@@ -1,0 +1,271 @@
+
+\section{Orbit-finiteness}
+\label{sec:orbit-finite-sets}
+Roughly speaking, orbit-finite sets are sets which have finitely many elements up to atom automorphisms. An example is the set 
+\begin{align*}
+	\set{(a,b,c) \in \atoms^3 : \text{$a \neq \atomtwo$ or $b = \atomone$}},
+\end{align*}
+or the state space of a nondeterministic register automaton.
+
+
+
+The precise definition of orbit-finiteness requires a little care to cover sets that are not equivariant, so we begin with some terminology.
+
+ 
+\begin{definition}[Orbits] Let $\bar a$ be a tuple of atoms. We say that $X,Y$ (which are either atoms or sets with atoms) are $\bar a$-equivalent if there is some $\bar a$-automorphism which maps $X$ to $Y$. This is an equivalence relation on sets with atoms, and its equivalence classes are called \emph{$\bar a$-orbits}. When $\bar a$ is the empty tuple of atoms, we talk about \emph{equivariant orbits}. 
+\end{definition}
+
+
+By definition of supports, a set with atoms is supported by $\bar a$ if and only if membership in the set is invariant under $\bar a$-equivalence; in other words, the set is a union, possibly infinite, of $\bar a$-orbits. Adding atoms to a tuple $\bar a$ makes it support more sets, but it makes the orbits smaller. This trade-off is illustrated in the following example. 
+
+\begin{myexample}\label{ex:three-finiteness-types}
+	Consider the atoms $\qatom$. Here are the partitions of $\atoms^2$ into orbits, using supports of size 0, 1 and 2:
+	\mypic{116}
+	The 3 equivariant orbits can be described by quantifier-free formulas:
+	\begin{align*}
+		x > y \qquad x = y \qquad x < y.
+	\end{align*}
+	These formulas are quantifier-free types, i.e.~they specify all relations over the vocabulary (which, in this case, contains only the order relation). The $\atomone$-orbits can also be described by quantifier-free formulas which are allowed to use the constant $\atomone$:
+	\begin{align*}
+		x > y > \atomone \qquad x > \atomone = y \qquad x > \atomone > y \qquad \cdots
+	\end{align*}
+	More generally, when the atoms are $\qatom$, then every $\bar a$-orbit in $\atoms^n$ can be described by a quantifier-free formula with $n$ free variables that uses constants from $\bar a$. Quantifier-free formulas are enough because the atoms $\qatom$ are \emph{homogeneous}, a property of atom structures that is discussed in Chapter~\ref{sec:homogeneous-atoms}. Some atom structures are oligomorphic but not homogeneous, and for those structures quantifier-free formulas will not be enough, but first-order formulas with quantifiers will.
+   % and let 
+   % \begin{align*}
+   % 	 X = \set{(a,b) : a, b \in \atoms \text{ where }a < b \land (a = \underline 1 \lor b < \underline 3)}.
+   % \end{align*}
+   % This set is contained in a single equivariant orbit 
+   % \begin{align*}
+   % 	Y = \set{(a,b) : a,b \in \atoms \text{ where } a < b}.
+   % \end{align*}
+   % Here is a picture of the sets $X$ and $Y$:
+   % \mypic{67} 
+   % The set $X$ is not equivariant, and therefore it does not exhaust the entire orbit. 
+   % If we increase the support to $\underline{13}$, the partition of $Y$ into orbits becomes fine enough so that $X$ becomes a union of orbits, and this union is finite:
+   % \mypic{68}
+   % We can further increase the support to $\underline {123}$, which further refines the partition into orbits, but still leaves finitely many of them, as in the following picture:
+   % \mypic{69}
+\end{myexample} 
+
+The key point is that even though the orbits get smaller, the number of orbits never goes from finite to infinite. Therefore, it will make sense to talk about sets with finitely many orbits, without specifying the support of the orbits.
+
+\begin{theorem}\label{thm:oligo-orbit-finite}
+   Assume that the atoms are oligomorphic. For every set with atoms $X$, the following conditions are equivalent.
+   \begin{enumerate}
+	   \item \label{it:some-intersects} For some tuple of atoms $\bar a$, $X$ is contained in a finite union of $\bar a$-orbits.
+	   \item \label{it:all-intersects} For every tuple of atoms $\bar a$, $X$ is contained in a finite union of $\bar a$-orbits.
+		   \end{enumerate}	
+\end{theorem}
+
+Before proving the theorem, we give some examples and discuss its consequences. 
+\begin{myexample} Consider the set $X$ which is the union
+   \begin{align*}
+		\underbrace{\setexpr{(x,y)} {x,y} {x \le \atomone < y}}_{X_1} \cup \underbrace{\setexpr{(x,y)} {x,y} {x = y}}_{X_2}
+   \end{align*}
+   which is depicted three times in the following picture, with different choices of support:
+   \mypic{67}
+   The set is contained in two equivariant orbits, it is contained in (in fact, equal to) five $\atomone$-orbits, and it is contained in (again, equal to) eleven $\atomone \atomtwo$-orbits. It is not exactly clear how to answer the question 
+   \begin{center}
+	   how many orbits does $X$ have?
+   \end{center}
+   without specifying the support. One idea is to use the least support, which exists for the atoms~$\qatom$, as we will see in Chapter~\ref{sec:least-supports}. It is not immediately clear if this is a good idea, for example sizes defined this way do not sum up when taking unions of sets with different supports:
+   \begin{align*}
+	   \overbrace{|X_1 \cup X_2|}^{\text{least support $\atomone$}} = 5 \qquad \overbrace{|X_1|}^{\text{least support $\atomone$}} = 2 \qquad \overbrace{|X_2|}^{\text{equivariant}}= 1
+   \end{align*}
+   We will revisit counting orbits in Chapter~\ref{sec:poly}.
+\end{myexample}
+
+Although it is not clear what is the exact number of orbits in a set with atoms, as discussed in the above example, the question
+\begin{center}
+   does $X$ have finitely many orbits?
+\end{center}
+has an unambiguous answer by Theorem~\ref{thm:oligo-orbit-finite}. This motivates the following definition, which is the central notion of this book.
+\begin{definition}[Orbit-finite sets]
+   Assume that the atoms are oligomorphic. 
+   A set with atoms which satisfies any of the two equivalent conditions from Theorem~\ref{thm:oligo-orbit-finite} is called \emph{orbit-finite}.	
+\end{definition}
+We do not talk about orbit-finiteness when the atoms are not oligomorphic. Exercise~\ref{ex:integers-fail-orbit-finiteness} shows how the conditions in the above theorem are not equivalent in the non-oligomorphic structure $(\Int,<)$. 
+
+
+By definition, every set with atoms is finitely supported, which means that it is equal to a union of $\bar a$-orbits for some finite tuple of atoms $\bar a$. For orbit-finite sets, this union is finite, which means that a set is orbit-finite if and only if it is equal to a finite union of $\bar a$-orbits for some tuple of atoms $\bar a$. As the tuple $\bar a$ grows, the $\bar a$-orbits become smaller, and therefore the largest orbits are the equivariant orbits. This means that a set with atoms is orbit-finite if and only if it is contained in a finite union of equivariant orbits. 
+
+
+We now prove Theorem~\ref{thm:oligo-orbit-finite}. 
+The first observation is that in the definition of an oligomorphic structure we could have talked about $\bar a$-orbits instead of equivariant orbits, and nothing would change.
+
+\begin{lemma}\label{lem:oligomorphic-non-equivariant}
+If the atoms $\atoms$ are oligomorphic, then for every atom tuple $\bar a$ and every dimension $n \in \set{0,1,\ldots}$ there are finitely many $\bar a$-orbits in $\atoms^n$.
+\end{lemma}
+\begin{proof}
+Let $k$ be the dimension of $\bar a$. Two $n$-tuples of atoms $\bar b$ and $\bar c$ are in the same $\bar a$-orbit if and only if the $(k+n)$-tuples $\bar a \bar b$ and $\bar a \bar c$ are in the same equivariant orbit. By oligomorphism, there are finitely many possibilities for the latter. \end{proof}
+
+A corollary of the above lemma is that Theorem~\ref{thm:oligo-orbit-finite} is true for subsets of $\atoms^n$, because every finitely supported subset of $\atoms^n$ satisfies both conditions in the theorem. To go from subsets of $\atoms^n$ to arbitrary sets with atoms, we use the following lemma. The lemma does not need the assumption on oligomorphism.
+
+
+\begin{lemma}\label{lem:orbits-images-of-tuples} Let $X$ be a set with atoms that is a single equivariant orbit. There is some $n \in \set{1,2,\ldots}$ and a surjective equivariant function\footnote{A function is equivariant if it has empty support, when seen as a set of pairs. See Exercise~\ref{ex:commuting-equivariance-diagram} for an equivalent description of what it means for a function to have empty support.}
+   \begin{align*}
+	   f : Y \to X \qquad \text{for some equivariant $Y \subseteq \atoms^n$}.
+   \end{align*} 
+\end{lemma}
+   % A set is multi-support orbit-finite if and only if it can be presented as
+   % \begin{align*}
+   % 	\bigcup_{i \in I} f_i( \set{\pi(\bar b_i) : \mbox{$\pi$ is an $\bar a_i$-automorphism}})
+   % \end{align*}
+   % where $I$ is finite, and for every $i$, $\bar a_i, \bar b_i$ are tuples of atoms, and $f_i$ is an equivariant function. Likewise for single-support orbit-finite sets, only all of the tuples $\bar a_i$ must be equal.
+\begin{proof} 
+   Choose some $x \in X$. Because the finite support condition is hereditary for sets with atoms, $x$ has a finite support $\bar b$. Consider the equivariant orbit of the pair $(\bar b, x)$, i.e.~the set
+\begin{align*}
+f = \set{ \pi(\bar b, x) : \mbox{$\pi$ is an atom automorphism}}.
+\end{align*} Here is a picture of $f$:
+\mypic{115}
+We claim that $f$ is in fact a function, i.e.~for every input there is exactly one output. Indeed,
+by Exercise~\ref{ex:support-depend-only}, all atom automorphisms $\pi,\sigma$ satisfy
+\begin{align*}
+   \pi(\bar b) = \sigma(\bar b) \qquad \text{implies} \qquad \pi(x_0) = \sigma(x_0),
+\end{align*}
+which means that $f$ is a function. Its domain is the equivariant orbit of $\bar b$, which is an equivariant subset of $\atoms^n$, where $n$ is the length of the support $\bar b$. Because $f$ is equivariant, the image of the equivariant orbit of $\bar b$ is equal to the equivariant orbit of $x$, see Exercise~\ref{ex:commuting-equivariance-diagram}, thus proving the lemma.
+\end{proof}
+
+Using the two above results, we finish the proof of Theorem~\ref{thm:oligo-orbit-finite}.
+
+
+\begin{proof}[Proof of Theorem~\ref{thm:oligo-orbit-finite}]
+   The only non-trivial implication is \ref{it:some-intersects} $\Rightarrow$ \ref{it:all-intersects}, i.e.~if $X$ is contained in a finite union of $\bar a$-orbits for some $\bar a$, then the same is true for every $\bar a$. Since the biggest orbits are the equivariant orbits, the theorem boils down to showing that if a set is contained in a finite union of equivariant orbits, then for every atom tuple $\bar a$ it is contained in a finite union of $\bar a$-orbits. This, in turn, boils down to showing that every equivariant orbit splits into finitely many $\bar a$-orbits, for every atom tuple $\bar a$. Let then $X$ be an equivariant orbit. Apply Lemma~\ref{lem:orbits-images-of-tuples} to $X$ yielding an equivariant surjective function
+		\begin{align*}
+			f : Y \to X.
+		\end{align*}
+		By Lemma~\ref{lem:oligomorphic-non-equivariant}, the set $Y$ splits into finitely many $\bar a$-orbits. Under an equivariant function, the image of an $\bar a$-orbit is also an $\bar a$-orbit, and therefore also $X$ is a finite union of $\bar a$-orbits. 
+\end{proof} 
+\begin{myexample} 
+When the atoms are oligomorphic, then by definition of oligomorphism, the set $\atoms$ of all atoms is orbit-finite; the same is also true for $\atoms^n$.
+   In the special case of the equality atoms or the rational numbers with order $(\mathbb Q, <)$, the set $\atoms$ is even a single equivariant orbit. There are oligomorphic atom structures with more than one equivariant orbit of atoms. An example is a variation of the two clique example from Example~\ref{ex:two-cliques}, where one of the two cliques has self-loops, but the other one does not:
+\mypic{118} 
+\end{myexample}
+
+% The following example shows that it is not clear how to count orbits in an orbit-finite set that is not equivariant. We discuss counting orbits in more detail in Section~\ref{sec:counting-orbits} and also in Chapter~\ref{sec:poly}.
+
+% 	\begin{myexample}
+% 		Consider the set from Example~\ref{ex:three-finiteness-types}. This set is the union 
+% 		\mypic{70}
+% of two sets, which are a $\underline 1$-orbit and a $\underline 3$-orbit, respectively. In this sense, the set has two orbits. If we want to use a common support, then we get a decomposition with seven $\underline{13}$-orbits:
+% \mypic{71}
+% \end{myexample}
+
+The following example shows that the number of orbits in a product $X \times Y$ is not polynomially bounded (in fact, not bounded by any function) by the number of orbits in $X,Y$. 
+\begin{myexample}
+	Consider the equality atoms. For $n \in \Nat$, we write $\atoms^{(n)}$ for the set of non-repeating $n$-tuples of atoms, i.e.~tuples where all coordinates are pairwise distinct. This set is one equivariant orbit because every non-repeating tuple can be mapped to every other non-repeating tuple by an automorphism of atoms, since the only structure is equality. The square of this set, 
+   \begin{align*}
+	   \atoms^{(n)} \times \atoms^{(n)},
+   \end{align*}
+   has a number of equivariant orbits that is exponential in $n$, corresponding to the ways in which the first $n$ coordinates can be equal to the second $n$ coordinates.
+   In particular, the number of orbits of $X \times X$ cannot be bounded by a function of the number of orbits in $X$.
+\end{myexample}
+
+
+\paragraph*{A representation theorem.} Recall Lemma~\ref{lem:orbits-images-of-tuples}, which said that every equivariant one-orbit set is the image, under an equivariant function, of some orbit of tuples of atoms. Below, we build on that lemma to get a representation of every orbit-finite set up to finitely supported bijections. 
+
+Define a \emph{partial equivalence relation} to be a relation that is transitive, symmetric, but not necessarily reflexive. Like (total) equivalence relations, partial equivalence relations also have disjoint equivalence classes, but these no longer need to cover the entire set. We write $X_{/\sim}$ for the family of equivalence classes in a set $X$ modulo a partial equivalence relation $\sim$. 
+
+The following straightforward representation result says that -- up to finitely supported bijections -- every orbit-finite set can be obtained by submotienting tuples of atoms modulo some partial equivalence relation.
+
+\begin{theorem}\label{thm:partial-equivalence-representation} Assume the atoms are oligomorphic, and there are at least two atoms. Every $\bar a$-supported orbit-finite set admits an $\bar a$-supported bijection with a set of the form $\atoms^n_{/\sim}$ where $n \in \set{0,1,\ldots}$ and $\sim$ is an $\bar a$-supported partial equivalence relation on $\atoms^n$.
+\end{theorem}
+\begin{proof} 
+   We first prove the theorem for sets which are a single $\bar a$-orbit, and then justify the representation in the theorem is closed under finite unions. 
+   
+   Let then $X$ be a set with atoms which is a single $\bar a$-orbit. Apply Lemma~\ref{lem:orbits-images-of-tuples} to the equivariant orbit that contains $X$, yielding a partial equivariant function
+   \begin{align*}
+	f : \atoms^{n} \to \text{sets with atoms}
+   \end{align*}
+   whose image contains $X$. 
+   Define $\sim$ to be the partial equivalence relation on $\atoms^n$ which identifies two atom tuples if they have the same image under $f$, and that image belongs to $X$. 
+   This equivalence relation is supported by $\bar a$. It is the same as the kernel of the function $f$ restricted to tuples with image in $X$. As usual with kernels, the set $X$ is in bijective correspondence with the submotient $\atoms^{n}_{/\sim}$. 
+
+   Consider now the general case, where $X$ is not necessarily a single $\bar a$-orbit. Thanks to the assumption that there are at least two atoms, sets of the form $\atoms^n_{/\sim}$ are closed under finite union. To represent a union of $k$ such sets, each one using dimension $\le n$, we use tuples of dimension $n + \log k$, with the equality type of the last $\log k$ coordinates used to indicate one of the $k$ sets.
+\end{proof}
+
+If there is only one atom (which is not a very interesting case, because for finite atom structures orbit-finite sets are the same as finite sets), then the theorem above also holds, except one needs to use a finite disjoint union of sets of the form $\atoms^n_{/\sim}$.
+
+
+
+
+\paragraph*{Closure properties.} Some closure properties of finite sets are shared by orbit-finite sets, some are not. Here is a summary:
+\begin{center}
+	\begin{tabular}{l|l}
+		operation on orbit-finite sets & is the result orbit-finite?\\ 
+		\hline
+		$X \cup Y$ & yes ({\small Lemma~\ref{fact:of-closure-properties}})\\
+		$X \cap Y$ & yes ({\small Lemma~\ref{fact:of-closure-properties}}) \\
+		$X \times Y$ & yes ({\small Lemma~\ref{fact:of-closure-properties}})\\
+		take some finitely supported subset of $X$ & yes ({\small Lemma~\ref{fact:of-closure-properties}}) \\
+		image $f(X)$ where $f$ has an orbit-finite graph& yes ({\small Lemma~\ref{fact:of-closure-properties}}) \\
+		set of all finitely supported subsets of $X$ & no ({\small Example~\ref{ex:powerset-not-orbit-finite}})\\
+		set of all finitely supported functions $X \to Y$ & no ({\small Exercises~\ref{ex:function-space} and~\ref{ex:function-space-bounded-supports}})
+	\end{tabular}	
+\end{center}
+The positive results from the above table are given in the following lemma. 
+\begin{lemma}\label{fact:of-closure-properties}
+Assume that the atoms are oligomorphic. Orbit-finite sets are closed under binary union, binary product, finitely supported subsets, projections (from products), and images under finitely supported functions.
+\end{lemma}
+\begin{proof} Binary union is immediate, and finitely supported subsets are immediate in view of condition~\ref{it:all-intersects} of Theorem~\ref{thm:oligo-orbit-finite}. For projections, we observe that the projection of one orbit in a product is one orbit: if $(x,y)$ and $(x',y')$ are in the same equivariant orbit, then the same is true for $y$ and $y'$. For images under orbit-finite functions, we observe that the co-domain of an orbit-finite function is orbit-finite, by projections. 
+	
+	We are left with binary products. 
+	By condition~\ref{it:some-intersects} of Theorem~\ref{thm:oligo-orbit-finite}, it suffices to show that the product $X_1 \times X_2 $ of two equivariant orbits is contained in finitely many equivariant orbits. Apply Lemma~\ref{lem:orbits-images-of-tuples}, yielding equivariant functions
+\begin{align*}
+	f_i : \atoms^{n_i} \to \text{sets with atoms} \qquad \text{for $i =1,2$}
+\end{align*}
+such that $X_i$ is contained in the image of $f_i$. The product $X_1 \times X_2$ is contained in the image of $\atoms^{n_1} \times \atoms^{n_2}$ under the equivariant function obtained by pairing $f_1$ and $f_2$ in the natural way. By assumption on oligomorphism, $\atoms^{n_1} \times \atoms^{n_2}$ has finitely many equivariant orbits, and therefore the same is true for $X_1 \times X_2$ thanks to the previous item.
+ \end{proof}
+
+ \begin{myexample}
+	 \label{ex:powerset-not-orbit-finite}
+	 An important operation that does not preserve orbit-finiteness is (finitely supported) powerset. If the atoms are an infinite oligomorphic structure, then the finitely supported powerset of $\atoms$ is necessarily not orbit-finite, because subsets of different size are in different orbits.
+ \end{myexample}
+
+
+ \exercisepart
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+% \mikexercise{\label{ex:representation}
+% Define a partial equivalence relation to be a relation which is symmetric and transitive, but not necessarily reflexive. If $\sim$ is a partial equivalence relation on a set $X$, then $X/\!_\sim$ denotes the family of equivalence classes, which is a family of pairwise disjoint sets which partitions elements that are equivalent to themselves. Assume that the atoms are oligomorphic and let $\bar a$ be an atom tuple. Show that if a set is orbit-finite and supported by $\bar a$, then it admits an $\bar a$-supported bijection with a set of the form $\atoms^n /_\sim$ where $\sim$ is a partial equivalence relation supported by $\bar a$.
+% }{ Call a set $\bar a$-representable if it satisfies the conclusion of the exercise. By oligomorphism, if a set is orbit-finite and supported by $\bar a$, then it is a finite union of $\bar a$-orbits. It is not difficult to see that $\bar a$-representable sets are closed under disjoint unions, by encoding additional information in the equality type of a tuple of atoms. Therefore, it suffices to show that every $\bar a$-orbit is $\bar a$-representable. Take then some $\bar a$-orbit, i.e.~a set of the form
+% \begin{align*}
+% X = \set{ \pi(x) : \mbox{$\pi$ is an $\bar a$-automorphism}} 
+% \end{align*}
+% for some set with atoms $x$. Let $\bar b$ be some support of $x$, and let $n$ be the dimension of $\bar b$. The relation
+% \begin{align*}
+% f = \set{(\pi(\bar b), \pi(x)) : \mbox{$\pi$ is an $\bar a$-automorphism}}
+% \end{align*}
+% is an $\bar a$-supported partial function from $\atoms^n$ to $X$. Functionality, i.e.~one argument can only give one result follows from the definition of support. Define the \emph{kernel} of $f$ to be the partial equivalence relation on $\atoms^n$ which identifies two tuples if they are both in the domain of $f$ and have same values under $f$. It is not difficult to see that the $\atoms^n$ submotiented by this kernel is in $\bar a$-supported bijection with $X$. } 
+
+
+
+
+
+
+
+
+
+
+
+
+

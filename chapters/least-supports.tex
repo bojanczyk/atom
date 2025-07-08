@@ -1,0 +1,275 @@
+\chapter{Least supports}
+\label{sec:least-supports}
+In this chapter, we show that in the equality atoms, one can always find the least support, i.e.~a support that is contained in all other supports. This result is also true for some other types of atoms, but we only prove it for the equality atoms. We use least supports to get a representation theorem for orbit-finite sets in the equality atoms, which is stronger than the representation theorem from Theorem~\ref{thm:partial-equivalence-representation} about atom tuples modulo partial equivalence. Using the stronger representation theorem, we prove that deterministic register automata have the same expressive power as deterministic orbit-finite automata, assuming that the input letters are pairs of the form (label from a finite set, atom).
+
+For the rest of this chapter, we assume the equality atoms. 
+\section{Least supports}
+In this book, we generally use tuples of atoms as supports. An alternative is to use finite sets of atoms, because whether a tuple $(a_1,\ldots,a_n)$ supports a set with atoms does not depend on the ordering and repetitions in the tuple. Therefore, it makes sense talking about one support being contained in some other support. 
+The following theorem shows that there is a least finite support\footnote{The Least Support Theorem was first proved in~\cite[Proposition 3.4]{DBLP:journals/fac/GabbayP02}. A generalisation of this theorem, for other kinds of atoms, can be found in~\cite[Section 10]{DBLP:journals/corr/BojanczykKL14}.}. 
+\begin{theorem}[Least Support Theorem] \label{thm:least-supports}
+	Assume the equality atoms. For every $x$ which is an atom or a set with atoms, there is a finite support that is contained in all finite supports of $x$.
+\end{theorem}
+
+Another way of stating the above theorem is that finite supports are closed under intersection. 
+ It is important that we consider finite supports. For example, the atom $\atomone$ is supported by the infinite set $\atoms - \set \atomone$, since fixing this set is the same as fixing $\atomone$. The intersection of the two supports $\set \atomone$ and $\atoms - \set \atomone$ is empty, but $\atomone$ does not have empty support. 
+
+ Let us write $\atoms^{(n)}$ for the set of non-repeating $n$-tuples of atoms. This is an equivariant one-orbit set. The key observation is the following lemma, which says that one can represent every equivariant one-orbit set as non-repeating tuples modulo an equivalence relation, such that equivalent tuples must necessarily agree as sets. 
+
+\begin{lemma}\label{lem:tuple-as-set}
+ For every equivariant one-orbit set $X$ there is an equivariant surjective function
+ \begin{align*}
+ f : \atoms^{(n)} \to X \qquad \text{for some $n \in \set{0,1,2,\ldots}$}
+ \end{align*}
+ such that tuples with the same value under $f$ are equal as sets:
+ \begin{align*}
+ f(a_1,\ldots,a_n) = f(b_1,\ldots,b_n) \qquad \text{implies} \qquad \set{a_1,\ldots,a_n}= \set{b_1,\ldots,b_n}.
+ \end{align*}
+\end{lemma}
+\begin{proof}
+ By Lemma~\ref{lem:orbits-images-of-tuples} there is an equivariant surjective function
+ \begin{align*}
+ f : Y \to X \qquad \text{for some equivariant $Y \subseteq \atoms^n$}.
+ \end{align*}
+ Take some equivariant orbit of $f$, with $f$ viewed as a subset of $Y \times X$. This orbit is still an equivariant function whose image is also $X$. In other words, we can assume without loss of generality that $Y$ is a single equivariant orbit in $\atoms^n$. Such an orbit is an equality type. By projecting away the duplicated coordinates in the equality type, we can assume that $Y$ contains only nonrepeating tuples. Summing up, we know that there is a surjective equivariant function
+ \begin{align*}
+ f : \atoms^{(n)} \to X.
+ \end{align*}
+ We show below that the function either satisfies the condition in the statement of the lemma, or the dimension $n$ can be made smaller. If the condition in the statement of the lemma is not satisfied, then 
+ \begin{align}\label{eq:not-equal-as-sets}
+ f(a_1,\ldots,a_n) = f(b_1,\ldots,b_n) 
+ \end{align}
+ holds for some tuples $\bar a, \bar b$ which are not equal as sets. Without loss of generality we assume that $a_n$ does not appear in the tuple $\bar b$. Choose some 
+ atom automorphism $\pi$ which fixes $a_1,\ldots,a_{n-1},b_1,\ldots,b_n$ but does not fix $a_n$. We have 
+ \begin{eqnarray*}
+ f(\bar a) \stackrel{\text{\eqref{eq:not-equal-as-sets}}} =
+ f(\bar b) \stackrel{\text{$\pi$ fixes $\bar b$}} = 
+ f(\pi(\bar b))\stackrel{\text{equivariance}} = 
+ \pi(f(\bar b)) \stackrel{\text{\eqref{eq:not-equal-as-sets}}} = 
+ \pi(f(\bar a)) \stackrel{\text{equivariance}} =
+ f(\pi(\bar a)).
+ \end{eqnarray*}
+ Therefore, we have shown that 
+ \begin{align*}
+ f(a_1,\ldots,a_{n-1},a_n) = f(a_1,\ldots,a_{n-1},a) \qquad \text{for some distinct $a,a_1,\ldots,a_n$.}
+ \end{align*}
+ The set of tuples $a,a_1,\ldots,a_n$ which satisfies the condition above is an equivariant subset of $\atoms^{(n+1)}$, by equivariance of $f$. Therefore, if some tuple satisfies the condition, then all tuples in $\atoms^{(n+1)}$ satisfy it as well, i.e.~we could also write ``for all distinct'' in the above condition.
+ In other words, the value of $f$ depends only on the first $n-1$ coordinates. Therefore, \begin{align*}
+ \set{((a_1,\ldots,a_{n-1}),f(a_1,\ldots,a_n)) : a_1,\ldots,a_{n} \in \atoms^{(n)}}
+ \end{align*}
+ is an equivariant surjective function from $\atoms^{(n-1)}$ to $X$, and we can use the induction assumption. 
+\end{proof}
+
+\begin{proof}[Proof of the Least Support Theorem. ]
+ Let $x$ be an atom or a set with atoms. Apply Lemma~\ref{lem:tuple-as-set} to the equivariant orbit of $x$:
+\begin{align*}
+ X = \set{\pi(x) : \text{$\pi$ is an atom automorphism}}
+\end{align*}
+yielding some equivariant function
+\begin{align*}
+ f : \atoms^{(n)} \to X
+\end{align*}
+where tuples with equal images must be equal as sets. 
+Choose some tuple $(a_1,\ldots,a_n)$ which is mapped by $f$ to $x$. To prove the Least Support Theorem, we will show that the atoms $a_1,\ldots,a_n$ appear in every support of $x$. Let then $\bar b$ be some atom tuple which supports $x$. Toward a contradiction, suppose that $\bar b$ is not a permutation of $a_1,\ldots,a_n$, and therefore one can choose some $\bar b$-automorphism which does not preserve the set $\set{a_1,\ldots,a_n}$. We have 
+\begin{eqnarray*}
+ x &=\quad & \text{\small($\pi$ fixes the support of $x$)}\\ 
+ \pi(x) &=\quad & \text{\small(choice of $a_1,\ldots,a_n$)}\\ 
+ \pi(f(a_1,\ldots,a_n)) &=\quad & \text{\small(equivariance of $f$)}\\
+ f(\pi(a_1,\ldots,a_n)).
+\end{eqnarray*}
+Since the tuple $\pi(a_1,\ldots,a_n)$ is not equal to $(a_1,\ldots,a_n)$ as a set, it must have a different value than $x$, by assumption on the function $f$. 
+\end{proof}
+
+
+
+\subsection*{A representation theorem for equality atoms} Apart from the Least Support Theorem, another application of Lemma~\ref{lem:tuple-as-set} is the following representation theorem for equivariant orbit-finite sets in the equality atoms.
+Let $X$ be an equivariant one-orbit set. Apply Lemma~\ref{lem:tuple-as-set}, yielding an equivariant function
+ \begin{align*}
+ f : \atoms^{(n)} \to X.
+ \end{align*}
+ Because $f$ is equivariant and permutations of coordinates commute with atom automorphisms, the following conditions are equivalent for every permutation $g$ of $\set{1,\ldots,n}$:
+ \begin{eqnarray}
+ \label{eq:perm-some} f(a_1,\ldots,a_n) = f(a_{g(1)},\ldots,a_{g(n)}) & & \text{for some $(a_1,\ldots,a_n) \in \atoms^{(n)}$}\\
+ \label{eq:perm-all} f(a_1,\ldots,a_n) = f(a_{g(1)},\ldots,a_{g(n)}) & & \text{for every $(a_1,\ldots,a_n) \in \atoms^{(n)}$}.
+ \end{eqnarray}
+ Permutations $g$ which satisfy condition~\eqref{eq:perm-all} form a group, call it $G$. We claim:
+ \begin{eqnarray*}
+ f(a_1,\ldots,a_n) &=& f(b_1,\ldots,b_n)\\ & \text{iff} & \\ \exists g \in G\ (a_1,\ldots,a_n)&=& (b_{g(1)},\ldots,b_{g(n)}).
+ \end{eqnarray*}
+ The bottom-up implication is by definition. For the top-down implication, recall that Lemma~\ref{lem:tuple-as-set} asserted that tuples with the image under $f$ must contain the same atoms, and therefore some $g \in G$ must take one tuple to the other. 
+ 
+ Let us write
+$$\atoms^{(n)} /_G$$ to be $\atoms^{(n)}$
+for the set of non-repeating atom tuples modulo coordinate permutations from the group $G$. Since quotienting by $G$ is exactly the kernel of the function $f$, we have just proved the following theorem\footnote{This result is from~\cite[Theorem 10.17]{DBLP:journals/corr/BojanczykKL14}, although a similar construction can already be found in~\cite[Definition 2]{DBLP:conf/fossacs/FerrariMP02}. 
+}:
+\begin{theorem}[Representation for orbit-finite sets in the equality atoms] \label{thm:classify-one-orbit}Assume the equality atoms.
+Every equivariant one-orbit set admits an equivariant bijection to a set of the form $$\atoms^{(n)} /_G$$ for some $n \in \Nat$ and some subgroup $G$ of permutations of the set $\set{1,\ldots,n}$.
+ 
+\end{theorem}
+\begin{myexample}
+ Let $n \in \set{1,2,\ldots}$ and let $G$ be the group of all permutations of $\set{1,\ldots,n}$. In this case, $\atoms^{(n)} /_G$ is the same as unordered sets of atoms with exactly $n$ elements (recall that $\atoms^{(n)}$ contains only non-repeating tuples). If $G$ is the group of cyclic shifts, then $\atoms^{(n)} /_G$ is $n$-tuples of distinct atoms modulo cyclic shifts. 
+\end{myexample}
+
+
+\exercisepart
+
+
+
+\section{Extended example: deterministic automata}
+\label{sec:det-reg-are-of}
+In the case study on orbit-finite automata from Section~\ref{sec:orbit-finite-automata}, we showed in Theorem~\ref{thm:register-nofa} that nondeterministic register automata have the same expressive power as nondeterministic orbit-finite automata, for alphabets where the two notions can be compared. Using the representation result from Theorem~\ref{thm:classify-one-orbit}, we prove a similar result for deterministic automata. 
+\begin{theorem}\label{thm:register-dofa}
+ Assume the equality atoms. For every finite set $\Sigma_{\mathrm{fin}}$ and every language $L \subseteq (\Sigma_{\mathrm{fin}} \times \atoms)^*$, the following conditions are equivalent:
+	\begin{enumerate}
+		\item \label{it:rec-reg-dofa} $L$ is recognised by a deterministic register automaton;
+		\item \label{it:rec-dofa} $L$ is recognised by an equivariant deterministic orbit-finite automaton.
+	\end{enumerate}
+\end{theorem}
+By Exercise~\ref{ex:reduce-support-in-automaton-deterministic}, the conditions in the above theorem are also equivalent to: (3) the language $L$ is equivariant, and it is recognised by a (not necessarily equivariant) deterministic orbit-finite automaton. 
+
+The rest of Section~\ref{sec:det-reg-are-of} is devoted to proving the above theorem. In the proof, we use an intermediate automaton model, based on the following definition (which can be used for any atoms, not just the equality atoms that are considered in this chapter).
+
+\begin{definition}[Straight set]\label{def:straight-set}
+ A \emph{straight set} is a set which admits a finitely supported bijection with a set of the form 
+ \begin{align*}
+ \atoms^{n_1} + \cdots + \atoms^{n_k} \qquad \text{for some $k, n_1,\ldots,n_k \in \set{0,1,\ldots}$}.
+ \end{align*}
+ If the bijection is equivariant, then we talk about an equivariant straight set\footnote{These sets are also known as \emph{strong nominal sets}.}.
+\end{definition}
+Examples of straight sets are: input alphabets of register automata; state spaces of register automata, and sets of the form $\atoms^{(n)}$ used in Theorem~\ref{thm:classify-one-orbit}. A non-example is the set of unordered pairs of atoms $\set{\set{a,b}: a \neq b \in \atoms}$, which created problems for choice in Example~\ref{ex:choice}. 
+
+ We prove Theorem~\ref{thm:register-dofa} in two steps:
+\begin{align*}
+ {\substack{\text{deterministic orbit-finite}\\\text{equivariant automata}}} \quad \stackrel{\text{Lemma~\ref{lem:dofa-to-straight}}} = \quad {\substack{\text{deterministic orbit-finite}\\\text{equivariant automata} \\\text{with straight state spaces}}} \quad \stackrel{\text{Lemma~\ref{lem:straight-to-register}}} = \quad {\substack{\text{deterministic}\\\text{register automata}}}
+\end{align*}
+
+
+In the proofs, we use categorical notation for automata, i.e.~an automaton $\mathcal A$ over an input alphabet $\Sigma$ consists of a state space $Q$ and three functions
+\begin{align*}
+ \underbrace{\iota_{\mathcal A} : 1 \to Q}_{\text{initial state}} \qquad \underbrace{\delta_{\mathcal A} : Q \times \Sigma \to Q}_{\text{transition function}} \qquad \underbrace{F_{\mathcal A} : Q \to \set{\text{yes,no}}}_{\text{accepting states}},
+\end{align*} 
+where $1$ stands for a set which has a unique equivariant element, e.g.~$1 = \set \emptyset$. We care about automata which are equivariant, i.e.~all the functions described above and the sets that they use are equivariant. 
+A \emph{homomorphism} of automata with the same input alphabet
+\begin{align*}
+ \xymatrix{\Bb \ar[r]^h & \Aa}
+\end{align*}
+is a function from the states of $\Bb$ (call them $P$) to the states of $\Aa$ (call them $Q$) which makes the following diagrams commute:
+\begin{align*}
+ \xymatrix{1 \ar[r]^{\iota_{\mathcal B}} \ar[rd]_{\iota_{\mathcal A}} & P \ar[d]^h \\ & Q} \qquad 
+ \xymatrix{ 
+ P \times \Sigma \ar[d]_{(h,id)}\ar[r]^{\delta_{\mathcal B}} & P\ar[d]^h \\
+ Q \times \Sigma \ar[r]_{\delta_{\mathcal A}} & Q
+ } \qquad \xymatrix{P \ar[d]_h \ar[dr]^{F_{\mathcal B}} \\ Q \ar[r]_{F_{\mathcal A}} & \set{\text{yes,no}}}.
+\end{align*}
+It is not hard to see that if there is a homomorphism from $\Aa$ to $\Bb$, then the two automata recognise the same language. We use homomorphisms to prove that deterministic automata recognise the same languages in Lemmas~\ref{lem:straight-to-register} and~\ref{lem:dofa-to-straight} below, which will complete the proof of Theorem~\ref{thm:register-dofa}.
+
+\begin{lemma}\label{lem:straight-to-register}
+ Deterministic register automata recognise the same languages as equivariant deterministic orbit-finite automata with straight state spaces. 
+\end{lemma}
+\begin{proof}
+ The state space of a deterministic register automaton is clearly straight, which gives the left-to-right inclusion in the lemma. For the converse inclusion, consider a deterministic orbit-finite automaton with a straight state space $Q$. Let $k$ be the number of orbits in $Q$ and let $n$ be the maximal dimension of tuples used in $Q$. It is easy to see that there is an equivariant injective function 
+ \begin{align*}
+ h : Q \to \underbrace{\set{1,\ldots,k} \times (\atoms \cup \set \bot)^n}_P.
+ \end{align*}
+ Using $h$ and its (one-sided) inverse, one can impose an automaton structure on $P$ which turns $h$ into an automaton homomorphism. The target of this homomorphism is a register automaton with $k$ locations and $n$ registers. 
+\end{proof}
+ 
+The more difficult step is turning the state space of a deterministic orbit-finite automaton into a straight set. This is done using the representation theorem from the previous section. 
+\begin{lemma}\label{lem:dofa-to-straight}
+ For every equivariant deterministic orbit-finite automaton, there is an equivalent one with a straight state space. 
+\end{lemma}
+\begin{proof}
+Consider an equivariant deterministic orbit-finite automaton $\Aa$ with state space $Q$ that is not necessarily straight. Apply Theorem~\ref{thm:classify-one-orbit}, yielding a representation of $Q$ as
+ \begin{align*}
+\atoms^{(n_1)}/_{G_1} + \cdots + \atoms^{(n_k)}/_{G_k}
+\end{align*}
+for some dimensions $n_i$ and groups $G_i$. Define $P$ to be the straight set
+\begin{align*}
+ \atoms^{(n_1)} + \cdots + \atoms^{(n_k)}
+ \end{align*}
+ and define $h : P \to Q$ to be the surjective function which quotients a tuple with respect to the appropriate group action. The function $h$ is surjective and equivariant. To prove the lemma, we will show that one can define an automaton structure on $P$ which turns $h$ into a homomorphism of automata. 
+ 
+ In Lemma~\ref{lem:straight-to-register}, defining the homomorphism was easy because $h$ had a (one-sided) inverse. This is no longer true in our case. Nevertheless, a weaker property holds, namely $h$ \emph{reflects supports} in the sense that if a tuple of atoms supports $h(p) \in Q$, then it also supports $p$ (the opposite implication is also true, thanks to equivariance). 
+The following claim shows that support-reflecting functions with straight domains admit a certain form of choice. 
+\begin{claim}\label{claim:reflect-choice} \ 
+ % Let $f_i : A_i \to B_i$ be equivariant functions with straight domains, for $i \in \set{1,2}$. Every function $g : B_1 \to B_2$ can be lifted to a function $h : A_1 \to A_2$ in a way consistent with $f_1$ and $f_2$. In diagrams: 
+ \mypic{81} 
+\end{claim}
+\begin{proof}
+ Take some $\bar a \in A$, which is a tuple of atoms because $A$ is straight. 
+ By surjectivity of $h$, there is some $\bar b \in P$ such that
+ \begin{align*}
+ g(\bar a) = h(\bar b).
+ \end{align*}
+ Because $g$ preserves supports and $h$ reflects supports, it follows that $\bar a$ supports $\bar b$. It follows that $\bar a \mapsto \bar b$ can be extended to an equivariant function from the equivariant orbit of $\bar a$ to the equivariant orbit of $\bar b$. By doing this for all orbits in $A$, we get the result. 
+ \end{proof}
+% \begin{proof}
+% It is enough to consider the case when $A$ and $P$ have one orbit each, i.e.~these are sets of non-repeating tuples of certain dimensions:
+% \begin{align*}
+% A = \atoms^{(n)} \quad P = \atoms^{(k)} \qquad \text{for some $n,k \in \set{0,1,\ldots}$}.
+% \end{align*}
+% Choose some $\bar a \in A$. Because $h$ is surjective, one can choose some $\bar b \in P$ such that
+% \begin{align*}
+% g(\bar a) = h(\bar b).
+% \end{align*}
+% Because $h$ reflects supports, and $\bar a$ supports $g(\bar a)$ by equivariance of $g$, it follows that $\bar a$ supports $\bar b$. This means that $\bar b$ is a tuple consisting of some of the atoms from $\bar a$, possibly in a different order. It follows that $\bar b$ is obtained from $\bar a$ by applying a function of the form
+% \begin{align*}
+% (a_1,\ldots,a_{n}) \ \mapsto \ (a_{i_1},\ldots,a_{i_k}) \qquad \text{for some distinct }i_1,\ldots,i_k \in \set{1,\ldots,n}. 
+% \end{align*}
+% This is the function $\red f$ from the statement of the claim. 
+% \end{proof}
+ 
+ We now define an equivariant automaton structure $\mathcal B$ on $P$ which turns $h$ into a homomorphism of automata, i.e.~it makes the following diagrams commute:
+\begin{align*}
+ \xymatrix{1 \ar[r]^{\iota_{\mathcal B}} \ar[rd]_{\iota_{\mathcal A}} & P \ar[d]^h \\ & Q} \qquad 
+ \xymatrix{ 
+ P \times \Sigma \ar[d]_{(h,id)}\ar[r]^{\delta_{\mathcal B}} & P\ar[d]^h \\
+ Q \times \Sigma \ar[r]_{\delta_{\mathcal A}} & Q
+ } \qquad \xymatrix{P \ar[d]_h \ar[dr]^{F_{\mathcal B}} \\ Q \ar[r]_{F_{\mathcal A}} & \set{\text{yes,no}}}.
+\end{align*}
+The initial state $\iota_{\mathcal B}$ and the transition function $\delta_{\mathcal B}$ is defined using Claim~\ref{claim:reflect-choice}, while acceptance is defined as the composition $F_{\mathcal A} \circ h$. 
+\end{proof}
+
+
+\exercisepart 
+
+
+
+\mikexercise{\label{ex:straight-choice-1} Assume the equality atoms. Let $X$ be a straight set with atoms. Show that for every set with atoms $Y$ and every finitely supported 
+\begin{align*}
+ F : X \to \text{nonempty finitely supported subsets of $Y$}
+\end{align*}
+there exists a finitely supported function $f : X \to Y$ such that 
+\begin{align*}
+ f(x) \in F(x) \quad \text{for every $x \in X$.}
+\end{align*}
+} 
+{ 
+ Let $\bar a$ be a support of $F$.
+ Since the choice function $f$ can be defined separately for each $\bar a$-orbit, we can assume without loss of generality that $X$ is a single $\bar a$-orbit. By definition of straight sets, this means that (up to finitely supported bijections) $X$ is a single $\bar a$-orbit in $\atoms^{(k)}$ for some $k$. 
+
+ \begin{claim}
+ There is some tuple of atoms $\bar c$ such that for every $x \in X$, there is some $y \in F(x)$ which is supported by the atoms in $x$ plus $\bar c$.
+ \end{claim}
+ \begin{proof} For $x \in X$ define $n \in \set{0,1,2,\ldots}$ to be the minimal number $n$ such that some element of $F(x)$ has support of size $n$. 
+ The number does not depend on the choice of $x$, since $X$ is contained in one equivariant orbit. Let $\bar c$ be any tuple of $k+n$ distinct atoms that do not appear in $\bar a$. Take some $x \in X$ and choose some $y \in F(x)$ with support of size at most $n$. Let $b_1,\ldots,b_i$ be the atoms in the least support of $y$ which are not in the least support of $x$, there are at most $n$ of these. Since $\bar c$ has $k+n$ atoms, one can find atoms $c_1,\ldots,c_i$ in the tuple $\bar c$ which do not appear in $x \in \atoms^{(k)}$. The atom automorphism $\pi$ that swaps $(b_1,\ldots,b_i)$ with $(c_1,\ldots,c_i)$ fixes the supports of both $x$ and $F$. Therefore, $\pi(y) \in F(x)$. The least support of $\pi(y)$ uses only atoms from $\bar c$ and the least support of $x$. 
+ \end{proof}
+
+ By Exercise~\ref{ex:orbit-list}, there is a finitely supported function which maps every $x \in X$ to an ordered list of the $x \bar c$-orbits that are contained in $F(x)$. By the above claim, one of these orbits is a singleton, and the function $f$ can simply output the unique element of that singleton (the first singleton in the list).
+}
+
+
+\mikexercise{Assume the equality atoms. Show that an equivariant orbit-finite set $X$ is straight if and only if it is projective in the sense of category theory:
+\mypic{119}
+}
+{\ }
+
+\mikexercise{Show an example of a function which preserves and reflects supports, but which is not equivariant.}{
+\begin{align*}
+ (a,b) \in \atoms^2 \qquad \mapsto \qquad \begin{cases}
+ (a,b) & \text{if $a \neq \atomone$}\\
+ (b,a) & \text{otherwise.}
+ \end{cases}
+\end{align*}
+
+}
+

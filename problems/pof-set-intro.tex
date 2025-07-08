@@ -1,0 +1,97 @@
+\mikexercise{\label{pof-one-way-permutation} In the definition of an equivariant subset from Definition~\ref{def:equivariant-pof}, we have an equivalence $\Leftrightarrow$, and we quantify over atom permutations, which can be briefly written as
+\begin{center}
+    \begin{tabular}{lllll}
+        0.  & 
+        $\bar a \in X$ & $\Leftrightarrow$ & $\pi(\bar a) \in X$ 
+        & for all permutations $\pi : \atoms \to \atoms$.
+    \end{tabular}
+\end{center}
+Instead of a two-way implication, we can have a one-way implication in either of the two directions, and we can quantify over functions that are not necessarily permutations, as in the following variants:
+\begin{center}
+    \begin{tabular}{lllll}
+        1.  & 
+        $\bar a \in X$ & $\Rightarrow$ & $\pi(\bar a) \in X$ 
+        & for all permutations $\pi : \atoms \to \atoms$\\
+        2.  & 
+        $\bar a \in X$ & $\Leftarrow$ & $\pi(\bar a) \in X$ 
+        & for all permutations $\pi : \atoms \to \atoms$\\
+        3.  & 
+        $\bar a \in X$ & $\Leftrightarrow$ & $\pi(\bar a) \in X$ 
+        & for all functions $\pi : \atoms \to \atoms$\\
+        4.  & 
+        $\bar a \in X$ & $\Rightarrow$ & $\pi(\bar a) \in X$ 
+        & for all functions $\pi : \atoms \to \atoms$\\
+        5.  & 
+        $\bar a \in X$ & $\Leftarrow$ & $\pi(\bar a) \in X$ 
+        & for all functions $\pi : \atoms \to \atoms$
+    \end{tabular}
+\end{center}
+Which variants are equivalent to the original definition, as in variant 0?}{ Variants 0,1,2 are equivalent to each other, and stronger than all  the other variants. Variant 3 is the weakest one, weaker than all the others. Finally, variants 4 and 5 are incomparable to each other, and set between 0=1=2 and 3. Here is a more detailed explanation:
+    \begin{enumerate}
+        \item     This variant, which uses an implication $\Rightarrow$ and atom permutations is equivalent to the original definition. This is because  permutations have inverses. The right-to-left implication 
+        \begin{align*}
+            (a_1,\ldots,a_d) \in X 
+            \quad \Leftarrow \quad
+            (\pi(a_1),\ldots,\pi(a_1)) \in X
+            \end{align*}
+        follows from  the left-to-right implication  (we use different variable names for clarity)
+        \begin{align*}
+            (b_1,\ldots,b_d) \in X 
+            \quad \Rightarrow \quad
+            (\sigma(b_1),\ldots,\sigma(b_1)) \in X
+            \end{align*}
+        in the special case of  $\sigma = \pi^{-1}$ and $b_i = \pi(a_i)$. 
+        \item Also, equivalent to the original definition, for the same reasons as above. 
+        \item If $X$ is of the form $\atoms^d$, then this variant only enables the full or empty sets. In particular, it is not equivalent to the original definition, since that definition enables other sets than full or empty.  Indeed, using the implication $\Rightarrow$ and the function that maps all atoms to the same atom $a$,   we conclude that if $X$ contains at least one tuple, then it must contain the tuple 
+            \begin{align*}
+            (a,a,\ldots,a)
+            \end{align*}
+        that uses  atom $a$ on all coordinates.  Using the same function and the converse implication $\Leftarrow$, we conclude that the set must contain all tuples in $\atoms^d$. 
+        \item This variant is weaker than 0=1=2, but it is stronger than 3. Clearly, we have the implications 
+            \begin{align*}
+            3 \quad \Rightarrow \quad 4 \quad \Rightarrow \quad 0=1=2.
+            \end{align*}
+        It remains to show that the implications are strict: 
+            \begin{enumerate}
+                \item the diagonal $\setbuild{(a,a)}{$a \in \atoms$} \subseteq \atoms^2$ is consistent with this variant, but not with variant 3;
+                \item the complement of the diagonal is not consistent with this variant, but is consistent with variants 0=1=2.
+            \end{enumerate}
+        \item The same discussion as in the previous point applies here.
+    \end{enumerate}
+
+}
+
+
+
+\mikexercise{\label{pof-cant-create-atom} Show that there is no equivariant function of type $\atoms^0 \to \atoms$.}{
+    If the graph of this function would contain 
+    \begin{align*}
+    () \mapsto a
+    \end{align*}
+    then for every atom permutation $\pi$ it  would also need to contain 
+    \begin{align*}
+    \pi(()) \mapsto \pi(a),
+    \end{align*}
+    which is the same as 
+    \begin{align*}
+    () \mapsto \pi(a).
+    \end{align*}
+    Therefore,  it would not be a function.
+}
+
+\mikexercise{\label{pof-number-of-subsets} Show that the number of equivariant subsets of  $\atoms^{d}$ is doubly exponential in $d$.  
+}{
+    Equivariant subsets are the same thing as unions of orbits. We know that the number of orbits is exponential, so the number of their unions is doubly exponential.
+}
+
+\mikexercise{\label{pof-transitive-relation-closure}Consider a pof set $X$ and an equivariant binary relation $R \subseteq X \times X$. Show that the transitive closure of $R$ is also equivariant.}{
+    A pair $(x,y)$ belongs to the transitive closure if and only if there is a sequence 
+    \begin{align*}
+    x = x_1,\ldots,x_n = y
+    \end{align*}
+    such that $R(x_i,x_{i+1})$ holds for  all $i \in \set{1,\ldots,n-1}$. To such a sequence we can apply a permutation $\pi$ to get a new sequence 
+    \begin{align*}
+        \pi(x) = \pi(x_1),\ldots,\pi(x_n) = \pi(y),
+        \end{align*}
+    which witnesses that $(\pi(x), \pi(y))$ is in the transitive closure. Therefore, the transitive closure is closed under applying atom permutations, i.e.~it is equivariant.
+}

@@ -1,0 +1,568 @@
+\chapter{Fixed dimension polynomial time} 
+\label{sec:poly} 
+
+In the previous chapter, we discussed computation on representable sets. In this chapter, we propose a notion of computation that  is  ``polynomial time''. We are mainly interested in the equality atoms.
+
+The proposed notion will  be designed so that many algorithms which are polynomial time on finite sets, such as graph reachability, will continue to be ``polynomial time'' on representable sets.  A minimal requirement is that the notion is general enough to describe equality tests, such as  the following program.
+\begin{lstlisting}
+if x == y:
+    print ``equal''
+\end{lstlisting}
+Another requirement for the definition is that, for inputs that do not use atoms, such as bit strings, exactly the usual notion of polynomial time is recovered. 
+
+ The first idea  is to consider the programs that work with representations, as in  the first item in Theorem~\ref{thm:computational-completeness}, and which run in polynomial time.  This is a bad idea, since it is too restrictive. The issue is that the equality tests, as discussed in the previous paragraph,  will not be covered. The problem arises already for the simplest kind of equality tests, namely equality with the empty set.  For example, if we want to check if  
+ \begin{align*}
+     \setexprtup {\emptyset} {\bar x} d {\varphi(\bar x)}
+ \end{align*}
+is equal to  the empty set, 
+ then we need to check if the formula $\varphi$ is satisfiable. Already in the equality atoms, this problem is \pspace-complete.
+
+The underlying problem is that the first-order theory of the atoms is computationally hard (\pspace\xspace hard if there are at least two atoms, see Exercise~\ref{ex:pspace-complete-form}). The solution proposed in this chapter is to identify a source of this hardness, namely the ``dimension'' of representable sets, which is -- roughly speaking -- the number of bound variables. The proposed notion of tractability avoids computational hardness, by using algorithms whose running time is polynomial in the size of the input, but the degree of the polynomial is allowed to depend on the dimension. Hence the name: fixed dimension polynomial time. 
+
+\section{Dimension and size of representable sets}
+\label{sec:dimension-and-size}
+As mentioned above, the idea behind our complexity class is that the running time of the algorithm is polynomial in the ``size'' of the input, but the polynomial (and its degree) can depend on its ``dimension''. Roughly speaking, the size of a set is the number of orbits, and the dimension is the maximal size of supports. These are very rough approximations, and the formal definitions will need to take more parameters into account. Before stating these definitions, we discuss -- on a simple but central example -- how fixing the dimension can improve certain orbit counts from exponential to polynomial.
+
+The central example is the set $\atoms^d$, which is the paradigmatic set of  dimension $d$.  
+ As we have remarked at the beginning of this book, the number of orbits in $\atoms^d$ is at least exponential in $d$ for any structure that has at least two atoms. After we fix the dimension $d$, it is no longer meaningful to talk about the asymptotics (such as polynomial or exponential) of the number of orbits, since there is only one set $\atoms^d$ under consideration.  We will, however, be interested in a different aspect of the orbit count, namely counting  orbits with respect to some support $\bar a$, i.e.~the number of  $\bar a$-orbits from
+Definition~\ref{def:bar-a-orbit}. Under this framing, we can talk about the asymptotics of the orbit count in terms of the number of atoms in the support $\bar a$.
+
+\begin{myexample} Assume the equality atoms.
+    Let us consider the $\bar a$-orbits in $\atoms^d$, where the dimension $d$ is fixed to be $1$, but the number of atoms in the support $\bar a$ can grow. Suppose first that the support $\bar a$ consists of two atoms, $\john$ and $\mary$. In this case, there are three $\bar a$-orbits, namely
+\begin{align*}
+    \set{\john}
+    \qquad \set{\mary}
+    \qquad 
+    \myunderbrace{\atoms \setminus \set{\john, \mary}}{fresh orbit}.
+\end{align*}
+More generally, if the support $\bar a$ has $n$ atoms, then the number of orbits is $n+1$. This is because there is one orbit for each atom in the support, and one orbit for the fresh atoms, which are all the atoms that are not in the support.
+
+Let us now see what happens in dimension $d=2$. Roughly speaking, an $\bar a$-orbit in $\atoms^2$ is obtained by taking a product of two $\bar a$-orbits in $\atoms^1$, such as 
+\begin{align*}
+\set{\mary} \times (\atoms \setminus \set{\john, \mary}).
+\end{align*}
+There is one exception to this rule, namely if we take the product of the fresh orbit with itself, then we need to distinguish between equal and non-equal pairs (this distinction is not necessary for the other pairs of orbits, since the answer to equality is known). Therefore, the number of orbits is going to be $(n+1)^2 + 1$. 
+\end{myexample}
+
+In the above example, the number of orbits was linear in $\bar a$ for dimension $d=1$, and quadratic for dimension $d=2$. This suggests that this orbit count could be polynomial for every fixed dimension, but with the polynomial (and its degree) depending on the dimension. This is indeed the case, if we use the equality atoms, as shown in the following lemma.
+\begin{lemma}\label{lem:atoms-plynomial-orbit-count}
+    Assume the equality atoms. For every fixed $d$, the number of $\bar a$-orbits in $\atoms^d$ is polynomial in the number of atoms in $\bar a$. The polynomial, and in particular its degree, depends on the dimension.
+\end{lemma}
+\begin{proof}
+    Consider  some support $\bar a$, whose size $n$ is possibly much larger than the fixed dimension $d$. 
+    For a tuple in $\atoms^d$, define its $\bar a$-profile to be the function 
+    \begin{align*}
+    \set{1,\ldots,d} \to    \set{\myunderbrace{a_1,\ldots,a_n}{atoms from $\bar a$},\text{fresh}}
+    \end{align*}
+    that tells us which coordinates store atoms from $\bar a$ and which ones store fresh atoms. Once the dimension is fixed, the number of profiles is polynomial in $n$, with the degree of the polynomial being $d$. A $\bar a$-orbit is then uniquely determined by its profile, and the information about which fresh coordinates are equal to each other. The second piece of information is exponential in $d$, but it is fixed when $d$ is fixed.
+\end{proof}
+
+The following example shows that the assumption on equality atoms is important, since the orbit count can be exponential for certain atom structures, even if we fix the dimension to $d=1$. 
+\begin{myexample}
+    Assume the graph atoms. Already in dimension $d=1$, the number of $\bar a$-orbits in $\atoms^d$ is exponential in the number of atoms in the support $\bar a$. This is because such an orbit is determined by the presence/absence of edges with the atoms in the support, which can be chosen in exponentially many ways. A similar situation arises for the bit vector atoms, where each linear combination of atoms from $\bar a$ gives a different orbit.
+\end{myexample}
+
+Motivated by the above example, in the rest of this chapter we will only talk about the equality atoms. The results would also apply to the linearly ordered atoms, but they will not apply to the atoms discussed in the previous example.
+
+
+As we will see in this chapter, many algorithms will be polynomial once we have fixed a bound on the dimension. Before presenting the results in more detail, let us first discuss our running example in this book, which is the graph reachability problem.
+\begin{myexample}[Running time for graph reachability]\label{ex:graph-fdp}
+    Assume the equality atoms, and  consider the  graph reachability problem. We give a sketch of why this problem can be solved in polynomial time, once the  dimension is fixed. A more formal proof of this result will be given in Corollary~\ref{cor:examples-of-fdp} later in this chapter.
+
+
+    Assume first that the instance of the problem is equivariant, i.e.~the set of vertices is equivariant, and the same holds for the edges and the source/target sets. Also, for the sake of this sketch,  assume that the set of vertices is a subset of a pof set, i.e.~it is of the form 
+\begin{align}\label{eq:graph-reachability-v-subset-pof}
+V \subseteq  \atoms^{d_1} + \cdots + \atoms^{d_n} \qquad \text{for some $d_1,\ldots,d_n \in \set{0,1,\ldots}$}.
+\end{align}
+In this case, the dimension $d$ of $V$ is the maximal exponent $d_1,\ldots,d_n$. If the dimension is assumed to be fixed, then the number of orbits is polynomial -- in fact linear -- in the number of summands $n$, since each summand $\atoms^{d_i}$ contributes a constant number of orbits. The graph reachability algorithm, see the source code in Example~\ref{ex:graph-reachability-source-code}, executes a while loop, where the $i$-th iteration computes the set $V_i$ of vertices that are  reachable in at most $i$ steps from the source vertices. Because the graph is equivariant, we know that each set $V_i$ is equivariant, i.e.~it is a sum of orbits. Since $V_i$ grows with $i$, it follows that the number of iterations is bounded by the number of orbits, and therefore it is polynomial -- in fact linear -- in $n$. 
+
+The linear bound discussed above will become polynomial, once we take into account graphs that are not equivariant. To see why, suppose that $V$ is still as in~\eqref{eq:graph-reachability-v-subset-pof}, but it is no longer assumed to be equivariant, but only finitely supported. Let $\bar a$ be a tuple of   atoms that supports the set of vertices, and also the edges and source/target vertices. The same analysis applies as in the equivariant case, except that now  each $V_i$ is a $\bar a$-supported subset of the vertices. Therefore, the number of iterations in the algorithm is bounded by the number of $\bar a$-orbits in the vertices, which is at most 
+\begin{align*}
+ \text{(number of $\bar a$-orbits in $\atoms^{d_1}$)}
+ + \cdots + 
+    \text{(number of $\bar a$-orbits in $\atoms^{d_n}$)}.
+\end{align*}
+By Lemma~\ref{lem:atoms-plynomial-orbit-count}, once we have fixed an upper bound on the dimensions $d_j$, this quantity is linear in $n$ and polynomial in the number of atoms in the support $\bar a$. 
+\end{myexample} 
+
+
+\subsection{Dimension}
+\label{sec:dimension}
+So far, we have only considered the dimension and its algorithmic consequences for powers of the atoms, i.e.~sets  of the form $\atoms^d$. In this section, we give a general definition of dimension, which applies to all representable sets. Before presenting the definition, however, we discuss some other examples of representable sets, and their expected dimensions.
+
+\begin{myexample} An example of a representable set is 
+\begin{align*}
+   {\atoms \choose 2} = \setexpr{ \set{x,y}}{x,y}{x \neq y}.
+\end{align*}
+An element of this set stores two atoms (i.e.~it has a support of size 2), and for this reason, its dimension will turn out to be 2. However, this example might still be misleading, since it suggests a definition of dimension which is the maximal support size of its elements. This will be incorrect for  representable sets that  atoms  shared by the entire set, since  such atoms will not contribute to the dimension. For example, the set 
+\begin{align*}
+\setbuild{
+    (\john,x,y)
+}
+{ $x,y \in \atoms$}
+\end{align*}
+will also have dimension 2, despite its elements having supports of size 3. The general idea is that the dimension refers to the atoms which are a source of infinity, i.e.~the atoms which can be chosen freely. For this reason, any finite set such as 
+\begin{align*}
+    \set{\john,\mary,\eve}
+\end{align*}
+will have dimension 0, since it does not contain any free atoms. 
+\end{myexample}
+
+The ideas discussed in the above example are formalised in the following definition. The definition will need to take care of one more phenomenon, which is the nested nature of representable sets.
+
+\begin{myexample}
+    Consider the set $\set{\atoms^4}$. This is a set that has one element only, namely $\atoms^4$, and this element has empty support.  Nevertheless, the dimension of this set will be 4 and not 0, because the definition of dimension will take into account not only elements of a set, but elements of elements, and so on. This is because algorithms will potentially look at such elements of elements, and this needs to be taken into account when defining the dimension.
+\end{myexample}
+
+We are now ready to present the formal definition of dimension.  
+
+\begin{definition}[Dimension of a representable set]\label{def:dim-sem} Assume the equality atoms. Define the \emph{dimension} of a representable set $X$, denoted by $\dim X$, to be 
+ \begin{align*}
+ \max_{x}\quad \text{number of atoms in least support of $x$ that are not in the least support of $X$},  
+ \end{align*}
+ where $x$ ranges over  the downset $\downset X$, see Definition~\ref{def:set-structure}.
+%   Define the \emph{size of $X$}, denoted by $\semsize X$ to be the number of orbits in $X_*$ with respect to atom automorphisms that fix all atoms in the set $\leastsup X$. 
+\end{definition}
+
+\begin{myexample}[Dimension of finitely supported subsets of $\atoms^d$]
+    Consider the set $\atoms^d$. We will show that the dimension of this set, if we apply Definition~\ref{def:dim-sem}, is the expected value of $d$.  Recall that tuples are encoded as nested pairs, with pairs using Kuratowski encoding, see Examples~\ref{ex:kuratowski-pairing} and~\ref{ex:lists}. Here is an example in dimension $d=3$:
+    \begin{align*}
+    [\john,\mary,\eve] = \set{\set{\john},\set{\john,
+    \set{
+        \set{\mary},
+        \set{\mary,
+        \set{\set{\eve}, \set{\eve, \emptyset}}
+        }
+    }
+    }}.
+    \end{align*}
+    All sets used in a tuple $\bar a$ are constructed using the atoms from the tuple. Therefore, all supports in the corresponding downset will contain only atoms from the tuple, i.e.~at most $d$ atoms. This means that  the dimension of $\atoms^d$ is $d$. 
+
+    Consider now a  subset  of $\atoms^d$ which is finitely supported, but not necessarily equivariant. This subset will have dimension at most $d$, but the dimension might be strictly smaller. For example, if we consider a set of the form 
+    \begin{align}\label{eq:atoms-d1-d2}
+    \set{\bar a} \times \atoms^{d_2} \qquad \text{for some $d_1 + d_2 = d$ and  $\bar a \in \atoms^{d_1}$},
+    \end{align} 
+    then this will be a subset of $\atoms^d$ that has atom dimension $d_2$, despite the fact that every tuple in this set has support $d$.  
+\end{myexample}
+
+
+
+The notion of size from Definition~\ref{def:dim-sem} was defined in a semantic way, referring to the representable set and not its representation via a set builder expression. However, this semantic definition can also be reflected in a syntactic one, which is defined in terms of the set builder expression.  
+In the syntactic, we will be counting free variables in the set builder expression that represents the set. The semantic notion of dimension was hereditary, in the sense that we talked not only about the set $X$ itself, but also about sets in $X_*$, i.e.~the elements, their elements, etc. The same will be true for the syntactic dimension, where we will be interested also in sub-expressions. Apart from the sub-expressions, we will also be interested in  subformulas, which are first-order formulas that are used in guards. Here is an example that illustrates these notions:
+\begin{align*}
+\setexpr{ 
+    \myoverbrace{
+    \setexpr
+        {
+        \myunderbrace{
+            \set{x,y,z}
+        }
+        {sub-expression}
+        }
+        {z }
+        {
+            \myunderbrace{
+            z \neq x}
+            {subformula}
+        }
+    }
+    {sub-expression}
+}
+{
+    x, y
+}
+{
+    \exists z \ (z \neq x \land 
+    \myunderbrace{
+        \exists u \ u  \neq y
+    }
+    {subformula}
+    )
+}
+\end{align*}
+ 
+Each sub-expression or subformula has some free variables, which range over atoms\footnote{By Theorem~\ref{thm:fs-qf}, we know that the guards can be made quantifier-free. If the guards are indeed quantifier-free, then counting the free variables in guards is spurious and already covered by counting free variables in subexpressions. However, in our algorithms we will encounter guards that are not quantifier-free, and therefore we want the notion of dimension to account for such guards as well. That is why we will also discuss subformulas of guards when discussing the notion of dimension.}. In the dimension, we will count the number of free variables that are not free in the entire expression\footnote{For this to be meaningful, we assume that the free variables of the entire expression are never reused as bound variables inside the expression. This assumption can always be ensured by renaming bound variables.}.
+
+\begin{definition}[Dimension of a set builder expression]\label{def:dim-synt}
+    Let $\alpha$ be a set builder expression, where all guards are quantifier-free. 
+    The \emph{dimension} of $\alpha$ is defined to be 
+     \begin{align*}
+ \max_{\beta}\quad \text{number of variables that are free in $\beta$ but not in $\alpha$},  
+ \end{align*}
+    where $\beta$ ranges over sub-expressions and subformulas of $\alpha$.
+\end{definition}
+
+The following lemma shows that the two notions of  dimensions coincide, i.e.~the semantic dimension of a representable  set is the minimal syntactic dimension of its representations.
+
+\begin{lemma}\label{lem:dim-sem-synt}
+    A representable set has dimension at most $d$ (in the sense of Definition~\ref{def:dim-sem}) if and only if it is represented by some set builder expression that has dimension at most $d$ (in the sense of Definition~\ref{def:dim-synt}). 
+\end{lemma}
+\begin{proof}
+    Same proof as Theorem~\ref{thm:hof-is-set-builder}.
+\end{proof}
+
+\subsection{Size}
+So far, we have discussed the dimension. The main topic of this chapter is algorithms that run in polynomial time, once the dimension is fixed. This naturally raises the question: polynomial in what? This requires having some notion of size for a representable set. In this section, we define this notion. 
+
+Clearly, we cannot use the usual notion of size, i.e.~the number of elements. This is because representable sets  will typically be infinite. Our notion of size can be defined in two ways: (a) syntactically, as the smallest size of a set builder expression; or (b) semantically, by counting orbits. In this section, we prove Lemma~\ref{lem:sizes-are-the-same}, which says that  these two notions give the same result, up to polynomial factors, once the dimension is fixed. This will mean that there is a robust notion of size, as long as we fix the dimension, and we do not care about polynomial factors. (This is a weaker correspondence than the one from Lemma~\ref{lem:dim-sem-synt}, where the two notions of dimension were equal, not just polynomially related.)
+
+
+
+
+
+\begin{lemma}\label{lem:sizes-are-the-same}
+  Fix a dimension $d \in \set{0,1,\ldots}$. For every representable set $X$ of dimension $d$, the  following quantities are bounded by polynomials of each other (the polynomials, and in particular their degree, depend on $d$): 
+  \begin{enumerate}
+    \item \label{it:sem-size} The semantic size of $X$, which is defined to be the number of $\bar a$-orbits in the downset $\downset X$, where $\bar a$ is the least support of $X$, and
+    \item \label{it:synt-size} The syntactic size of $X$, which is defined to be the least size of a set builder expression that represents it, and which uses the optimal\footnote{We need the assumption that the set builder expression has optimal dimension. As discussed in Exercise~\ref{ex:dim-size-tradeoff}, there one can get an exponential decrease in size by using suboptimal dimension. } dimension $d$.  
+  \end{enumerate}
+\end{lemma}
+\begin{proof}
+  We begin by showing that the semantic size is bounded by a polynomial function of the syntactic size. Suppose  that $X$ is represented by a set builder expression $\alpha$ together with a valuation $\bar a$ of its free variables. We will  show that the semantic size of $X$ is at most polynomial in the size of $\alpha$ (the bound will be most meaningful when the representation has minimal size). The semantic size of $X$ is defined by counting orbits in the downset with respect to the least support, which is smaller or equal to the number of $\bar a$-orbits in the downset, because $\bar a$ is not necessarily the least support.   Each element of the downset is obtained by taking a subexpression $\beta$ of $\alpha$, and a suitable valuation of its free variables. By the assumption that $\alpha$ has optimal dimension, for each subexpression $\beta$, its free variables consist of the free variables of the original expression $\alpha$, plus at most $d$ extra variables. Therefore, each element of the downset is of the form $\beta(\bar a \bar b)$, where $\beta$ is a subexpression and $\bar b$ is a tuple of at most $d$ atoms. 
+  The semantic size of $X$ is at most 
+  \begin{align*}
+  \sum_{\beta} \text{number of $\bar a$-orbits in the set }\myunderbrace{
+  \setbuild{\bar b}{ $\beta(\bar a \bar b)$ is in the downset of $X$}}{call this set $X_\beta$},
+  \end{align*}
+  where $\beta$ ranges over subexpressions and $\bar b$ ranges over the free variables of $\beta$ that are not free in $\alpha$. Since the length of the tuple $\bar b$ is bounded by $d$, the set $X_\beta$ has dimension at most $d$, and therefore by Lemma~\ref{lem:atoms-plynomial-orbit-count} its number of $\bar a$-orbits is polynomial in the size of $\bar a$. 
+
+  Let us now show the converse bound. Consider a representable set $X$ of dimension $d$.  We will find a set builder expression whose size is polynomial in its semantic size. (Recall that the size of a set builder expression is the number of distinct subexpressions and subformulas in the guards.)
+  Let $\bar a$ be the least support of $X$. Consider an element $x$ of the downset $\downset X$. 
+  By definition of dimension, we know that $x$  is either an atom (in which case it has a support of size one) or it is a set which admits a  support of the form $\bar a \bar b$, where $\bar b$ contains at most $d$ atoms. By   Theorem~\ref{thm:hof-is-set-builder}, in the latter case $x$ has a representation of the form  $\alpha(\bar a \bar b)$ for some set builder expression $\alpha$.  It is not hard to see that expression depends only on the $\bar a$-orbit of $x$, because if $\pi$ is a $\bar a$-automorphism, then we have 
+  \begin{align*}
+     \pi(x) = \alpha(\pi(\bar a \bar b)) = \alpha(\bar a \pi(\bar b)).
+  \end{align*}
+  Let $\Gamma$ be the set of all possible expressions $\alpha$ that arises this way. The number of such expressions is at most the  number of $\bar a$-orbits in $\downset X$, which is the semantic  size. Let us now show that we can ensure  that $\Gamma$ is closed under taking subexpressions, and that the guards in all expressions from $\Gamma$ are of polynomial size. This will establish that each expression in $\Gamma$ has polynomial size, since we define the size of an expression to be the number of different subexpressions plus the size of the guards. 
+  Consider some expression $\alpha(\bar x \bar y) \in \Gamma$, where $\bar x$ are the variables for $\bar a$ and $\bar y$ are the remaining variables. (We write  $d_\alpha$ for the number of remaining variables; this number depends on $\alpha$ but is guaranteed to be at most $d$.)  Every element of $\alpha(\bar x \bar y)$ is either an atom, or a simpler expression, and therefore we know that 
+  \begin{align*}
+  \alpha(\bar x \bar y)\qquad  = \qquad   &
+  \setexpr{ z }{z}{z \in \alpha(\bar x \bar y)} \quad  \cup \\
+  &
+  \bigcup_{\beta} \setexprtup{ \beta(\bar x \bar z)}{\bar z}{d_\beta}{\beta(\bar  x \bar z) \in \alpha(\bar x \bar y)},
+  \end{align*}
+  where $\beta$ in the union ranges over expressions from $\Gamma$ that have strictly smaller rank that $\alpha$. (The rank is the nesting depth of set brackets.) The expression on the right-hand size of the above equality is not strictly speaking a set builder expression, since it uses guards of the form  
+  \begin{align*}
+  z \in \alpha(\bar x \bar y) \qquad \text{and} \qquad 
+  \gamma(\bar  x \bar z) \in \alpha(\bar x \bar y).
+  \end{align*}
+  However, by the Symbol Pushing Lemma, these guards can be rewritten as first-order formulas, in fact as quantifier-free formulas (because the equality atoms have quantifier elimination). It remains to show that these quantifier-free formulas have polynomial size, assuming fixed dimension. We will apply the guards only to valuations where the tuple $\bar x$ is instantiated to $\bar a$. Therefore, the truth value of the guards will depend only on the $\bar a$-orbit of the remaining variables in the guards. The number of the remaining variables is constant for fixed dimension, and therefore, the number of such orbits is polynomial in the length of $\bar a$, by Lemma~\ref{lem:atoms-plynomial-orbit-count}. Therefore, the guards can be expressed as quantifier-free formulas of polynomial size. 
+\end{proof}
+
+
+
+
+
+% We assume that the atoms are homogeneous in this chapter, which implies that quantifiers can be eliminated from first-order formulas, see Theorem~\ref{thm:fs-qf}. In particular, without loss of generality we can assume that all guards in set builder expressions are quantifier-free. (We discuss the computational complexity of quantifier elimination in ..)
+
+% \begin{lemma}\label{lem:atoms-poc}
+% Consider the equality atoms. For every $\bar a \in \atoms^k$, the number of $\bar a$-orbits in $\atoms^n$ is at most $(n+k)^k$, in particular it is polynomial in $n$ when $k$ is fixed. 
+% \end{lemma}
+% \begin{proof}
+% To describe the $\bar a$-orbit of a tuple $\bar b \in \atoms^k$, one needs to indicate for each coordinate of $\bar b$ if it is equal to one of the coordinates of $\bar a$, or if it is a fresh atom. In case of fresh atoms, one needs to say which ones are equal. It follows that the number of $\bar a$-orbits in $\atoms^k$ is at most 
+% \begin{align*}
+% (n+k)^k,
+% \end{align*}
+% which satisfies the bounds in the statement of the lemma.
+% \end{proof}
+
+ 
+\section{Fixed dimension polynomial time}
+\label{sec:syntactic-poly} 
+Having defined the dimension and size of representable sets, we are now ready to define  our complexity class.  The idea is that the algorithm inputs a representation, and its running time  is polynomial (in the size of the input representation) once the dimension is fixed, although we allow the degree of the polynomial to depend on the dimension. By the results from the previous section, the notions of dimension and size are robust, and can be defined both syntactically and semantically.   Also, there is a second -- and less important  -- requirement that the output of the function has bounded dimension; this will ensure that the functions in the class can be composed. For functions with Boolean outputs, the second requirement will be superfluous, since there will be only two possible outputs, and hence bounded dimension.
+
+
+\begin{definition}[Fixed dimension polynomial time]\label{def:syntactic-fdp}
+    Consider an oligomorphic atom structure and an atom representation. 
+    A function 
+    \begin{align*}
+    f : \text{representable sets} \to \text{representable sets}
+    \end{align*}
+    is said to be in \emph{fixed dimension polynomial time},  \fdp for short, if there is an algorithm which inputs a representation $\alpha(\bar a)$ of a set $X$ and outputs a representation of $f(X)$, subject to the following constraints:
+    \begin{itemize}
+        \item The running time is at most 
+         \begin{align*}
+ \Oo(|\alpha|^{g_1(\dimension \alpha)})\qquad \text{for some computable $g_1 : \Nat \to \Nat$},
+\end{align*}
+\item The dimension of the output expression is at most 
+\begin{align*}
+ g_1(\dimension \alpha) \qquad \text{for some computable $g_2 : \Nat \to \Nat$.}
+\end{align*}
+    \end{itemize}
+\end{definition}
+
+In the above definition, we use the syntactic notions of size and dimension, as defined in Definition~\ref{def:dim-sem} and Condition~\ref{it:synt-size} from Lemma~\ref{lem:sizes-are-the-same}, respectively.  However, thanks to Lemmas~\ref{lem:dim-sem-synt} and \ref{lem:sizes-are-the-same}, these values coincide with their semantic counterparts. 
+We have defined the class for general atoms, but  it will only be useful for certain atoms. For the purpose of simplicity, we consider only the equality atoms. In this case, an atom representation is any function $2^* \to \atoms$ which allows a decidable equality check, i.e.~we can check if two strings represent the same atom. For the equality atoms, the representation is not particularly important, and we can simply assume that it is a bijection, i.e.~the atoms are simply the same thing as strings in $2^*$, without any nontrivial equalities.
+
+In the rest of this section, we will show that the  class defined above contains many algorithms that we have discussed so far in this book. We begin with the simplest problems, such as testing equality $X=Y$ or membership $X \in Y$, which were treated in  Theorem~\ref{thm:decide-set-builder}. The following result strengthens Theorem~\ref{thm:decide-set-builder}, by adding that the algorithms are in syntactic \fdp, assuming that the equality atoms are used.
+
+\begin{theorem}\label{thm:decide-set-builder-fdp}
+	Consider the equality atoms, together with a bijective atom representation.     
+    Given representations of  sets with atoms $X$ and $Y$, in syntactic \fdp one can compute:
+	\begin{enumerate}
+		\item the answers to the following questions: $X = Y$, $X \in Y$ and $X \subseteq Y$;
+		\item representations of the sets $X \cup Y$, $X \cap Y$ and $X \setminus Y$.
+	\end{enumerate}
+\end{theorem}
+\begin{proof}
+We use the same proof as for Theorem~\ref{thm:decide-set-builder}, except that we observe that it is compatible with syntactic \fdp. In the previous proof, we used the Symbol Pushing Lemma to reduce the problems to the first-order theory of the atoms, with parameters. In this new proof, we simply observe that the  reduction, and the theory of the atoms, can both be treated in syntactic \fdp. 
+
+Before continuing, we need to extend the notion of dimension from set builder expressions to formulas, since the reduction and deciding the theory are both problems which involve formulas.  This is done in the natural way: 
+    \begin{align*}
+    \dim \varphi \quad = \quad  \max_\beta \quad \text{number of variables that are free in $\beta$ but not in $\varphi$},
+    \end{align*}
+    where $\beta$ ranges over  subformulas of $\varphi$.
+
+Consider a question as in the statement of the theorem, e.g.~a membership test $X \in Y$.   Using the  Symbol Pushing Lemma, compute in polynomial time a first-order sentence $\varphi(\bar x)$ and a valuation $\bar a \in \atoms^{\bar x}$ of its free variables, such that $X \in Y$ holds if and only if $\varphi(\bar a)$ is true in the atom structure.  The first observation, which follows from a straightforward inspection of its proof, is that the Symbol Pushing Lemma itself is \fdp, i.e.~the dimension of the output formula is bounded by the dimension of the input set builder expressions. (The time needed to compute was already shown to be polynomial, even independently of the input dimension.) Therefore, it remains to show that the question $\varphi(\bar a)$ can be decided in \fdp, which is done in the following lemma.
+
+
+ \begin{lemma}
+    For every fixed $d$, there is a polynomial time algorithm which does this:
+    \decisionproblem{
+        A first-order formula $\varphi(\bar x)$ of dimension at most $d$, and atoms $\bar a \in \atoms^{\bar x}$.
+    }{
+        Is $\varphi(\bar a)$ true in the atom structure?    
+    }
+ \end{lemma}
+\begin{proof}
+    It is easier to think of  $\varphi(\bar a)$ as a formula that does not have any free variables, but which uses constants from the atoms.  Consider a subformula of $\varphi(\bar a)$, which is of the form $\psi(\bar a \bar y)$, for some variables $\bar y$. The number of variables in $\bar y$ is at most $d$, by the assumption on dimension. This  subformula defines a subset of $\atoms^{\bar y}$ that is supported by $\bar a$. Like any subset supported by $\bar a$, this subset is a union of $\bar a$-orbits. The number of  $\bar a$-orbits  is polynomial in the size of the support $\bar a$, as shown in Lemma~\ref{lem:atoms-plynomial-orbit-count}. Each individual $\bar a$-orbit is described by a formula of polynomial size, which compares the free variables $\bar y$ to each other and the constants in $\bar a$. Therefore, the union of orbits can be defined by a formula polynomial in $\bar a$. Summing up, we have shown that for each subformula of $\varphi(\bar a)$, there is an equivalent formula that has size polynomial in $\bar a$. This formula can be easily computed by an induction on the size of subformulas, in the same way as the quantifier elimination procedure from Theorem~\ref{thm:fs-qf}. 
+\end{proof}
+Applying the algorithm from the above lemma to the output of the Symbol Pushing Lemma, we get an answer to the questions in the first item of the theorem. The same argument applies to the construction of the sets in the second item. 
+\end{proof}
+
+
+
+Another result on representable sets was the Downset Lemma. We do not even need to revisit this lemma, since it was already polynomial, at least once we have fixed the formula $\varphi$, or more precisely, the number of variables used in this formula. 
+
+
+The algorithms given in Theorem~\ref{thm:decide-set-builder-fdp} and the Downset Lemma are useful, but they only correspond to basic operations that would be invoked in a single step by an algorithm. Of course an algorithm, such as the one for graph reachability, would need to do more than just a single step. To deal with such algorithms, we will present a meta-theorem, namely that any ``saturation algorithm'' on the downset can be implemented in syntactic \fdp. 
+
+
+
+
+\paragraph*{Inflationary fixpoints.} We will formalise ``saturation procedures'' by using fixpoints.  Let us begin with a motivating example based on graph reachability.
+
+\begin{myexample}\label{ex:fixpoint-logic-reach}
+    Consider the relation ``there is a nonempty path from $x$ to $y$'' in a graph. This relation is the binary relation $R$ on vertices  which contains the edge relation $E$ and which is closed under composition. This means that  we can think of this set as being the least fixpoint of the following operator, which inputs and outputs binary relations on vertices:
+    \begin{align*}
+    R  \quad \mapsto \quad   E \cup R \circ R  \red{\ \cup\  R}.
+    \end{align*}
+    The red part, where $R$ is added to the output, is not strictly necessary, but it will better fit our narrative about inflationary fixpoints. 
+     The fixpoint can be computed by starting with $R$ as the empty set, and applying the operator as many times as it takes to stabilize. Since the output of the operator contains the input, because of the red part, the operator will reach a fixpoint in a finite number of steps, assuming that the graph is finite. 
+\end{myexample}
+
+In the above example, we had an operator on sets, and we kept on iterating it until it stabilised. However, as mentioned in the example, one needs to ensure that the iteration process stabilises.
+We take a very straightforward approach, which is  to ensure that the relation grows or stays the same in each step, by simply adding its previous value\footnote{An alternative approach, more commonly used for fixpoint logics, is to require the operator to be monotone, i.e.~if the input relation is made bigger as a set, then the output relation is also made bigger or stays the same. }.
+
+
+\begin{definition}[Inflationary fixpoint]\label{def:inflationary-fixpoint}
+    Consider an operator $f$ on subsets of $A^k$ for some set $A$ and some power $k \in \set{1,2,\ldots}$. The \emph{inflationary fixpoint} of this operator is the limit of the sequence 
+    \begin{align*}
+    R_0 & = \emptyset \\
+    R_{i+1} & = f(R_i) \cup R_i
+    \end{align*}
+\end{definition}
+
+If the set $A$ in the above definition is finite, then the inflationary fixpoint is guaranteed to exist, and the number of steps required to reach it is at most $|A|^k$. For infinite sets, the inflationary fixpoint might not exist. This could be repaired by using transfinite induction, i.e.~extending the sequence to possibly infinite ordinal numbers. However, such a repair will not be necessary in our context, because we will use the fixpoint for representable sets. As we will see, such sets behave more like finite sets, and the fixpoint will stabilise in a finite number of steps. Furthermore, it can be computed in \fdp. 
+
+
+
+
+\begin{theorem}\label{thm:fdp-fixpoint}
+    Fix a formula $\varphi(x_1,\ldots,x_k)$ which uses a binary relation $\in$ and a relation name $R$ that has $k$ arguments. The following can be computed in syntactic \fdp: 
+    \decisionproblem{
+        A  representable set $X$.
+    }{
+        The $k$-ary relation on the downset of $X$, which is obtained by taking the inflationary fixpoint of the operator defined by $\varphi$. In particular, the inflationary fixpoint is defined.
+    }
+\end{theorem}
+\begin{proof}
+    Fix a dimension bound $d$ for the representation of the input set $X$. When we talk about something being polynomial in the following proof, we mean polynomial once $d$ and the formula $\varphi$ have been  fixed. (Actually, we do not even need to fix the formula $\varphi$, but have to fix the number of variables used in this formula and its subformulas.)
+    The input to the algorithm is a representation of $X$, say $\alpha(\bar a)$. 
+    Consider the $k$-ary relations on $X$ 
+    \begin{align*}
+        R_0 \subseteq R_1 \subseteq R_2 \subseteq
+    \end{align*}
+    that are used in the definition of the inflationary fixpoint. We can use the  Equivariance Principle to conclude that each of these relations is supported by $\bar a$. Therefore, the number of steps that is needed to reach the fixpoint bounded by the number of $\bar a$-orbits in the downset $\downset X$. The following claim shows that this bound is polynomial. (In particular, the bound is finite, and therefore the inflationary fixpoint is defined.)
+    
+    \begin{claim}
+        The number of $\bar a$-orbits in the downset $\downset X$ is polynomial in the size of $\alpha$.
+    \end{claim}
+    \begin{proof}
+            Each element of the downset is obtained by taking some subexpression of $\alpha$ and some valuation of its free variables. Consider a subexpression, which has the form $\beta(\bar x \bar z)$, where $\bar x$ are the free variables of the original expression $\alpha$, and $\bar z$ are the remaining free variables. The number of variables in $\bar z$ is bounded by the fixed dimension $d$. An element of the downset that corresponds to $\beta$ will arise by using the fixed support $\bar a$ for $\bar x$, and then choosing some values of the variables for $\bar z$. Since the length of $\bar z$ is fixed, the number of $\bar a$-orbits for the latter choice is polynomial in $\bar a$, thanks to Lemma~\ref{lem:atoms-plynomial-orbit-count}.
+    \end{proof}
+
+    Let $n$ be the polynomial bound from the above claim. By inlining the formula $\varphi$ in itself $n$ times, we can compute in polynomial time a new formula $\varphi_n$ that computes the $n$-th iteration of the fixpoint computation. More formally, define $\varphi_0$ the formula ``false'', and define 
+    \begin{align*}
+    \varphi_{i+1}
+    \quad \eqdef \quad 
+    \varphi_{i} \lor \varphi[ R := \varphi_i]
+    \end{align*}
+    The size of the formula $\varphi_i$ is polynomial in $i$, since we measure the size of formulas by counting subformulas. Furthermore, the number of variables in $\varphi_i$ is bounded by the number of variables in $\varphi$, at least if we reuse variables. Therefore, we can apply the Downset Lemma to evaluate the formula $\varphi_n$ in the set $X$ in polynomial time, yielding the desired result. 
+\end{proof}
+
+Many of the algorithms that we have discussed so far in this book can be implemented using fixpoints. Therefore, these algorithms will be in fact in  \fdp for representable inputs, as stated in the following corollary.
+
+\begin{corollary}\label{cor:examples-of-fdp}
+ The following problems for representable inputs are in  \fdp:
+ \begin{enumerate}
+ \item graph reachability;
+ \item emptiness for nondeterministic automata;
+ \item minimisation for deterministic automata;
+ \item emptiness for context-free grammars.
+ \end{enumerate}
+\end{corollary} 
+\begin{proof}
+    We  begin with graph reachability. An input to this problem is a tuple 
+    \begin{align*}
+    \myunderbrace{V}{vertices}
+    \quad \myunderbrace{E \subseteq V^2}{edges}
+    \quad \myunderbrace{S \subseteq V}{sources}
+    \quad \myunderbrace{T \subseteq V}{targets},
+    \end{align*}
+where all sets are representable. The input can be seen as a single set $X = (V,E,S,T)$. The set of reachable vertices is the inflationary fixpoint of the  operator on unary relations $R$ that is defined by the following formula:
+\begin{align*}
+\varphi(x) 
+\qquad = \qquad x \in S \lor \exists y \ E(y,x) \land R(x).
+\end{align*}
+We can now apply Theorem~\ref{thm:fdp-fixpoint} to show that this fixpoint can be computed in \fdp. Formally speaking, to apply the theorem, we should ensure that  the formula  uses membership $\in$ and the relation $R$. This  can be done, since the relations $S$ and $E$ can be defined purely in terms of membership, by extracting them from the downset of $X$. 
+
+Automaton nonemptiness reduces to graph reachability, and the reduction is \fdp. Therefore, automaton nonemptiness is also in \fdp. 
+
+Let us now deal with minimisation of deterministic automata. Using reachability, we can trim the state space to the reachable states. Next, we use a fixpoint algorithm to compute the distinguishability relation on states. This is the inflationary fixpoint of the following operator on binary relations $R$ that is defined by the following formula: 
+ \begin{align*}
+ \varphi(x_1,x_2) \ = \ \lor\! \begin{cases}
+ \underbrace{Q(x_1) \land Q(x_2) \land (F(x_1) \Leftrightarrow \neg F(x_2))}_{\text{one of the states accepts the empty word, the other does not}}\\
+ \underbrace{\exists a\ \exists p_1\ \exists p_2\ \delta(x_1,a,p_1)\land \delta(x_2,a,p_2)\land R(p_1,p_2)}_{\text{some letter takes $(x_1,x_2)$ to a pair of states that accept different words}}.
+ \end{cases}
+ \end{align*}
+ Once we have computed this fixpoint, we can use Currying to compute the set of equivalence classes in polynomial time (see Exercise~\ref{ex:currying}), and from this set we can compute the minimal automaton.
+
+ The case of emptiness for context-free grammars is left to the reader. 
+\end{proof} 
+
+
+
+
+
+
+
+
+\exercisepart
+
+\mikexercise{\label{ex:pspace-complete-form}Assume any atom structure with at least two elements. Show that the following problem is {\sc PSpace}-complete: given a sentence of first-order logic, decide if it is true in the atoms. }{ }
+
+\mikexercise{\label{ex:pspace-complete-setb}Assume the equality atoms. Show that the following problem is {\sc PSpace}-complete: given two set builder expressions without atom parameters, decide if they represent the same set. }{}
+
+\mikexercise{\label{ex:pspace-complete-setb-quantifier-free-guards}Show that the problem from Exercise~\ref{ex:pspace-complete-setb} remains \pspace-complete even if we require the guards in set builder expressions to be quantifier-free.}{}
+\mikexercise{\label{ex:dimension-tuples} Show that the dimension of $\atoms^k$, according to Definition~\ref{def:dim-sem}, is $k$.}
+{ Formally speaking, a pair is defined using Kuratowski pairing:
+ \begin{align*}
+ (\alpha, \beta) \eqdef \set{\alpha} \cup \set{\set \alpha \cup \set{\beta}}
+ \end{align*}
+ Apart from the subexpressions of $\alpha$ and $\beta$, the Kuratowski pair has five subexpressions as indicated in the following picture:
+\mypic{101}
+ It follows that the size of a $k$-tuple satisfies
+ \begin{align*}
+ |(\alpha_1, \ldots , \alpha_k)| \leq |\alpha_1| + \ldots · · + |\alpha_k| + \Oo(k).
+ \end{align*}
+ Note that Kuratowski pairing introduces no new variables, apart from the ones used by its components. For example, the dimension of the set
+ \begin{align*}
+ \atoms^k = \setexprtrue {(a_1,\ldots,a_k)} {a_1,\ldots,a_k}
+ \end{align*}
+ is $k$, while its size 
+ is linear in $k$.}
+
+
+\mikexercise{\label{ex:fdp-poc}
+Consider atoms which are not necessarily the equality atoms. 
+We say that the atoms have \emph{fixed dimension polynomial orbit count} if for every $\bar a \in \atoms^n$, the number of $\bar a$-orbits in $\atoms^k$ is 
+\begin{align*}
+ \Oo(n^{f(k)}) \qquad \text{for some computable $f : \Nat \to \Nat$}.
+\end{align*}
+Which of the following atoms have fixed dimension polynomial orbit count?
+\begin{enumerate}
+ \item The bit vector atoms.
+ \item The tree atoms.
+ \item The equivalence relation atoms.
+ \item A finite atom structure.
+\end{enumerate}
+}{ 
+\begin{enumerate}
+ \item The bit vector atoms do not have fixed dimension polynomial orbit count. Let $\bar a$ be a tuple of $n$ linearly independent atoms. Then the number of $\bar a$-orbits in $\atoms$ is $2^n$ because each atom can be a linear combination of any nonempty subset of the atoms $\bar a$ -- or be linearly independent of all of them.
+\end{enumerate}
+}
+
+
+\mikexercise{\label{ex:orbit-count} Let $\atoms$ be a homogeneous structure. Show that $\atoms$ has fixed dimension polynomial orbit count if and only if there is a fixed dimension polynomial time program which does this:
+\begin{itemize}
+ \item {\bf Input.} A set builder expression $\alpha$ and an atom tuple $\bar a \in \atoms^*$;
+ \item {\bf Output.} A Von Neumann numeral which represents the number of $\bar a$-orbits in the set represented by $\atoms^k$. 
+\end{itemize}} {}
+
+
+\mikexercise{\label{ex:fdp-more-general-atoms}
+ Assume that the atoms:
+\begin{enumerate}
+ \item are homogeneous over a finite vocabulary;
+ \item have a computable Ryll-Nardzewski function;
+ \item have fixed dimension polynomial orbit count, as defined in Exercise~\ref{ex:fdp-poc};
+ \item admit a polynomial time algorithm which answers questions of the form
+ \begin{align*}
+ \atoms \models \exists x_1,\ldots,x_n \ \varphi
+ \end{align*}
+ where $\varphi$ is quantifier-free and in {\sc dnf}.
+\end{enumerate}
+ Show that there is a fixed dimension polynomial program which inputs a first-order formula over the vocabulary of the atoms (possibly using constants from the atoms), and which outputs an equivalent formula that is quantifier-free. 
+}
+{
+ Fix some variable names $x_1,\ldots,x_k$. 
+Define $P$ to be the set of atomic formulas, i.e.~formulas 
+Define an \emph{atomic formula} to be a relation from the vocabulary of the atoms applied to arguments which are either variables $x_1,\ldots,x_k$ of constants from the tuple $\bar a$. The number of atomic formulas is 
+\begin{align*}
+ \sum_R (k+n)^{\text{arity of $R$}},
+\end{align*}
+where $R$ ranges over relations in the vocabulary of the atoms. 
+}
+
+\mikexercise{\label{ex:fraisse-fdp}
+ Let $\structclass$ be a class of finite structures over a finite relational vocabulary, such that membership in $\structclass$ can be tested in polynomial time. Show that the \fraisse limit of $\structclass$ satisfies the assumptions in Exercise~\ref{ex:fdp-more-general-atoms}.
+} 
+{
+
+}
+
+\mikexercise{\label{ex:fdt-no}
+Assume the equality atoms.
+Consider an algorithm which inputs and outputs set builder expressions. We say that the algorithm is \emph{fixed dimension tractable} if its running time on a set builder expression is at most 
+\begin{align*}
+ f(\dim \alpha) \cdot |\alpha|^c
+\end{align*}
+for some computable function $f$ and constant $c$ that does not depend on the dimension. Show that there is no fixed dimension tractable algorithm for graph reachability, under the following assumption from the field of fixed parameter tractable algorithms:
+\begin{itemize}
+ \item [(*)] There is no algorithm which inputs a finite graph $G$ and a first-order sentence $\varphi$ using a binary edge relation, outputs whether $G \models \varphi$, and runs in time 
+ \begin{align*}
+ f(\varphi) \cdot |G|^c 
+ \end{align*}
+ for some computable function $f$ and constant $c$. 
+\end{itemize}
+
+}{ }
+
+\mikexercise{\label{ex:fdt-yes} The issues in Exercise~\ref{ex:fdt-no} go away if we disallow parameters. Show that there is a fixed dimension tractable algorithm for graph reachability, which works for equivariant inputs (i.e.~the input is a set builder expression without atom constants). 
+}
+{ }
+
+
+\mikexercise{ \label{ex:dim-size-tradeoff}In Lemma~\ref{lem:sizes-are-the-same}, when measuring the syntactic size, we use expressions of optimal dimension. Show that this assumption  is important because even for sets of dimension 0, one can make a set builder expression exponentially smaller at the cost of using dimension $>0$.} {}
+{ Consider the set $\set{\atomone, \atomtwo}^n$. This is a finite set, and its dimension is 0. Any 0-dimensional set builder expression that represents this set needs to have size at least $2^n$, because it needs to essentially enumerate the set. On the other hand, one can represent this set with an $n$-dimensional expression of size polynomial in $n$, namely 
+\begin{align*}
+ \setexpr{(x_1,\ldots,x_k)} {x_1,\ldots,x_k} {\varphi(x_1,\ldots,x_k)}
+\end{align*}
+where $\varphi$ is the formula which says that all of its arguments are either $\atomone$ or $\atomtwo$. }
+
+
+\mikexercise{
+Show that the $|X|$ is not upper bounded by any fixed dimension polynomial function of the parameter ``number of equivariant orbits that intersect $X_*$''.
+}
+{For distinct atoms $a_1,\ldots,a_n$, consider the powerset of $\set{a_1,\ldots,a_n}$. This set has dimension 0, since it is finite. Its semantic size is $2^n$, while the number of equivariant orbits that intersect it is $n$.
+}

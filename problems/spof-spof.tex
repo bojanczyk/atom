@@ -1,0 +1,113 @@
+\mikexercise{How many equivariant functions are there of type 
+\begin{align*}
+{\atoms \choose d} \to {\atoms \choose e}
+\end{align*}
+for $d, e \in \set{0,1,\ldots}$?
+}{
+One possibility is the identity function, which arises when $d=e$. We will show that this is the only possibility. 
+There cannot be any such function when $e > d$, because otherwise the output would need to contain an atom that is not present in the input. There cannot be any such function There cannot be any such function when $e < d$, because this would require choosing some atom, and this cannot be done by the argument in Example~\ref{ex:choice-spof}. Finally, when $d=e$, the only possibility is the identity function, because otherwise the output would need to contain some atom that is not in the input.
+}
+
+\mikexercise{\label{ex:intersection-language} Find a deterministic spof automaton for the language
+\begin{align*}
+    \setbuild{ w \in {\atoms \choose 3}^*}{some atom $a$ appears in all letters}.
+    \end{align*}}{The automaton computes the intersection of all letters, and accepts if this intersection is nonempty. The possible }
+
+    \mikexercise{\label{ex:union-language} Find a deterministic spof automaton for the language
+\begin{align*}
+    \setbuild{ w \in {\atoms \choose 3}^*}{there are at most distinct 5 atoms used in the word}.
+    \end{align*}}{The automaton computes the union of all letters, up to threshold 5. }
+
+\mikexercise{\label{ex:two-atoms-from-first-everywhere} Find a deterministic spof automaton for the language
+    \begin{align*}
+        \setbuild{ w \in {\atoms \choose 3}^*}{some atom from the set in the first letter appears \\ an even number of times in the remaining letters}.
+        \end{align*}
+}{}
+
+\mikexercise{\label{ex:some-two-atoms-everywhere} Find a deterministic spof automaton for the language:
+\begin{align*}
+\setbuild{ w \in {\atoms \choose 2}^*}{there exist $a,b \in \atoms$ such that every letter in $w$ intersects $\set{a,b}$}.
+\end{align*}
+}{
+Consider the first two letters in the input string that are not equal to each other, which are sets $x$ and $y$ of size two. 
+\begin{enumerate}
+    \item If the sets are disjoint, then the only candidates for $a,b$ are from $x \cup y$. Then, we can use the same kind of solution as in Exercise~\ref{ex:two-atoms-from-first-everywhere}.
+    \item Otherwise, the only candidates for $a$ and $b$ are: 
+    \begin{enumerate}
+        \item the two atoms that are in the symmetric difference $(x \setminus y) \cup (y \setminus x)$; or 
+        \item the atom in the intersection, and some other atom. 
+    \end{enumerate}
+\end{enumerate}
+}
+
+\mikexercise{\label{ex:group-colcombet} Consider a spof group, i.e.~the underlying set is a spof, and the group operation is equivariant. Show that such a group must be  finite.} { This exercise is based on~\cite[Lemma 2.14]{DBLP:journals/corr/ColcombetLP14}.
+Consider the least support of the multiplication operation in the group. This least support also supports the universe of the group, and the inverse operation $g \mapsto g^{-1}$. For an element $g$ of the group, define $[g]$ to be the set of atoms that are in the least support of $g$ but are not in the least support of the multiplication operation of the group. 
+If a set of atoms supports $g,h $ and the multiplication operation, then it also supports the product $gh$. It follows that 
+\begin{align}\label{eq:group-homo}
+ [g h] \subseteq [g] \cup [h] .
+\end{align}
+For the same reasons, we have
+\begin{align}
+ \label{eq:group-homo2}
+ [g^{-1}] = [g] .
+\end{align}
+Take some $g$ in the group which maximises the size $[g]$. Such a maximum exists, since the size of $[g]$ depends on that $\bar a$-orbit of $g$, of which there are finitely many. Since we are dealing with the equality atoms, we can choose an atom automorphism $\pi$ so that 
+\begin{align}\label{eq:group-abc}
+ \pi([g]) \cap [g] = \emptyset.
+\end{align}
+ We have
+\begin{align*}
+ g = \pi(g) \pi(g)^{-1} g.
+\end{align*}
+Combining this with~\eqref{eq:group-homo}, we get 
+\begin{align*}
+ [g] \subseteq [\pi(g)] \cup [\pi(g)^{-1} g]
+\end{align*}
+Combining this with~\eqref{eq:group-abc}, we get
+\begin{align*}
+ [g] \subseteq [\pi(g)^{-1}g]
+\end{align*}
+By maximality of $[g]$ the above is actually an equality, i.e.
+\begin{align}
+ \label{eq:group-homo3}
+ [g] \subseteq [\pi(g)^{-1}g]
+\end{align}
+The same proof also yields
+\begin{align}
+ \label{eq:group-homo4}
+ [\pi(g)] \subseteq [g^{-1}\pi(g)]
+\end{align}
+ Using a similar reasoning applied to
+\begin{align*}
+ \pi(g)^{-1} = g^{-1} \pi(g) \pi(g)^{-1}
+\end{align*}
+we conclude that 
+\begin{align*}
+ [\pi(g)] \stackrel {\text{\eqref{eq:group-homo4}}} \subseteq [ g^{-1} \pi(g)] \stackrel {\text{\eqref{eq:group-homo2}}}= [\pi(g)^{-1}g] \stackrel {\text{\eqref{eq:group-homo3}}}= [g].
+\end{align*}
+From~\eqref{eq:group-abc} it follows that $[\pi(g)]$ is empty. Therefore, $[g]$ must also be empty, since $[\_]$ commutes with $\bar a$-automorphisms. 
+By maximality of $[g]$ it follows that all elements of the group have value $\emptyset$ under $[\_]$ which implies that all elements of the group are supported by $\bar a$. In an orbit-finite set there can only be finitely many elements with a given support (Exercise~\ref{ex:finitely-many-supported-by-one-tuple}). Therefore, the group is finite.
+The same proof would work for some other atoms, e.g.~$\qatom$.}
+
+
+
+
+
+
+\mikexercise{
+ Let $X$ be a spof.  Show that if $f : X \to X$ is an equivariant surjective function, then $f$ is a bijection.
+}
+{
+ 
+}
+
+
+\mikexercise{Consider a chain 
+\begin{align*}
+X_0 \stackrel {f_1} \twoheadrightarrow X_1 \stackrel {f_2} \twoheadrightarrow X_2 \stackrel {f_3} \twoheadrightarrow \ldots
+\stackrel {f_n} \twoheadrightarrow X_n
+\end{align*}
+of equivariant surjective function between spof sets.
+Show that the length of this chain is bounded by a polynomial of the following two parameters of the first set $X_0$: the orbit count, and the atom dimension.
+}{}
+

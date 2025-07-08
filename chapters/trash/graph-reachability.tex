@@ -1,0 +1,68 @@
+\section{Graph reachability}
+\label{sec:graph-reachability}
+We begin our case studies with directed graph reachability. 
+\begin{theorem}\label{thm:graph-reachability}
+Assume that the atoms are oligomorphic and have decidable first-order theory as in the assumptions of Corollary~\ref{thm:decide-set-builder}. The following problem is decidable:
+\decisionproblem{ A directed graph $(V,E)$, and source and target subsets $S,T \subseteq V$, all given by set builder expressions.}{Is there a directed path from some source to some target?}
+\end{theorem}
+\begin{proof} 
+	For $n \in \set{1,2,\ldots}$, let $V_n$ be the vertices that are reachable in at most $n$ steps from some source. These sets are defined by 
+\begin{align*}
+	V_n = \begin{cases}
+		S & \text{$n=0$}\\
+V_{n-1} \cup V_{n-1} E & n >0.
+	\end{cases} 
+\end{align*} 
+By the Third Symbol Pushing Lemma, a set builder expression describing the set $V_n$ can be computed, given a set builder expression for $V_{n-1}$. For each $n = 0,1,2,\ldots$, compute the expression for $V_n$, until a fixpoint is reached, i.e.~some $n$ such that $V_n= V_{n+1}$. Whether or not a fixpoint is reached can be checked using Corollary~\ref{thm:decide-set-builder}. The algorithm returns true or false, depending on whether the fixpoint intersects the target vertices. The following claim shows that the fixpoint is always reached in a finite number of steps, and therefore the algorithm terminates. 
+
+
+\begin{claim}\label{claim:graph-diameter}
+	There is some $n$ such that $V_n= V_{n+1}$. 
+\end{claim}	
+\begin{proof}
+	Let $\bar a$ be a tuple of atoms that supports $S, V$ and $E$. (For example, one can take $\bar a$ to be all of the atoms that appear in the set builder expressions that define these sets.) One can show by induction that this tuple also supports $V_n$ for every $n$. Later in this section, we give a more general explanation for such results (a tuple that supports one thing must also support other related things), using a principle called the equivariance principle. 
+	Therefore, all the sets 
+	\begin{align*}
+		V_0 \subseteq V_1 \subseteq \cdots \subseteq V
+	\end{align*}
+	are unions of $\bar a$-orbits. Because $V$ is defined by a set builder expression, it is orbit-finite by Theorem~\ref{thm:definable-is-hof}. By Theorem~\ref{thm:oligo-orbit-finite}, $V$ is a finite union of $\bar a$-orbits It follows that for 
+	some $n$, there are no more $\bar a$-orbits to add when going from $V_n$ to $V_{n+1}$. 
+\end{proof}
+\end{proof}
+
+The above proof illustrates how it is useful to have both syntactic descriptions (set builder expressions) and semantic ones (hereditarily orbit-finite sets). The semantic description is used to show that the fixpoint is reached in a finite number of steps, while the syntactic description is used to compute this fixpoint. 
+
+
+\paragraph*{Equivariance principle.} In the proof above, we said that any tuple of atoms which supports the graph and its source vertices will also support the vertices that can be reached in at most $n$ steps. Other examples of such statements are: ``a tuple that supports an automaton will also support the language recognised by the automaton'' or ``a tuple that supports system of equations with a unique solution will also support that solution''. We describe below a result, called the \emph{equivariance principle}, which implies all such statements. The principle says that, if a function (e.g.~the function that maps an automaton to its recognised language, or the partial function that maps a system of equations to its unique solution if it exists) can be defined in the language of set theory, then that function is equivariant. In particular, any tuple supporting the input to that function will also support the output of that function, because for equivariant functions, any support of the input is also a support of the output.
+
+\begin{lemma}[Equivariance principle]\label{lem:principle-of-equivariance} Let $\atoms$ be a structure, not necessarily oligomorphic, and consider the structure
+	\begin{align*}
+		\sets \atoms \quad \eqdef \quad (\text{atoms and sets with atoms over $\atoms$}, \in, \emptyset).
+	\end{align*}
+	Suppose that $\varphi(x,y)$ is a formula of first-order logic which uses only $\in$ and $\emptyset$, and whose interpretation in the above structure is a function
+	\begin{align*}
+		f : \text{atoms and sets with atoms over $\atoms$} \to \text{atoms and sets with atoms over $\atoms$.}
+	\end{align*}
+	Then $f$ is an equivariant function. In particular, if an atom tuple supports a set with atoms $X$, then the same atom tuple also supports $f(X)$.
+\end{lemma}
+\begin{proof}
+	Take an automorphism $\pi$ of $\atoms$. It is not hard to see that $\pi$, when lifted to sets with atoms over $\atoms$, is an automorphism of the structure $\sets \atoms$. First-order logic is invariant under automorphism, i.e.~if a pair $(X,Y)$ of elements in the universe of the structure $\sets \atoms$ satisfies the formula defining $f$, then the same will be true for $(\pi(X),\pi(Y))$.
+\end{proof}
+
+The language of first-order logic is rich enough to cover most constructions used in this book, e.g. pairing and unpairing as described in Example~\ref{ex:set-structure}. For such constructions, we can use the equivariance principle to prove equivariance. Later in the book, we will no longer do detailed analysis as in Example~\ref{ex:set-structure}, and we will simply refer to the equivariance principle when making statements such as ``if an automaton is supported by an atom tuple $\bar a$, then its recognised language is also supported by $\bar a$''.
+
+\begin{myexample} When applying the Equivariance Principle, one needs to remember that the structure $\sets \atoms$ 
+	only talks about finitely supported sets (because sets with atoms are, by definition, finitely supported). To illustrate the potential for mistakes, 
+		consider the statement: 
+		\begin{itemize}
+			\item[(*)] If a graph is nonempty and has at least one outgoing edge for each vertex, then it has an infinite path.
+		\end{itemize}
+		The statement can easily be formalised using set theory, but such a formalisation turns out to be false in $\sets \atoms$ for some choices of atoms. To see this, consider the atoms $\qatom$, and the graph where the vertices are the atoms and the edge relation is $\set{(a,b) : a < b}$. Every vertex has at least one outgoing edge, and indeed the graph contains an infinite path, but it does not contain any infinite finitely supported path, because such a path would need to use infinitely many atoms. Hence, (*) is not true in $\sets \atoms$. In the equality atoms, (*) is true for orbit-finite graphs (see Exercise~\ref{ex:buchi-reachability-lasso}) but it is false in general (see Exercise~\ref{ex:no-infinite-finitely-supported-path}). 
+\end{myexample}
+
+
+
+
+
+\exercisepart
+

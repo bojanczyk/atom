@@ -1,0 +1,240 @@
+\newcommand{\decisionproblem}[2]
+{
+	\begin{itemize}
+		\item {\bf Input.} #1
+		\item {\bf Output.} #2
+	\end{itemize}
+}
+
+\newcommand{\freevar}[1]{\mathrm{var}(#1)}
+
+\newcommand{\fdp}{\textsc{fdp}\xspace}
+
+\newcommand{\pspace}{{\sc{PSpace}\xspace}}
+\newcommand{\indvec}[1]{\atoms^{\langle #1 \rangle}}
+ \newcommand{\dimension}[1]{\mathrm{dim}(#1)}
+\newcommand{\leastsup}[1]{\mathrm{sup}(#1)}
+
+\newcommand{\syntdim}[1]{\mathrm{dim}(#1)}
+\newcommand{\syntsize}[1]{|#1|}
+\newcommand{\semdim}[1]{\mathrm{\red{dim}}(#1)}
+\newcommand{\semsize}[1]{\red|#1\red|}
+
+\newcommand{\orbitsize}[2]{|#1|_{#2}}
+%\newcommand{\saut}[1]{\mathrm{G}_{#1}}
+%\newcommand{\aut}{\mathrm{G}}
+%\newcommand{\secfm}{\bfseries{\scshape{fm\ }}}
+%\newcommand{\fm}{\textsc{fm}\ }
+%\newcommand{\tneq}{\(\neq\)}
+\newcommand{\tleq}{\(\leq\)}
+% \newcommand{\tin}{\(\in\)}
+% \newcommand{\tnotin}{\(\notin\)}
+% \newcommand{\tcup}{\(\cup\)}
+% \newcommand{\temptyset}{\(\emptyset\)}
+% \newcommand{\tcap}{\(\cap\)}
+% \newcommand{\ttimes}{\(\times\)}
+
+\newcommand{\approxi}[2]{#1^{(#2)}}
+
+\newcommand{\cellc}[2]{\mathsf{cell}_{#1}(#2)}
+\newcommand{\tatoms}{\(\ \!\!\!\!\atoms\)}
+
+% \newcommand{\booltrue}{\ensuremath{\mathtt{true}}}
+% \newcommand{\boolfalse}{\ensuremath{\mathtt{false}}}
+\newcommand{\tset}[1]{\{#1\}}
+
+\newcommand{\settype}{\mathtt{set}}
+\newcommand{\atomtype}{\mathtt{atom}}
+
+\newcommand{\red}[1]{{\color{red}#1}}
+\newcommand{\blue}[1]{{\color{blue}#1}}
+
+\newcommand{\exercisepart}{
+
+\bigskip
+
+{\noindent \large \bf Exercises}
+
+
+}
+\newcommand{\setexpr}[3]{\set{#1\ |\ \text{ for }#2 \in \atoms \text{ such that }#3}}
+\newcommand{\setexprtup}[4]{\set{#1\ |\ \text{ for }#2 \in \atoms^{#3} \text{ such that }#4}}
+\newcommand{\setexprtrue}[2]{\set{#1\ |\ \text{ for }#2 \in \atoms}}
+\newcommand{\setexprtuptrue}[3]{\set{#1\ |\ \text{ for }#2 \in \atoms^{#3}}}
+
+\newcommand{\symbolpushbis}[2]{\symbolpush{#1 \ : \ #2}}
+\newcommand{\symbolpush}[1]{\underline{#1}}
+
+\newcommand{\aequiv}[1]{\stackrel{#1}\sim}
+\newcommand{\locations}{\mathsf{Loc}}
+
+\newcommand{\bibnotes}[1]{
+\bigskip
+{\footnotesize
+\noindent {\bf Bibliographic notes for Section~\arabic{section}. }
+#1}
+}
+
+% these two macros are for delayed exercises, I don't use them now
+% \renewcommand{\ExerciseHeader}{\noindent \textbf{\ExerciseName~\ExerciseHeaderNB\ExerciseHeaderTitle
+% \ExerciseHeaderOrigin. }}
+% \renewcommand{\AnswerHeader}{\noindent {\textbf{Solution to \ExerciseName\ \ExerciseHeaderNB.\\}}}
+
+\newcounter{exercisecounter}
+\newenvironment{mexercise}{
+\refstepcounter{exercisecounter}
+
+\smallskip\noindent{\textbf{{Exercise \arabic{exercisecounter}. }}}}{
+}
+
+
+
+
+
+
+\newcommand{\pv}[1]{{\mathtt{#1}}}
+
+% the original picture files, from illustrator
+\newcommand{\mypic}[1]{
+\begin{center}
+	\includegraphics[page=#1,scale=0.5]{atom-pics}
+\end{center}
+}
+
+% for pictures with figma
+\newcommand{\mypicb}[1]{
+\begin{center}
+	\includegraphics[page=#1,scale=0.22]{atom-book}
+\end{center}
+}
+
+%\newcommand{\notin}{\not \in}
+
+\newcommand{\sets}{\mathsf{set}}
+\newcommand{\setbuil}{\mathsf{setbuil}}
+\newcommand{\defset}{\mathsf{hdef}}
+\newcommand{\hofset}{\mathsf{hof}}
+
+\newcommand{\setbuild}[2]{\set{\ #1 \ | 
+\begin{tabular}{l}
+	#2
+\end{tabular}}}
+
+% the tabular in the above macro can make it too wide, hence this one
+\newcommand{\setbuildoneline}[2]{\set{\ #1 \ | 
+\text{ #2}\ }}
+
+\newcommand{\myunderbrace}[2]{\underbrace{#1}_{\mathclap{\text{\scriptsize 
+\begin{tabular}{c}
+	#2
+\end{tabular} }}}}
+\newcommand{\myoverbrace}[2]{\overbrace{#1}^{\mathclap{\text{\scriptsize 
+\begin{tabular}{c}
+	#2
+\end{tabular} }}}}
+
+\newcommand{\Bool}{2}
+\newcommand{\eve}{\text{Eve}}
+\newcommand{\adam}{\text{Adam}}
+\newcommand{\john}{\text{John}}
+\newcommand{\tom}{\text{Tom}}
+\newcommand{\jim}{\text{Jim}}
+\newcommand{\mary}{\text{Mary}}
+
+\newcommand{\deflift}{{\mathsf{def}}}
+\newcommand{\tti}{{\mathtt I}}
+\newcommand{\ttj}{{\mathtt J}}
+\newcommand{\qatom}{(\mathbb Q, <)}
+\newcommand{\sem}[1]{[\![#1]\!]}
+\newcommand{\fraisse}{Fra\"iss\'e } 
+
+\newcommand{\saut}[1]{\mathrm{G}_{#1}}
+\newcommand{\aut}{\mathrm{G}}
+\newcommand{\secfm}{\bfseries{\scshape{fm\ }}}
+%\newcommand{\fm}{\textsc{fm}\ }
+\newcommand{\tneq}{\(\neq\)}
+\newcommand{\tin}{\(\in\)}
+\newcommand{\tnotin}{\(\notin\)}
+\newcommand{\tcup}{\(\cup\)}
+\newcommand{\temptyset}{\(\emptyset\)}
+\newcommand{\tcap}{\(\cap\)}
+\newcommand{\ttimes}{\(\times\)}
+
+\newcommand{\structclass}{\mathscr A}
+\newcommand{\structclassb}{\mathscr B}
+\newcommand{\structclassh}{\mathscr H}
+\newcommand{\structa}{\mathbb A}
+\newcommand{\structb}{\mathbb B}
+\newcommand{\structc}{\mathbb C}
+\newcommand{\structh}{\mathbb H}
+
+\newcommand{\atoms}{\mathbb A}
+\newcommand{\field}{\mathbb F}
+\newcommand{\universe}[1]{\mathrm{universe(#1)}}
+\newcommand{\Fff}{\mathscr F}
+\newcommand{\limmodel}{\underline \structa}
+\newcommand{\arity}{\mathrm{arity}}
+\newcommand{\lincomb}{\mathrm{Lin}}
+\newcommand{\length}{\mathrm{len}}
+
+% various kinds of function spaces
+\newcommand{\lineqfun}[2]{ #1 \underset{\text{lineq}}{\longrightarrow} #2}
+\newcommand{\linfsfun}[2]{ #1 \underset{\text{linfs}}{\longrightarrow} #2}
+\newcommand{\eqfun}[2]{ #1 \underset{\text{eq}}{\longrightarrow} #2}
+\newcommand{\fsfun}[2]{ #1 \underset{\text{fs}}{\longrightarrow} #2}
+
+\newcommand{\generate}[1]{\langle #1 \rangle}
+
+\newcommand{\atoma}{{a}}
+\newcommand{\atomb}{{b}}
+\newcommand{\atomc}{{c}}
+\newcommand{\atomd}{{d}}
+
+\newcommand{\atomq}{{q}}
+\newcommand{\atomzero}{{\underline 0}}
+\newcommand{\atomone}{{\underline 1}}
+\newcommand{\atomtwo}{{\underline 2}}
+\newcommand{\atomthree}{{\underline 3}}
+
+ 
+\newcommand{\atomseta}{{A}}
+\newcommand{\atomsetb}{{B}}
+\newcommand{\atomsetc}{{C}}
+\newcommand{\atomsets}{{S}}
+\newcommand{\atomsett}{{T}}
+
+\newcommand{\Qfin}{Q_{\mathrm{fin}}}
+\newcommand{\Afin}{A_{\mathrm{fin}}}
+
+\newcommand{\bind}{\nabla}
+\newcommand{\powerset}{{\mathsf P}}
+\newcommand{\pfin}{{\mathsf P}_{\text{fin}}}
+\newcommand{\decproblem}[3]
+{\begin{center}
+\fbox{
+\begin{tabular}{rl}
+\textsc{Problem}: & #1 \\
+\textsc{Input}: & #2\\
+\textsc{Output}: & #3
+\end{tabular}
+}
+\end{center}}
+
+\newcounter{openquestioncounter}
+\newenvironment{openquestion}{
+\medskip
+
+\refstepcounter{openquestioncounter}
+\smallskip\noindent{\textbf{{Open question \arabic{openquestioncounter}. }}}}{\hfill $\Box$
+\medskip 
+}
+
+
+
+
+
+
+
+\newcommand{\eqdef}{\stackrel {\mathrm{def}} = }
+
+\newcommand{\Ii}{\mathcal I}

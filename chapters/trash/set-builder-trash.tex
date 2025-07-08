@@ -1,0 +1,64 @@
+\label{sec:hereditary-orbit-finite-sets}
+
+The following is not really a new definition, but only the special case of orbit-finiteness from Definition~\ref{def:supports-general} when applied to sets with atoms. 
+
+
+
+\begin{definition}[Orbit-finite set with atoms]\label{def:orbit-finite-set-with-atoms}
+	A set with atoms is called \emph{orbit-finite} if it is equivariant and has finitely many orbits.
+\end{definition}
+
+Let us discuss two aspects  of the above definition. The first aspect is that  Definition~\ref{def:supports-general} requires that every element $x$ of an orbit-finite set $X$ has finite support. This will be automatically  true when $X$ is a set with atoms, since every element of a set with atoms is either an atom or a set with atoms, and these are finitely supported. The second aspect is  that Definition~\ref{def:supports-general} requires the set to be equipped with an action of atom automorphisms. When $X$ is a set with atoms, this action is supplied automatically, however we need $X$ be equivariant (and not just finitely supported, as in the definition of sets with atoms), since otherwise the automatically defined action would take us out of the set\footnote{It would make sense to consider orbit-finite sets that are not equivariant but finitely supported; this  is discussed in the exercises. For the sake of simplicity we stay with the idea from Definition~\ref{def:sets-with-atoms} that orbit-finite sets are required to be equivariant.}
+
+
+The following straightforward theorem shows that, up to equivariant bijections,  all orbit-finite sets arise from Definition~\ref{def:orbit-finite-set-with-atoms}. 
+
+\begin{theorem}
+	Assume an oligomorphic atom structures, and consider a set $X$ with action of atom automorphisms. Then $X$ is orbit-finite in the sense of Definition~\ref{def:supports-general} if and only if it admits an equivariant bijection with a set of atoms that is orbit-finite in the sense of Definition~\ref{def:orbit-finite-set-with-atoms}.
+\end{theorem}
+\begin{proof}
+	Clearly Definition~\ref{def:orbit-finite-set-with-atoms} is a special case of Definition~\ref{def:supports-general}. For the opposite  implication, we use  Theorem~\ref{thm:spof=orbit-finite}, which says that every orbit-finite set admits an equivariant bijection with a submotiented pof set. submotiented pof sets are easily seen to be sets with atoms, since sets with atoms are closed under taking disjoint unions, pairs and submotients. 
+\end{proof}
+
+
+    Using the above claim, we prove the reduction from the lemma. 
+    Take any orbit-finitely spanned vector space $V$. We want to show that $V$ has finite length, using the assumption that spaces of the form $\lincomb \atoms^{(d)}$ have finite length.   Let $X$ be an orbit-finite spanning set for $V$. Like any orbit-finite set, $X$ admits a surjective equivariant function from a polynomial orbit-finite set $Y$, see Lemma~\ref{lem:}: 
+    \begin{align*}
+    f : Y \to X \subseteq V.
+    \end{align*}
+    We can lift the function $f$ to a linear map from the linear combinations of $Y$ to $V$:
+    \begin{align*}
+    \lincomb f : \lincomb Y \to V.
+    \end{align*}
+    This is an equivariant linear map, because the original function $f$ was equivariant,  and it is surjective because $f$ was surjective onto a set that  spans $V$. Therefore, by Claim~\ref{claim:length-bounds-times-surjective}, to prove finite length of $V$ it is enough to prove finite length for $\lincomb Y$.  Like any polynomial orbit-finite set, $Y$ splits is a disjoint union of orbits of the form: 
+    \begin{align*}
+    Y = \atoms^{(d_1)} + \cdots + \atoms^{(d_n)}.
+    \end{align*}
+    The above decomposition is for  sets, and not vector spaces. A disjoint union $+$ on bases in a vector space gives us a direct sum $\oplus$ over the corresponding vector spaces, and thus we get a decomposition
+    \begin{align*}
+    \lincomb Y = \lincomb \atoms^{(d_1)} \oplus \cdots \oplus \lincomb \atoms^{(d_n)}.
+    \end{align*}
+    Therefore, by Claim~\ref{claim:length-bounds-times-surjective}, the length of $\lincomb Y$ is finite as long as the vector spaces in the decomposition have finite length, which is the assumption of the lemma. This completes the reduction.
+    \end{proof}
+
+	 
+    Consider an orbit-finite set $X$. We will be interested in functions
+    \begin{align*}
+    f : X \to \field
+    \end{align*}
+    that are finitely supported. We begin by clarifying some our terminology, since there are two possible meanings of the term ``finitely supported function'':
+    \begin{enumerate}
+        \item The first meaning is to use the notion of support as in Definition~\ref{def:supports-general} for sets equipped with an action of atom permutations. In this sense, $f$ is finitely supported if  there is some finite tuple of atoms $\bar a$ such that 
+        \begin{align*}
+        f(x) = f(\pi(x)) \qquad \text{for every atom permutation that fixes $\bar a$}.
+        \end{align*}
+        \item The second meaning is to use the notion of support as the set of inputs with nonzero output. In this sense, $f$ is finitely supported if the set $\setbuild{ x}{$f(x) \neq 0$}$ is finite.
+    \end{enumerate}
+    We use the first meaning, which gives a weaker condition than the second one. For example, every constant function of type $\atoms \to \field$ is finitely supported in the first meaning (the one that we use), but not finitely supported in the second meaning,  unless it is zero everywhere. We write 
+    \begin{align}
+        \label{eq:fs-fun-space}
+    \fsfun X \field
+    \end{align}
+    for the set of finitely supported functions. The second meaning corresponds to $\lincomb X$, since these are finite (not orbit-finite) linear combinations of elements from $X$. 
+
+    The set~\eqref{eq:fs-fun-space} is also a vector space, since such functions can be added (coordinatewise) and multiplied by scalars. Therefore, it is meaningful to talk about its length. We will prove that the length of this space is finite, namely 

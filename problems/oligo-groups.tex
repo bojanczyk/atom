@@ -1,0 +1,83 @@
+
+\mikexercise{\label{ex:surjection-from-atomsk} Assume that the atoms are oligomorphic. Show that for every orbit-finite set $X$, there is some $d \in \set{0,1,\ldots}$ and a surjective equivariant function $f :\atoms^d \to X$. }{}
+
+\mikexercise{Show that the atoms $\qatom$ also have least supports.}{See~\cite[Corollary 9.5]{DBLP:journals/corr/BojanczykKL14}.}
+\mikexercise{Show an example of oligomorphic atoms without least supports.}{Suppose that the atoms are a graph with infinitely many edges that do not share any nodes. 
+\mypic{73}
+	This structure is oligomorphic, actually it is homogeneous (see Section~\ref{sec:homogeneous-atoms}).
+	Every atom is supported by itself, or the other side of its edge.
+}
+
+\mikexercise{\label{ex:transitive-closure}Assume that the atoms are oligomorphic. Let $X$ be a set with an action of group automorphisms, which is not known to be orbit-finite. Let $R \subseteq X \times X$ be an equivariant  binary relation which is  orbit-finite. Show that the transitive closure of $R$ is also orbit-finite.} {Define $S \supseteq R$ to be those pairs which can be obtained by taking some first coordinate of $R$ and pairing it with some second coordinate of $R$. The set $S$ is obtained from $R$ by taking the product of the projections of $R$ onto the first and second coordinates. Since projection is an equivariant function, it follows from Fact~\ref{fact:of-closure-properties} that $S$ is orbit-finite. Choose some tuple $\bar a$ which supports both $R$ and $S$. It is easy to see that the transitive closure does not increase the support, and therefore the transitive closure of $R$ is a subset of $S$ that is union of $\bar a$-orbits. Since $S$ is orbit-finite, this union must be finite.}
+
+\mikexercise{\label{ex:function-space} Assume that the atoms are oligomorphic, and there are infinitely many atoms. Show that orbit-finite sets are not closed under taking finitely supported function spaces:
+\begin{align*}
+X \stackrel {\text{fs}} \to Y 
+\quad \eqdef \quad 
+\setbuildoneline{ f : X \to Y}{$f$ is finitely supported}.
+\end{align*}
+\vspace{-0.6cm}
+}{ 
+	Consider the equality atoms. For every finite set of atoms $C$, the following is a finitely supported function:
+	\begin{align*}
+		f_C(a)= \begin{cases}
+			\atomone & \text{if $a \in C$}\\
+			\atomtwo & \text{otherwise}.
+		\end{cases}
+	\end{align*}
+When $C,D$ are finite sets of atoms with different sizes, then the functions $f_C$ and $f_D$ are not in the same orbit. 
+}
+
+\mikexercise{\label{ex:function-space-bounded-supports} Assume oligomorphic atoms. Let $X,Y$ be orbit-finite sets and let $F$ be an equivariant subset of the  finitely supported function space from the previous exercise. Show that $F$ is orbit-finite if and only if there is some $n \in \set{0,1,2,\ldots}$ such that every function $f \in F$ has a support of size at most $n$. }{ }
+
+\mikexercise{\label{ex:finitely-many-supported-by-one-tuple} Assume oligomorphic atoms. Show that in an orbit-finite set, for every atom tuple $\bar a$ there are finitely many elements supported by $\bar a$.}{Suppose that $X$ is orbit-finite. Choose some support $\bar b$ of $X$. For every tuple of atoms $\bar a$, there are finitely many $\bar a \bar b$-orbits of $X$. If an element $x \in X$ is supported by $\bar a$, then its $\bar a \bar b$-orbit is a singleton, hence there are finitely many elements of $X$ supported by $\bar a$.}
+
+\mikexercise{Show that Exercise~\ref{ex:uniformise} fails in $\qatom$.}{Consider the total ordered atoms, and the relation $a < b$. There is no finitely supported function which maps each atom to a strictly bigger one.}
+
+\mikexercise{Show that Exercise~\ref{ex:uniformise} fails in some atoms, even for a relation $R$ such that for every first argument, there are finitely many second arguments related by the relation.}{The atoms are the undirected graph which consists of infinitely many triangles. The binary relation is ``different but in the same triangle''. The function would need to pick, for each atom, one of the two other vertices in the same triangle.}
+
+\mikexercise{Assume that the atoms are oligomorphic. Let $X$ be an orbit-finite set and let $\bar a$ be a tuple of atoms. Consider the family of equivalence relations on $X$ which are supported by $\bar a$ and where every equivalence class is finite. Show that this family has a greatest element with respect to inclusion (i.e.~a coarsest equivalence relation). } {Let $E$ be the family in the exercise. The set $E$ is finite because $X\times X$ is orbit-finite and therefore has finitely many $\bar a$-supported subsets thanks to Exercise~\ref{ex:finitely-many-supported-by-one-tuple}. Therefore, to prove the exercise it suffices to show that for every two equivalence relations $\sim_1,\sim_2 \in E$ there exists an equivalence relation $\sim \in E$ which is coarser than both $\sim_1$ and $\sim_2$. Consider the following binary relation on $X$:
+\begin{align*}
+ R = \sim_1 \circ \sim_2.
+\end{align*}
+This relation is supported by $\bar a$. Define $\sim$ to be the transitive closure of $R$. This is an equivalence relation and it is supported by $\bar a$. It suffices to show that $\sim$ has finite equivalence classes. Define $R_n \subseteq X \times X$ to be the set pairs which can be connected by a path of length at most $n$ in the graph $(X,R)$. We know 
+\begin{align*}
+ R = R_1 \subseteq R_2 \subseteq R_3 \subseteq \cdots \subseteq X \times X
+\end{align*}
+are all subsets of $\bar a$ that are supported by $\bar a$. By~\ref{ex:finitely-many-supported-by-one-tuple} there are finitely many subsets of $X \times X$ that are supported by $\bar a$, and therefore there must be some $n$ such that $R_n$ is transitive, i.e.~$R_n = \sim$. By the assumption that $\sim_1,\sim_2$ have finite equivalence classes, the graph $(X,R)$ has finite degree, i.e.~for each $x \in X$ there are finitely many $y \in X$ such that $R(x,y)$. Therefore, the graph $(X,R_n)$ also has finite degree, which shows that $\sim$ is in $E$.
+ }
+
+z
+\mikexercise{\label{exercise:equality-atoms-have-uniform-chains}Show that the following statement is true in the equality atoms but not in $\qatom$. Let $X$ be a set equipped with an action of atom automorphisms, where every element is finitely supported. Then  $X$ is orbit-finite if and only if: (***) for every equivariant family of finitely supported subsets of $X$ which is totally ordered by inclusion, there is a maximal element. }
+{Let us begin with a counterexample for $\qatom$. The set of all atoms is orbit-finite, but it admits a chain of subsets without a maximal element, namely the family of all downward closed intervals.
+
+We now prove that the statement in the exercise is true in the equality atoms. We will show that (***) is equivalent to (**) from the solution to Exercise~\ref{ex:uniformly-supported} and therefore it is equivalent to orbit-finiteness. Actually, we show a stronger property. 
+
+\begin{lemma}\label{lem:order-on-equality-atoms}
+	Consider the equality atoms. If a set with atoms $(X,\le)$ is a total order, then some tuple of atoms supports all elements of $X$.
+\end{lemma}
+\begin{proof}
+We use the following property of the equality atoms:
+\begin{quote}
+	($\dagger$) Every finite partial automorphism of the atoms can be extended to a complete automorphism that is the identity on almost all atoms.
+\end{quote}
+The above property is not true in $\qatom$ but it true e.g.~in the random graph that will be discussed in Section~\ref{sec:homogeneous-atoms}.
+
+Let $\bar a$ be a support of both $X$ and the total order, which we denote by $\le$. We show that every element $ x \in X$ is supported by $\bar a$. Let then $\pi$ be some $\bar a$-automorphism of the atoms. We need to show that $\pi(x)=x$. Let $\bar b$ be a finite support of $x$ (eventually we will show that $x$ is supported by $\bar a$). Since supports are closed under adding elements, assume that that all atoms in $\bar a$ appear also in $\bar b$. By property ($\dagger$), there must be some automorphism of the atoms $\sigma$, which agrees with $\pi$ on $\bar b$, but which is the identity on almost all atoms. Since $\pi$ and $\sigma$ agree on the support of $x$, it follows that $\pi(x)=\sigma(x)$. Also, $\sigma$ is an $\bar a$-automorphism since it agrees with $\pi$ on $\bar b$ which contains all elements of $\bar a$.
+
+Since $X$ is supported by $\bar a$, it follows that $\sigma(x)$ belongs to $X$. Since $\le$ is a total order, $x$ and $\sigma(x)$ must be comparable under $\le$. Without loss of generality, we assume that 
+\begin{align*}
+	x \le \sigma(x).
+\end{align*}
+ Since $\le$ is supported by $\bar a$, we can apply the $\bar a$-automorphism $\sigma$ to both sides of the inequality, yielding
+\begin{align*}
+	\sigma(x) \le \sigma^2(x).
+\end{align*}
+By doing this a finite number of times, we get
+\begin{align*}
+	x \le \sigma(x) \le \cdots \le \sigma^n(x) 
+\end{align*}
+Since $\sigma$ is the identity on almost all atoms, there must be some $n$ for which $\sigma^n$ is the identity. Therefore, we see that $x \le \sigma(x) \le x$, and therefore $x=\sigma(x)$, which is the same as $\pi(x)$.
+\end{proof}}
+
+

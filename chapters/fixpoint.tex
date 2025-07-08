@@ -1,0 +1,100 @@
+\subsection*{Fixpoint logic}
+The set of reachable vertices in a graph is computed using a fixpoint algorithm; the same is true for other algorithms such as automaton emptiness or minimisation. Fixpoint algorithms can be formalised using a suitable logic. We will prove in Theorem~\ref{thm:fdp-fixpoint} that every property which can be defined in such a logic is necessarily in fixed dimension polynomial time. This result will imply that most of the computational problems described in this book are in fixed dimension polynomial time, for example automaton emptiness or converting a context-free grammar into a pushdown automaton. 
+
+\paragraph*{Fixpoint logic.} We introduce below an extension of first-order logic with a least fixpoint operator. To simplify notation, we assume relational vocabularies, i.e.~there are only relation names and no function names. 
+
+\begin{definition}[Fixpoint logic] The syntax of fixpoint logic is defined as follows, for a relational vocabulary $\tau$. 
+ \begin{enumerate}
+ \item \label{it:fixpoint-relation} If $x_1,\ldots,x_n$ are variables and $R \in \tau$ is a relation of arity $n$, then
+ \begin{align*}
+ R(x_1,\ldots,x_n)
+ \end{align*}
+ is a fixpoint formula over vocabulary $\tau$.
+ \item \label{it:fixpoint-connectives} If $\varphi,\psi$ are fixpoint formulas over vocabulary $\tau$ and $x$ is a variable, then
+ \begin{align*}
+ \varphi \land \psi \qquad \varphi \lor \psi \qquad \exists x \varphi \qquad \forall x \psi
+ \end{align*}
+ are fixpoint formulas over vocabulary $\tau$. 
+ \item \label{it:fixpoint-fixpoint} Suppose that $\varphi$ is a fixpoint formula over vocabulary $\tau$ with free variables $x_1,\ldots,x_n$ and $R \in \tau$ is an $n$-ary relation symbol. Then
+ \begin{align*}
+ \mu R(x_1,\ldots,x_n) \ \varphi 
+ \end{align*}
+ is a fixpoint formula over vocabulary $\tau - \set R$. 
+ \end{enumerate}
+\end{definition}
+Before giving the semantics of fixpoint logic, we begin with an example for our running example of graph reachability.
+\begin{myexample}
+ Let $\psi(x,y)$ be the following fixpoint formula
+ \begin{align*}
+ \mu R(x,y) \ \big(x=y \lor \exists z\ E(x,z) \land R(z,y)\big)
+ \end{align*}
+ The formula expresses that there is a path from $x$ to $y$ along the relation $E$. One way to understand this formla -- and this is the approach that we take below -- is to consider unfoldings, which are obtained by replacing each occurrence of $R$ by smaller unfoldings of the fixpoint formula. More formally, the $i$-th unfolding is defined to be 
+ \begin{align*}
+ \approxi \psi i (x,y) \quad \eqdef \quad x= y \lor \exists z\ E(x,z) \land \bigvee_{j < i} \approxi \psi j (x,y).
+ \end{align*}
+ The $i$-th unfolding says that there is a path from $x$ to $y$ of length at most $i$. Depending on the graph in question, different values of $i$ might be needed to get the semantics of the formula. In general we allow the parameter $i$ to be an ordinal number. For graph reachability, the ordinal $i=\omega$ is sufficient to cover reachability in all graphs, but for other formulas higher ordinal number might be needed. 
+\end{myexample}
+
+As in the above example, we define the semantics of fixpoint logic by converting each fixpoint formula into a formula of first-order logic which is allowed to use infinite disjunctions. Define \emph{infinitary first-order logic} in the same way as first-order logic, except that: (a) disjunctions and conjunctions can be infinite; (b) formulas are well-founded, i.e.~the each formula one can assign an ordinal number such that subformulas have smaller ordinal numbers. The semantics of such formulas are defined in the natural way, by transfinite induction. 
+
+
+Let $\varphi$ be a fixpoint formula, and let $i$ be an ordinal number. (In Lemma~\ref{lem:stabilisation-natural} below, we show that natural numbers are enough, but this will require extra reasoning, so we begin with ordinal numbers.) Define the \emph{$i$-th approximation of $\varphi$}, denoted by $\approxi \varphi i$, to be the following formula of infinitary first-order logic. For atomic formulas, the approximation does nothing, while for the connectives of first-order logic, the approximation is simply relegated to the simpler formulas:
+\begin{eqnarray*}
+ \approxi{(R(x_1,\ldots,x_n))}i &\quad \eqdef \quad& R(x_1,\ldots,x_n) \\ 
+ \approxi{(\varphi \land \psi)} i &\eqdef& \approxi \varphi i \land \approxi \psi i \\ \approxi{(\varphi \lor \psi)} i &\eqdef& \approxi \varphi i \lor \approxi \psi i \\
+ \approxi {(\exists x \varphi)} i &\eqdef& \exists x \approxi \varphi i \\ \approxi {(\forall x \varphi)} i &\eqdef& \forall x \approxi \varphi i
+\end{eqnarray*}
+The only nontrivial step is the approximation of a fixpoint formula
+\begin{align*}
+ \approxi {(\mu R(x_1,\ldots,x_k).\ \varphi)} i.
+\end{align*}
+This is obtained by taking $\approxi \varphi i$ and replacing every atomic formula $R(y_1,\ldots,y_n)$ by the infinite disjunction 
+\begin{align*}
+ \bigvee_{j < i} \approxi {(\mu R(x_1,\ldots,x_k).\ \varphi)} j (y_1,\ldots,y_n).
+\end{align*}
+The above definition is well-founded because $\approxi \varphi i$ is defined by induction on $\varphi$ while the disjunction uses smaller ordinals $j < i$. 
+(In the case of $i=0$ the disjunction is empty, and therefore equal to $\false$.) 
+
+Since fixpoint logic does not have negation, one can show that the approximation becomes more and more true as the parameter $i$ grows, i.e.
+\begin{align*}
+ \mathbb B \models \approxi \varphi i (\bar b) \quad \text{implies} \quad \mathbb B \models \approxi \varphi j (\bar b)
+\end{align*}
+holds whenever $i < j$ are ordinals and $\bar b$ is a valuation of the free variables of $\varphi$ in a structure $\mathbb B$. 
+Since there are more ordinals than values for $\bar b$, for every $\mathbb B$ there must be some ordinal $i$ such that
+\begin{align*}
+ \mathbb B \models \approxi \varphi i (\bar b) \quad \text{if and only if} \quad \mathbb B \models \approxi \varphi j (\bar b) 
+\end{align*}
+holds for all ordinals $j > i$. 
+This number $i$ is called the \emph{stabilisation number} of $\varphi$ in $\mathbb B$. The semantics of $\varphi$ in $\mathbb B$ is defined to be the set of tuples which satisfy $\approxi \varphi i$ in $\mathbb B$, where $i$ is chosen to be the stabilisation number. Note that the stabilisation number depends both on the formula and the structure. 
+
+In general, the stabilisation number is an ordinal that depends on the structure $\mathbb B$. In some cases one can give upper bounds on the ordinal, e.g.~the formula for graph reachability always gives a finite ordinal number. In other cases, there are no such bounds. For example, the formula\footnote{Formally speaking, the formula is illegal because it uses implication, which would require talking about absence of edges if we were to replace implication by a disjunction. Therefore, if we want to see the formula as a fixpoint formula, we should think of it as being evaluated in graphs where there is a predicate for \emph{absence} of edges.}
+\begin{align*}
+ \mu R(x) \ \big(\forall y\ E(x,y) \Rightarrow R(y)\big),
+\end{align*}
+which says that there are no infinite paths starting in $x$, might require ordinals bigger than $\omega$ to satbilise (in fact, for every ordinal one can give a graph where that ordinal is needed for stabilisation). 
+
+\begin{lemma}\label{lem:stabilisation-natural}
+ For every formula of fixpoint logic and every orbit-finite structure, the stabilisation number is a natural number.
+\end{lemma}
+\begin{proof} 
+ Suppose that $\bar a$ is a tuple of atoms which supports a structure $\mathbb B$, i.e.~it supports the universe and all of the relations. The set of tuples which satisfies the $i$-th approximation of a fixpoint formula in $\mathbb B$ is supported by $\bar a$, and therefore at each finite step of approximation, a whole $\bar a$-orbit is added to the semantics. It follows that the stabilisation number is at most 
+\begin{align}
+ \text{number of $\bar a$-orbits in $B^k$}
+\end{align}
+where $B$ is the universe of the structure, and $k$ is the maximal arity of a fixpoint (the arity of a fixpoint is defined to be the arity of the relation $R$ which is bound by the fixpoint) used in the formula.
+\end{proof}
+
+
+
+
+\begin{theorem}\label{thm:fdp-fixpoint}
+ Let $\varphi(x_1,\ldots,x_n)$ be a formula of least fixpoint first-order logic, whose vocabulary contains only a binary membership predicate $\in$. The following function is fixed dimension polynomial time:
+ \begin{itemize}
+ \item {\bf Input.} A hereditarily orbit-finite set $A$;
+ \item {\bf Output.} The interpretation of $\varphi$ in the structure $(A_*, \in)$.
+ \end{itemize}
+\end{theorem}
+\begin{proof}
+ By induction on the size of a $\psi$ of fixpoint logic we show 
+ Let $\psi(x_1,\ldots,x_n,Y_1,\ldots,Y_n)$ 
+\end{proof}

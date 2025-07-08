@@ -1,0 +1,146 @@
+\mikexercise{\label{ex:support-depend-only}
+Show that a tuple $\bar a$ supports $x$ if and only if 
+\begin{align*}
+	\pi(\bar a)=\sigma(\bar a) \quad \text{implies} \quad \pi(x)=\sigma(x) \qquad \text{for every atom automorphisms $\pi,\sigma$.}
+\end{align*}
+}{The right-to-left implication is immediate. For the left-to-right implication, assume that $\bar a$ is a tuple of atoms that supports $x$ and that $\pi,\sigma$ are atom automorphisms that satisfy $\pi(\bar a) = \sigma(\bar b)$. In particular, $\pi^{-1} \circ \sigma$ is an atom automorphism that fixes $\bar a$, and therefore
+\begin{align*}
+	(\pi^{-1} \circ \sigma)(x) = x
+\end{align*}
+Applying $\pi$ to both sides of the above equality we get the described
+\begin{align*}
+	\sigma(x) = \pi(x).
+\end{align*}
+} 
+
+
+\mikexercise{\label{ex:equivariant-binary-relations-on-equality-atoms}Find all equivariant binary relations on $\atoms$.}{There are only four equivariant (having empty support) binary relations on atoms, namely the empty and full relations, the equality relation, and the disequality relation:
+	\begin{align*}
+		\emptyset \qquad \atoms \times \atoms \qquad \set{(\atoma,\atoma) : \atoma \in \atoms} \qquad \set{(\atoma,\atomb) : \atoma \neq \atomb \in \atoms}.
+	\end{align*}
+	It suffices to show that if an equivariant relation contains some equality pair $(\atoma,\atoma)$ then it contains all other equality pairs as well, and if it contains some disequality pair $(\atoma,\atomb)$ with $\atoma \neq \atomb$, then it contains all other disequality pairs as well. The reason is that every equality pair can be mapped to every other equality pair by an automorphism of the equality atoms, likewise for disequality pairs. 	
+	The reader will easily generalise this argument to show that an $n$-ary relation is equivariant if and only if it can be defined by a quantifier-free formula that uses only equality.}
+
+
+
+
+    \mikexercise{\label{ex:commuting-equivariance-diagram}Show that a function $f: X \to Y$ is equivariant if and only if the following diagram commutes for atom permutation $\pi$:
+    \begin{align*}
+        \xymatrix{ X \ar[r]^f \ar[d]_\pi & Y \ar[d]^\pi \\ X \ar[r]_f & Y} 
+    \end{align*} \ 
+    }{By unravelling the definition, the commuting diagram says that
+        \begin{align*}
+            (\pi(x), \pi (f(x))) \in f \qquad \mbox{for every $x \in X$}
+        \end{align*}
+        which is equivalent to
+        \begin{align*}
+            (x, f(x)) \in \pi^{-1}(f) \qquad \mbox{for every $x \in X$}.
+        \end{align*}
+        Since applying an automorphism, such as $\pi^{-1}$, to the function $f$ results in a function, the above is equivalent to saying that the functions $f$ and $\pi^{-1}(f)$ are identical, for every atom permutation $\pi$. This is the same thing as saying that $f$ is equivariant
+    
+    }
+
+    \mikexercise{Consider an enumeration $a_1,a_2,\ldots$ of some countably infinite set $A$. Define the distance between two permutations of $A$ to be $1/n$ where $a_n$ is the first argument where the permutations disagree. Let $X$ be a countably infinite set equipped with an action of permutations of the equality atoms. Show that all elements of $X$ are finitely supported if and only if 
+\begin{align*}
+ \underbrace{\pi}_{\text{permutation of $\atoms$}} \qquad \mapsto \qquad \underbrace{(x \mapsto \pi(x))}_{\text{permutation of $X$}}
+\end{align*}
+is a continuous mapping, and that this continuity does not depend on the choice of enumerations of $\atoms$ or $X$.
+ }{This exercise might be connected to~\cite[Section III.9]{maclanemoerdijk}, but I'm not sure.
+ 
+ We first observe that the choice of enumeration is not important. This is because the topology on bijections does not depend on the enumerations. In other words, the notion of convergent sequence (of bijections) does not depend on the enumeration: a sequence of bijections is convergent if and only if it is pointwise ultimately constant, i.e.~for every argument, all but finitely many bijections give the same result.
+
+ The equivalence in the exercise says that the following conditions are equivalent:
+ \begin{enumerate}
+ 	\item if a sequence of bijections $\pi_1,\pi_2,\ldots$ of atom automorphisms is pointwise ultimately constant, then the sequence of bijections $f_1,f_2,\ldots$ on $X$ defined by $f_n(x) = \pi_n(x)$ is also pointwise ultimately constant;
+ 	\item every element of $X$ is finitely supported.
+ \end{enumerate}
+ For the bottom up implication, suppose that $\pi_1,\pi_2,\ldots$ is pointwise ultimately constant. To show that $f_1,f_2,\ldots$ is pointwise ultimately constant, take some element $x \in X$. By assumption 2, there is some finite atom tuple $\bar a$ that supports $x$. By assumption on $\pi_1,\pi_2,\ldots$ being pointwise ultimately constant, it follows that all but finitely many of the automorphisms $\pi_1,\pi_2,\ldots$ give the same result on the tuple $\bar a$. This implies that all but finitely many of the functions $f_1,f_2,\ldots$ give the same result on $x$.
+ 
+For the top-down implication, suppose that some $x \in X$ does not have finite support. Let $a_1,a_2,\ldots$ be an enumeration of $\atoms$. Since $x$ does not have finite support, it follows that for every $n \in \set{1,2,\ldots}$ there is some atom automorphism $\pi_n$ which is the identity on $a_1,a_2,\ldots,a_n$ but is not the identity on $x$. Consider the sequence
+\begin{align*}
+ \pi_1,\mathrm{id}, \pi_2, \mathrm{id}, \pi_3, \mathrm{id}, \ldots.
+\end{align*}
+This sequence is pointwise ultimately constant (its limit is the identity). However, if we apply the atom automorphisms from the sequence to $x$, then on even numbered positions we will get $x$, and on even numbered positions we will not get $x$.
+}
+
+
+\mikexercise{Show a counterexample, in the equality atoms, to the converse implication from Exercise~\ref{ex:finitely-many-supported-by-one-tuple}. In other words, show a set which is not orbit-finite, but where every tuple of atoms supports finitely many elements.}{Consider the set of all non-repeating tuples of atoms. Since tuples can have arbitrarily large dimensions, and atom automorphisms preserve dimensions of tuples, the set is not orbit-finite. Nevertheless, a given tuple of atoms can only support finitely many tuples, namely those tuples that are contained in it (and possibly reordered).}
+
+
+\mikexercise{\label{ex:uniformise}Assume the equality atoms. Let $R \subseteq \atoms^{n+k}$ be a finitely supported relation which is total in the following sense: for every $\bar a \in \atoms^n$ there is some $\bar b \in \atoms^k$ such that $R(\bar a \bar b)$. Show that there is a finitely supported function $f: \atoms^n \to \atoms^k$ whose graph is contained in $R$. }{
+	We begin with the following observation.
+\begin{claim}
+There exists a tuple of atoms $\bar c$ which supports $R$ and such that for every 
+$\bar a \in \atoms^k$ there exists a tuple $\bar b \in \atoms^k$ such that $R(\bar a \bar b)$ and every atom in $\bar b$ appears in $\bar a \bar c$.
+\end{claim}
+\begin{proof}
+Let $\bar d$ be some support of $R$. 
+	Choose $\bar c$ to be $\bar d$ plus $2k$ fresh distinct atoms. The tuple $\bar c$ is designed so that for every $\bar a \in \atoms^n$ there are at least $k$ atoms in $\bar c$ which are not in $\bar d$ and do not appear in $\bar a$. By the assumption that $\bar d$ supports $R$ and because we are in the equality atoms, membership $\bar a \bar b \in R$ depends only on the equality type of the tuple $\bar a \bar b \bar d$. Hence, one can always choose $\bar b$ so that those coordinates which are not from $\bar a \bar d$ are from $\bar c$.
+\end{proof}
+
+Let $\bar c$ be as in the above claim. Take some $\bar a \in \atoms^n$ and apply the above lemma, yielding a tuple $\bar b \in\atoms^k$. Define 
+\begin{align*}
+ f_{\bar a} = \set{\pi(\bar a, \bar b) : \mbox{$\pi$ is a $\bar c$-automorphism}}.
+\end{align*}
+The above relation is contained in $R$, and it is a partial function by the assumption that every atom in $\bar b$ appears in $\bar a \bar c$. The domain of $f_{\bar a}$ is the $\bar c$-orbit of $\bar a$. Since $\atoms^n$ has finitely many $\bar c$-orbits, we can take a finite union of partial functions of the form $f_{\bar a}$ and get a total function.
+}
+
+
+
+
+
+
+
+
+\mikexercise{\label{exercise:orbit-finite-has-no-contraction}
+	Show that in the equality atoms (actually, under any oligomorphic atoms), every orbit-finite is Dedekind finite\footnote{This exercise is inspired by~\cite{andreas-dedekind}.}, i.e.~does not admit a finitely supported bijection with a proper subset of itself. }
+{	Suppose that $X$ is an orbit-finite set, and $f : X \to X$ is an injective function. It is not difficult to see that if $\bar a$ is a support of $f$, then $f$ maps injectively $\bar a$-orbits to $\bar a$-orbits. In particular, since $X$ has finitely many $\bar a$-orbits, then the image of $f$ must have the same number of $\bar a$-orbits, and is therefore the whole set $X$. }
+
+
+
+
+
+\mikexercise{\label{exercise:orbit-infinite-set-with-contractions} Show that in the equality atoms, there is a set that is not orbit-finite, but Dedekind finite in the sense from Exercise~\ref{exercise:orbit-finite-has-no-contraction}.}
+{	Before giving the solution, we remark that Dedekind finiteness can be used to characterise orbit-finite sets, but one needs to use the (finitely supported) powerset. The following theorem, which is given here without proof, was shown by Andreas Blass.
+\begin{theorem}\label{thm:}
+	For every choice of atoms, not necessarily oligomorphic ones, a set is all-support orbit-finite if and only if its powerset is Dedekind finite.
+\end{theorem}
+
+Let us now solve the exercise.
+Consider the equality atoms and the set 
+	\begin{align*}
+		\atoms^{(*)} \quad \eqdef \quad \bigcup_n \atoms^{(n)},
+	\end{align*}
+	i.e.~the set of non-repeating tuples of arbitrary lengths. This set is not orbit-finite, yet we claim that it is Dedekind finite, i.e.~that every finitely supported injection
+	\begin{align*}
+		f : \atoms^{(*)} \to \atoms^{(*)}
+	\end{align*}
+	is a bijection. Suppose that $f$ is supported by a finite tuple of atoms $\bar a$. 	
+For a tuple in $\atoms^{(*)}$ define its $\bar a$-dimension to be the number of atoms in the tuple, not counting the atoms from $\bar a$. 
+	 All tuples in a single $\bar a$-orbit have the same $\bar a$-dimension, and therefore it makes sense to talk about the $\bar a$-dimension of an $\bar a$-orbit.
+\begin{claim}
+	For every $\bar a$-orbit $Z$, the image $f(Z)$ is a $\bar a$-orbit with the same $\bar a$-dimension.
+\end{claim}
+\begin{proof}
+ % 	The image of $f$ is $S$-supported, and therefore there must be some $S$-orbit $Z$ missing from the image of $f$.	
+% It is not difficult to see that there are finitely many $S$-orbits in $\atoms^{(*)}$ which have the same $S$-dimension as $Z$, call them
+% 	\begin{align*}
+% 		Z_1,\ldots,Z_k \qquad Z=Z_1.
+% 	\end{align*}
+The image under $f$ of an $\bar a$-orbit in $\atoms^{(*)}$ is also an $\bar a$-orbit.
+	The $\bar a$-dimension cannot increase when applying $f$, since the function is $\bar a$-supported, but it cannot decrease as well (since the inverse of $f$ is also $\bar a$-supported). 
+\end{proof}
+
+	 The key property is that for every $n\in \Nat$, the set $\atoms^{(*)}$ has finitely many $\bar a$-orbits of $\bar a$-dimension $n$. It follows that for every $n$, $f$ is a bijection between $\bar a$-orbits of $\bar a$-dimension $n$, and therefore $f$ is a bijection.}
+
+
+\mikexercise{Call a family of sets \emph{directed} if every two sets from the family are included in some set from the family. Consider the equality atoms. Show that a set with atoms $X$ is finite (in the usual sense) if and only if it satisfies: for every set with atoms $\Xx \subseteq \powerset X$ which is directed, there is a maximal element in $\Xx$. }{The left-to-right implication is clear. For the converse implication, if $X$ is not finite, then the family of finite subsets of $X$ is directed but has no maximal elements.}
+
+\mikexercise{\label{ex:uniformly-supported}Call a family $\Xx$ of sets \emph{uniformly supported\footnote{This exercise is inspired by~\cite[Section 5.5]{PittsAM:nomsns}.}} if there is some tuple of atoms which supports all elements of $\Xx$. Assume that the atoms are oligomorphic. Show that a set $X$ is orbit-finite if and only if: (*) there is a maximal element in every set of atoms $\Xx \subseteq \powerset X$ which is directed and uniformly supported.}{
+Let us introduce a further condition: (**) there is a maximal element in every set of atoms $\Xx \subseteq \powerset X$ which is a chain (i.e.~totally ordered by inclusion) and uniformly supported. We will show that orbit-finiteness, (*) and (**) are all equivalent. 	The implication from (*) to (**) is immediate. 
+	For the implication from (**) to orbit-finiteness of $X$, choose some support $\bar a$ of $X$. If $X$ had infinitely many $\bar a$-orbits,
+	 then we could construct a uniformly supported infinite chain without a maximal element, by successively adding these orbits.
+	For the implication from orbit-finiteness to (*), suppose that $\Xx$ is a uniformly supported directed family of subsets of an orbit-finite set $X$. Let $\bar a$ a tuple of atoms that supports every set in $\Xx$. The union $\bigcup \Xx$ is a finitely supported subset of $X$, and therefore must be orbit-finite by oligomorphism. The union partitions into finitely many $\bar a$-orbits, call them $X_1,\ldots,X_n$. Every set from $\Xx$ is simply a union of some $\bar a$-orbits $X_1,\ldots,X_n$, and therefore $\Xx$ must contain $X_1 \cup \cdots \cup X_n$, a maximal element.}
+	
+	
+    \mikexercise{\label{ex:konig} Show the following variant of K\"onig's lemma. If a tree has orbit-finite branching and arbitrarily long branches, then it has an infinite branch.}{Same proof as for the standard lemma, plus this observation: the depth of a subtree is invariant under applying atom automorphisms.}

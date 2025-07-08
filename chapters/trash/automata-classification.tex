@@ -1,0 +1,56 @@
+\section{Most models of register automata are inequivalent}
+The goal of this section is to collect exercises which paint a depressing picture: with one exception, the only inclusions between models of register automata are the ones that trivially follow from the definitions. To have a richer landscape, we also consider the 
+two-way variant of register automata, where the head of the automaton can move both ways, with the input being extended by markers on both sides\footnote{An in-depth study of various kinds of register automata can be found in~\cite{DBLP:journals/tocl/NevenSV04}, including undecidability of universality of nondeterministic one-way automata (Theorem~\ref{thm:register-undecidable-universality}).
+The non-equivalence results summarised in Figure~\ref{fig:sep-langs} are originally found in~\cite{DBLP:journals/tcs/KaminskiF94,DBLP:journals/tocl/NevenSV04} and an unpublished Master's thesis in Polish~\cite{wysocki}. For a survey on automata and logic for infinite alphabets, see also~\cite{DBLP:conf/csl/Segoufin06}.}. For the purpose of this section, we assume that all models allow $\varepsilon$-transitions.
+
+
+\mikexercise{\label{ex:alt-guessing}Find a language of data words that is recognised by an alternating register automaton with guessing, but not by any alternating register automaton without guessing.}{This solution comes from the Master's thesis of Tomasz Wysocki~\cite{wysocki}. Consider the following language over $\atoms$:
+\begin{align*}
+ \set{ a^n a_1 \cdots a_n : \text{$n \in \Nat$ and $a,a_1,\ldots,a_n \in \atoms$ are all distinct}}
+\end{align*}
+
+Let us first argue that an alternating register automaton without guessing cannot recognise the language. After reading a prefix of the form $a^n$, the bag can only have $a$ in its registers. Since there are finitely many possibilities for such bags, there must be some $n < m$ such that the set of reachable bags after reading $a^n$ is the same as the set of reachable bags after reading $a^m$. Therefore, if the automaton accepts $a^n a_1 \cdots a_n$, then it also accepts $a^m a_1 \cdots a_n$.
+
+Let us recognise this language with guessing. An alternating automaton can easily check that a word is of the form $a^n a_1 \cdots a_m$ for distinct data values $a,a_1,\ldots,a_m$. The challenge is to check that $n=m$. Since languages recognised by alternating automata are closed under intersection, we assume that the input is of the form $a^n a_1 \cdots a_m$.
+
+We only present the main idea using pictures.
+ The automaton has three registers. A main thread of the automaton will read the first $n$ letters, and after reading the $i$-th letter it will be in a configuration with the initial state and register values $a, a_{i-1},a_i$ as in the following picture (the orange boxes represent these configurations, with the first two boxes being corner cases):
+ \mypic{8}
+The contents of the registers are above are guessed, but they are verified using alternation: the initial state is universal, and in each step it spawns off a parallel thread that checks if the current configuration corresponds to two consecutive data values in the future, as in this picture:
+\mypic{9}
+}
+
+\mikexercise{Show that every two-way nondeterministic register automaton can be simulated by an alternating register automaton (with guessing and $\varepsilon$-transitions).}{This solution comes from the Master's thesis of Tomasz Wysocki~\cite{wysocki}. Consider a two-way nondeterministic automaton $\Aa$, where the locations are $\locations$ and the registers are $R$. For two states of this automaton 
+\begin{align*}
+ p,q \in \locations \times \text{register valuations}
+\end{align*}
+we say that a word admits a $(p,q)$-loop if there is a run of the automaton which begins in state $p$, ends in state $q$, and never tries to move to the left beyond the first position of the word. Here is the picture, note how the run is allowed to revisit the first position or the end delimiter $\dashv$ but it is not allowed to see the start delimiter $\vdash$.
+\mypic{10}
+The crucial point is to recognise loops: we will sketch that there is an alternating register automaton, such that if is initialised in a state that stores both $p$ and $q$, then it accepts if and only if there is a $(p,q)$-loop. Once loops are recognised, it is not difficult to simulate the two-way automaton (one needs to deal with the initial state and visiting the start marker $\vdash$.) To recognise loops, we observe that a data word admits a $(p,q)$-loop if and only if one of the following conditions holds:
+\begin{itemize}
+	\item There is some intermediate state $r$ such that the word admits a $(p,r)$-loop and an $(r,p)$-loop, as in this picture.
+\mypic{12}
+ To check this, the simulating alternating register automaton does an $\epsilon$-transition where it guesses $r$ and temporarily stores it in the registers. Next it universally branches by into threads for $(p,r)$ and $(r,q)$. Guessing is crucial because $r$ might contain data values from the future of the word, and $\epsilon$-transitions are used because the two-way automaton might revisit the first position an unbounded number of times.
+	\item The loop does not revisit the first position, as in the following picture:
+		 \mypic{11}
+ The simulating alternating register automaton guesses the two configurations $p',q'$, subject to the transition requirement, and advances to the next position.
+\end{itemize}
+}
+
+
+
+We now present a series of exercises with a more systematic study of the following models of automata: one-way deterministic and nondeterministic, two-way deterministic and nondeterministic, as well as one-way alternating with or without guessing. We assume $\varepsilon$-transitions are allowed in all models. The picture with these six models is in Figure~\ref{fig:sep-langs}. The picture shows the obvious containments which follow from the syntax as well as the less obvious containment from Exercise~\ref{ex:alt-guessing}. In the solutions to the following exercises, one is allowed to give answers conditional on open problems in complexity theory, such as~{\sc p = np}.
+\begin{figure}[hbt]
+\mypic{19} 
+ \caption{\label{fig:sep-langs} Six classes of register automata and their combinations. Point 1 is the language: ``last letter appears only once'', while point 2 is the language ``all letters are distinct''. The remaining points 3, 4, 5 are Exercises~\ref{ex:sep1}-\ref{ex:sep3}, while Exercise~\ref{ex:sep-all} sums up the results by saying that all combinations are possible.}
+\end{figure}
+
+
+
+\mikexercise{\label{ex:sep3}Show a language that witnesses point 5 in Figure~\ref{fig:sep-langs}, possibly using conjectures about complexity classes being distinct. }{We want a language that is one-way alternating without guessing but which is not two-way nondeterministic. We use the same type of graph problem as in Exercise~\ref{ex:sep2}, except that instead of graph reachability we use alternating graph reachability. Since alternating graph reachability is complete for polynomial time, the language cannot be done by a nondeterministic two-way automaton, since otherwise nondeterministic {\sc LogSpace} would be equal to polynomial time. }
+
+\mikexercise{\label{ex:sep-all} Show that all coloured areas in Figure~\ref{fig:sep-langs} contain languages.}{Suppose that 
+$L$ is a language that can be done by model A but not B, and $K$ is a language that can be done by model A but not C. Define $L \& K$ to be the concatenation of $L$ and $K$ separated by a fresh symbol. As long as A, B, C are one of the six models in the figure, then the language $L \& K$ can be done by model A but neither by B or C. Using this idea, we can find examples for all coloured areas as in the following picture:
+\mypic{20}}
+
+

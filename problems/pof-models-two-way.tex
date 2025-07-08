@@ -1,0 +1,101 @@
+
+\mikexercise{\label{pof-two-way-automata-atom-less}
+Show that in the atom-less case, i.e.~when the states and input alphabet have atom dimension zero, this model recognises exactly the regular languages.
+}{
+    This is a classical automata construction. 
+}
+
+
+\mikexercise{\label{pof-two-way-det}
+Suppose that atoms are names, which can be written using the Latin alphabet. 
+The \emph{atomless representation} of an element in a pof set is the string over the finite  alphabet, which is obtained from the Latin alphabet by adding letters for brackets and commas, that is obtained by writing out each atom as a string. For example the triple 
+\begin{align*}
+(\john,\eve,\john) \in \atoms^3
+\end{align*}
+ has an  atomless representation of 15 letters, where the first letter is an opening bracket and the second letter is J. The atomless representation extends to words over a pof alphabet.
+    Show that for every two-way pof automaton, the set 
+    \begin{align*}
+    \setbuild{\text{atomless representation of $w$}}{the automaton accepts $w$}
+    \end{align*}
+    is in the complexity class L, i.e.~deterministic logarithmic space.
+}
+{
+    The configuration of the automaton of a pointer to the head position, and pointers to the atoms stored in the state. (The atoms in the state must originate from the input string, by the arguments from  Problem~\ref{pof-only-letters-used}.) All of this can be stored in logarithmic space, since the number of pointers is constant.
+}
+
+\mikexercise{\label{pof-two-way-nondet}Consider the nondeterministic variant of the previous exercise. Show that the language of atomless representations is in NL, i.e.~nondeterministic logarithmic space, and it can be complete for that class\footnote{A corollary of Exercises~\ref{pof-two-way-det} and~\ref{pof-two-way-nondet} is that 
+\begin{align*}
+\text{pof two-way automata determinise} \quad \Rightarrow \quad \text{NL} = \text{L}.
+\end{align*}
+It is likely that the assumption is false, but no proof is known as of this time. }.}
+{
+    The idea is to simulate all possible runs of the automaton, and check if any of them accepts. This can be done in polynomial time, since the number of possible runs is polynomial in the input length.
+}
+
+\mikexercise{Find a deterministic two-way register automaton which recognises the language
+\begin{align*}
+ \set{a_1 \cdots a_n : \mbox{$a_1,\ldots,a_n$ are distinct and $n$ is a prime number}}.
+\end{align*}
+
+}{If all positions have distinct atoms, then storing the atom from position $i$ in the register can be seen as storing a pointer to position $i$. The automaton can increment such pointers, test them for equality, and it can move its head to a pointer. Using this one can implement simple arithmetic on pointers.}
+
+
+
+
+\mikexercise{Consider nondeterministic two-way register automaton $\Aa$ with one register and labels $\Sigma$. Show that the following language is regular (in the usual sense, without data values):
+\begin{eqnarray*}
+ \{ b_1 \cdots b_n \in \Sigma^* &:& \mbox{$\Aa$ accepts $(b_1,a_1)\cdots(b_n,a_n)$}\\ &&\mbox{for some distinct atoms $a_1,\ldots,a_n \in \atoms$}\}.
+\end{eqnarray*}
+
+}{ It will be easier to work with a slightly more general model, called \emph{two-way automata with regular lookaround}, where the transitions can ask about regular queries about the sequence of labels to the left (or to the right) of the head. For example, the automaton could empty its register conditionally on the property ``the number of $b$ labels to the left of the head is even''. From now on, when talking about two-way register automata we assume it has one register, it is nondeterministic, but it is allowed to use regular lookaround. 
+
+
+A configuration of a two-way register automaton is called \emph{local} if the register is either empty or its content is equal to the data value under the head. Call a two-way register automaton local if every change of registers is done only in local configurations (i.e.~the automaton can either load the current data value into the register assuming the register was previously empty, or it can empty the register assuming that the register previously stored the data value under the head). One first shows that every two-way 
+register automaton can be made local without affecting the expressive power on data words with pairwise distinct data values. For this, the automaton nondeterministically guesses the last local configuration before emptying the register and does the emptying at that moment.
+
+It remains to prove the exercise for two-way register automata that are local. For a data word
+\begin{align*}
+ \frac {\color {red} b_1}{ \color{blue}a_1} \frac {\color {red} b_2}{ \color{blue}a_2} \cdots \frac {\color {red} b_n}{ \color{blue}a_n} \qquad {\color{red} b_1,\ldots,b_n} \in \Sigma \quad {\color{blue} a_1,\ldots,a_n} \in \atoms 
+\end{align*}
+and locations $\ell,\ell'$, we say that the automaton admits a $(\ell,\ell')$-loop in position $i \in \set{1,\ldots,n}$ if it can start in position $i$ in the local configuration $(\ell,{\color {blue} a_i})$ and then do a finite number of transitions that do not change the register and lead back to position $i$ in the local configuration $(\ell',{\color {blue} a_i})$. It is not difficult to see that the existence of a $(\ell,\ell')$-loop depends only on the label under the head and regular properties of the labels to the left and right of the head. Therefore, the instead of doing a $(\ell,\ell')$-loop, the automaton could simply do an $\epsilon$-transition conditional on some regular lookaround. After eliminating $(\ell,\ell')$-loops this way, we are left with a two-way automaton which has the property that whenever it loads something into a register, it empties the register in the next step. For such automata, the register is superfluous, and we are left with a two-way automaton without registers, which recognise only regular properties of the labels.
+}
+
+
+
+
+\mikexercise{\label{pof-two-way-alternating}Show that for every nondeterministic two-way pof automaton, there is an equivalent (one-way) alternating pof automaton with $\varepsilon$-transitions.  }{
+This solution is based in~\cite[Section 3.3]{wysockiAutomatyAlternujaceRejestrami2013}.
+For states $p$ and $q$ of the two-way automaton, define a $(p,q)$-loop to be a run as in the following picture:
+\mypic{6}
+The alternating automaton has a state for every pair $(p,q)$, which will accept words that admit a $(p,q)$-loop. 
+A $(p,q)$-loop might decompose into two loops: a $(p,r)$-loop followed by a $(r,q)$-loop.  This will be implemented by states that are triples $(p,q,r)$, and $\varepsilon$-transitions of the form:
+\begin{align*}
+(p,q) \stackrel \varepsilon \to (p,q,r) \\
+(p,r,q) \stackrel \varepsilon \to (p,r) \\
+(p,r,q) \stackrel \varepsilon \to (r,q).
+\end{align*}
+The first transition is chosen existentially, which corresponds to nondeterministically making a choice in the run, and therefore  the state $(p,q)$ is existential. The  two other transitions are chosen universally, because the $(p,r)$-loop and the $(r,q)$-loop both need to be enabled. Therefore, the triple states $(p,r,q)$ are universal. 
+
+So far, we have discussed how a loop can decompose into two simpler loops. There are also loops that do not decompose this way; in such a loop we begin with a transition that moves the head one step to the right, then we have a loop, and then we have a transition that moves the head one step to the left. The corresponding transitions in the alternating automaton are left to the reader; they are no longer $\varepsilon$-transitions.
+}
+
+
+\mikexercise{\label{ex:sep1}Show a language that is two-way deterministic, also one-way nondeterministic, but not one-way alternating without guessing. }{This language is:
+\begin{align*}
+ \set{w \in \atoms^* : \mbox{some letter appears exactly once}}.
+\end{align*}
+The language is clearly recognised by a one-way nondeterministic automaton, by guessing the letter which appears exactly once. Let us now find a deterministic two-way automaton which does this language. The automaton implements the following procedure:
+
+\begin{enumerate}
+	\item Put the head on the first letter.
+	\item Check if the letter under the head appears exactly once. If yes, accept immediately, otherwise return the head to its previous position (this can be done by a subroutine which first searches to the left for a duplicate, then searches to the right for a duplicate, and returns after finding the first duplicate).
+	\item If the head is on the last position, reject, otherwise move the head one step to the right and goto 2.
+\end{enumerate}
+It remains to show that the language cannot be done by an alternating one-way automaton without guessing. This, honestly speaking, is just a conjecture.}
+\mikexercise{\label{ex:sep2}Show a language that is one-way nondeterministic and one-way alternating without guessing, but not two-way deterministic, possibly assuming conjectures about complexity classes being distinct. }{For this, consider the set of even length sequences of atoms
+\begin{align*}
+ a_1b_1 \cdots a_n b_n \in \atoms^*
+\end{align*}
+such that there is a path from $1$ to $n$ in the graph whose vertices are $\set{1,\ldots,n}$ and where the edge relation contains all pairs $i \to j$ such that $i < j$ and $b_i=a_j$. This language is clearly seen to be recognised by a one-way nondeterministic register automaton without guessing (and therefore also by an alternating one). However, if the language were recognised by a two-way deterministic register automaton, then the language would be in deterministic {\sc LogSpace}. However, every instance of directed graph reachability can be encoded as a membership question in this language, and therefore we would get that directed graph reachability is in deterministic {\sc LogSpace}, thus implying that {\sc LogSpace} can be determinised.
+ }
+

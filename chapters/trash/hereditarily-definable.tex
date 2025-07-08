@@ -1,0 +1,80 @@
+\section{Hereditarily orbit-finite sets}
+
+
+
+\paragraph*{Algorithms on hereditarily definable sets.}
+ We say that a logical structure is \emph{effective} if one can represent its universe (e.g.~there exists an enumeration of its universe) so that one can decide, given a formula of first-order logic and a valuation of its variables (using the given representation), if the formula is true. 
+ 
+ \begin{ourexample}
+ 	Presburger arithmetic, i.e.~the natural numbers equipped with addition, is an effective structure which is not oligomorphic.
+ \end{ourexample}
+
+
+ To represent a hereditarily definable set, we need some way of representing the valuation of free variables. The assumption that the atoms are effective gives a way of representing the valuation, and therefore it makes sense to talk about algorithms which input or output hereditarily definable sets.
+ 
+ 
+ 
+ \begin{theorem}\label{thm:atom-toolkit}[Representation of hereditarily orbit-finite sets]
+ 	Suppose that the atoms are effective, but not necessarily oligomorphic. Then there are algorithms implementing the following operations:
+ 		\begin{enumerate}
+ 			\item \label{atom-toolikt-singleton} {\bf Singleton.} Given $X$, which is a hereditarily definable set, compute $\set{X}$;
+ 			\item \label{atom-toolikt-union} {\bf Binary union.} Given hereditarily definable sets $X, Y$, compute $X \cup Y$;
+			\item \label{atom-toolkit-big-union} {\bf General union. } Given a hereditarily definable set, compute $\bigcup X$.
+ 			\item \label{atom-toolikt-support} {\bf Support.} Given a hereditarily definable set $X$, compute some finite support; 
+ 			% \item \label{atom-toolikt-intersecting orbits} {\bf Intersecting orbits.} Given a hereditarily orbit-finite set $X$ and a finite tuple $\bar a$ of atoms, produce all hereditarily orbit-finite sets that intersect $X$ and are $\bar a$-orbits; \footnote{There are finitely many $\bar a$-orbits that intersect $X$, so they can be given as list of sets.}
+ 			\item \label{atom-toolikt-element} {\bf Choice.} Given a hereditarily definable set, produce an element or say it has no elements;
+ 				\item \label{atom-toolikt-equality} {\bf Inclusion.} Given hereditarily orbit-finite sets $X,Y$, decide if $X \subseteq Y$.
+ 		\end{enumerate} 
+ \end{theorem}
+ 
+ \begin{lemma}\label{lem:}
+ 	For every expression $\alpha$ one can compute an expression $\cup \alpha$ with the same free variables such that 
+	\begin{align*}
+		\cup \alpha(\bar a) = \bigcup_{x \in \alpha(\bar a)} x \qquad \mbox{for every $\bar a$}
+	\end{align*}
+ \end{lemma}
+ \begin{proof}
+	 The proof is unfolding the definition of set union.
+The interesting case is when $\alpha$ is a set expression\begin{align*}
+ \alpha = \set{\beta(\bar x \bar y) : \mbox{ for $\bar y$ such that }\varphi(\bar x \bar y) }.
+\end{align*}
+Suppose that $\beta$ is a finite union of several expressions. Those expressions in the union that are atoms do not contribute anything, so we may assume without loss of generality that $\beta$ is a finite union
+\begin{align*}
+	\bigcup_{i \in I} \set{\gamma_{i}(\bar x \bar y \bar z_i) : \mbox{ for $\bar z_i$ such that }\varphi_{i}(\bar x \bar y \bar z_i) }.
+\end{align*}
+Therefore, the union $\bigcup \alpha(\bar a)$ is equal to
+\begin{align*}
+	\bigcup_{i \in I} \set{\gamma_{i}(\bar x \bar y \bar z_i) : \mbox{ for $\bar y \bar z_i$ such that }\varphi_{i}(\bar x \bar y \bar z_i) \land \varphi(\bar x \bar y)}.
+\end{align*} 	
+ \end{proof}
+ 
+ 
+ \begin{fact}\label{fact:expressions-to-fo}
+ 	Let $\alpha,\beta$ be expressions whose free variables are included in $\bar x$. One can compute a formula of first-order logic
+	 which selects exactly those valuations $\bar a$ which make the inclusion $\alpha(\bar a) \subseteq \beta(\bar a)$ hold. Likewise for membership $\in$.
+ \end{fact}
+ \begin{proof}
+ 	The proof is done in parallel for the operations $\in$ and $\subseteq$, by induction on the combined size of the expressions. Consider the following cases, depending on the operation.
+
+ 	\begin{itemize}
+ 		\item[$\subseteq$] If the left side is an atom, then the inclusion formula is false, since an atom is not a subset of anything. If the left side is a finite union, then all of its components must be a subset of the right side, and therefore a finite conjunction of inductively obtained formulas is used. The remaining case is when the left side is a set expression
+ 		\begin{align*}
+ 			\set{\alpha(\bar x \bar y) : \mbox{ for $\bar y$ such that }\tau(\bar x\bar y) }.
+ 		\end{align*}
+ In this case inclusion boils down to membership for smaller expressions: for every $\bar y$ satisfying $\tau(\bar x \bar y)$, the expression $\alpha(\bar x,\bar y)$ must be a member of the right side.
+	
+ 		\item[$\in$] If the right side is an atom, then the formula is simply false because an atom has no elements.
+ 		If the right side is a union, then we need to check if the left side is a member of some set on the right side, and therefore we use a finite disjunction of inductively obtained formulas. The remaining case is when the right side 
+ 	is a set expression 
+ 	\begin{align*}
+ 			\set{\beta(\bar x \bar y) : \mbox{ for $\bar y$ such that }\tau(\bar x\bar y) }.
+ 	\end{align*}
+ 	To test if the left side is a member of the above, we need to test if there is some valuation of $ \bar y$ which satisfies $\tau$, such that the left side is equal to $\beta(\bar x,\bar y)$. When the left side is an atom, then equality is built into first-order logic, otherwise equality is inclusion both ways, which can be described using the induction assumption.
+ 	\end{itemize}
+	
+ \end{proof}
+ 
+ The atoms in the tuple $\bar a$ are represented by the data structures described in Exercise~\ref{ex:atoms-can-be-represented}. An expression together with a valuation is denoted by $\alpha(\bar a)$, the semantics are defined in the obvious way.%
+
+
+A \emph{set builder expression} is defined

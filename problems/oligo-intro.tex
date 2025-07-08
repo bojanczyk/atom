@@ -1,0 +1,24 @@
+\mikexercise{\label{ex:integers-fail-orbit-finiteness} Show that the structure  $(\Int,<)$ is not oligomorphic. }
+{
+The power $\atoms^1$ has one orbit, but the square $\atoms^2$ has infinitely many orbits.
+}
+
+
+
+\mikexercise{For the atoms $(\mathbb Q,<)$, find all equivariant binary relations on $\atoms$. }{
+All of the four equivariant relations mentioned in the solution to Exercise~\ref{ex:equivariant-binary-relations-on-equality-atoms} are still valid. (In general, when the 
+		atoms gain structure, there are more equivariant sets.) However, there are four new binary relations, which refer to the total order, namely:
+		\begin{align*}
+			\set{(\atoma,\atomb) : \atoma < \atomb} \qquad \set{(\atoma,\atomb) : \atoma \le \atomb} \qquad \set{(\atoma,\atomb) : \atoma > \atomb} \qquad \set{(\atoma,\atomb) : \atoma \ge \atomb}.
+		\end{align*}
+		Observe again these are exactly the binary relations that can be defined by quantifier-free formulas. 
+}
+
+\mikexercise{Consider a structure $\atoms$ that is oligomorphic. Let $\mathbb B$ be a new structure, whose universe is a pof set over $\atoms$, and whose relations are equivariant (under automorphism of $\atoms$). Show that $\mathbb B$ is also an oligomorphic structure.  }{}
+
+
+
+
+% \mikexercise{Consider the atoms $(\mathbb Q, <)$. Show that there is no equivariant well-founded total order on $\atoms$. }{ Suppose that $R$ is an equivariant binary relation on the atoms. Let $c$ be the smallest atom in the finite support. If $a_1<b_1$ and $a_2<b_2$ are atoms which are smaller than $c$, then $R$ selects the pair $(a_1,b_1)$ if and only if it selects the pair $(a_2,b_2)$, because these pairs can be mapped to each other by an automorphism of the rational numbers that fixes all rational numbers greater or equal to $c$. It follows that for atoms smaller than $c$, the order imposed by $R$ is either that of the rational numbers or its opposite, neither of which is well-founded.
+
+% This example goes back to Andrzej Mostowski, who was one of the main figures in sets with atoms, which is why they are sometimes called Fraenkel-Mostowski sets. The example shows that in sets with atoms there exist sets which can be totally ordered, but not in a well-founded way. }

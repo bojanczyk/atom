@@ -1,0 +1,47 @@
+
+
+
+\mikexercise{\label{pof-turing-example-2}
+     Give a deterministic pof Turing machine for the language 
+    \begin{align*}
+    \setbuild{ w\#v}{$w,v \in \atoms^*$ are in the same orbit}.
+    \end{align*}
+}
+{
+    The machine first checks if $w$ and $v$ have the same length, say $n$. Next, for every $i, j \in \set{1,\ldots,n}$, the machine checks that 
+    \begin{gather*}
+    \text{$i$-th letter of $w$} = \text{$j$-th letter of $w$}
+    \quad \Leftrightarrow \quad
+    \text{$i$-th letter of $v$} = \text{$j$-th letter of $v$}.
+    \end{gather*}
+}
+
+
+
+
+\mikexercise{\label{pof-turing-zero-dimension-state-two-tape}
+Consider a two-tape model, which has a work tape with a separate head. 
+    Show that for every pof Turing machine, deterministic or not, there is an equivalent one (in the two-tape model) where the state space has atom dimension zero. 
+    (Attention: this will no longer be true for orbit-finite sets, which are not polynomial orbit-finite.)
+}
+{
+    To ease notation, let us assume that atoms are bit strings, i.e.
+    \begin{align*}
+    \atoms = \set{0,1}^*.
+    \end{align*}
+    For a word in $\atoms^*$, define its \emph{atomless representation} to be the word over alphabet $\set{0,1,\#}$ obtained by concatenating all strings that are the atoms, separated by the symbol $\#$. Here is an example, where rectangles represent individual letters:
+    \mypic{7}
+    Atomless representations can also be defined for strings over general pof alphabets; in this case we have a special letter for the component. The important thing is that atomless representations use a finite alphabet without atoms, i.e.~of atom dimension zero.
+
+    Consider the function 
+    \begin{align*}
+    \Sigma^* \to \set{0,1,\#}^*
+    \end{align*}
+    which maps a string 
+
+}
+
+\mikexercise{\label{pof-turing-zero-dimension-state-one-tape}Show that the answer to the previous problem is negative in the one-tape model.
+}
+{}
+

@@ -1,0 +1,9 @@
+\mikexercise{\label{ex:fo-data-word}To express properties of words in $\atoms^*$,  we can use first-order logic, where the quantifiers range over positions, and there are predicates for the order on positions, and equality of data values.  For example, the following formula says that the first position has the same atom as some later position:
+\begin{align*}
+\forall x 
+\quad \myunderbrace{(\forall y \ y \ge x) }{$x$ is the first position}
+\quad \Rightarrow \quad
+\myunderbrace{(\exists y \ y > x \land y \sim x)}{$x$ has the same atom \\ as some later position}.
+\end{align*}
+Show that satisfiability is undecidable for this logic, i.e.~one cannot decide if a given formula is true in some  word from $\atoms^*$.
+}{One can write a formula which is true exactly in the encodings of runs of Turing machines as used in Theorem~\ref{thm:register-undecidable-universality}. Alternatively, one can write a formula which is true exactly in the encodings of runs of Minsky machines as used in Exercise~\ref{ex:one-register-undec}.}

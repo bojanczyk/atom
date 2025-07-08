@@ -1,0 +1,392 @@
+
+\subsection*{Size and dimension of set builder expressions}
+
+We begin by introducing two measures of set builder expressions which will be used in the definition of our complexity class, namely syntactic dimension and size. These measures are associated to a set builder expression, and not the represented set. In Section~\ref{sec:sem-poly}, we will define size and dimension for the represented sets, and prove that these measures are equivalent as far as fixed dimension polynomial time is concerned. 
+
+\paragraph*{Dimension and size for set builder expressions} The size of set builder expressions is defined in the same spirit as the size of first-order formulas, see the proof of the Symbol Pushing Lemma, i.e.~the size of a set builder expression is the number of subexpressions plus the number of subformulas of first-order formulas that appear in the guards of set expressions. This means that: (a) atoms used as parameters have unit cost; and (b) we do not count repeated use of the same subexpression or first-order formula (the size is counted as in circuits and not as in formulas). A more detailed explanation is given below. 
+
+
+
+Define a \emph{subexpression} of a set builder expression to be any expression that appears inside it, as illustrated in the following example:
+\mypic{99}
+Define a subformula of a set builder expression to be a subformula of one of its guards, as illustrated in the following example:
+\mypic{100}
+Define the \emph{size} of a set builder expression $\alpha$, denoted by $\syntsize \alpha$, to be the number of distinct subexpressions and subformulas. In particular, repeated uses of the same subexpression are only counted once. This difference is ap- parent in Von Neumann numerals
+\begin{align*}
+n \eqdef \set{0,1,...,n-1}, 
+\end{align*}
+whose size grows linearly in $n$, but would grow exponentially if repeated subexpressions were counted separately.
+
+
+
+
+
+\subsection*{Fixed dimension polynomial time}
+We are now ready to define notion of ``polynomial time'' that is appropriate to sets with atoms. In the following definition, a function $p : \Nat^2 \to \Nat$ is called \emph{polynomial when the first coordinate is fixed} if for every $k \in \Nat$, the function $p(k,\_)$ is bounded by some polynomial, which might depend on $k$. A typical example is $(k, n) 􏰀\mapsto n^k$.
+
+
+
+
+
+\begin{lemma}\label{thm:fdp-fo}
+ Let $\varphi(x_1,\ldots,x_n)$ be a formula of first-order logic whose vocabulary contains only a binary membership predicate $\in$. The following function is fixed dimension polynomial time:
+ \begin{itemize}
+ \item {\bf Input.} A hereditarily orbit-finite set $A$;
+ \item {\bf Output.} The interpretation of $\varphi$ in the structure $(A_*, \in)$.
+ \end{itemize}
+\end{lemma}
+\begin{proof}
+ By analysing the proof of the Symbol Pushing Lemma (Lemma~\ref{lem:symbol-pushing}) and the Definable Relation Lemma (Lemma~\ref{lem:set-structure}). 
+
+ We begin with the Symbol Pushing Lemma, which inputs two set builder expressions with free variables $\alpha(\bar x)$ and $\beta(\bar x)$, and outputs a first-order formula $\varphi(\bar x)$ such that
+	\begin{align*}
+ \atoms \models \varphi(\bar a) \quad \text{iff} \quad \alpha (\bar a) \subseteq \beta (\bar a)
+ \end{align*}
+ % Suppose that the set $A$ is given by a set builder expression $\alpha$. Let $\Gamma$ be the subexpressions of $\alpha$, these subexpressions might have free variables. By the Symbol Pushing Lemma, for every subexpressions 
+ % \begin{align*}
+ % \beta(x_1,\ldots,x_n), \gamma(y_1,\ldots,y_m) \in \Gamma
+ % \end{align*}
+ % there is a first-order formula $\psi$ which satisfies
+ % \begin{align*}
+ % \atoms \models \psi(a_1,\ldots,a_n,b_1,\ldots,b_m) \qquad \text{iff} \qquad \beta(a_1,\ldots,a_n) \in \gamma(b_1,\ldots,b_m)
+ % \end{align*}
+ % for every atoms $a_1,\ldots,a_n,b_1,\ldots,b_m$. Furthermore, the size of this formula is polynomial in the sizes of $\beta$ and $\gamma$, and therefore also polynomial in the size of $\alpha$. 
+ % holds if and only if the set represented by $\beta(\bar b)$ is an element of the set represented by $\gamma(\bar c)$. 
+
+
+
+\end{proof}
+
+
+\begin{lemma} \label{lem:fdp-sat} Assume the equality atoms. The first-order theory of the atoms is in fixed dimension polynomial time. More precisely, the problem
+ \begin{itemize}
+ \item {\bf Input.} A sentence of first-order logic using equality and atom parameters.
+ \item {\bf Output.} Is the sentence true in $\atoms$?
+ \end{itemize} 
+ can be solved by an algorithm which runs in time
+ \begin{align*}
+ \mathrm{poly}(|\varphi|)^{f( \dimension \varphi)}
+ \end{align*}
+ for some computable function $f$.
+\end{lemma}
+\begin{proof}
+ The reason is that every formula of first-order logic can be converted, in fixed dimension polynomial time, to a disjunction of quantifier-free types. 
+ Define a \emph{quantifier-free type} over variables $x_1,\ldots,x_k$ and parameters from the atoms $a_1,\ldots,a_n \in \atoms$ to be a conjunction of 
+ ${n+k} \choose 2$
+ equalities or disequalities that fully specifies the equality relationships between the variables and the parameters. The number of quantifier-free types is at most 
+\begin{align*}
+ \underbrace{(n+1)^k}_{\substack{\text{which variables are equal}\\ \text{to which parameters}}} \quad \times \quad {\text{number of equality types over $\set{1,\ldots,k}$}}.
+\end{align*}
+Note that the above quantity is polynomial in $n$, if the dimension $k$ is fixed. Furthermore, when working with disjunctions of quantifier-free types, Boolean operations and eliminating one quantifier can be done in polynomial time. It follows that one can eliminate quantifiers in polynomial time (assuming $k$ is fixed), converting each first-order formula into a disjunction of quantifier-free types of polynomial size. 
+\end{proof}
+
+
+\begin{corollary} \label{cor:fdp-equality} Assume the equality atoms. 
+ Equality, inclusion and membership (on sets represented by set builder expressions) can be decided in fixed dimension polynomial time.
+\end{corollary} 
+\begin{proof}
+ By the Symbol Pushing Lemma, equality, inclusion and membership can be reduced to testing validity of a polynomial size formula. An inspection of the transformations used in Figure~\ref{fig:symbol-pushing} shows that the dimension of the formula produced by the Symbol Pushing Lemma is bounded by a function of the dimensions of the input set builder expressions. Therefore, validity of the resulting formula can be decided in fixed dimension polynomial time, by Lemma~\ref{lem:fdp-sat}.
+\end{proof}
+Lemma~\ref{lem:fdp-sat} and Corollary~\ref{cor:fdp-equality} are also true for the ordered atoms $\qatom$, with essentially the same proof. The following example shows that Lemma~\ref{lem:fdp-sat} fails for the graph graph atoms from Section~\ref{sec:random-graph}, assuming {\sc p $\neq$ np}. 
+
+ 
+
+
+
+\begin{lemma}
+ Assume that the ... The following problem can be solved in fixed dimension polynomial time. 
+ \begin{itemize} 
+ \item {\bf Input.} Set builder expressions which represent a set $X$ and a function 
+ \begin{align*}
+ f : \powerset X \to \powerset X,
+ \end{align*}
+ which is monotone in the sense that $X_1 \subseteq X_2$ implies $f(X_1) \subseteq f(X_2)$. 
+ \item {\bf Output.} A set builder expression representing the least fixpoint of $f$. 
+ \end{itemize}
+\end{lemma}
+
+
+\subsection{Extended example: bit vector atoms}
+\label{sec:vector-spaces-oligo}
+In this section, we present a structure that is oligomorphic but not homogeneous. Apart from illustrating the difference between oligomorphism and homogeneity, the structure will later lead to interesting consequences for sets with atoms.
+ In Section~\ref{cha:turing} we will show that when this structure is used as the atoms, then the atom version of the P=NP question has a negative answer (unconditionally, without complexity assumptions).
+
+We use the name \emph{bit vector} for an infinite sequence of zeros and ones which has finitely many ones. By ignoring the trailing zeros, a bit vector can be represented as a finite sequence such as $00101001$. Bit vectors can be added modulo two, and multiplied by $0$ or $1$. Equipped with this structure, we get a linear space over the two element field. The dimension of this linear space is countably infinite, an example basis consists of bit vectors which have a $1$ on exactly one coordinate:
+\begin{align*}
+	1, 01,001,0001,\ldots
+\end{align*}
+Another example of a basis consists of bit vectors which have a $1$ on the first $n$ coordinates:
+\begin{align*}
+	1,11,111,1111,\ldots
+\end{align*}
+The bit vectors can be seen as a relational structure, with the following predicates:
+\begin{itemize}
+	\item {\bf addition}: a ternary predicate $x + y = z$ for addition modulo 2;
+	\item {\bf zero test}: a unary predicate $0(x)$ for the zero vector; 
+	\item {\bf independence}: for each $n$, a predicate $I_n(x_1,\ldots,x_n)$ for linear independence of $n$ vectors.
+\end{itemize}
+
+As long as addition and zero test is allowed, the automorphisms of the structure are the same, whether or not we allow the independence predicates in the vocabulary. This is because independence is first-order definable in terms of addition and zero test (but not quantifier-free definable). % It is not difficult to see that an automorphism is any function which maps a basis of the entire space to another basis of the entire space.
+
+
+On the other hand, homogeneity depends on the choice of predicates.
+
+
+
+
+
+
+\begin{lemma}
+	The bit vectors with addition and zero test are not homogeneous. With addition, zero test and independence, they are homogeneous.
+\end{lemma}
+\begin{proof}
+	To prove the first item, observe that 
+ there is a partial automorphism between the linearly dependent set $\set{100,010,001,111}$ and any linearly independent set of size four. This is because addition, as a relation, selects no tuples in this set. On the other hand, full automorphisms must preserve independence, so the partial automorphism does not extend to a full automorphism.
+
+To prove the second item, consider a partial automorphism $\pi : S \to T$ between two finite sets of vectors, under the vocabulary which contains addition, zero test, and the independence predicates. Choose a subset $S_0 \subseteq S$ which is a basis for the set spanned by $S$. By the Basis Extension Theorem, $S_0$ can be extended to a basis of the entire linear space, call this basis $S_1$. Because $\pi$ is a partial automorphism, and the vocabulary contains the independence predicates, the set $\pi(S_0)$ is a basis for $T$. By the Basis Extension Theorem, $T_0$ can be extended to a basis $T_1$ of the entire space. Choose any bijection of $S_1$ with $T_1$ which is consistent with $\pi$ on the subset $S_0$. This bijection extends to an automorphism of the entire space; the resulting automorphism is consistent with $\pi$ on the subset $S$.	
+\end{proof}
+
+We have just shown that the bit vectors are not homogeneous over a given finite vocabulary (addition and zero test), but are homogeneous if the vocabulary is extended to an infinite one. Observe that the latter result is not so surprising, since every structure can be made homogeneous, by extending the predicates with all equivariant relations.
+
+
+\begin{lemma}
+	The bit vectors with addition and zero test are oligomorphic.
+\end{lemma}
+\begin{proof}
+	The bit vectors become homogeneous when the independence relations are to the vocabulary. Therefore, the equivariant orbit of an $n$-tuple of bit vectors is uniquely determined by the quantifier-free formulas satisfied by this $n$-tuple, over the extended vocabulary with independence relations. Since the independence relations of arity greater than $n$ will always return false, up to logical equivalence there are only finitely many non-equivalent quantifier-free formulas over $n$ variables.
+\end{proof}
+
+From now on, we use the name \emph{bit vector atoms} for the relational structure with addition, zero test and the independence predicates. Thanks to oligomorphism, orbit-finite sets have good closure properties. 
+
+
+\begin{ourexample}[Grassmannian]
+	\label{ex:grassmannian}
+	Let $X$ be the family of sets of two independent bit vectors. This is a one-orbit set.
+	Consider the following equivalence binary relation $X$: two sets are considered equivalent if they span the same linear space. E.g.~the sets $\set{01,10} \in X$ and $\set{11,01} \in X$ are equivalent. This is an equivariant equivalence relation on $X$. The submotient under this equivalence relation is a one-orbit set, which is not straight. 
+\end{ourexample}
+
+
+Recall Theorem~\ref{thm:church-turing}, which described two equivalent characterisations of computable functions from definable sets to definable sets. Let us specialise this concept to the case of languages over a definable alphabet. Assume that the input alphabet $\Sigma$ is a definable set. It is not difficult to show that every word $w \in \Sigma^*$ is a definable set, since a sequence of definable letters is also definable. View a language as its characteristic function
+\begin{align*}
+ L : \Sigma^* \to \set{\mbox{yes, no}}
+\end{align*}
+and extend this characteristic function to all definable sets by giving a ''no'' answer to every definable set which is not in $\Sigma^*$. We say that $L \subseteq \Sigma^*$ is \emph{computable} if the function obtained this way is computable in either of the two equivalent senses from Theorem~\ref{thm:church-turing}. Before continuing, let us give an alternative definition of computability which is equivalent, but more adapted to the setting of words and Turing machines. 
+
+Recall that by definition, a definable alphabet $\Sigma$ is given by a set builder expression $\alpha(\bar x)$ together with a tuple of atoms $\bar a$ that instantiates its free variables $\bar x$. The expression $\alpha$ cannot be an atom, since otherwise the alphabet has no letters. Therefore, it must be a finite union of set expressions:
+\begin{align*}
+ \alpha(\bar x) = \bigcup_{i \in I} \set{ \alpha_i(\bar x \bar y_i) : \mbox{for $\bar y_i$ such that $\varphi_i(\bar x \bar y_i)$}}.
+\end{align*}
+In order to provide a letter in $\Sigma$, one needs to indicate $i \in I$ and a tuple of atoms $\bar b$ that evaluates the tuple of variables $\bar y_i$; the letter is then equal to $\alpha_i(\bar a \bar b)$. Note that the length of the tuple $\bar b$ might depend on $i$. Thanks to the assumption that the atoms are effective, a tuple of atoms can be written down as a bit string. Define a \emph{representation} of a word $w \in \Sigma^*$ to be a bit string describing the sequence of representations of letters as defined above. 
+
+\begin{ourexample}
+	Consider the equality atoms, represented as bit strings, and the alphabet
+	\begin{align*}
+\underbrace{\set{ \set{y_1,y_2} : \mbox{for $y_1,y_2$ such that $y_1 \neq y_2$}}}_{\text{expression 1}} \cup \underbrace{\set{\underline 2,\underline 3}}_{\text{expression 2}} 
+\end{align*}
+One possible source of ambiguity in representations is that an element might be captured by two different expressions, e.g.~$\set{\underline 1, \underline 2}$ in the above example. This problem could be avoided by rewriting the expressions. Another problem, is that even if the expression is known, then two different valuations of the free variables might give the same result. For example, a letter $\set{\underline 2, \underline 5}$ is encoded by writing down first the expression number -- necessarily expression 1, in this particular example -- then giving a valuation of the variables which yields this letter. Note that there are two possible valuations, namely
+\begin{align*}
+ (y_1,y_2) \mapsto (\underline 2, \underline 5) \quad (y_1,y_2) \mapsto (\underline 5, \underline 2)
+\end{align*}
+This source of ambiguity could be eliminated by choosing the lexicographically least valuation. Since ambiguity of representation will not play a role in our discussion, we will not make an effort to eliminate it.
+\end{ourexample}
+ 
+
+\begin{lemma}\label{lem:computable-tape} Assume that the atoms are effectively oligomorphic.
+ If $\Sigma$ is a definable alphabet, then the following conditions are equivalent for every language $L \subseteq \Sigma^*$:
+ \begin{enumerate}
+ 	\item $L$ is finitely supported and $\set{w \in 2^* : \mbox{$w$ represents a word from $L$}}$ is semi-decidable in the usual sense without atoms; and 
+ \item $L$ is computed by a definable while program.
+ \end{enumerate}
+\end{lemma}
+\begin{proof}
+	Using Theorem~\ref{thm:church-turing}.
+\end{proof}
+
+The main goal of this section is to give a third equivalent item in the above lemma, namely recognised by a Turing machine. However, in our proof (at least for the general case of arbitrary effective atoms structures), we will need to use \emph{alternating} Turing machines. Already for the simplest equality atoms a deterministic machine will not be enough. 
+
+
+
+Since the running time of the Turing machine is polynomial, if the input length $n$ is big enough then 
+\begin{align*}
+	n^k \le 2^n.
+\end{align*}
+
+
+\begin{claim}
+	Every atom that appears in $\rho$ is a linear combination of the input atoms $a_1,\ldots,a_n$. 
+\end{claim}
+
+
+Define the following system of equations $\Ee$, over variables $x_1,\ldots,x_n$. Every atom $a$ that appears in $\rho$ is supported by $a_1,\ldots,a_n$, and therefore can be expressed as a linear combination
+\begin{align*}
+	a = \sum_{i \in I_a} a_i \qquad \text{for some $I_a \subseteq \set{1,\ldots,n}$}.
+\end{align*}
+\begin{itemize}
+	\item Let $b_1,\ldots,b_m$ be the atoms that appear in a $2 \times 2$ neighbourhood of $\rho$, and let $I \subseteq \set{1,\ldots,m}$. if
+	\begin{align*}
+		\sum_{i \in I} b_i = 0
+	\end{align*}
+	then we add 
+\end{itemize}
+Conversely, a square grid labelled by $\Delta$ is a computation of a Turing machine if and only if the first row is labelled by an initial configuration, and the labels of the tiles are locally consistent as required by the definition of a Turing machine. One way to formalise this consistency is that for every four tile positions which are adjacent as in the following picture
+\begin{align*}
+	\begin{tabular}{cc}
+		a & b \\
+		c & d
+	\end{tabular}
+\end{align*}
+the labels of these tiles belong to a designated subset $C \subseteq \Delta^4$. 
+
+
+
+For $i,j \in \set{1,2,\ldots}$, define $\cellc {(i,j)} {\bar a}$
+to be the contents of the $i$-th cell in the tape of the Turing machine in the $j$-th step of computation. These contents are either a letter of the work alphabet (possibly blank), or a pair (letter of the work alphabet, state) in case the head of the Turing machine is over cell $i$ in step $j$. 
+As usual, a computation can be visualised as a rectangular grid, where each tile of the grid gets a colour which consists of a symbol of the work alphabet and a possibly a state (if the tile coincides with the head). The set of colours is orbit-finite and straight, i.e.~each colour is a tuple of atoms. We say an atom appears in a colour if it is found in one of the coordinates of the tuple of atoms that is the colour.
+
+We say that an atom is \emph{locally supported} by a computation if it is supported by the atoms that appear in the colours of two neighbouring tiles (neighbouring either vertically or horizontally). The number of atoms that can appear in the colours of two tiles is bounded by the Turing machine. The number of colours supported by these atoms is therefore also bounded by the machine, if exponentially bigger. This exponential depends only on the fixed Turing machine and not its input, and therefore can be treated as a constant with respect to the input. It follows that the number of atoms that are locally supported by a computation is at most quadratic in the length of the run (time $\times$ space), assuming that the machine is fixed.
+
+The transition function of the machine is equivariant.It follows that every atom which appears in the computation, or is locally supported by it, is already supported by the input, and therefore each of these atoms is a linear combination of the input vectors. Since the computation is not exponentially long, then some linear combination must be missing, i.e.~there must be some nonempty $I \subseteq \set{1,\ldots,n}$ such that the atom
+\begin{align*}
+a = 		\sum_{i \in I} a_i
+\end{align*}
+is not locally supported by the computation. 
+
+
+\begin{claim}\label{lem:cheat} There exist atoms $b_1,\ldots,b_n$ such that
+	\begin{align*}
+		\sum_{i \in J} b_i = 0 \quad \mbox{iff} \quad J=I \qquad \text{for every nonempty $J \subseteq \set{1,\ldots,n}$.}
+	\end{align*}
+\end{claim}
+\begin{proof}
+
+	Let $n \in \Nat$.
+	For every $I \subseteq \set{1,\ldots,n}$ there is a set $b_1,\ldots,b_n$ of vectors such that
+\begin{align*}
+	\sum_{i \in J} b_i = 0 \qquad \mbox{iff} \qquad J=\emptyset \mbox{ or }J=I
+\end{align*}
+
+
+	When $I$ is empty, the lemma is immediate. 
+	
+	
+Otherwise,	we can assume without loss of generality that $n \in I$.	
+	Choose some independent vectors $b_1,\ldots,b_{n-1}$. Define 
+	\begin{align*}
+		b_n \eqdef \sum_{i \in I-\set{n}} b_i.
+	\end{align*}
+	This means that 
+	\begin{align*}
+		\sum_{i \in I} b_i = b_n + b_n = 0.
+	\end{align*}
+	We now show that 
+	\begin{align*}
+		\sum_{i \in J} b_i \neq 0 
+	\end{align*}
+	holds whenever $J$ is nonempty and not equal to $I$.
+	If $J$ contains some $j \not \in I$ then the sum cannot be zero because $b_j$ is linearly independent from all the remaining vectors. Otherwise, $J$ is a proper subset of $I$. If $J$ does not contain $n$, then the sum cannot be zero because the vectors with indexes in $I - \set n$ are linearly independent. Finally if $J$ contains $n$ but omits some $i \in I$, then the sum from the statement of the lemma will be nonzero on coordinate $b_i$.
+\end{proof}
+
+Take $b_1,\ldots,b_n$ to be the atoms from the above claim. These atoms are linearly dependent, since summing. We will show that the input $b_1,\ldots,b_n$ is also rejected by the machine, which contradicts the assumption that the machine accepts all dependent tuples. 
+Consider the computations of the machine on inputs $a_1 \cdots a_n$ and $b_1 \cdots b_n$, encoded as coloured grids, call them $\rho$ and $\sigma$. 
+\begin{claim}
+	For every $x,y \in \Nat^2$ at distance at most 1, the pairs 
+	\begin{align*}
+		(\cellc x {\bar a}, \cellc x {\bar a}) \qquad (\cellc x {\bar b}, \cellc x {\bar b}) 		\end{align*}
+	are in the same equivariant orbit.
+\end{claim}
+\begin{proof}
+	By induction on the distance of the tiles from the top row of the grid, which contains the input.
+\end{proof}
+
+By taking $x=y$, the claim implies that for every individual tile, the colours in both grids are in the same equivariant orbit. Whether or not a state is accepting is an equivariant property, and therefore one computation contains an accepting state if and only if the other computation contains an accepting state.
+% \end{proof}
+
+
+\begin{proof}
+Consider a run of deterministic normal form machine on the input $a_1 \cdots a_n$ consisting of independent vectors. The machine should reject. 
+
+For $i,j \in \set{1,2,\ldots}$, define $\cellc {(i,j)} {\bar a}$
+to be the contents of the $i$-th cell in the tape of the Turing machine in the $j$-th step of computation. These contents are either a letter of the work alphabet (possibly blank), or a pair (letter of the work alphabet, state) in case the head of the Turing machine is over cell $i$ in step $j$. 
+As usual, a computation can be visualised as a rectangular grid, where each tile of the grid gets a colour which consists of a symbol of the work alphabet and a possibly a state (if the tile coincides with the head). The set of colours is orbit-finite and straight, i.e.~each colour is a tuple of atoms. We say an atom appears in a colour if it is found in one of the coordinates of the tuple of atoms that is the colour.
+
+We say that an atom is \emph{locally supported} by a computation if it is supported by the atoms that appear in the colours of two neighbouring tiles (neighbouring either vertically or horizontally). The number of atoms that can appear in the colours of two tiles is bounded by the Turing machine. The number of colours supported by these atoms is therefore also bounded by the machine, if exponentially bigger. This exponential depends only on the fixed Turing machine and not its input, and therefore can be treated as a constant with respect to the input. It follows that the number of atoms that are locally supported by a computation is at most quadratic in the length of the run (time $\times$ space), assuming that the machine is fixed.
+
+The transition function of the machine is equivariant.It follows that every atom which appears in the computation, or is locally supported by it, is already supported by the input, and therefore each of these atoms is a linear combination of the input vectors. Since the computation is not exponentially long, then some linear combination must be missing, i.e.~there must be some nonempty $I \subseteq \set{1,\ldots,n}$ such that the atom
+\begin{align*}
+a = 		\sum_{i \in I} a_i
+\end{align*}
+is not locally supported by the computation. 
+
+
+\begin{claim}\label{lem:cheat} There exist atoms $b_1,\ldots,b_n$ such that
+	\begin{align*}
+		\sum_{i \in J} b_i = 0 \quad \mbox{iff} \quad J=I \qquad \text{for every nonempty $J \subseteq \set{1,\ldots,n}$.}
+	\end{align*}
+\end{claim}
+\begin{proof}
+
+	Let $n \in \Nat$.
+	For every $I \subseteq \set{1,\ldots,n}$ there is a set $b_1,\ldots,b_n$ of vectors such that
+\begin{align*}
+	\sum_{i \in J} b_i = 0 \qquad \mbox{iff} \qquad J=\emptyset \mbox{ or }J=I
+\end{align*}
+
+
+	When $I$ is empty, the lemma is immediate. 
+	
+	
+Otherwise,	we can assume without loss of generality that $n \in I$.	
+	Choose some independent vectors $b_1,\ldots,b_{n-1}$. Define 
+	\begin{align*}
+		b_n \eqdef \sum_{i \in I-\set{n}} b_i.
+	\end{align*}
+	This means that 
+	\begin{align*}
+		\sum_{i \in I} b_i = b_n + b_n = 0.
+	\end{align*}
+	We now show that 
+	\begin{align*}
+		\sum_{i \in J} b_i \neq 0 
+	\end{align*}
+	holds whenever $J$ is nonempty and not equal to $I$.
+	If $J$ contains some $j \not \in I$ then the sum cannot be zero because $b_j$ is linearly independent from all the remaining vectors. Otherwise, $J$ is a proper subset of $I$. If $J$ does not contain $n$, then the sum cannot be zero because the vectors with indexes in $I - \set n$ are linearly independent. Finally if $J$ contains $n$ but omits some $i \in I$, then the sum from the statement of the lemma will be nonzero on coordinate $b_i$.
+\end{proof}
+
+Take $b_1,\ldots,b_n$ to be the atoms from the above claim. These atoms are linearly dependent, since summing. We will show that the input $b_1,\ldots,b_n$ is also rejected by the machine, which contradicts the assumption that the machine accepts all dependent tuples. 
+Consider the computations of the machine on inputs $a_1 \cdots a_n$ and $b_1 \cdots b_n$, encoded as coloured grids, call them $\rho$ and $\sigma$. 
+\begin{claim}
+	For every $x,y \in \Nat^2$ at distance at most 1, the pairs 
+	\begin{align*}
+		(\cellc x {\bar a}, \cellc x {\bar a}) \qquad (\cellc x {\bar b}, \cellc x {\bar b}) 		\end{align*}
+	are in the same equivariant orbit.
+\end{claim}
+\begin{proof}
+	By induction on the distance of the tiles from the top row of the grid, which contains the input.
+\end{proof}
+
+By taking $x=y$, the claim implies that for every individual tile, the colours in both grids are in the same equivariant orbit. Whether or not a state is accepting is an equivariant property, and therefore one computation contains an accepting state if and only if the other computation contains an accepting state.
+\end{proof}
+
+
+\exercisepart
+
+\mikexercise{ \label{ex:algebraic-closure} We say that $a \in \atoms$ belongs to the \emph{algebraic closure} of $X \subseteq \atoms$ if there is some first-order formula $\varphi(x)$ which defines a subset of $\atoms$ that contains $a$ and is finite. The formula is allowed to use the vocabulary of $\atoms$ and constants from $X$. Show that the equality atoms, the atoms $\qatom$, and the bit vector atoms satisfy the following property: 
+\begin{description}
+\item[(*)] For every equivariant orbit-finite set $X$, there is an equivariant function $f : Y \to X$ such that $Y$ is straight, and tuples with the same image under $f$ have the same algebraic closure. 
+\end{description}
+}{sol}
+
+\mikexercise{\label{ex:not-always-reflects} Show that an example of oligomorphic atoms which satisfy condition (*) from Exercise~\ref{ex:algebraic-closure}, but do not satisfy (add closed supports)
+\mypic{81}
+} {Let $\atoms$ be the graph which is a disjoint union of triangles, with every triangle having one vertex with a self-loop, as in the following picture:
+\begin{center}
+(picture)
+\end{center}
+Define $A \subseteq \atoms$ to be the vertices with self-loops, and define $P \subseteq \atoms$ to be the vertices without self-loops. The set $Q$ is the set of triangles, i.e.~the atoms modulo the equivalence relation ``in the same triangle'', and the functions $g$ and $h$ map a vertex to its triangle. There is not equivariant function $A \to P$ because such a function would require choosing one vertex. }
+
+
+
+\mikexercise{
+Show an oligomorphic structure which does not satisfy (*). 
+}
+{Example..}

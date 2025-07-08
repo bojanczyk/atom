@@ -1,0 +1,345 @@
+\mikexercise{\label{ex:least-supports-orbits}
+ For a set with atoms $X$, let us write $\leastsup X$ for the set of atoms in its least support. Let $X$ be an orbit-finite set, and let 
+ \begin{align*}
+ X = X_1 \cup \cdots \cup X_n
+ \end{align*}
+ be its partition into orbits with respect to the least support (i.e.~with respect to atom automorphisms that are the identity on the least support). Show that 
+ \begin{align*}
+ \leastsup X = \leastsup{X_1} \cup \cdots \cup \leastsup {X_n}.
+ \end{align*}
+} 
+{Clearly anything that supports all the sets $X_1,\ldots,X_n$ will also support $X$, which proves the inclusion
+\begin{align*}
+ \leastsup X \subseteq \leastsup{X_1} \cup \cdots \cup \leastsup {X_n}.
+ \end{align*}
+ For the converse inclusion, we observe that the notions of least support, and the partition of a set with respect to its least support can all be defined using the language of set theory, and therefore the functions
+\begin{align*}
+ X \mapsto \leastsup X \qquad X \mapsto \set{X_1,\ldots,X_n} \qquad X \mapsto \bigcup_{i} \leastsup {X_i}
+\end{align*}
+can all be defied using the language of set theory. In particular, by the equivariance principle, these functions are equivariant. Since the last function is equivariant, anything that supports $X$, e.g.~its least support, will also support $\bigcup_i \leastsup{X_i}$. Therefore, 
+\begin{align*}
+ \leastsup X \quad \text{supports} \quad \leastsup{X_1} \cup \cdots \cup \leastsup {X_n}.
+ \end{align*}
+Since both sides of the above are finite sets of atoms, and for finite sets of atoms ``supporting'' is the same as ``containing'', we get the inclusion
+\begin{align*}
+ \leastsup X \supseteq \leastsup{X_1} \cup \cdots \cup \leastsup {X_n}.
+ \end{align*}
+
+}
+
+
+\mikexercise{\label{ex:group-infinite} Does Exercise~\ref{ex:group-colcombet} generalise to all oligomorphic choices of the atoms? } {No. The bit vector atoms are oligomorphic, but the atoms themselves are a group.}
+
+
+
+\mikexercise{\label{ex:lift-repr}Assume that the atoms are oligomorphic and admit least supports.
+Let $X$ be an orbit-finite set and let $f : X^n \to X$ be a finitely supported function. Show that there exists $k \in \Nat$ and finitely supported functions
+\begin{align*}
+ g : \atoms^k \to X \qquad f' : \atoms^{n \cdot k} \to \atoms^k
+\end{align*}
+which make the following diagram commute:
+\begin{align*}
+\xymatrix{ \atoms^{n \cdot k} \ar[d]_{f'} \ar[r]^{(g,\ldots,g)}& X^n \ar[d]^{f}\\ \atoms^k \ar[r]_g & X}
+\end{align*}
+
+} 
+{Using the same ideas as in Theorem~\ref{thm:classify-one-orbit}, we get the following result.
+
+
+\begin{claim}\label{claim:lift-supports} Let $X$ be an orbit-finite set. There exists $k$ and a finitely supported surjective function $g : \atoms^k \to X$ such that for every $x \in X$ there is some tuple in $g^{-1}(x)$ only uses atoms from the least support of $x$.
+\end{claim}
+	
+
+Take $g$ and $k$ as in the above claim. Take $\bar c$ to be some tuple of atoms which supports both $g$ and $f$. We will show that for every $\bar a \in \atoms ^{n \cdot k}$ there is some $\bar c$-supported partial function $f'$ which satisfies the commuting diagram in the statement of the picture when its domain is restricted to the $\bar c$-orbit of $\bar a$. By putting these functions together we get the desired result. 
+ 
+ 
+Let then $\bar a \in \atoms^{n \cdot k}$. Consider
+\begin{align*}
+ x = f \circ (g,\ldots,g) (\bar a).
+\end{align*}
+The element $x$ is supported by $\bar a \bar c$ because the value of a function is supported by any tuple which supports both the function and its arguments. Therefore the least support of $x$ uses only atoms that appear in $\bar a \bar c$. By Claim~\ref{claim:lift-supports}, there is some $\bar b \in \atoms^k$ which uses only atoms from $ \bar a \bar c$ and such that $g(\bar b) = x.$ Consider the relation
+\begin{align*}
+ f' \eqdef \set{\pi(\bar { a}, \bar b) : \mbox{$\pi$ is a $\bar c$-automorphism}}
+\end{align*}
+By choice of $\bar b$ this relation is a partial function from $\atoms^{n \cdot k}$ to $\atoms^k$ and it satisfies the commuting diagram in the exercise when restricted to its domain. }
+
+
+
+
+\mikexercise{\label{ex:straight-choice-1} Assume the equality atoms. Let $X$ be a straight set with atoms. Show that for every set with atoms $Y$ and every finitely supported 
+\begin{align*}
+ F : X \to \text{nonempty finitely supported subsets of $Y$}
+\end{align*}
+there exists a finitely supported function $f : X \to Y$ such that 
+\begin{align*}
+ f(x) \in F(x) \quad \text{for every $x \in X$.}
+\end{align*}
+} 
+{ 
+ Let $\bar a$ be a support of $F$.
+ Since the choice function $f$ can be defined separately for each $\bar a$-orbit, we can assume without loss of generality that $X$ is a single $\bar a$-orbit. By definition of straight sets, this means that (up to finitely supported bijections) $X$ is a single $\bar a$-orbit in $\atoms^{(k)}$ for some $k$. 
+
+ \begin{claim}
+ There is some tuple of atoms $\bar c$ such that for every $x \in X$, there is some $y \in F(x)$ which is supported by the atoms in $x$ plus $\bar c$.
+ \end{claim}
+ \begin{proof} For $x \in X$ define $n \in \set{0,1,2,\ldots}$ to be the minimal number $n$ such that some element of $F(x)$ has support of size $n$. 
+ The number does not depend on the choice of $x$, since $X$ is contained in one equivariant orbit. Let $\bar c$ be any tuple of $k+n$ distinct atoms that do not appear in $\bar a$. Take some $x \in X$ and choose some $y \in F(x)$ with support of size at most $n$. Let $b_1,\ldots,b_i$ be the atoms in the least support of $y$ which are not in the least support of $x$, there are at most $n$ of these. Since $\bar c$ has $k+n$ atoms, one can find atoms $c_1,\ldots,c_i$ in the tuple $\bar c$ which do not appear in $x \in \atoms^{(k)}$. The atom automorphism $\pi$ that swaps $(b_1,\ldots,b_i)$ with $(c_1,\ldots,c_i)$ fixes the supports of both $x$ and $F$. Therefore, $\pi(y) \in F(x)$. The least support of $\pi(y)$ uses only atoms from $\bar c$ and the least support of $x$. 
+ \end{proof}
+
+ By Exercise~\ref{ex:orbit-list}, there is a finitely supported function which maps every $x \in X$ to an ordered list of the $x \bar c$-orbits that are contained in $F(x)$. By the above claim, one of these orbits is a singleton, and the function $f$ can simply output the unique element of that singleton (the first singleton in the list).
+}
+
+\mikexercise{Show that Exercise~\ref{ex:straight-choice-1} fails in the atoms $\qatom$.}
+{
+ Take $F$ to be the function which maps an atom $a \in \atoms$ to all strictly bigger atoms. 
+}
+\mikexercise{Assume the equality atoms. Show that an equivariant orbit-finite set $X$ is straight if and only if it is projective in the sense of category theory:
+\mypic{119}
+}
+{\ }
+
+\mikexercise{Show an example of a function which preserves and reflects supports, but which is not equivariant.}{
+\begin{align*}
+ (a,b) \in \atoms^2 \qquad \mapsto \qquad \begin{cases}
+ (a,b) & \text{if $a \neq \atomone$}\\
+ (b,a) & \text{otherwise.}
+ \end{cases}
+\end{align*}
+}
+
+
+\mikexercise{\label{ex:not-always-reflects} Show an oligomorphic atom structure which fails the Least Support Theorem, as stated in Theorem~\ref{thm:least-support-bit}.}{The atoms are the undirected graph which is an infinite union of triangles: 
+\mypic{89}
+Consider a triangle which involves atoms $a,b,c$. This triangle is supported by $a$, and it is also supported by $b$ (or $c$). Nevertheless, the atom $a$ does not support $b$, because one can swap $b$ and $c$ while fixing $a$. 
+}
+
+\mikexercise{Assume the equality atoms. 
+ Let $S,T$ be finite sets of atoms. Show that every atom automorphism $\pi$ which fixes $S \cap T$ can be presented as a composition
+ \begin{align*}
+ \pi = \pi_1 \circ \cdots \circ \pi_n
+ \end{align*}
+ such that each $\pi_i$ is an atom automorphism that fixes either $S$ or $T$.}
+ {Before proving the exercise, we observe that it gives an alternative proof of the Least Support Theorem. To prove the Least Support Theorem, it suffices to show that finite sets of atoms supporting $x$ are closed under intersection. Suppose then that $x$ is supported by $S$ and also supported by $T$. By the exercise, if an atom automorphism $\pi$ fixes $S \cap T$, then it can be decomposed as a finite compositions of atom automorphisms that fix either $S$ or $T$. Since such automorphisms fix $x$, it follows that $\pi$ also fixes $x$. It remains to prove the exercise. 
+ 
+ We do this in several steps.
+ \begin{enumerate}
+ \item \emph{Transpositions.} Suppose first that $\pi$ from the assumption of the lemma is a transposition, i.e.~it swaps two atoms $a,b \not \in S \cap T$. Choose atoms $a',b' \not \in S \cup T$. Swapping $a,b$ is the same as performing the following sequence of transpositions:
+ \mypic{41}
+ By the assumption that $a,b$ are not in $S \cap T$ and $a',b'$ are not in $S \cup T$, each of the above transpositions fixes either $S$ or $T$.
+ \item \emph{Finite permutations.} An automorphism (i.e.~permutation) of the atoms is called finite if it moves finitely many atoms. Every finite permutation is a finite composition of transpositions, and thus the previous item implies that the conclusion of the lemma is also true when $\pi$ is a finite permutation.
+ \item \emph{Infinite cycles.} Suppose that $\pi$ is an infinite cycle, as in the following picture: \mypic{42}
+ We do not assume that the cycle contains all atoms. 
+ Since $S \cup T$ is finite, up to renumbering we can assume that there is some $n$ such that elements from $S \cup T$ can appear only in $\set{a_2,\ldots,a_n}$.
+ If we compose $\pi$ with the transposition \mypic{44} then we get the permutation consisting of two cycles (one finite, one infinite) as in the following picture: \mypic{43}
+ The permutations drawn in blue fix $S \cup T$. Therefore, we have shown that the infinite cycle $\pi$ is a composition of two permutations that fix $S \cup T$, and one finite cycle. To the finite cycle we can apply the previous item.
+ \item \emph{General case.} Every permutation can be decomposed into independent cycles, some finite and some infinite. Both types of cycles were dealt with in the previous items. We only need to apply the construction to the finitely many cycles that contain atoms from $S \cup T$.
+ \end{enumerate}
+ }
+
+\mikexercise{\label{ex:least-supports-orbits}
+ For a set with atoms $X$, let us write $\leastsup X$ for the set of atoms in its least support. Let $X$ be an orbit-finite set, and let 
+ \begin{align*}
+ X = X_1 \cup \cdots \cup X_n
+ \end{align*}
+ be its partition into orbits with respect to the least support (i.e.~with respect to atom automorphisms that are the identity on the least support). Show that 
+ \begin{align*}
+ \leastsup X = \leastsup{X_1} \cup \cdots \cup \leastsup {X_n}.
+ \end{align*}
+} 
+{Clearly anything that supports all the sets $X_1,\ldots,X_n$ will also support $X$, which proves the inclusion
+\begin{align*}
+ \leastsup X \subseteq \leastsup{X_1} \cup \cdots \cup \leastsup {X_n}.
+ \end{align*}
+ For the converse inclusion, we observe that the notions of least support, and the partition of a set with respect to its least support can all be defined using the language of set theory, and therefore the functions
+\begin{align*}
+ X \mapsto \leastsup X \qquad X \mapsto \set{X_1,\ldots,X_n} \qquad X \mapsto \bigcup_{i} \leastsup {X_i}
+\end{align*}
+can all be defied using the language of set theory. In particular, by the equivariance principle, these functions are equivariant. Since the last function is equivariant, anything that supports $X$, e.g.~its least support, will also support $\bigcup_i \leastsup{X_i}$. Therefore, 
+\begin{align*}
+ \leastsup X \quad \text{supports} \quad \leastsup{X_1} \cup \cdots \cup \leastsup {X_n}.
+ \end{align*}
+Since both sides of the above are finite sets of atoms, and for finite sets of atoms ``supporting'' is the same as ``containing'', we get the inclusion
+\begin{align*}
+ \leastsup X \supseteq \leastsup{X_1} \cup \cdots \cup \leastsup {X_n}.
+ \end{align*}
+
+}
+
+\mikexercise{Show that the atoms $\qatom$ also have least supports.}{See~\cite[Corollary 9.5]{DBLP:journals/corr/BojanczykKL14}.}
+\mikexercise{Show an example of oligomorphic atoms without least supports.}{Suppose that the atoms are a graph with infinitely many edges that do not share any nodes. 
+\mypic{73}
+	This structure is oligomorphic, actually it is homogeneous (see Section~\ref{sec:homogeneous-atoms}).
+	Every atom is supported by itself, or the other side of its edge.
+}
+
+\mikexercise{\label{ex:group-colcombet} Assume the equality atoms. Show that if a group is orbit-finite, then it is finite.} { This exercise is based on~\cite[Lemma 2.14]{DBLP:journals/corr/ColcombetLP14}.
+Consider the least support of the multiplication operation in the group. This least support also supports the universe of the group, and the inverse operation $g \mapsto g^{-1}$. For an element $g$ of the group, define $[g]$ to be the set of atoms that are in the least support of $g$ but are not in the least support of the multiplication operation of the group. 
+If a set of atoms supports $g,h $ and the multiplication operation, then it also supports the product $gh$. It follows that 
+\begin{align}\label{eq:group-homo}
+ [g h] \subseteq [g] \cup [h] .
+\end{align}
+For the same reasons, we have
+\begin{align}
+ \label{eq:group-homo2}
+ [g^{-1}] = [g] .
+\end{align}
+Take some $g$ in the group which maximises the size $[g]$. Such a maximum exists, since the size of $[g]$ depends on that $\bar a$-orbit of $g$, of which there are finitely many. Since we are dealing with the equality atoms, we can choose an atom automorphism $\pi$ so that 
+\begin{align}\label{eq:group-abc}
+ \pi([g]) \cap [g] = \emptyset.
+\end{align}
+ We have
+\begin{align*}
+ g = \pi(g) \pi(g)^{-1} g.
+\end{align*}
+Combining this with~\eqref{eq:group-homo}, we get 
+\begin{align*}
+ [g] \subseteq [\pi(g)] \cup [\pi(g)^{-1} g]
+\end{align*}
+Combining this with~\eqref{eq:group-abc}, we get
+\begin{align*}
+ [g] \subseteq [\pi(g)^{-1}g]
+\end{align*}
+By maximality of $[g]$ the above is actually an equality, i.e.~
+\begin{align}
+ \label{eq:group-homo3}
+ [g] \subseteq [\pi(g)^{-1}g]
+\end{align}
+The same proof also yields
+\begin{align}
+ \label{eq:group-homo4}
+ [\pi(g)] \subseteq [g^{-1}\pi(g)]
+\end{align}
+ Using a similar reasoning applied to
+\begin{align*}
+ \pi(g)^{-1} = g^{-1} \pi(g) \pi(g)^{-1}
+\end{align*}
+we conclude that 
+\begin{align*}
+ [\pi(g)] \stackrel {\text{\eqref{eq:group-homo4}}} \subseteq [ g^{-1} \pi(g)] \stackrel {\text{\eqref{eq:group-homo2}}}= [\pi(g)^{-1}g] \stackrel {\text{\eqref{eq:group-homo3}}}= [g].
+\end{align*}
+From~\eqref{eq:group-abc} it follows that $[\pi(g)]$ is empty. Therefore, $[g]$ must also be empty, since $[\_]$ commutes with $\bar a$-automorphisms. 
+By maximality of $[g]$ it follows that all elements of the group have value $\emptyset$ under $[\_]$ which implies that all elements of the group are supported by $\bar a$. In an orbit-finite set there can only be finitely many elements with a given support (Exercise~\ref{ex:finitely-many-supported-by-one-tuple}). Therefore, the group is finite.
+The same proof would work for some other atoms, e.g.~$\qatom$.}
+
+
+\mikexercise{\label{ex:group-infinite} Does Exercise~\ref{ex:group-colcombet} generalise to all oligomorphic choices of the atoms? } {No. The bit vector atoms are oligomorphic, but the atoms themselves are a group.}
+
+\mikexercise{\label{ex:lift-repr}Assume that the atoms are oligomorphic and admit least supports.
+Let $X$ be an orbit-finite set and let $f : X^n \to X$ be a finitely supported function. Show that there exists $k \in \Nat$ and finitely supported functions
+\begin{align*}
+ g : \atoms^k \to X \qquad f' : \atoms^{n \cdot k} \to \atoms^k
+\end{align*}
+which make the following diagram commute:
+\begin{align*}
+\xymatrix{ \atoms^{n \cdot k} \ar[d]_{f'} \ar[r]^{(g,\ldots,g)}& X^n \ar[d]^{f}\\ \atoms^k \ar[r]_g & X}
+\end{align*}
+
+} 
+{Using the same ideas as in Theorem~\ref{thm:classify-one-orbit}, we get the following result.
+
+
+\begin{claim}\label{claim:lift-supports} Let $X$ be an orbit-finite set. There exists $k$ and a finitely supported surjective function $g : \atoms^k \to X$ such that for every $x \in X$ there is some tuple in $g^{-1}(x)$ only uses atoms from the least support of $x$.
+\end{claim}
+	
+
+Take $g$ and $k$ as in the above claim. Take $\bar c$ to be some tuple of atoms which supports both $g$ and $f$. We will show that for every $\bar a \in \atoms ^{n \cdot k}$ there is some $\bar c$-supported partial function $f'$ which satisfies the commuting diagram in the statement of the picture when its domain is restricted to the $\bar c$-orbit of $\bar a$. By putting these functions together we get the desired result. 
+ 
+ 
+Let then $\bar a \in \atoms^{n \cdot k}$. Consider
+\begin{align*}
+ x = f \circ (g,\ldots,g) (\bar a).
+\end{align*}
+The element $x$ is supported by $\bar a \bar c$ because the value of a function is supported by any tuple which supports both the function and its arguments. Therefore the least support of $x$ uses only atoms that appear in $\bar a \bar c$. By Claim~\ref{claim:lift-supports}, there is some $\bar b \in \atoms^k$ which uses only atoms from $ \bar a \bar c$ and such that $g(\bar b) = x.$ Consider the relation
+\begin{align*}
+ f' \eqdef \set{\pi(\bar { a}, \bar b) : \mbox{$\pi$ is a $\bar c$-automorphism}}
+\end{align*}
+By choice of $\bar b$ this relation is a partial function from $\atoms^{n \cdot k}$ to $\atoms^k$ and it satisfies the commuting diagram in the exercise when restricted to its domain. }
+
+
+
+\mikexercise{
+ Assume the equality atoms. Show that if $f : X \to X$ is a finitely supported surjective function and $X$ is orbit-finite, then $f$ is a bijection.
+}
+{
+ 
+}
+
+
+\mikexercise{Show that Exercise~\ref{ex:straight-choice-1} fails in the atoms $\qatom$.}
+{
+ Take $F$ to be the function which maps an atom $a \in \atoms$ to all strictly bigger atoms. 
+}
+
+\mikexercise{\label{ex:orbit-finite-union}Assume that the atoms are oligomorphic. Show that orbit-finite sets are closed under orbit-finite union in the following sense. Let $X$ is an orbit-finite set and $f$ is an equivariant function that maps each element of $X$ to an orbit-finite set, then
+\begin{align*}
+ \bigcup_{x \in X} f(x)
+\end{align*} is an orbit-finite set.} {
+Suppose that $X$ and $f$ are supported by an atom tuple $\bar a$. Since orbit-finite sets are clearly closed under finite unions, it suffices to consider the case when $X$ is one $\bar a$-orbit. Choose some $x \in X$, and let $\bar b$ be an atom tuple which supports $f(x)$. Since $f(x)$ is orbit-finite, it is a union of finitely many $\bar b$-orbits, and therefore one can choose $y_1,\ldots,y_n$ so that every element of $f(x)$ is obtained from some $y_i$ by applying some $\bar b$-automorphism. It follows that an element belongs to the union in the exercise if and only if it can be obtained by taking some $y_i$, applying some $\bar b$-automorphism, and then applying some $\bar a$-automorphism. The result then follows from Exercise~\ref{ex:hull}.}
+
+
+\mikexercise{\label{ex:reduce-support-in-automaton}Assume that the atoms are oligomorphic. Consider a language that is recognised by an orbit-finite nondeterministic automaton. Show that if the language is supported by a tuple of atoms $\bar a$, then it is also recognised by an orbit-finite nondeterministic automaton which is supported by $\bar a$.}{
+Consider a nondeterministic orbit-finite automaton $\Aa$ which recognises a language $L$ supported by $\bar a$. Define a new automaton, which is a disjoint union of all automata of the form $\pi(\Aa)$ where $\pi$ is a $\bar a$-automorphism. This new automaton is orbit-finite and supported by $\bar a$. Finally, the recognised language is the same because all automata in the disjoint union recognise the same language, namely the original language $L$.}
+
+
+\mikexercise{
+ \label{ex:reduce-support-in-automaton-deterministic} Same as Exercise~\ref{ex:reduce-support-in-automaton}, but for deterministic automata.
+}
+{ The construction from Exercise~\ref{ex:reduce-support-in-automaton} does not work, but we can apply the Myhill-Nerode Theorem. Since the syntactic automaton is obtained only from the language, it has the same support as the language, by the equivariance principle. 
+
+}
+\mikexercise{	Consider the following weakening of Minsky machines. The automaton has a finite set of states, as well as a finite set of counters, which store natural numbers. The automaton can test a counter for zero. Instead of the increment and decrement operations in Minsky machines, the automaton can execute operations of the form ``make counter $c$ strictly bigger'' and ``make counter $c$ strictly smaller''. The model is nondeterministic, since the automaton does not control the aumount by which the counter is increased or decreased. The automaton accepts by reaching an accepting state. Show that emptiness is decidable.}{		Instead of natural numbers, we could use the positive rational numbers, and the answer to emptiness would be the same. This is because a run that uses positive rational numbers can be changed into a run that uses natural numbers, by scaling. After assuming that the counters store positive rational numbers, we end up with a special case of nondeterministic orbit-finite automata, over the total ordered atoms. (The automaton is not equivariant, since it uses the constant $0$.) As we shall prove later on, emptiness for such automata is decidable.
+}
+
+%\begin{myexample}\label{ex:integer-small-differences}
+%	We illustrate importance of the assumption on oligomorphic atoms. 
+%	Consider the integer atoms, which are not oligomorphic. 
+%	Let $D \subseteq \Int$ be an arbitrary set of integers.	Consider the language of integers sequences where every two consecutive letter have a difference in $D$:
+%	\begin{align*}
+%		L_D = \set{ a_1 \cdots a_n \in \Int : a_{i} - a_{i-1} \in D \mbox{ for every $i \in \set{2,\ldots,n}$}}.
+%	\end{align*}
+%	This language is recognised by a deterministic automaton, which keeps in its state the last letter seen, and enters an error state if the difference is outside $D$:
+%	\begin{align*}
+%		\delta(q,a) = \begin{cases}
+%			a & \mbox{if $a-q \in D$}\\
+%			\bot & \mbox{otherwise}
+%		\end{cases}.
+%	\end{align*}
+%	The transition function is equivariant.
+%	Since the set $D$ can be any set of integers, e.g.~the prime numbers or some undecidable set, it follows that orbit-finite automata over the integers are too powerful to be interesting.
+%\end{myexample}
+
+
+
+
+
+% When the atoms are oligomorphic, then the transition relation is not only finitely supported (as required by the definition), but it is also an orbit-finite set. This is because the transitions are a finitely supported set of triples (state, letter, state), and orbit-finite sets are closed under products and finitely supported subsets. This is not the case for atoms that are not oligomorphic, as claimed in the following exercise.
+% 
+% \mikexercise{
+% 	Consider the integer atoms. Show that every language recognised by a nondeterministic orbit-finite automaton with an orbit-finite transition relation is recognised by a deterministic orbit-finite automaton with a finite state space.
+% }{}
+
+
+
+\mikexercise{\label{ex:orbit-finite-union-automata}Assume that the atoms are oligomorphic. Show that the class of languages recognised by nondeterministic orbit-finite automata is closed under orbit-finite union, in the sense of Exercise~\ref{ex:orbit-finite-union}.}{Suppose that 
+we have a union 
+\begin{align*}
+ \bigcup_{i \in I} L_i
+\end{align*}
+where $I$ is an orbit-finite set and each $L_i$ is recognised by an nondeterministic orbit-finite automaton with state space $Q_i$. Then the union is recognised by an automaton with state space 
+\begin{align*}
+ \biguplus_{i \in I}Q_i 
+\end{align*}
+which is an orbit-finite set by Exercise~\ref{ex:orbit-finite-union}. 
+ }
+
+
+ \mikexercise{Assume the equality atoms. Show that languages recognised by nondeterministic orbit-finite automata (same for deterministic) are not closed under orbit-finite intersection.
+ }
+ {
+ The language of words $w \in \atoms^*$ where all atoms are distinct, is an orbit-finite intersection
+ \begin{align*}
+ \bigcap_{a} \quad \text{atom $a$ appears at most once.}
+ \end{align*}
+ The language of representations of accepting runs of Turing machines, as described in the proof of Theorem~\ref{thm:register-undecidable-universality}, is also seen to be an orbit-finite intersection of languages recognised by orbit-finite deterministic automata. 
+ }
+\mikexercise{Assume the equality atoms. Show that languages recognised by nondeterministic orbit-finite automata are not closed under orbit-finite intersection, in the sense defined in Exercise~\ref{ex:orbit-finite-union}.}{Intuitively speaking, the problem is that intersection corresponds to product on automata, and we cannot do orbit-finite products. Here is the counterexample. For every $a \in \atoms$, the language ``$a$ appears at most once'' is recognised by a (deterministic) orbit-finite automaton. If we could intersect all these languages, then we would get a nondeterministic automaton for the language ``all letters are distinct''. By Theorem~\ref{thm:register-nofa}, this would mean that ``all letters are distinct'' could be recognised by a register automaton, which is not the case. } 

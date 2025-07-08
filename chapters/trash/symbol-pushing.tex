@@ -1,0 +1,51 @@
+\chapter{Symbol pushing}
+
+
+
+
+
+
+
+
+
+% \begin{myexample}
+% Let $\atoms$ be the ordered rational numbers. Here is an example of a set builder expression which has two free variables $x,y$ and uses no parameters: \begin{align*}
+% 		\beta(x,y) = \set{z : \mbox{ for $z$ such that }x < z < y }.
+% 	\end{align*}
+% 	The variable $z$ is bound in $\beta$. 	Given a valuation $(x \mapsto a, y \mapsto b)$ of the free variables, the expression returns the open interval from $a$ to $b$. Using $\beta$, we can define the family of open intervals contained in $(0;1)$:
+% \begin{align*}
+% 		\alpha = \set{\beta(x,y) : \mbox{ for $x,y$ such that }0 < x < y < 1 }.
+% 	\end{align*}
+% Note that $0,1$ are parameters in the expression. 
+% \end{myexample}
+	
+%	 In definable sets, we will also use pairs, with pairing seen as syntactic sugar inside set builder notation, e.g.~using the Kuratowski pair:
+%\begin{align*}
+%	(x,y) \eqdef \set{\set x, \set{x,y}}.
+%\end{align*}
+%Therefore, the set of all pairs $\atoms^2$ is a definable set, another example is the upper diagonal in the ordered rational numbers
+%\begin{align*}
+% \set{(x,y) : \mbox{ for $x,y$ such that }x < y }.
+%\end{align*}
+%On the other hand, the set $\atoms^*$ is not a definable set, regardless of the atom structure $\atoms$, since if we unravel the definition of Kuratowski pair, we will see that there is unbounded nesting of set brackets in $\atoms^*$, while every definable set has bounded nesting. 
+%
+%Since we have pairs, we can talk about definable sets which are binary relations, and also about the special case of binary relations which are functions.
+%
+%\begin{myexample}
+%	Let $\atoms$ be the ordered rational numbers. The function
+%	\begin{align*}
+% \set{a,b} \qquad \mapsto \qquad \min(a,b)
+%\end{align*}
+%which maps a two element set of atoms to its minimum is a definable set. This is an example of a choice function, which inputs a set and outputs one of its elements. Later we will see that there is no choice function if the atoms are the natural numbers with equality only.
+%\end{myexample}
+%
+%
+%In contexts where elements of sets can be renamed without affecting
+%In particular, since every finite set is isomorphic to (i.e.~in a bijection with) some natural number, we will assume that definable sets generalise finite ones.
+
+
+
+
+% \mikexercise{\label{ex:definable-automata}A \emph{definable nondeterministic automaton} over atoms $\atoms$ is the same definition as that of a nondeterministic finite automaton, except the instead of being finite, the components (i.e.~states, input alphabet, etc.) are all required to be hereditarily definable sets over $\atoms$.
+% Show that every register automaton, as defined in Section~\ref{sec:register-automata}, is a special case of a definable automaton over the equality atoms.}{A simple formalisation (especially if one uses the variant of the definition that uses syntactic equivariance). }
+

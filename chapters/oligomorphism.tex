@@ -1,0 +1,565 @@
+\chapter{Atoms beyond equality}
+\label{ch:beyond-equality}
+
+So far, we have worked with atoms that have equality only. It turns out that the theory developed in this book is also meaningful when the atoms have extra structure, like an order.  We take a logical approach, where the notion of atoms is specified by a relational structure, i.e.~a set with some relations on it. Here are some examples: 
+\begin{align*}
+    \myunderbrace{(\Nat)}{the natural numbers\\ with no relations}
+  \qquad \qquad 
+\myunderbrace{(\Nat, <)}{the natural numbers\\ with order}
+  \qquad \qquad 
+  \myunderbrace{(\Int, <)}{the integers \\ with order} 
+  \qquad \qquad \myunderbrace{
+    (\mathbb Q, +)
+  }{the rational numbers \\ with a ternary relation\\ for addition $x+y=z$}.
+\end{align*}
+All of these structures will be candidates for atoms, however only the first and last one will turn out to be appropriate. This chapter explains when a structure is appropriate, and how the theory works when that happens.
+
+
+
+\section{Oligomorphic structures}
+\label{sec:oligomorphic}
+The choice of atoms will be formalized by a relational structure, as in model theory. 
+\begin{definition}[Relational structure]\label{def:relational-structure}
+	A \emph{relational structure} consists of: 
+\begin{enumerate}
+	\item an underlying set $A$, called the \emph{universe} of the structure;
+	\item a family of relations on this set, each one of the form $R \subseteq A^d$ for some $d$. 
+\end{enumerate}
+\end{definition}
+
+We use letters like $\mathbb A$ or $\mathbb B$ to describe the atoms. 
+A candidate for the atoms is a relational structure. Not all candidates are appropriate, however. Here is an example of an inappropriate one.
+
+\begin{myexample}[Presburger Arithmetic]\label{ex:Presburger-arithmetic}
+	Suppose that for the atoms we would like to use the natural numbers with addition, i.e.~the relational structure 
+	\begin{align*}
+		\atoms = (\set{0,1,2,\ldots}, \myunderbrace{x + y = z}{a ternary relation for the addition}).
+	\end{align*}
+	This structure is also known as Presburger Arithmetic. 
+	We could consider "polynomial orbit-finite sets" for this structure, and subsets of them that are definable using formulas. This time, the formulas could use the relations given in the structure, namely the successor relation and a zero test. In this setting, many of the problems that were decidable previously, will become undecidable for the new choice of atoms. An example is graph reachability -- one can easily encode the halting problem for counter machines. To implement a zero test on variable $x$, we check if $x+x=x$.
+\end{myexample}
+
+As we see from the above example, some structures, such as Presburger Arithmetic, will not be a good choice for the atoms. This is despite Presburger Arithmetic being a very tame structure, in particular it has a decidable first-order theory, as formalized in the following definition. (We assume that the reader is familiar with the basics of first-order logic, such as what it means for a formula to be true in a structure, or what free variables are. For a more detailed introduction, see~\cite{hodges1993model}.)
+
+\begin{definition}[Decidable first-order theory]
+	The \emph{first-order theory} of a structure is the set of first-order sentences that are true in it. Here, a first-order sentence is a formula that is built using the following constructors
+	\begin{align*}
+	\myunderbrace{\forall x \quad \exists x}{quantifiers}
+	\qquad 
+	\myunderbrace{\lor \quad \land \quad \neg}{Boolean combinations}
+	\qquad
+	\myunderbrace{x=y}{equality}
+	\qquad 
+	\myunderbrace{R(x_1,\ldots,x_d)}{relations from the structure},
+	\end{align*}
+	and which has no free variables. A structure has a decidable first-order theory if  there is an algorithm that decides if  first-order sentence  belongs to the theory. 
+\end{definition}
+
+ We will typically be interested in structures with a decidable first-order theory. However, as we saw in Example~\ref{ex:Presburger-arithmetic}, having a decidable first-theory will not -- on its own -- be sufficient for our theory. It will be equally important that the notion of "equivariant" subset is  well-behaved.
+So far,  equivariance,  was defined in terms of "atom permutations". When the atoms are a structure with relations beyond equality,  the role of permutations is played by automorphisms, as described in the following definition. 
+
+\begin{definition}[Automorphisms and equivariance]
+	Let $\atoms$ be a relational structure. 
+	\begin{itemize}
+		\item     An ""automorphism"" of $\atoms$ is a bijection $\pi$ of its universe with itself, which  preserves all relations, i.e.
+    \begin{align*}
+        \bar a \in R \qquad \Leftrightarrow \qquad \pi(\bar a) \in R
+    \end{align*}
+    holds for every relation $R$ of arity $d$ in the structure and every tuple $\bar a \in \atoms^d$. The automorphisms form a group, since they can be composed and inverted.
+	\item Consider a set $X$ that is equipped with an action of the group of automorphisms of $\atoms$. A subset $Y \subseteq X$ is called ""equivariant"" if it is invariant under the action, i.e.
+	\begin{align*}
+	y \in Y \quad \Leftrightarrow \quad \pi(y) \in Y \qquad \text{for every automorphism $\pi$ of $\atoms$}.
+	\end{align*}
+	\end{itemize}
+\end{definition}
+
+\begin{myexample}[Presburger arithmetic is rigid]\label{ex:presburger-rigid}
+	Suppose that we define the atoms $\atoms$ to be  Presburger Arithmetic. The problem with this choice is that there are  no  non-trivial automorphisms (such structures are called rigid). Indeed, an automorphism must map $0$ to $0$, and then it must map $1$ to $1$, and so on. Therefore, the only automorphism is the identity.	This means that every subset of $\atoms$, or more generally $\atoms^d$,  is going to be "equivariant". In particular, this precludes any finite representation or algorithms that would deal with "equivariant" subsets. 
+\end{myexample}
+\begin{myexample}[Equality atoms]\label{ex:equality-atoms}
+	Suppose that we define the atoms $\atoms$ to be a structure  where the universe is some countably infinite set, and which has no relations. (Equality is assumed to be a given for first-order logic.) An automorphism in this case is the same as a bijection of the universe with itself, i.e.~a permutation of the universe, which corresponds to the atoms that were studied in the previous chapters of this book. For this reason, we call this structure the \emph{equality atoms}.  These were the atoms that were studied in the first chapters of this book.
+\end{myexample}
+
+\begin{myexample}[Integers with order]\label{ex:integers-with-order} In this example, we present a candidate for the atoms which will turn out to be inadequate, since it will not satisfy the "oligomorphism" condition that will be defined below.
+	Suppose that we define the atoms $\atoms$ to be   $(\Int,<)$, i.e.~the integers with order. Automorphisms of this structure must preserve the order. Therefore, they must also preserve the successor relation. Indeed, if two consecutive elements $x$ and $x+1$ would be mapped to non-consecutive elements, then the resulting gap would be a violation of bijectivity. Therefore, automorphisms of this structure are  translations, i.e.~functions of the form $x \mapsto x + c$ for some $c \in \Int$. In this structure, $\atoms$ has one "orbit", because one can go from every integer to every other integer by applying some translation. However, $\atoms^2$ has infinitely many "orbits", because the difference $x_1-x_2$ between the two coordinates is preserved by translations. Therefore, there are uncountably many "equivariant" subsets of $\atoms^2$.
+\end{myexample}
+
+As illustrated in the above examples, we want the structure to have finitely many "orbits" under its automorphisms. This should not only hold for the structure $\atoms$  itself, but also for its powers $\atoms^d$, since such powers will arise in our constructions (such as "pof sets"). Hence the following definition. 
+
+% \footnote{To the author's best knowledge, the notion of orbit-finiteness was first introduced in~\cite{DBLP:conf/stacs/Bojanczyk11}, which studied orbit-finite monoids as recognisers of languages of data words.
+% } 
+
+\begin{definition}[Oligomorphic structure]\label{def:structure-assumptions} A structure $\atoms$ is called ""oligomorphic""\footnote{The notion of oligomorphic structures comes from~\cite{ryll1959categoricity}, \cite{engeler1959characterization} and \cite{svenonius1959no}, who proved that countable oligomorphic structures are exactly those which are $\omega$-categorical, i.e.~are the unique countable models of their first-order theory. This connection with first-order logic will be important later in this  chapter, when discussing how "orbit-finite" sets can be represented using formulas of first-order logic. } if for every $d \in \set{0,1,\ldots}$, the set $\atoms^d$ has finitely many elements up to automorphisms of $\atoms$. More precisely, for every $ d$, the equivalence relation on $\atoms^d$ defined by
+		\begin{align*}
+		 \bar a \sim \bar b \qquad \mbox{if } \pi(\bar a) = \bar b \mbox{ for some automorphism $\pi$ of $\atoms$}
+		\end{align*}
+		has finitely many equivalence classes.
+\end{definition}	
+
+
+
+\begin{myexample}\label{ex:summary-oligomorphic}
+	The equality atoms from Example~\ref{ex:equality-atoms}, i.e.~an infinite set without any structure except equality, are oligomorphic. These are the atoms that we have studied so far: automorphisms are permutations, and the number of "orbits" in $\atoms^d$ is the $d$-th Bell number. The other structures 
+\begin{align*}
+(\Nat,+) \qquad (\Int,<)
+\end{align*}
+discussed in Examples~\ref{ex:Presburger-arithmetic} and~\ref{ex:integers-with-order} are not oligomorphic. For the second one, we need to go to the second power to get infinitely many "orbits". 
+\end{myexample}
+
+	
+\begin{myexample}
+	Every structure with a finite universe is oligomorphic.
+\end{myexample}
+
+\begin{myexample}[Ordered atoms]
+	\label{ex:order-atoms}
+    Consider the structure  $(\mathbb Q, <)$ of ordered rational numbers. We will call this structure the \emph{ordered atoms}. This is because it will turn out that this structure is the canonical way of modelling a total order in our theory, as we will describe in Chapter~\ref{sec:homogeneous-atoms}.  We will show that this structure is oligomorphic. An automorphism of this structure is any order-preserving permutation. For example, the affine function
+    \begin{align*}
+    x \mapsto  \frac x 3 - 2
+    \end{align*}
+    is an automorphism. On the other hand, $x^3$ is not an automorphism, despite preserving the order. The reason is that cubing is not invertible on the rationals. To show that this structure is oligomorphic, we will prove that two tuples 
+    \begin{align*}
+    (a_1,\ldots,a_d), (b_1,\ldots,b_d) \in \mathbb Q^d
+    \end{align*}
+    are in the same "orbit", with respect to atom automorphisms, if and only if they have the same order type, i.e.
+    \begin{align*}
+    a_i \leq a_j \quad \Leftrightarrow \quad b_i \leq  b_j \qquad \text{for all $i,j \in \set{1,\ldots,d}$.}
+    \end{align*}
+    This will imply oligomorphism, since there are finitely many different order types for each dimension $d$. 
+    Clearly if the tuples are in the same "orbit", then they must have the same order type, by definition of automorphisms. The converse implication is also not hard to see, for example it is sufficient to consider piecewise affine maps. 
+\end{myexample}
+
+\begin{myexample}
+    The real numbers with order $(\mathbb R, <)$ are also oligomorphic. The same argument as for the rationals works. However, we will not study this structure since we care about countable ones only.
+\end{myexample}
+
+
+
+\begin{myexample}\label{ex:two-cliques}
+	Consider an undirected graph with two countably infinite cliques (without self-loops). Here is a picture, with only 12 vertices shown for each of the two cliques:
+	\mypic{117}
+	The graph, like any graph, can be viewed as a logical structure, where the universe is the vertices, and there is one binary relation for edges, which is symmetric and irreflexive. 
+	The automorphisms of this structure (which are the same as graph automorphisms in the usual sense) are generated by: permutations of the first clique, permutations of the second clique, and swapping the two cliques. In particular, the tuples
+	\begin{align*}
+		(a_1,\ldots,a_d) \quad \text{and} \quad (b_1,\ldots,b_d)
+	\end{align*} 
+	are equal up to atom automorphisms if and only if they have the same equality types and the same equivalence types with respect to the equivalence relation ``in the same clique''. Since there are finitely many possibilities for every choice of $n$, it follows that these atoms are oligomorphic.
+\end{myexample}
+
+\paragraph*{"Polynomial orbit-finite sets".} Many of the notions that we have described so far make sense for other atoms, and not just the equality atoms. The only difference is that instead of "atom permutations", we use the more general notion of atom automorphism. In the special case of the equality atoms, this will be the same as "atom permutations". 
+
+We begin with the generalization of "pof sets" and their "equivariant" subsets. 
+
+\begin{definition}["Polynomial orbit-finite sets" for general atoms]
+    Let $\atoms$ be an oligomorphic  structure. A \emph{"pof set"} over this structure is any set of the form 
+    \begin{align*}
+    \atoms^{d_1} + \cdots + \atoms^{d_k}.
+    \end{align*}
+    A subset $X$ of a  "pof set" is called \emph{"equivariant"} if membership in the subset is invariant under atom automorphisms, i.e.
+    \begin{align*}
+    x \in X \quad \Leftrightarrow \quad \pi(x) \in X \qquad \text{for every automorphism $\pi$ of $\atoms$},
+    \end{align*}
+    with the expected action of automorphisms on elements of the "pof set".
+\end{definition}
+
+The first part of the above definition, i.e.~applying a polynomial to some structure, makes sense for structures that are not necessarily oligomorphic. However, we intend to study "pof sets" equipped with "equivariant" subsets, and "equivariant" subsets are well-behaved only for oligomorphic structures. 
+
+As was the case for the equality atoms, we can consider pof automata, now for a general structure.
+
+\begin{myexample}
+Consider the ordered atoms $\atoms = \qatom$ from Example~\ref{ex:order-atoms}, and the language 
+\begin{align*}
+\setbuild{ w \in \atoms^*}{the letters in $w$ are strictly growing}.
+\end{align*}
+This language is recognised by a deterministic pof automaton. The automaton stores the most recent letter, and enters a rejecting sink state if it sees a decrease. The state space is 
+\begin{align*}
+\myunderbrace{\atoms^0}{initial}
+\quad + \quad 
+\myunderbrace{\atoms^1}{last\\ atom}
+\quad + \quad 
+\myunderbrace{\atoms^0}{error}
+\end{align*}
+and the transition function is defined as expected. 
+\end{myexample}
+
+
+\exercisepart
+\input{problems/oligo-intro}
+
+
+\section{Representation of "equivariant" subsets}
+\label{sec:representation-of-equivariant-subsets}
+The purpose of the theory that is developed in this book is to have a generalization of finiteness that is amenable to algorithms. In particular, "equivariant" sets should allow for finite representations, and should have other good properties of finite sets. From the very definition of oligomorphism we see that an "equivariant" subset can be chosen in finitely many ways, as explained in the following lemma.
+\begin{lemma}\label{lem:finitely-many-equivariant-subsets}
+    Let $\atoms$ be a relational structure that is oligomorphic. Then every "pof set" has finitely many "equivariant" subsets. 
+\end{lemma}
+\begin{proof}
+It is enough to show that "pof sets" of the form $\atoms^d$ have finitely many "equivariant" subsets, and the result will transfer to general "pof sets", which are disjoint unions of such sets. By definition of oligomorphism, there are finitely many "orbits" in $\atoms^d$, and each "equivariant" subset is a union of such "orbits". Therefore, there are finitely many choices.
+\end{proof}
+
+A corollary of the above lemma is that certain fixpoint algorithms will be guaranteed to terminate in finite time. A typical example is graph reachability, as illustrated below.
+
+
+\begin{myexample}\label{ex:reachability}
+	In Theorem~\ref{thm:reachability-decidable-pof}, we showed that graph reachability is decidable  for pof graphs under the equality atoms. Suppose that we want to generalise this to any oligomorphic atoms. A natural idea is to consider the chain
+	\begin{align}\label{eq:chain-of-reachable-vertices}
+	V_0 \subseteq V_1 \subseteq V_2 \subseteq \cdots
+	\end{align}
+	where $V_n$ is the set of vertices that can be reached from some source vertex via a path of length at most $n$. 
+	Assuming that 
+	 set of source vertices is "equivariant", and the edge relation is also "equivariant", the set $V_n$ will also be "equivariant" for every $n$. It follows from Lemma~\ref{lem:finitely-many-equivariant-subsets} that the chain~\eqref{eq:chain-of-reachable-vertices} will stabilize after finitely many steps, and therefore the set of reachable vertices can be obtained in finitely many steps. 		
+\end{myexample}
+
+
+In the above example, we showed an ``algorithm'' that decides graph reachability by computing a finite increasing chain of "equivariant" subsets of vertices. However, for this to be an algorithm, we need to be to represent subsets $V_n$ from the chain in a finite way; compute the new subsets based on the previous ones, and test equality between such subsets. 
+This leads us to the question: 
+\begin{quotation}
+	How can we represent "equivariant" subsets of a "pof set"?
+\end{quotation} 
+Of course, we want the representation to support certain basic operations, such as checking if two subsets are the same (because the same subset might have several representations), or Boolean combinations on subsets. Since a "pof set" is a finite union of sets of the form $\atoms^d$, the question reduces to
+\begin{quotation}
+	How can we represent "equivariant" subsets of $\atoms^d$?
+\end{quotation}
+In the case of the equality atoms, in   Section~\ref{sec:pof-representation} we proposed two representations, namely  generating subsets, and formulas. As it turns out, these two representations carry over to general oligomorphic structures. 
+
+By definition of oligomorphic atoms, see  Lemma~\ref{lem:finitely-many-equivariant-subsets}, a "pof set" will have finitely many "orbits", and therefore every "equivariant" subset can be represented by giving one element for each "orbit". Therefore, we can use finite sets of generators to describe "equivariant" subsets, at least as long as we can write down individual elements of the structure.  There are, however, some unresolved questions about this representation of subsets. For example: how do we test equality of two subsets given by generators? Or: how do we compute the complement? We will return to these questions in Section~\ref{sec:generating-sets-oligo}; for the moment we will stick to the formula representation.  As we will see below, the formula representation is very well suited to the oligomorphic case, since oligomorphic structures are exactly those where "equivariant" subsets can be defined by first-order formulas.
+
+Under the equality atoms, we represented an "equivariant" subset of $\atoms^d$ by a formula 
+\begin{align*}
+\varphi(x_1,\ldots,x_d)
+\end{align*}
+that used  Boolean combinations and equality. In the general oligomorphic case, we will also use such formulas, but we will allow 
+quantifiers, and other relations -- beyond equality -- that are present in  the structure. Subset of $\atoms^d$ that can be defined this way are called \emph{first-order definable}.
+For some structures, such as the equality atoms, we can avoid quantifiers, but for others the quantifiers will be necessary, as illustrated in the following example.
+
+\begin{myexample}\label{ex:oligo-squares}
+	Consider  the following three-vertex graph: 
+	\mypicb{4}
+	As mentioned in Example~\ref{ex:two-cliques}, this graph can be seen as a relational structure with one binary relation. 
+	Like any finite structure, this structure is oligomorphic. There is no quantifier-free formula that distinguished the isolated vertex from a non-isolated vertex, despite the two vertices being in different "orbits". 
+\end{myexample}
+
+
+The following theorem shows that  for oligomorphic structures which are countable (i.e.~have a countable universe), "equivariant" subsets are exactly the first-order definable ones.
+
+
+\begin{theorem}\label{thm:ryll}
+    Let $\atoms$ be a countable oligomorphic structure. A subset $X \subseteq \atoms^d$ is "equivariant" if and only if it is first-order definable.
+\end{theorem}
+\begin{proof}
+    In this proof, we use the name \emph{atom} for elements of the universe. 
+	Consider the following game (known as the Ehrenfeucht-\fraisse game), which is parametrised by two tuples $\bar a, \bar b \in \atoms^d$ and a number of rounds $k \in \set{0,1,2,\ldots,\omega}$. The game is played by two players, called Spoiler and Duplicator. In each round:
+	\begin{itemize}
+				\item Spoiler chooses one of the tuples and extends it with one atom.
+		\item Duplicator responds by extending the other tuple with one atom.
+			\end{itemize}
+	Spoiler wins the game if, for some finite $i \le k$, the (extended) tuples after playing $i$ rounds can be distinguished by some quantifier-free formula (using the relations from the structure), otherwise Duplicator wins. 
+	The theorem follows immediately from the equivalence of items 1 and 4 in the following lemma.
+	\begin{lemma}
+		The following conditions are equivalent for every tuples $\bar a, \bar b \in \atoms^d$:
+		\begin{enumerate}
+			\item \label{ryll:fo-same} the tuples belong to the same first-order definable subsets;
+			\item \label{ryll:fin-k} Duplicator has a winning strategy in the $k$-round game for every $k < \omega$;
+			\item \label{ryll:inf-k} Duplicator has a winning strategy in the $\omega$-round game;
+			\item \label{ryll:same-orbit} the tuples are in the same "orbit".
+		\end{enumerate}
+	\end{lemma}
+	
+		
+	
+	\begin{proof}\ 
+		\begin{itemize}
+			\item \emph{\ref{ryll:fo-same} implies \ref{ryll:fin-k}.} This is (half of) the classical Ehrenfeucht-\fraisse theorem\footnote{See~\cite[Section 3.2]{hodges1993model}}, which says that if two tuples satisfy the same formulas of quantifier rank at most $k$, then Duplicator has a winning strategy in the $k$-round game. Recall that the quantifier rank of a formula is the maximal nesting of quantifiers. 
+		 \item \emph{\ref{ryll:fin-k} implies \ref{ryll:inf-k}.} In this step, we use oligomorphism.
+The key observation is in the  following claim, which shows that Duplicator has a strategy that ensures staying in positions that satisfy~\ref{ryll:fin-k}.
+		 
+		 \begin{claim}
+			Consider one round of the Ehrenfeucht-\fraisse game, which begins in a position (i.e.~a pair of atom tuples of same finite length) that satisfies condition~\ref{ryll:fin-k}. For every move of player Spoiler, there is a response of player Duplicator which ensures that the resulting position  also satisfies condition~\ref{ryll:fin-k}.
+		 \end{claim}
+		 \begin{proof}
+			Suppose that the round begins in a position $(\bar a, \bar b)$. By symmetry, we only consider the case when Spoiler extends the tuple $\bar a$ with some atom $a \in \atoms$. By condition~\ref{ryll:fin-k}, we know that for every $k$ there is some response  $b_k \in \atoms$ of player Duplicator, which guarantees that 
+			\begin{align}
+				\label{eq:duplicator-next-move}
+				\text{Duplicator can win the $k$-round game from position }
+				(\bar a a, \bar b b_k).
+			\end{align}
+			Observe that the above condition, which describes a property of tuples of some fixed length, is "equivariant". This is because the dynamics of the game would not be affected if we applied an atom automorphism to all choices. 			By oligomorphism, we know that there are finitely many "orbits" of tuples 
+			\begin{align*}
+			(\bar a a, \bar b b_k)
+			\end{align*}
+			that can be realized. Therefore, some "orbit" is hit by infinitely many choices of $b_k$. By equivariance of~\eqref{eq:duplicator-next-move}, we can pick some $b_k$ that witnesses an "orbit" that is hit infinitely often, and this $b_k$ will guarantee winning the $k$-round game for infinitely many $k$, and therefore for all $k$. 
+		 \end{proof}
+		 Thanks to the above claim, if we play the $\omega$-round game starting in a position that satisfies~\ref{ryll:fin-k}, then Duplicator can play in a way that guarantees always staying in positions that satisfy~\ref{ryll:fin-k}. In particular, Duplicator can win $\omega$-rounds, thus witnessing~\ref{ryll:inf-k}.
+			\item \emph{\ref{ryll:inf-k} implies \ref{ryll:same-orbit}.} In this step, we use countability. We need to show that if Duplicator has a winning strategy in the $\omega$-round game for tuples $\bar a$ and $\bar b$,
+			then there is an automorphism that maps one tuple to the other. This is proved using a back-and-forth argument. Fix some enumeration of the model $\atoms$, which exists by assumption on countability. Consider a play in the $\omega$-round game, where Spoiler uses the following strategy:
+			 \begin{itemize}
+				 \item in even-numbered rounds, extend the $\bar a$ tuple with the least (according to the enumeration) atom that does not appear in it;
+				 \item in odd-numbered rounds, do the same for the $\bar b$ tuple.
+			 \end{itemize}
+			 Suppose that Duplicator responds to the above strategy with a winning strategy. In the resulting play, we get two infinite sequences
+			\begin{align*}
+				a_1,a_2,\ldots \qquad b_1,b_2,\ldots
+			\end{align*}
+			of atoms that extend the tuples $\bar a$ and $\bar b$, respectively. By the choice of Spoiler's strategy, every atom appears in the first infinite  sequence, and also every atom  appears in the second infinite sequence.  Therefore, the function $a_i \mapsto b_i$ is permutation of the atoms. Furthermore, this permutation is an automorphism, since at every step in the game, the same quantifier-free formulas must be satisfied on both sides. 
+			\item \emph{\ref{ryll:same-orbit} implies~\ref{ryll:fo-same}.} By induction on the quantifier rank $k$, one shows that tuples in the same "equivariant" "orbit" must satisfy the same first-order formulas of quantifier rank $k$. 
+			
+		\end{itemize}
+		
+This completes the proof of the lemma, and therefore also of the theorem.
+	\end{proof}
+\end{proof}
+
+% \begin{corollary}
+% 	\label{thm:ryll}
+% 	Suppose that the atoms are a countable oligomorphic structure. If $X \subseteq \atoms^k$ is supported by a tuple of atoms $\bar a \in \atoms^d$, then it is definable by a first-order formula with $k$ free variables and parameters from $\bar a$.
+% \end{corollary}
+% \begin{proof}
+% Define
+% 	\begin{align*}
+% 		Y = \set{ \pi(\bar a \bar b) : \mbox{$\pi$ is an atom automorphism and $\bar b \in X$}}.
+% 	\end{align*} 
+% 	This is an equivariant set, and therefore by Lemma~\ref{thm:ryll} it is defined by a formula of first-order logic $\varphi$ with $n+k$ free variables. A tuple $\bar b$ belongs to $X$ if and only if it satisfies $\varphi(\bar a\bar b)$.
+% \end{proof}
+
+
+\subsection*{Graph reachability}
+\label{sec:oligo-graph-reachability}
+In the previous chapters, we showed that some decision problems -- such as graph reachability or emptiness for nondeterministic automata -- can be decided. We now show that these results carry over to other structures, under the suitable assumptions. The first of these assumptions is that the structure is countable and oligomorphic, and so we can use Theorem~\ref{thm:ryll} to conclude that "equivariant" subsets can be represented in a finite way, namely by first-order formulas. This assumption makes the decision problems well-posed, because the inputs (such as graphs or automata) can be represented in a finite way. However, we also need to be able to operate on "equivariant" subsets. For example, the same "equivariant" subset might have several representations, and we need to be able to test equality between them. This boils down to the question: given two first-order formulas 
+\begin{align*}
+\varphi(x_1,\ldots,x_d) \qquad \text{and} \qquad \psi(x_1,\ldots,x_d),
+\end{align*}
+decide if they define the same subset of $\atoms^d$. Already in the special case when $d=0$, i.e.~when the formulas are sentences, this problem is the same as checking which sentences are true in the structure. Therefore, in order to manipulate "equivariant" subsets represented by formulas, we will want the first-order theory to be decidable; this will be our second assumption. These two assumptions will be enough for many algorithms. An example is graph reachability -- the following theorem shows that the decidability result from Section~\ref{sec:pof-graphs} transfers over from the equality atoms to general oligomorphic structures.
+
+\begin{theorem}\label{thm:olig-graph-reachability}
+Assume that the atoms $\atoms$ are a countable oligomorphic structure with a decidable first-order theory. Then reachability for pof graphs is decidable. 
+\end{theorem}
+\begin{proof}
+	Although we have essentially described the algorithm in Example~\ref{ex:reachability}, we spell out the details about the representation in this proof, to explain how exactly we manipulate "equivariant" subsets represented by formulas.
+	The input to the problem consists of a "pof set"
+	\begin{align*}
+		V = \sum_{i \in I} \atoms^{d_i},
+		\end{align*}	
+	together with three "equivariant" relations: 
+	\begin{align*}
+	\myunderbrace{E \subseteq V^2}{edges} 
+	\qquad 
+	\myunderbrace{S,T \subseteq V}{source and target\\ vertices}
+	\end{align*}
+	An "equivariant" subset of $V$ -- such as the source and target sets -- is represented by a family of first-order formulas, with one formula for each "component" $i \in I$ of the disjoint union in the set $V$. The formula for "component" $i$ has $d_i$ free variables, and tells us when a tuple of atoms belongs to the $i$-th "component". A similar representation is used for the binary relation $E$ -- for each pair of "components" $i,j \in I$, there is a formula with $d_i+d_j$ free variables, which tells us when a tuple of atoms from the $i$-th "component" is related to a tuple of atoms from the $j$-th "component". We will use these representations to implement a reachability algorithm.
+
+	We intend to compute 
+	the chain 
+	\begin{align*}
+	V_0 \subseteq V_1 \subseteq V_2 \subseteq \cdots
+	\end{align*}
+	of sets, such that $V_n$ is the vertices that can be reached by a path of length at most $n$. Each set $V_n$ will be represented by a family of formulas, call these formulas $\set{\varphi_i^n}_{i \in I}$. For $n=0$, we use the formulas for the source set. Let us now show how to compute the formulas for $V_{n+1}$ based on the formulas for  $V_n$:
+	\begin{align*}
+		\myoverbrace{\varphi^{n+1}_i(\bar x )}{the  formula for \\ "component" $i$ in $V_{n+1}$}
+		\qquad = \qquad 
+		\myoverbrace{\varphi^n_i(\bar x )}{the  formula for \\ "component" $i$ in $V_n$}
+		\quad  \vee \quad  \myunderbrace{\bigvee_{j \in I} \exists \bar y}{choosing a "component"\\ $j \in I$ and a tuple $\bar y$ \\ of $d_j$ atoms is the same as \\ choosing an element of $V$ }
+	\quad   \big(\myoverbrace{\varphi^n_j(\bar y )}{the  formula for\\ "component" $j$ in $V_n$}
+	\quad  \land \quad  \myunderbrace{\varphi^E_{ji}(\bar y,\bar x)}{the formula for  \\ "components" $i$ and $j$  in \\ the edge relation $E$} \big).
+	\end{align*}
+	As explained in Example~\ref{ex:reachability}, this chain cannot grow infinitely often, because the set of vertices has finitely many "orbits", and each set in the chain is a union of these "orbits". Also, a new set in the chain is defined in terms of the previous one, and therefore once we have $V_{n+1} = V_n$ for some $n$, then the chain stabilizes forever. We can check when the chain stabilizes by asking if the following first-order formula -- which says that no new elements have been added -- is true in the atoms:
+	\begin{align*}
+	\bigwedge_{i \in I} \forall \bar x \ \varphi_i^n(\bar x) \ \Rightarrow \ \varphi^{n+1}(\bar x).
+	\end{align*} 
+	We can get an answer to this question, by the assumption that the atoms have a decidable first-order theory. 
+\end{proof}
+
+In the proof above, we did not give a more precise estimate on the computational complexity of the problem, beyond saying that it is decidable. Later on in this book, we will see that the algorithm is in \textsc{PSpace} for most choices of atoms that we consider, including the equality atoms (this was already shown in Section~\ref{sec:pof-graphs}), and the ordered atoms.
+
+
+
+
+\exercisepart
+
+
+\mikexercise{Consider a structure with a countable vocabulary. Show that if it is not oligomorphic, then there is some subset of $\atoms^d$ that is "equivariant", but not first-order definable.}
+{
+	Choose $d$ so that $\atoms^d$ has infinitely many "orbits", which exists by the assumption that the structure is not oligomorphic.  An "equivariant" subset of $\atoms^d$ can be chosen in uncountably many ways, while a first-order definable subset can be chosen in countably many ways. 
+}
+
+
+\mikexercise
+{\label{ex:buchi-reachability-lasso} Consider the following two conditions for an "orbit-finite" graph:
+\begin{enumerate}
+	\item \label{it:buchi-reach} there is an infinite directed path; 
+	\item \label{it:lasso-reach} there is a cycle.
+\end{enumerate}
+Find an atom structure where the two conditions are equivalent, and also an atom structure where only the implication \ref{it:buchi-reach} $\Leftarrow$ \ref{it:lasso-reach} is true.
+}{
+\begin{itemize}
+	\item \emph{Not equivalent.} The atoms are $\qatom$. Consider the graph where the vertices are atoms, and the edge relation is $\set{(v,w): v < w}$. Take $T$ to be all vertices, and $s$ to be any vertex. There exists an infinite path from $s$ which sees $T$ infinitely often -- actually this is true for every infinite path -- but there is no cycle in the graph. 
+	\item \emph{Equivalent.} The atoms are the equality atoms $(\Nat,=).$ Let $(V,E)$ be such that there is an infinite path that begins in $s$ and visits $T \subseteq V$ infinitely often. Let $\bar a$ be a tuple of atoms that supports the graph and the target set $T$. By the pigeon-hole principle, the infinite path must contain two vertices $t,t'$ that are in the same $\bar a$-orbit, i.e.
+	\begin{align*}
+		\pi(t) = t' \qquad \text{for some $\bar a$-automorphism $\pi$. }
+	\end{align*}
+	Suppose that $t'$ is visited first by the infinite path, i.e.
+	\begin{align*}
+		t \stackrel{p} \to t' \qquad \text{for some finite path $p$ in the graph.}
+	\end{align*}
+	It follows that for every $n$, there is a path from $t$ to $\pi^n(t)$, namely
+	\begin{align*}
+		t \stackrel{p} \to \pi(t) \stackrel{\pi(p)} \to \pi^2(t) \stackrel{\pi^3(p)} \to \cdots \stackrel{\pi^{n-1}(p)} \to \pi^n(t).
+	\end{align*}
+	By the same argument as in the solution to Exercise~\ref{exercise:equality-atoms-have-uniform-chains}, we may assume that $\pi$ is the identity on all but finitely many atoms, and therefore $\pi^n(t)=t$ for some $n$, thus showing that there is a cycle containing $t$.
+\end{itemize}	 
+} 
+
+
+\mikexercise
+{\label{ex:buchi-reachability} Show that under the assumptions of Theorem~\ref{thm:olig-graph-reachability}, there is an algorithm that checks if condition~\ref{it:buchi-reach} of Exercise~\ref{ex:buchi-reachability-lasso} is satisfied for a pof graph. Likewise for condition~\ref{it:lasso-reach}.}{
+\begin{enumerate}
+	\item \emph{Infinite path that sees $T$ infinitely often.} Suppose that $\bar a$ supports the graph. We claim that condition~\ref{it:buchi-reach}, i.e.~existence of an infinite path that begins in $s$ and visits $T$ infinitely often, is equivalent to: 
+	\begin{center}
+		(*) there exist paths $s \to t \to t'$ such that $t$ and $t'$ are in the same $\bar a$-orbit.
+	\end{center}
+	The left-to-right implication follows from the pigeon-hole principle, while for the right-to-left implication we use the path
+	\begin{align*}
+		t \to \pi(t) \to \pi^2(t) \to \cdots .
+	\end{align*}
+	It remains to decide if (*) holds. The binary relation ``in the same $\bar a$-orbit'' is a finitely supported relation on $V$. Therefore, the question in the definition of (*) can be formalised using the set structure. (There is a hole in this argument, namely that it assumes that we can compute the relation ``in the same $\bar a$-orbit''. This is actually an assumption that needs to be made about the atom structure, see the footnote for Exercise~\ref{ex:effective-oligo}.)
+	\item \emph{One can reach a finite cycle that intersects $T$.} Condition~\ref{it:lasso-reach} is checked using the set structure from the Third Symbol Pushing Lemma. 
+\end{enumerate}
+
+}
+
+
+
+ \mikexercise
+{\label{ex:alternating-reachability} An instance of \emph{alternating reachability} is defined in the same way as an instance of graph reachability, i.e.~there is a directed graph with distinguished source and target vertices. The difference is in the semantics: we play a game between players Odd and Even, with Odd choosing the next edge in odd rounds, and Even choosing the next edge in even rounds. We want to decide if player Odd has a strategy that guarantees seeing a target vertex in a finite number of rounds, regardless of the choice of initial vertex in the source set\footnote{This type of game is called a \emph{reachability game}. More general games, namely parity games, are studied in~\cite[Section 5.2]{klin2017modal}}.  Show that this problem is decidable under the assumptions of Theorem~\ref{thm:olig-graph-reachability}. 
+} { Define $V_0$ to be $T$. For $n > 0$ define $V_n \subseteq V$ to be $V_{n-1}$ plus all vertices $v \in V$ such that:
+\begin{itemize}
+	\item $v$ is owned by $0$ and some $(v,w) \in E$ satisfies $w \in V_n$;
+	\item $v$ is owned by $1$ and all $(v,w) \in E$ satisfy $w \in V_n$.
+\end{itemize}
+Using the set structure, one shows that each $V_n$ is a hereditarily definable set that can be computed. 
+By the same argument as for graph reachability, there is some fixpoint, i.e.~some $n$ such that $V_{n+1}=V_n$. If the source vertex is in this fixpoint, then player $0$ wins the game. We claim that the converse implication is also true, thus completing the algorithm. 
+
+To prove this claim, suppose that the source vertex belongs to the complement of the fixpoint, call this complement $W$. By definition, if $v \in W$ then 
+\begin{itemize}
+	\item $v$ is owned by $0$ then all $(v,w) \in E$ satisfy $w \in W$;
+	\item $v$ is owned by $1$ then some $(v,w) \in E$ satisfies $w \in W$.
+\end{itemize}
+It follows that player $1$ has a strategy that ensures staying in the complement $W$, and thus never reaching the set $T$. 
+}
+
+
+\mikexercise {\label{ex:buchi-game} Assume the equality atoms. A \emph{B\"uchi game} has the same syntax as alternating reachability from Exercise~\ref{ex:alternating-reachability}. The game is played similarly, except that the objective of player $0$ is to see vertices from $T$ infinitely often. Give an algorithm that decides the winner in a B\"uchi game represented by a set builder expression. Hint: use memoryless determinacy of B\"uchi games without atoms, see ~\cite[Theorem 6.4]{DBLP:books/el/leeuwen90/Thomas90}. } { The difficulty is that the memoryless determinacy theorem uses choice, and produces strategies that are not necessarily finitely supported. In fact, one can give an example of a B\"uchi (even reachability) game where player $0$:
+\begin{itemize}
+	\item has a winning strategy that is not finitely supported;
+	\item does not have a finitely supported winning strategy.
+\end{itemize}
+ A solution to this difficulty is to consider nondeterministic strategies. 
+Define a \emph{memoryless nondeterministic strategy} for player $i \in \set{0,1}$ to be a set of pairs 
+\begin{align*}
+	S_i \subseteq (V_i \times V) \cap E
+\end{align*}
+such that if a vertex owned by player $i$ has at least one outgoing edge in $E$, then it also has at least one outgoing edge in $S_i$. 
+We say that $S_i$ is \emph{winning} for player $i$ if every path that starts in the source vertex $s$ and uses only edges from $S_i$ will necessarily see $T$ infinitely often. We claim that if player $i$ has a winning memoryless strategy (not necessarily finitely supported) in a B\"uchi game, then player $i$ also has a winning memoryless nondeterministic strategy, which is supported by whatever supports the game. There are finitely many such strategies; these can then be enumerated and checked 
+
+(to do complete)
+% To prove this, consider a winning memoryless strategy 
+% \begin{align*}
+% 	f : \underbrace{V_i}_{\text{vertices owned by $0$}} \to V
+% \end{align*}
+% for player $i$. Define a nondeterministic strategy by
+% \begin{align*}
+% 	S_i = \set{\pi(v,f(v)) : v \in V_i, \pi \text{ a $\bar a$-automorphism}}.
+% \end{align*}
+% We claim that if $f$ is winning, then so is $S_i$. 
+
+% which has the property that if $G$ is a B\"uchi game where player $i$ wins, then $S_i$ is a winning memoryless nondeterministic strategy for player $i$. Such a formula is obtained by formalising, in the language of set theory, the proof of memoryless determinacy for parity games, see e.g.. From the Equivariance Principle it then follows that if $\bar a$ supports a B\"uchi game, then the winning player has a memoryless nondeterministic winning strategy that is supported by $\bar a$. Such strategies can be enumerated by brute force, since there are finitely many $\bar a$-supported sets of edges. 
+o}
+
+
+ 
+
+
+\mikexercise{\label{ex:graph-reach-oligo-decidable-finite-vocabulary} 
+Consider the graph which is obtained by taking a disjoint union of all cliques, one for each size $n \in \set{1,2,\ldots}$. This structure is not oligomorphic, but we can still consider "pof sets" with first-order definable subsets. Show that graph reachability is decidable. 
+} 
+{
+For $k \in \set{1,2,\ldots,\omega}$ define $\atoms_k$ be the structure obtained from $\atoms$ by adding for each $i < k$ a unary predicate $P_i$ which selects elements of the clique of size~$i$. 
+\begin{claim}\label{claim:cliques-quantifier-elimination}
+	Every first-order formula over $\atoms$ of quantifier-rank $r$ is equivalent to a quantifier-free formula over $\atoms_r$.
+\end{claim}
+\begin{proof}
+	Induction on $r$ 
+\end{proof}
+
+\begin{claim}
+	\label{claim:cliques-transitive-closure}
+	If $R$ is a binary relation on $\atoms^k$ which is first-order definable, then there is some $n$ such that the transitive reflexive closure $R^*$ is equal to $R^{\le n}$. 
+\end{claim}
+\begin{proof} By Claim~\ref{claim:cliques-quantifier-elimination}, the relation $R$ is defined by a quantifier-free formula over $\atoms_r$ for some $r$.
+	Consider a path in the graph where the vertices are $\atoms^k$ and the edge relation is given by $R$:
+	\begin{align*}
+		\bar x_1 \stackrel R \to \bar x_2 \stackrel R \to \cdots \stackrel R \to \bar x_n.
+	\end{align*}
+	 If $n$ is sufficiently large with respect to $r$, one can find $i < j$ such that the quantifier-free types in $\atoms_r$ are the same for the $2k$-tuples $\bar x_i \bar x_{i+1}$ and $\bar x_i \bar x_{j+1}$. We can then shorten the path, by going directly from $\bar x_i$ to $\bar x_{j+1}$. 
+\end{proof}
+A corollary of the above claim is that the fixpoint algorithm for graph reachability terminates in finitely many steps, for graphs where the vertices are tuples of atoms. By Exercise~\ref{ex:setb-partial-tuple}, any the vertices of any graph represented by a set builder expression can be viewed as tuples of atoms modulo a first-order definable partial equivalence, and therefore the fixpoint algorithm terminates in finitely many steps also for graphs represented by set builder expressions. 
+
+An extension of this argument would work for the structure which is the union of all finite cycles:
+\mypic{120}
+
+}
+
+
+
+
+
+
+\section{"Orbit-finite" sets}
+\label{sec:orbit-finiteness-oligomorphic}
+
+In Section~\ref{sec:orbit-finiteness-equality}, we gave a more semantic notion of finiteness for the equality atoms, called orbit-finiteness.  This notion, which is the central one for this book,  extends to other structures  by using automorphisms instead of permutations.  
+\begin{definition}[Finite supports and orbit-finiteness]\label{def:supports-general}
+	Let $\atoms$ be a relational structure, and consider a set $X$ that is equipped with an action of atom automorphisms, i.e.~automorphisms of the structure $\atoms$.
+	\begin{itemize}
+		\item \emph{Supports.}  An element $x \in X$ is  \emph{supported} by  a list of  atoms $a_1,\ldots,a_n$ if 
+		\begin{align*}
+			\pi(\bar a) = \bar a 
+		\quad \Rightarrow \quad 
+		\pi(x) = x
+		\end{align*}
+		holds for every automorphism $\pi$ of the structure $\atoms$. We say that $x$ is \emph{finitely supported} if it is supported by some finite list of atoms.
+		\item \emph{Orbit-finite set.} 	The set $X$ is called  ""orbit-finite"" if  every element $x \in X$ has finite support, and there are finitely many "orbits" under the group action.
+	\end{itemize}
+\end{definition}
+
+We will only be interested in "orbit-finite" sets for atoms that are oligomorphic. The oligomorphic assumption will guarantee that basic operations, such as product $X \times Y$, can be implemented on "orbit-finite" sets.
+
+
+\begin{myexample}[Finitely supported subsets in the ordered atoms]
+	\label{example:totally-ordered-powerset}
+		Consider the ordered atoms $\atoms = (\mathbb Q, <)$. In this case, the automorphisms are order-preserving bijections.  Let us discuss the finitely supported elements of the powerset, i.e.~the finitely supported subsets of $\atoms$. Consider a subset $X \subseteq \atoms$ which is supported by a tuple of atoms $\bar a$. We claim that $X$ is a union of intervals (open, closed, open-closed or closed-open) whose endpoints are either $-\infty, \infty$, or appear in $\bar a$. Indeed, consider atoms $b,c$ that are not in $\bar a$ and are not separated by an atom in $\bar a$ in terms of the order. There is an automorphism that fixes $\bar a$, and which maps $b$ to $c$. Since the set $X$ is supported by $\bar a$, it follows that $b \in X$ if and only if $c \in X$.
+\end{myexample}
+
+
+
+In Chapter~\ref{cha:orbit-finite-equality}, we defined "spof sets" under the equality atoms, and we showed that they were the same as "orbit-finite" sets, up to "equivariant" bijections. The notion of  ""spof set"" extends to oligomorphic structures (a "pof set" quotiented by an "equivariant" partial equivalence relation). Also,  the characterization carries over, as stated in the following theorem.
+
+\begin{theorem}\label{thm:spof=orbit-finite}
+	Let $\atoms$ be an oligomorphic structure, and let $X$ be a set that is equipped with an action of atom automorphisms. Then $X$ is "orbit-finite" if and only if it admits an "equivariant" bijection with a  "spof set". 
+\end{theorem}
+\begin{proof}
+	Same  proof as the special case for equality atoms from Theorem~\ref{thm:subquotiented-pof-representation}. Oligomorphism is used in the easier right-to-left implication: every  "spof set" is "orbit-finite". This is because  "pof sets" without subquotients are "orbit-finite" by definition of oligomorphism, and taking a subquotient does not increase the number of "orbits". 
+\end{proof}
+
+A corollary of the above theorem is that "orbit-finite" sets enjoy the same closure properties as  "spof sets". For example, they are closed under Cartesian products $X \times Y$, since "spof sets" have this property. 
+Not all results carry over to oligomorphic structures. For example, least supports can fail, as explained below. 
+
+\begin{myexample}
+	Consider an atom structure $\atoms$ which is the following graph:
+	\mypicb{5}
+	Consider the  "spof set" $\atoms/\!\!\sim$, where $\sim$ is the equivalence relation ``in the same connected component''. An element of this set, i.e.~a connected component, is supported by any of the two atoms in it, but none of these supports is the least support.
+	A similar phenomenon can be observed in the structure of two cliques from Example~\ref{ex:two-cliques}. In this case, each of the two cliques -- when seen as an element of the finitely supported powerset -- is supported by any atom that appears in it. 
+\end{myexample}
+
+
+\exercisepart
+\input{problems/oligo-groups}

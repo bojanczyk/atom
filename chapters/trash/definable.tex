@@ -1,0 +1,127 @@
+\chapter{Representing orbit-finite sets}
+\label{sec:definable-sets}
+How does one represent an orbit-finite set $X$ so that it can be processed by algorithms? 
+One idea is to choose a support $\bar a$, and elements 
+\begin{align*}
+	x_1,\ldots,x_n \in X
+\end{align*}
+which represent all $\bar a$-orbits, and then write $X$ as 
+\begin{align*}
+	X = \bigcup_{i \in \set{1,\ldots,n}} \text{$\bar a$-orbit of $x_i$},
+\end{align*}
+with $x_1,\ldots,x_n$ being represented by induction assumption. This representation works -- assuming that the atoms can be represented in a finite way -- for \emph{hereditarily orbit-finite sets}, which are sets that are orbit-finite, their elements are orbit-finite, and so on recursively until atoms are reached. Two drawbacks of this representation are: (a) it is not immediately clear how to work with it, e.g.~how to test two representations for equality; and (b) a lot of space is required to represent simple sets, e.g.~representing $\atoms^n$ requires enumerating all of the exponentially many orbits. In Section~\ref{sec:sem-poly} we will revisit this representation, but in this chapter we work with a different idea.
+
+We propose a representation, using set builder expressions, which avoids the drawbacks (a) and (b), and has the further advantage that it works for models that are not necessarily oligomorphic, such as Presburger arithmetic $(\Nat,+)$. We also show how set builder expressions can be transformed by algorithms, with some transformations (like union) being polynomial time, and some transformations (like testing equality) being as hard as the first-order theory of the underlying atom structure. Then, we show that if the atoms are oligomorphic, then the set builder expressions coincide with hereditarily orbit-finite sets. 
+
+
+
+
+
+
+
+
+
+
+\section{Hereditarily orbit-finite sets}\label{sec:hof}
+In this section, we show that if the atoms are oligomorphic, then the hereditarily orbit-finite sets (orbit-finite, the elements are orbit-finite, their elements are orbit-finite, and so on) described at the beginning of this chapter are the same as those defined by set builder expressions.
+
+% \begin{myexample}
+% 	 Consider a register automaton, say nondeterministic. Every automaton is an example of a hereditarily orbit-finite set. Indeed, formally speaking an automaton is a tuple, so one needs to show that every component of the tuple is hereditarily orbit-finite (because the pairing function preserves hereditarily orbit-finite sets). The most interesting case is the transition relation, and here it suffices to show that the space of all configurations (and therefore also pairs of configurations) forms a hereditarily orbit-finite set. The number of orbits is at least exponential in the number of registers, due to the undefined registers.
+% \end{myexample}
+
+
+
+
+\begin{theorem}\label{thm:definable-is-hof}
+	Assume that the atoms are countable and oligomorphic. A set can be defined by a set builder expression if and only if it is hereditarily orbit-finite.
+\end{theorem}
+
+The key part of the above theorem is the following lemma, which is based on the proof of Ryll-Nardzewski, Engeler and Svenonius about countable oligomorphic being the same thing as $\omega$-categorical. 
+
+
+As discussed in Example~\ref{example:fs-powerset}, in the equality atoms the finitely supported subsets of $\atoms^k$ coincide with those that can be defined using quantifier-free formulas, which is a stronger statement than first-order definability as per Corollary~\ref{thm:ryll}. The same is true for $\qatom$, see Example~\ref{example:totally-ordered-powerset}. The reason is that these atom structures are \emph{homogeneous}, see Chapter~\ref{sec:homogeneous-atoms}. Not all oligomorphic structures are homogeneous, and therefore sometimes quantifiers are needed to define finitely supported relations on the atoms, as shown in the following example.
+
+\begin{myexample}
+	Let $\atoms$ be the undirected graph which consists of a countably infinite disjoint union of cycles of length 4: 
+	\mypic{83}
+	This is an oligomorphic structure. Consider the equivariant set
+	\begin{align*}
+		\set{(a,b) : \mbox{$a,b \in \atoms$ are antipodal, i.e.~$a \neq b \land \exists c \ E(a,c) \land E(c,b)$}}.
+	\end{align*}
+The set is definable in first-order logic, but not without quantifiers.
+\end{myexample}
+
+
+Before proving Theorem~\ref{thm:definable-is-hof}, let us note a further corollary of Corollary~\ref{thm:ryll}.
+Recall Theorem~\ref{thm:partial-equivalence-representation} which represented orbit-finite sets using tuples of atoms modulo partial equivalence relations. If we view a partial equivalence relation on $n$-tuples of atoms as a set of $2n$-tuples of atoms, and apply Corollary~\ref{thm:ryll}, we see that the partial equivalence can be defined by a formula of first-order logic with $2n$ free variables, possibly using parameters from the atoms. Putting this together with Theorem~\ref{thm:partial-equivalence-representation}, we see that every $\bar a$-supported orbit-finite set admits an $\bar a$-supported bijection with a finite union of sets, each one of which is submotients of atom tuples modulo a partial equivalence relation that can be defined in first-order logic with parameters from $\bar a$. 
+
+
+ 
+\begin{proof}[Proof of Theorem~\ref{thm:definable-is-hof}]
+We begin with the left-to-right implication. By induction on the size of a set builder expression $\alpha$, we show that 
+\begin{align*}
+	\bar a \quad \mapsto \quad \text{set represented by $\alpha(\bar a)$}
+\end{align*}
+ is a function that inputs tuples of atoms and outputs hereditarily orbit-finite sets. Also, this function is supported by the parameters that appear in $\alpha$. Consider the interesting case in the induction step, which is when $\alpha$ is a set expression of the form
+\begin{align*}
+\alpha(\bar x) =		\setexprtup {\beta(\bar x \bar y)} {\bar y} {n} {\varphi(\bar x \bar y) }.
+	\end{align*}
+	By definition, the set represented by $\alpha(\bar a)$ is the image of the set 
+	\begin{align}\label{eq:set-builder-domain}
+		\set{\bar b \in \atoms^n : \varphi(\bar a \bar b)},
+	\end{align}
+	 under the function
+	\begin{align}\label{eq:set-builder-transformation}
+		\bar b \quad \mapsto \quad \text{set represented by $\beta(\bar a \bar b$)}.
+	\end{align}
+	The set~\eqref{eq:set-builder-domain} is orbit-finite as a finitely supported subset of the orbit-finite set $\atoms^n$. Finitely supported functions map orbit-finite sets to orbit-finite sets, and therefore $\alpha(\bar a)$ is orbit-finite. Its elements are hereditarily orbit-finite by induction assumption. 
+	
+	We now turn to the right-to-left implication in Theorem~\ref{thm:definable-is-hof}. The proof is by induction on the rank in the cumulative hierarchy, i.e.~the nesting depth of set brackets. Let then $X$ be a hereditarily orbit-finite set supported by $\bar a$. Since set builder expressions have union in the syntax, it suffices to consider the case when $X$ consists of a single $\bar a$-orbit. Choose some $x \in X$, with support $\bar b$. In particular, $x$ is also supported by $\bar a \bar b$. By induction assumption, $x$ is represented by some set builder expression $\alpha(\bar a \bar b)$. The set $X$ is therefore equal to 
+	\begin{align*}
+		 \set{ \pi( \alpha(\bar a\bar b)) : \mbox{$\pi$ is $\bar a$-automorphism}}.
+	\end{align*}
+	Since $\bar a \bar b \mapsto \alpha(\bar a \bar b)$ is an equivariant function, it commutes with atom automorphisms, and thus
+	\begin{align}\label{eq:x-hof-hdef}
+ X = 	\set{{\alpha}(\bar a \bar c) : \bar c \in Y }
+ \end{align}
+ where $Y$ is the $\bar a$-orbit of the tuples $\bar b$. By Corollary~\ref{thm:ryll}, the set $Y$ is defined by a formula of first-order logic which uses parameters from $\bar a$. Substituting this formula for $Y$ in~\ref{eq:x-hof-hdef} gives a set builder expression defining $X$.
+\end{proof}
+
+
+
+
+
+
+\exercisepart
+
+
+\mikexercise{\label{ex:setb-partial-tuple} Assume that there are at least two atoms, but the atoms are not necessarily oligomorphic. Show the following variant of Theorem~\ref{thm:partial-equivalence-representation} for sets represented by set builder expressions: for every set $X$ represented by a set builder expression there is some $n \in \set{0,1,\ldots}$, a first-order definable partial equivalence $\sim$ on $\atoms^n$ (which can use atom parameters) and a bijection
+\begin{align*}
+	 f : \atoms^n_{/\sim} \to X
+\end{align*} 
+that is represented by a set builder expression. 
+}
+{
+	As explained in the proof of Theorem~\ref{thm:partial-equivalence-representation}, sets which admit a representation as in the statement of the exercise are closed under finite union. Therefore, it is enough to treat the case of a set which is defined by a set expression 
+\begin{align*}
+	\setexprtup{\alpha(\bar x)}{\bar x}{n}{\varphi(\bar x)}.
+\end{align*}
+The function 
+\begin{align*}
+	\bar a \in \atoms^n \mapsto \alpha(\bar a)
+\end{align*}
+is the desired bijection, assuming that we restrict its domain to tuples that satisfy $\varphi$, and submotient it under the kernel
+\begin{align*}
+	\bar a \sim \bar b \quad \text{if} \quad \alpha(\bar a) = \alpha(\bar b),
+\end{align*}
+which is defined in first-order logic thanks to the First Symbol Pushing Lemma. 
+}
+\mikexercise{\label{ex:orbit-list} Assume that the atoms are oligomorphic. Show that for every orbit-finite set $X$ there is a finitely supported function
+\begin{align*}
+	f : \atoms^* \to \text{(finitely supported subsets of $X$)}^*
+\end{align*}
+such that for every $\bar a \in \atoms^*$, $f(\bar a)$ is a list of all $\bar a$-orbits that are contained in $X$. 
+}
+{
+Since every orbit-finite set admits a finitely supported bijection with one that is hereditarily orbit-finite, we can assume without loss of generality that $X$ is hereditarily orbit-finite, and therefore definable. For $\bar a = (a_1,\ldots,a_n)$, every $\bar a$-orbit that is represented by a set builder expression that uses parameters from $\bar a$. There is a well-founded $\bar a$-supported total order on such set builder expressions, by viewing each set builder expression as a string over a finite alphabet, with the atom parameters ordered as $a_1 < \cdots < a_n$. The function $f$ uses this order to produce a list of orbits.
+}

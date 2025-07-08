@@ -1,0 +1,657 @@
+\chapter{Vector Spaces}
+\label{chap:vector-spaces}
+
+In this section, we discuss an orbit-finite version of finite dimensional vector spaces. The idea is to consider a space that has two kinds of structure: the structure of a vector space, and the structure of a set with atoms. The canonical example is the space $\lincomb \atoms$, which consists of finite linear combinations of atoms, such as 
+\begin{align*}
+\john + 2 \tom - 3 \eve
+\end{align*}
+in the case of the equality atoms. In fact, almost all results in this chapter will be restricted to the equality atoms, although some of them could be extended to other atoms, such as the ordered atoms or the graph atoms\footnote{
+The results of this chapter are based on~\cite{orbitFiniteVectorTheoretics}, where one can also find results for other kinds of atoms, such as the order atoms.
+}. In the vector space $\lincomb \atoms$, there are two kinds of structure: (a) there is the structure of a vector space, where we can add vectors and multiply them by scalars; and (b) there is the structure of atoms, where we can apply atom automorphisms to vectors, giving other vectors. The interplay between these two kinds of structure will be the main focus of this chapter. Typically, we will be interested in subsets that are compatible with both kinds of structure, i.e.~closed  under both  linear combinations and atom automorphisms.
+
+There might also be some confusion with a previous use of vector spaces in this book, namely the bit vector atoms from Section~\ref{sec:bit-vectors}. The difference is that in Section~\ref{sec:bit-vectors},  the atoms themselves had a vector space structure (in particular, in order to have oligomorphism, we needed to assume that the underlying field was finite). In this chapter, we start with some atoms $\atoms$, and then we discuss vector spaces in the context of these atoms, typically over an infinite field such as the rational numbers. Of course, the two constructions could be combined, i.e.~we could take vector spaces over the bit vector atoms, but we will avoid this combination to avoid confusion. 
+
+\section{Vector Spaces with Atoms}
+\label{sec:vector-spaces-with-atoms}
+We begin with a formal definition of a vector space with atoms. The definition is given for an arbitrary choice of atoms and field. However, almost all results in this chapter will assume that the atoms are the equality atoms, and that the field has characteristic zero. Characteristic zero means that one cannot obtain zero by adding an element of the field to itself finitely many times. The field of rational numbers has characteristic zero, but finite fields do not. In particular, we will exclude finite fields for most results in this chapter. (Although most of the results would work for arbitrary fields, but with different proofs.)
+
+\begin{definition}[Vector Space with Atoms]
+\label{def:vector-space-with-atoms}
+    Consider some atom structure $\atoms$ and some field $\field$.  A \emph{vector space with atoms} is a set $V$ equipped with:
+    \begin{enumerate}
+        \item the structure of a vector space over the field $\field$, i.e.~a binary function $v+w$ for addition and a family of unary  functions $\lambda v$ for multiplying by a scalar $\lambda \in \field$, subject to the usual axioms; and 
+        \item an action of automorphisms of the atoms $\atoms$;
+    \end{enumerate}
+    subject to the following conditions:
+    \begin{enumerate}[(a)]
+        \item \label{axiom:finite-support-for-each-vector} every vector has finite support in the sense of Definition~\ref{def:supports-general}
+        \item \label{axiom:scalar-multiplication-equivariant} for every scalar $\lambda \in \field$, scalar multiplication $v \mapsto \lambda v$ is equivariant;
+        \item \label{axiom:addition-equivariant} the addition operation $(v,w) \mapsto v+w$ is equivariant.
+    \end{enumerate}
+\end{definition}
+
+In condition~\ref{axiom:finite-support-for-each-vector}, we use the notion of finite support from Definition~\ref{def:supports-general}, which means that for every $v \in V$ there is some finite tuple of atoms $\bar a$ such that $\pi(v)=v$ holds for every atom automorphism that fixes $\bar a$. This terminology might be slightly confusing when talking about vector spaces, where a different notion of ``finitely supported'' is sometimes used, namely a vector that has non-zero values in finitely many places. In this book, we never use the second notion, and we always mean the atom sense of Definition~\ref{def:supports-general} when talking about finite supports. Also note that in condition~\ref{axiom:scalar-multiplication-equivariant}, the corresponding axiom can be stated as 
+\begin{align*}
+\pi(\lambda v) = \lambda \pi(v).
+\end{align*}
+One could imagine that the field also uses atoms, and the  axiom is 
+\begin{align*}
+\pi(\lambda v) = \pi(\lambda) \pi(v).
+\end{align*}
+We do not use the alternative axiom. 
+
+\begin{myexample}
+    \label{ex:linear-combinations-of-atoms}
+        Fix an  atom structure $\atoms$ and some field $\field$. Consider the following three vector spaces, of which only the second and third will satisfy the axioms of Definition~\ref{def:vector-space-with-atoms}.
+        \begin{enumerate}
+            \item Consider first the space $\atoms \to \field$ of all functions from atoms to the field. This is a vector space, since functions can be added coordinate-wise, and likewise they can be multiplied by scalars. This space also satisfies axioms~\ref{axiom:scalar-multiplication-equivariant} and~\ref{axiom:addition-equivariant} from Definition~\ref{def:vector-space-with-atoms}. However, it does not satisfy axiom~\ref{axiom:finite-support-for-each-vector}. For example, we can take any subset of atoms $X \subseteq \atoms$ that is not finitely supported, and use its characteristic function, which maps atoms from $X$ to $1$ and the remaining atoms to $0$. This function will not be finitely supported.
+            \item \label{item:fs-fun-example-atoms} A simple way to fix the problem for the previous space is to restrict it to those functions that are finitely supported. This will restore axiom~\ref{axiom:finite-support-for-each-vector}, and the remaining axioms will also be preserved. Therefore, this is indeed an example of a vector space with atoms, which we denote by 
+            \begin{align*}
+            \fsfun \atoms \field.
+            \end{align*}
+            A basis for this vector space can be obtained as follows. For each atom $a \in \atoms$, we take its characteristic function, which maps the atom to 1 and the remaining atoms to zero. On top of that, we add one more function, namely the constant function that maps all atoms to 1. 
+            \item Finally, we can restrict the space from the previous item to functions that have finitely many possible nonzero values (this is the other understanding of the words ``finitely supported'', which is not used in this book). This is the space 
+            \begin{align*}
+            \lincomb \atoms
+            \end{align*}
+            that was mentioned at the beginning of this chapter. 
+            For this space, the set of atoms $\atoms$ is a basis.
+            %  More generally, for every orbit-finite set $X$, we will write $\lincomb X$ for the set of  finite linear combinations of elements of $X$. 
+        \end{enumerate}
+\end{myexample}
+
+As mentioned earlier in this chapter, a  vector space with atoms has two kinds of structure, namely linear combinations and actions of atom automorphisms. 
+When talking about subspaces, we will be interested in subspaces that preserve both kinds of structure. 
+\begin{definition}
+    [Equivariant subspace] Let $V$ be a vector space with atoms. An \emph{equivariant subspace} of $V$ is a subset $W \subseteq V$ that is closed under linear combinations and applying atom automorphisms.  
+\end{definition}
+
+
+
+\begin{myexample}[Zero-sum space]\label{ex:zero-sum-space}
+    Assume the equality atoms, and any field. An example of a subspace in $\lincomb \atoms$ is what we call the \emph{zero-sum space}, which consists of vectors 
+    \begin{align*}
+     \lambda_1 a_1 + \cdots + \lambda_n a_n
+     \qquad \text{such that }
+     \lambda_1 + \cdots + \lambda_n = 0.
+    \end{align*} 
+    This set is clearly an equivariant subspace, since it is closed both under linear combinations and atom automorphisms.
+    We call this the \emph{zero-sum space}. We will prove that this  space is spanned (i.e.~generated using linear combinations only, and not atom automorphisms), by the set 
+    \begin{align}\label{eq:spanning-set-of-zero-sum-subspace}
+    \setbuild{ a -b}{$a,b \in \atoms$}.
+    \end{align}
+    To prove that the above set spans the zero-sum subspace, we  use induction on the number of atoms that appear in a vector. Indeed, suppose that 
+    \begin{align*}
+    v = \lambda_1 a_1 + \cdots + \lambda_n a_n
+    \end{align*}
+    is in the zero-sum subspace. If $n \leq 1$, then the  vector must be equal to zero. Otherwise, if $n \geq 2$, then we can  subtract the vector  $\lambda_n a_n - \lambda_n {a_{n-1}}$, which is spanned by~\eqref{eq:spanning-set-of-zero-sum-subspace},  to get new vector that is also in the zero-sum space. The new vector uses fewer atoms, and hence we can apply the induction assumption.
+
+      We will now show that the zero-sum subspace is the only non-trivial equivariant subspace. This means that apart from the zero-sum space,  the only other equivariant subspaces are the zero space and the full space.  Indeed, consider an equivariant subspace $V$ that contains some non-zero vector 
+        \begin{align*}
+    v = \lambda_1 a_1 + \cdots + \lambda_n a_n.
+    \end{align*}
+    Choose some atom permutation $\pi$ that maps $a_n$ to some fresh atom $b$, and which fixes the remaining atoms $a_1,\ldots,a_{n-1}$. This can be done in the equality atoms.  If we subtract $\pi(v)$ from $v$, then we get the vector
+    \begin{align*}
+    \lambda_n a_n - \lambda_n b,
+    \end{align*}
+    which is in the zero-sum subspace. From this vector, we can use atom automorphisms and scalar multiplication to get all other  vectors in the spanning set~\eqref{eq:spanning-set-of-zero-sum-subspace}, and thus $V$ must contain the zero-sum subspace. 
+
+    So far, we have shown that every equivariant subspace, except the zero
+     space, must contain the zero-sum subspace. 
+    Finally, we will show that there is no equivariant subspace that is strictly between the zero-sum subspace and the full space, which will prove  that the zero-sum subspace is the only non-trivial equivariant subspace. Consider any vector 
+            \begin{align*}
+    v = \lambda_1 a_1 + \cdots + \lambda_n a_n
+    \end{align*}
+    that is not in the zero-sum subspace. Let $v'$ be the vector that is obtained from $v$ by changing the coefficient of $a_n$ so that $v'$ belongs to the zero-sum subspace. Since $v$ is not in the zero-sum subspace, the coefficient must be changed, and therefore $v - v'$ is a vector that uses only the atom $a_n$, and which is nonzero. From such a vector, we can obtain the full space by using atom automorphisms and linear combinations.
+\end{myexample} 
+
+
+
+As the above example shows, requiring that a subset is closed under both linear combinations and atom automorphisms is a strong restriction. The zero-sum space from the above example also witnesses another phenomenon of vector spaces with atoms, which is that they do not necessarily have a basis that is equivariant.  This is somewhat to be expected, since finding a basis involves choice, which is problematic in the presence of atoms. 
+
+
+
+\begin{myexample}[No equivariant basis]\label{ex:no-equivariant-basis}
+    We will show that the zero-sum space from Example~\ref{ex:zero-sum-space} does not have any equivariant basis. 
+    For example, the spanning set~\eqref{eq:spanning-set-of-zero-sum-subspace} is not a basis, because it has  linear dependencies, such as
+    \begin{align*}
+    (\john - \tom) + (\tom - \john) = 0.
+    \end{align*}
+    Let us now prove that not only this subset, but also any other equivariant subset cannot be a basis. Toward a contradiction, consider an equivariant basis, and take  any vector $v$ in this basis. Let $a_1,\ldots,a_n$ be all atoms that appear in this vector, and consider the sum 
+    \begin{align*}
+    w= \sum_\pi \pi(v),
+    \end{align*}
+    where $\pi$ ranges over the finitely many permutations of $\set{a_1,\ldots,a_n}$. The resulting vector also uses the same atoms, however all coefficients are now the same. Since the vector is in the zero-sum space, it follows that all coefficients are zero. This means that we could not have been dealing with a basis, since some finite sum of basis vectors had a zero sum. 
+\end{myexample}
+
+\begin{myexample}
+  In Example~\ref{ex:zero-sum-space}, we showed that space $\lincomb \atoms$ had only finitely many equivariant subspaces, with the only non-trivial one being the zero-sum space. This is not true in general. Consider for example the space $\lincomb(\atoms^2)$. This space is finitely generated, namely by two vectors $(\john,\john)$ and $(\john,\eve)$.
+  An example vector in this space is 
+  \begin{align*}
+  2(\john,\john)  - 3(\john, \eve) + 2(\eve,\eve).
+  \end{align*}
+  Such a vector can be visualised as a  finite directed graph with edges weighted by field elements, where the vertices are atoms, as in the following picture:
+  \mypicb{9}
+  An equivariant subspace can be seen as a property of such graphs which is closed under isomorphism and linear combinations. Here are some examples of such properties:
+  \begin{enumerate}
+    \item sum of  weight of self-loops is zero;
+    \item (sum of weight of self-loops) $=3 \cdot$(sum of weights of non-self-loops);
+    \item for every vertex, the sum of the weights of incoming edges is zero.
+  \end{enumerate}
+  In the second item, we have one equivariant subspace for each field element, and therefore we can have infinitely many such spaces if the field is infinite.
+\end{myexample}
+
+\section{The finite length property}
+\label{sec:finite-length}
+One of the essential properties of orbit-finite sets (without vector spaces) was that if we take an increasing chain of equivariant subsets, then this chain must be finite. This property ensured termination for various algorithms, such as graph reachability, where such chains were computed. We will show  that, under suitable assumptions, a similar property holds for chains of equivariant subspaces.  The assumption is that the space can be generated by finitely many vectors, by using both kinds of structure available, namely linear combinations and atom automorphisms. This can be seen as a vector space generalization of  orbit-finiteness, where sets were finitely generated using only atom automorphisms.
+
+
+\begin{definition}
+    [Finitely generated] Let $V$ be a vector space with atoms. For  $X \subseteq V$, define the \emph{equivariant subspace generated by $X$}, denoted by 
+    $\generate X$, to be the least equivariant subspace of $V$ that contains $X$.  A vector space with atoms is called \emph{finitely generated} if it is equal to $\generate X$ for some finite set of vectors $X$. 
+\end{definition}
+
+It is not hard to see that the subspace $\generate X$ consists of vectors of the form  
+\begin{align*}
+\lambda_1 \pi_1(x_1) + \cdots + \lambda_n \pi_n(x_n),
+\end{align*}
+where $\lambda_1,\ldots,\lambda_n$ are coefficients from the field, $\pi_1,\ldots,\pi_n$ are atom automorphisms, and $x_1,\ldots,x_n \in X$. In other words,  $\generate X$ can  be obtained by first closing $X$ under the action of atom automorphisms, and then closing it under linear combinations. Therefore, a space is finitely generated if and only if it is spanned (using linear combinations only) by some orbit-finite set. Observe that if we first close $X$ under linear combinations, and then under automorphisms, then we get a smaller set than $\generate X$, which is not necessarily closed under linear combinations.
+
+
+The main result of this chapter, Theorem~\ref{thm:finite-length} below, shows that for a finitely generated vector space with atoms, there is a finite upper bound on the length of strictly increasing chains of equivariant subspaces, as described in the following definition. 
+
+\begin{definition}
+    [Length] Let $V$ be a vector space with atoms. The \emph{length} of $V$ is defined to be the maximal $n$ such that $V$ has a strictly increasing chain of equivariant subspaces of the form 
+    \begin{align*}
+    V_0 \subset V_1 \subset \ldots \subset V_n.
+    \end{align*}
+\end{definition}
+
+The length counts the number of times that the subspace can grow. Of course in a maximal chain, the chain will begin with the zero subspace and end with the full space. In principle, the length can be infinite, but we will show that it is finite for finitely generated vector spaces, under the  assumption that the atoms are the equality atoms, and the field has  characteristic zero. 
+
+
+
+
+
+
+
+
+\begin{theorem}\label{thm:finite-length}
+    Assume that the atoms are the equality atoms, and that the field has characteristic zero. A vector space with atoms is finitely generated if and only if it has finite length. 
+\end{theorem}
+
+ We cannot remove both assumptions in the theorem, since under the bit vector atoms and the two-element field, the length can become infinite, see~\cite[Section 4.4]{orbitFiniteVectorTheoretics}. For all we know, in the case of characteristic zero, then all oligomorphic atoms have finite chains; we know that this is the case for atoms such as the ordered atoms, or the graph atoms. 
+
+Before proving the theorem, let us present an  important corollary, which is that finitely generated vector spaces with atoms are closed under taking equivariant subspaces. This corollary is not obvious without the finite length property, since it is not immediately clear how to find a finite generating set in an equivariant subspace, even in the presence of a finite generating set for the entire space. However, the finite  length property is clearly  closed under taking equivariant subspaces, and the theorem says that finite length is equivalent to finite generation. 
+
+
+
+
+
+\begin{proof}[Proof of Theorem~\ref{thm:finite-length}]
+
+   We begin with the proof with the easier implication, which is
+    \begin{align*}
+    \text{finite length} \quad \implies \quad \text{finitely generated.}
+    \end{align*}
+    Suppose that $V$ has finite length. We use a greedy process to construct a finite generating set. Take some vector $v_1 \in V$. If this vector generates the entire space, then we are done. Otherwise, let $v_2$ be a vector that is not generated by $v_1$. If  the space is generated by $v_1$ and $v_2$, then we are done. Otherwise, we continue. At each step we have a finitely generated equivariant subspace $\generate{v_1,\ldots,v_n}$. This chain of subspaces cannot grow indefinitely, and so we must reach the full space in finitely many steps. Observe that in this part of the proof, we only used the fact that there cannot be infinite chains, however we will prove a stronger result, namely that chains have  uniformly bounded length. 
+    
+    We now proceed to the core of the theorem, which is the implication
+    \begin{align*}
+    \text{finitely generated} \quad \implies \quad \text{finite length.}
+    \end{align*}
+    We begin  by reducing to spaces that have a basis, i.e.~spaces of the form $\lincomb X$, where $X$ is an orbit-finite set. Such a space consists of finite linear combinations of elements from $X$.
+    To see the reduction, consider some vector space with atoms $V$ that is finitely generated. This means that the space is spanned (using only linear combinations and not atom automorphisms) by some orbit-finite set $X$.  Let
+    \begin{align*}
+    \varphi : \lincomb X \to V
+    \end{align*}
+    be the equivariant linear map which maps a linear combination of vectors from $X$ to their corresponding value in $V$.  This map is surjective, by the assumption that $X$ is a spanning set. It is not injective, i.e.~it is not an isomorphism, because $X$ might not be a basis, and therefore one vector from $V$ might arise as an image of several linear combinations from $\lincomb X$.  By equivariance, for every chain of equivariant subspaces in $V$, the inverse images under $\varphi$ form an equivariant chain of subspaces in $\lincomb X$. By surjectivity, if a chain in $V$ is strictly increasing, then the same is true for the chain of its inverse images. Therefore, the length of $V$ is at most the length of $\lincomb X$. 
+    
+    
+    In the previous paragraph, we showed that the difficult implication in the theorem reduces to the special case when the vector spaces is of the form  $\lincomb X$, where $X$ is an orbit-finite set. In the rest of the proof of this theorem, we  will prove that
+    \begin{align}
+    \label{eq:length-bounded-by-square}
+    \text{length of } {\lincomb X}
+    \quad \leq \quad 
+    \text{number of orbits in $X^2$.}
+    \end{align}
+    The upper bound above is finite, since orbit-finite sets are closed under taking squares, and thus it gives the harder implication in the theorem.      It remains to prove this bound.
+    The main idea will be to reduce the problem to a finite case, where only a finite (although large) set of atoms is used.  The finite version will allow us to use a theorem from representation theory, which is called Maschke's Theorem\footnote{The proof here is different from the one in~\cite{orbitFiniteVectorTheoretics}, and the use of Maschke's Theorem is inspired by work of Jingjie Yang.}.
+
+    \paragraph*{Maschke's Theorem.} Let us begin by introducing some terminology that will be used in Maschke's Theorem. 
+    In the definition of a vector space with atoms, we had a vector space with an action of the automorphisms of the atoms. Consider a more general setting, where there is an action of some abstract group $G$, see Definition~\ref{def:group-action}, such that for every group element $\pi$, the corresponding function $v \mapsto \pi(v)$ is a linear map in the vector space. This linear map must be invertible, by the definition of a group action. We will call such a vector space a \emph{vector space with an action of $G$}.
+    Vector spaces with atoms are the special case  when $G$ is the permutations of the atoms. In the proof below, we will use the case when the group $G$ is finite, and the vector space has finite dimension. 
+    
+    Equivariance and related notions are naturally extended for vector spaces with an action of a group $G$; for completeness we describe this now in some detail. 
+    For a vector space $V$ with an action of a group $G$, a subspace is called \emph{equivariant} if it is invariant under the action of $G$, i.e.~if we take a vector in the subspace and apply a group element, then the resulting vector is still in the subspace. Similarly, we define equivariance for a linear map $\varphi : V \to W$ between two vector spaces with an action of the same group $G$: for every group element $g$, the following diagram commutes 
+    \[
+    \begin{tikzcd}
+V 
+\ar[d, "\varphi"']
+\ar[r, "\text{action of $g$}"]
+& V 
+\ar[d, "\varphi"] \\
+W
+\ar[r, "\text{action of $g$}"']
+& W
+    \end{tikzcd}
+    \]
+    Finally, we can extend the notion of length to the case of vector spaces with an action of a group $G$:  this is the maximal length of a strictly increasing chain of equivariant subspaces. 
+
+    The case that we will care about is when we have a finite set of atoms $S \subseteq \atoms$, and the group is the set of all permutations of this set. For an orbit-finite set $X$, define $X_S$ to be the elements of $X$ that are supported by $S$, i.e.
+    \begin{align*}
+    X_S = 
+    \setbuild{ x \in X}{$x$ is supported by a tuple from $S$}.
+    \end{align*}
+    This is a finite set, since for every orbit-finite set, there are finitely many elements with a given support. (This is most easily seen using the representation result from Theorem~\ref{thm:classify-one-orbit}.) 
+    The set $X_S$ is equipped with an action of permutations of $S$, because applying such a permutation preserves the property of being supported by $X$. We will be interested in linear combinations of this set, i.e.~the set $\lincomb X_S$, which is a finite-dimensional vector space with an action of permutations of $S$. We can view this space as a finite dimensional approximation of the   space $\lincomb X$.  The following lemma shows that the length of the latter  set can be bounded by the lengths of its finite approximations. 
+
+    \begin{lemma}
+        For every orbit-finite set $X$,
+        \begin{align*}
+        \text{length of }\lincomb X
+        \quad \leq \quad  \sup_S \text{\ length of }\lincomb {X_S},
+        \end{align*}
+        where the supremum ranges over finite sets of atoms.
+    \end{lemma}
+    \begin{proof}
+        Consider some chain of equivariant subspaces in the infinite case: 
+        \begin{align*}
+        V_0 \subset V_1 \subset \ldots \subset V_n = \lincomb X,
+        \end{align*}
+        where the group is all permutations of the atoms.
+        For each $i \in \set{1,\ldots,n}$, choose some vector  that is in $V_i$ but not in $V_{i-1}$. Let $S$ be the finite set of atoms that appear in these chosen vectors, and define 
+        \begin{align*}
+        W_i = V_i \cap \lincomb X_S.
+        \end{align*}
+        This is a vector space with an action of permutations of $S$.
+        The restricted  spaces $W_i$ are  closed under applying permutations of $S$, since $V_i$ was invariant under applying such permutations (and other permutations as well). Also, after intersecting with $\lincomb X_S$, the chain continues to be strictly growing, since it contains vectors that witness the growth of the original chain. Hence, the new chain  witnesses that the length of $\lincomb X_S$ is at least $n$. 
+    \end{proof}
+
+    Thanks to the above lemma, it remains to show that the length of $\lincomb X_S$ is bounded by the number of orbits in $X^2$. What we have gained is that the vector spaces have finite (albeit unbounded) dimension, and the group actions use finite (albeit unbounded) groups. This will allow use to leverage a result from representation theory, called Maschke's Theorem, which decomposes  spaces  into irreducible parts.  (In the theorem below, $\oplus$ stands for the direct sum of vector spaces, i.e.~$V \oplus W$ is the set of pairs $(v,w)$ where $v \in V$ and $w \in W$, with the operations defined coordinate-wise. In terms of bases, the basis of a direct sum is the disjoint union of the bases of the two vector spaces.)
+
+        \begin{theorem}[Maschke's Theorem]
+            Suppose that $V$ is a finite dimensional vector space with an action of a finite group $G$, and the field has characteristic zero. Then $V$ can be decomposed as 
+            \begin{align*}
+            V = V_1 \oplus \cdots \oplus V_n,
+            \end{align*}
+            where each $V_i$ is an equivariant space that is  irreducible, i.e.~the only equivariant subspaces of $V_i$ are the zero space  and the full space $V_i$.
+        \end{theorem}
+\begin{proof}
+    Induction on the dimension of $V$, which we can do because the dimension is assumed to be finite. The main observation in the proof is the following claim, which will allow us to reduce the dimension in the induction step. 
+    
+    \begin{claim}
+        Suppose that $U$ is an equivariant subspace of $V$. There is a linear map from $V$ to $U$ which: (a)  is the identity on vectors from $U$; and (b) has an equivariant kernel. 
+    \end{claim}
+    \begin{proof}
+        We begin with a linear map $\varphi_0$ that satisfies condition (a) but not necessarily condition (b). Such a map can be found as follows. Take a basis of $U$, and extend it to a basis of the entire space $V$. Define $\varphi_0$ so that it sends the basis vectors from $U$ to themselves, and the remaining basis vectors to zero. This linear map need not satisfy (b), since we have not taken any care when extending the basis to the entire space. 
+
+        We will now improve the map $\varphi_0$  from the previous paragraph so that it additionally satisfies condition (b), i.e.~it has an equivariant kernel. We do this using a form of averaging over group elements, which can be done since the group is assumed to be finite. Define $\varphi$ as follows:
+        \begin{align*}
+        \varphi(v) = \frac{1}{|G|}  \sum_{\pi \in G} (\pi^{-1} \circ \varphi_0 \circ \pi)(v).
+        \end{align*}
+        The above map is well-defined thanks to the assumption that the field has characteristic zero, so that it is meaningful to divide by $|G|$. (For example, if the field would have characteristic two, then dividing by an even number would not be meaningful, since it would correspond to division by zero.)
+        
+        We now show that the new $\varphi$ satisfies the two conditions in the claim: 
+        \begin{enumerate}[(a)]
+            \item  We first show that $\varphi$ is the identity on $U$. Take some $u \in U$. The following computation shows that each summand in the definition of $\varphi(u)$ is equal to $u$:
+                \begin{align*}
+     (\pi^{-1} \circ \varphi_0 \circ \pi)(u) 
+\myunderbrace{=}{because $\pi(u) \in U$ by equivariance and $\varphi_0$ is the identity on $U$} 
+     (\pi^{-1} \circ \pi)(u) = u.
+    \end{align*}
+    Therefore,  $\varphi(u)$ is an average of several copies of $u$, which is just $u$ itself.
+    \item Let us now show that the kernel of $\varphi$ is equivariant. We have:
+           \begin{align*}
+            \varphi(\sigma(v)) 
+         \quad = \quad 
+          \frac{1}{|G|} \sigma \big(
+            \myunderbrace{\sum_{\pi \in G} (\sigma^{-1} \circ \pi^{-1} \circ \varphi_0 \circ \pi \circ \sigma)(v)}
+            {equal to $\varphi(v)$, because ranging over $\pi$ is \\ the same  as ranging over $\pi \circ \sigma$} 
+            \big).
+        \end{align*}
+        Therefore, if $\varphi(v)$ is zero, then the above is also zero, which establishes that the kernel of $\varphi$ is equivariant.
+        \end{enumerate}
+    This completes the proof of the claim.
+    \end{proof}
+    Let us now complete the proof of Maschke's Theorem. The proof is by induction on the dimension of $V$. If the dimension is one, then $V$ is irreducible, and we are done. Otherwise, take some 
+    nontrivial equivariant subspace $U$ of $V$, and apply the above claim, yielding a linear map $\varphi : V \to U$. Using a standard linear algebra argument, we see that the space $V$ is the direct sum of the image and kernel of $\varphi$. 
+    The image is irreducible, and the kernel has strictly smaller dimension, so we can apply the induction assumption to it.  This completes the proof of Maschke's Theorem.
+\end{proof}
+
+    We will use Maschke's Theorem to bound the length of a vector  space $V$. 
+    For two vector spaces $V$ and $W$ equipped with an action of the same group $G$, let us write 
+    \begin{align*}
+    \lineqfun V W
+    \end{align*}
+    for the set of all equivariant linear maps from $V$ to $W$, with respect to the action of the group $G$. (The group is implicit in this notation.) Elements of this set are closed under taking linear combinations, and therefore this set can be seen as a vector space (but we do not equip this set  with an action of the group, and therefore its only structure is that of a vector space). In particular, it is meaningful to talk about the dimension of this vector space. 
+    \begin{lemma}\label{lem:dim-bounds-length}
+        Let $V$ be a finite dimensional vector space, over a field of characteristic zero, which is equipped with an action of some finite group $G$. Then 
+        \begin{align*}
+        \text{length of $V$} \quad \leq  \quad \text{dimension of the vector space }  \lineqfun V V.
+        \end{align*}
+    \end{lemma}
+    \begin{proof}
+        Apply Maschke's Theorem, yielding a decomposition 
+        \begin{align}\label{eq:maschke-decomposition}
+        V = V_1 \oplus \cdots \oplus V_n.
+        \end{align}
+        For every $i \in \set{1,\ldots,n}$ we can define an equivariant linear map from $V$ to itself which is the identity on $V_i$ and maps vectors from the other components to zero.  This gives us  at least $n$ equivariant linear maps from $V$ to itself. None of these maps is spanned by the other, and hence the dimension is at least $n$. It remains to show that $n$ is an upper bound on the length of $V$. This follows from the following claim,  since irreducible spaces have length exactly one.
+
+        \begin{claim}
+            The length of $V= U \oplus W$ is at most the sum of lengths of $U$ and $W$.
+        \end{claim}
+        \begin{proof}
+            We first remark that the bound is in fact an equality, since the converse bound can be shown by taking a maximal chain in $U$, and following it with a maximal chain in $W$ (with $U$ added in each step). Let us now prove the bound in the claim, which is the one that we actually use. Consider some chain  of equivariant subspaces
+            \begin{align*}
+            V_0 \subset V_1 \subset \ldots \subset V_m = V
+            \end{align*}
+            in $V$. Define two equivariant chains in  $U$ and $W$, respectively,  as follows: 
+            \begin{align*}
+            U_i = & \setbuild{ u \in U}{$(u,0) \in V_i$}\\
+            W_i = &  \setbuild{ w \in W}{$(u,w) \in V_i$ for some $u \in U$}.
+            \end{align*}
+ The chains need not be strictly increasing, since some information is lost. However, we will show that in each step at least on of the chains must grow, which will give the upper bound in the statement of the claim. Toward a contradiction, suppose that there is some $i \in \set{1,\ldots,n}$ such that 
+            \begin{align*}
+            U_{i-1} = U_i \quad \text{and} \quad W_{i-1} = W_i.
+            \end{align*}
+            We will show that $V_{i-1} = V_i$, which will contradict the assumption that the chain is strictly increasing. Take some vector in $(u,w) \in V_i$. Then:
+            \begin{eqnarray*}
+                \begin{array}{lll}
+                                (u',w) &\in V_{i-1} &\qquad  \text{for some $u'$ by the assumption that $W_{i-1} = W_i$}\\
+            (u-u',0) &\in V_{i} &\qquad  \text{by taking a difference of two vectors in $V_i$}\\
+            (u-u',0) &\in V_{i-1} &\qquad  \text{by the assumption that $U_{i-1} = U_i$}\\
+            (u,w) & \in V_{i-1} &\qquad  \text{by taking a sum of two vectors in $V_{i-1}$}
+                \end{array}
+            \end{eqnarray*}
+            This shows that $V_{i-1} = V_i$, yielding the desired contradiction.
+        \end{proof}
+        Thanks to the above claim, the length of $V$ is at most the number $n$ of irreducible components in the Maschke decomposition~\eqref{eq:maschke-decomposition}. As we have argued before the claim, we can find at least $n$ linearly independent equivariant linear maps from $V$ to itself, which completes the proof of the lemma.
+    \end{proof}
+
+    Thanks to the above lemma, the length of the vector space $\lincomb X_S$ is bounded by the dimension of the space of equivariant linear maps from this space  to itself. The next lemma bounds this dimension by the orbit count of $X^2$, as required by~\eqref{eq:length-bounded-by-square}, and thus  completes the problem   proof of the theorem. 
+
+    \begin{lemma}\label{lem:bound-on-dim-for-finite-set} 
+        For every finite set $S \subseteq \atoms$ we have 
+        \begin{align*}
+        \text{dimension of the vector space }\lineqfun {\lincomb X_S} {\lincomb X_S} \quad  \leq \quad  \text{number of orbits in $X^2$.}
+        \end{align*}
+    \end{lemma}
+    \begin{proof}
+        To define a  linear equivariant function with domain $\lincomb X_S$, it is enough to define the function on the basis $X_S$. Therefore, the vector space in the statement of the lemma is the same as the vector space  
+        \begin{align*}
+            \eqfun {X_S} {\lincomb X_S}
+        \end{align*}
+        of equivariant functions (not linear maps) from $X_S$ to $\lincomb X_S$.  By Currying, the above space is isomorphic to  the space 
+        \begin{align*}
+        \eqfun {X_S \times X_S} \field.
+        \end{align*}
+        To define an equivariant function, it is enough to choose one field element for each orbit. This is because two inputs in the same orbit will be mapped to the same field element, by equivariance of scalar multiplication.  Therefore, the dimension of the space above is equal to the number of orbits of
+        \begin{align*}
+        (X \times X)_S = X_S \times X_S
+        \end{align*}
+        under the action of the group of all permutations of $S$. To finish the proof of the lemma, we will show that this number of orbits is bounded from above by the number of orbits in $X \times X$, under the action of the group of  all permutations of the atoms. This will follow from the    following claim, applied to $Y = X \times X$. The claim is the only place in the proof where we use the assumption that the atoms are the equality atoms.
+
+        \begin{claim}
+            Assume the equality atoms.
+            Consider an orbit-finite set $Y$. For every finite set of atoms $S$, and every  two elements of $Y_S$, the following conditions are equivalent: 
+            \begin{enumerate}[(i)]
+                \item \label{it:orbit-in-s} being  in the same orbit of $Y_S$ under the action of permutations of $S$;
+                \item \label{it:orbit-in-atoms} being in the same orbit of $Y$ under the action of permutations of $\atoms$.
+            \end{enumerate}
+        \end{claim}
+    \begin{proof}
+    The implication \ref{it:orbit-in-s} $\Rightarrow$ \ref{it:orbit-in-atoms} is clear, and would work for any homogeneous atom structure, not just the equality atoms: every permutation of $S$ can be extended to a permutation of all atoms. Let us now explain the implication \ref{it:orbit-in-atoms} $\Rightarrow$ \ref{it:orbit-in-s}.    Suppose that $y_1, y_2 \in Y_S$ are in the same orbit under the action of permutations of all atoms. We can improve the permutation that maps $y_1$ to $y_2$ so that it  swaps the supports, and does not move any atoms outside the support (this would be impossible in some atoms, say the ordered atoms). This way, the improved permutation is a permutation of $S$. 
+    \end{proof}   
+    
+    Using the above claim, in fact only implication \ref{it:orbit-in-atoms} $\Rightarrow$ \ref{it:orbit-in-s}, we complete the proof of the lemma.
+The counter-positive of  implication \ref{it:orbit-in-atoms} $\Rightarrow$ \ref{it:orbit-in-s} is that if two elements of $Y_S$ are in different orbits, then they also represent different orbits in $Y$. Therefore, the number of orbits in $Y_S$ is at most the number of orbits in $Y$. When applied to $Y = X \times X$ we get the result from the claim.
+    \end{proof}
+This completes the proof of the bound~\eqref{eq:length-bounded-by-square}, and hence the proof of Theorem~\ref{thm:finite-length}.
+\end{proof}
+
+
+
+\section{Function spaces}
+\label{sec:function-spaces}
+As we will show in this section, one of the remarkable things about vector spaces with atoms is that they are closed under taking function spaces.  This is in contrast with the situation for orbit-finite sets, which are not closed under taking function spaces. Let us illustrate this on the example of the set of atoms itself.
+
+\begin{myexample}\label{ex:adding-linear-combinations-makes-finitely-generated}  Orbit-finite sets (without vector spaces) are not closed under taking finitely supported powersets. For example, consider the finitely supported powerset of $\atoms$. We can think of this powerset as the 
+    set 
+    \begin{align*}
+    \fsfun \atoms {(1+1)}
+    \end{align*}
+    of all finitely supported functions from $\atoms$ to the Booleans. As we have shown in Example~\ref{ex:powerset-not-orbit-finite}, this set is not orbit-finite, since sets of different finite sizes are in different orbits. In other words, the above set is not finitely generated, assuming that the only kind of structure is applying atom permutations.
+
+    Consider now a larger set, namely the set 
+    \begin{align*}
+    \fsfun \atoms \field
+    \end{align*}
+    of all finitely supported functions from $\atoms$ to a field $\field$, say the field of rational numbers. This set is larger, since every orbit-finite set can be viewed as a function, namely its characteristic function, which maps elements of the set to $1$ and the remaining elements to $0$. What have we gained by considering a larger set? The answer is that the larger set is equipped with the structure of a vector space, i.e.~we can take linear combinations of functions. Thanks to this extra structure, the space becomes finitely generated: as we have shown item~\ref{item:fs-fun-example-atoms} of Example~\ref{ex:linear-combinations-of-atoms}, every function in the space is a linear combination of characteristic functions of singletons and the full set. 
+\end{myexample}
+
+As we have explained in the above example, adding linear combinations can make it possible to finitely generate sets that were previously not finitely generated. This is the idea that will be pursued in this section. In the example, when talking about function spaces, we used finitely supported and not equivariant functions. Let us begin by explaining why this is the right choice.
+
+\paragraph*{Why finitely supported functions?} Let us explain why finitely supported functions, as opposed to equivariant ones, are the natural choice for function spaces. Let us first discuss this in the case of orbit-finite sets, i.e.~when the only available structure is that of atom permutations. Later, we will extend the discussion to vector spaces with atoms. 
+What is a function space?  Suppose that $X$ and $Y$ are orbit-finite sets. There are two ideas for the function space, namely
+\begin{align*}
+\myunderbrace{\eqfun X Y}{equivariant\\ functions from $X$ to $Y$}
+\qquad \subseteq \qquad
+\myunderbrace{\fsfun X Y}{finitely supported\\ functions from $X$ to $Y$}.
+\end{align*}
+The smaller set is finite, while the bigger one is not only infinite, but even orbit-infinite.  We claim that the ``right'' notion of function space is the bigger one. Why? This is because we would like function spaces to allow Currying, in the following sense: 
+\begin{quote}
+    Equivariant functions from $X \times Y$ to $Z$ are in one-to-one correspondence with equivariant functions from $X$ to the function space $Y \to Z$. 
+\end{quote}
+It is not hard to see that the smaller equivariant space does not allow Currying, while the bigger finitely supported one does. This is because 
+when we transform an equivariant function from $X \times Y$ to $Z$ into a function from $X$ to some space, then this corresponds to fixing one argument in the function, which will turn an equivariant function into a finitely supported one. Therefore, even if ultimately care only about equivariant functions, our function spaces will need to store finitely supported functions, as long as we want to have Currying. The usefulness of Currying can be seen in the following example that uses automata. 
+
+\begin{myexample}
+    Consider a deterministic orbit-finite automaton, with an equivariant transition function 
+    \begin{align*}
+    \delta : Q \times \Sigma \to Q.
+    \end{align*}
+    Suppose that we want to turn this automaton into a monoid. This is done by considering for each input letter $w \in \Sigma^*$, the corresponding transition function $\delta_w : Q \to Q$. (This construction does not preserve orbit-finiteness in general, but this is not important for the example.) Even though the original transition  function $\delta$ was equivariant, the functions $\delta_w$ are no longer equivariant, since they have a fixed input word $w$, and the atoms used by that word will possibly influence the state transformation. Therefore, the monoid constructed this way will be a subset of 
+    \begin{align*}
+    \fsfun Q Q,
+    \end{align*}
+    i.e.~it will use finitely supported but not necessarily equivariant functions.
+    We see here an example of Currying, where one argument of a function is fixed.
+\end{myexample}
+
+
+
+A similar discussion applies to vector spaces with atoms. If we have two vector spaces with atoms $V$ and $W$, then we can consider two vector spaces:
+\begin{align*}
+\myunderbrace{\lineqfun V W}{equivariant\\ linear maps from $V$ to $W$}
+\qquad \subseteq \qquad
+\myunderbrace{\linfsfun V W}{finitely supported\\ linear maps from $V$ to $W$}.
+\end{align*}
+For the same reason as previously, only the bigger space will allow Currying. This is why we will focus on the bigger space. The main result of this section will be that even  the bigger space is finitely generated.
+
+
+\paragraph*{Finitely supported dual.} Before considering general function spaces, we begin with the case where the outputs are in the field, i.e.~spaces of the form 
+\begin{align*}
+\linfsfun V \field.
+\end{align*}
+This space is called the \emph{finitely supported dual} of $V$. For vector spaces of finite dimension, i.e.~spaces of the form $\field^d$ for some $d \in \set{0,1,\ldots}$,  applying the dual gives the same space (essentially it corresponds to replacing row vectors with column vectors). However, in the presence of  atoms, this is no longer the case.
+
+\begin{myexample}
+    Consider the finitely supported dual of $\lincomb \atoms$, which is the space
+    \begin{align*}
+    \linfsfun {\lincomb \atoms} \field.
+    \end{align*}
+    Defining a linear map $\lincomb \atoms$ is the same as defining a function on the basis $\atoms$, and therefore this space is the same as 
+    \begin{align*}
+    \fsfun \atoms \field.
+    \end{align*}
+    As we have seen in Example~\ref{ex:linear-combinations-of-atoms}, this space is  isomorphic to $\lincomb (\atoms +1)$, because we need one more generator for a constant function. 
+\end{myexample}
+
+Nevertheless, finitely generated vector spaces with atoms are closed under taking finitely supported duals, as we will show in the following theorem.
+
+
+
+
+\begin{theorem}
+\label{thm:duals-finite-generation}
+Assume the equality atoms and that the field has characteristic zero. If a vector space with atoms $V$  is finitely generated, then the same is true for its finitely supported dual $\linfsfun V \field$.
+\end{theorem}
+\begin{proof}
+    In the first step of the proof, we reduce the spaces of the form $\lincomb \atoms^{(d)}$. 
+    \begin{lemma}\label{lem:reduce-to-atoms-d-duals}
+        It is enough to prove  the special case of the theorem where $V=\lincomb \atoms^{(d)}$.
+    \end{lemma}
+    \begin{proof}
+        First we reduce the theorem to spaces with a basis, i.e.~spaces of the form $\lincomb X$, where $X$ is an orbit-finite set. By definition, every finitely generated vector space $V$ admits an equivariant surjective linear map 
+        \begin{align*}
+        \varphi : \lincomb X \to V.
+        \end{align*}
+        The finitely supported dual of $\lincomb X$ is larger than the finitely supported dual of $V$, since each linear map in the latter space can be pulled back to a linear map in the former space, by precomposing with $\varphi$. Therefore, if the finitely supported dual of $\lincomb X$ is  finitely generated, then the same is true for $V$.
+
+        So far we have reduced to spaces of the form $\lincomb X$, where $X$ is an orbit-finite set. Let us now further reduce to the case where $X = \atoms^{(d)}$ for some $d$. 
+        Call an orbit-finite set $X$ \emph{good} if the finitely supported dual of $\lincomb X$ is finitely generated. This is the same as saying that the space 
+        \begin{align*}
+        \fsfun X \field
+        \end{align*}
+        is finitely generated. The main observation is that good sets are closed under disjoint unions and images under equivariant functions. For the disjoint unions, we observe that  a function with domain $X_1 + X_2$ can be defined independently on each summand. For the images, we observe that if $f : X \to Y$ is a surjective equivariant function, then every function with  domain $Y$ can be pulled back to a function with domain $X$. If the pulled back functions can be finitely generated, then the same is true for the original functions. Using these two closure properties of good sets, we complete the proof of the lemma. Indeed, by   Claim~\ref{claim:surjective-from-tuples}, every orbit-finite can be obtained from sets of the form $\atoms^{(d)}$ by using disjoint unions and images under surjective equivariant functions. Therefore, if the sets $\atoms^{(d)}$ are good, then so are all orbit-finite sets.
+    \end{proof}
+
+    It remains to prove the theorem for the special case $V =  \lincomb \atoms^{(d)}$. As in the proof of the above lemma, linear maps from $\lincomb \atoms^{(d)}$ are the same as functions from the basis $\atoms^{(d)}$, and therefore we need to establish that the space 
+    \begin{align*}
+    \fsfun {\atoms^{(d)}} \field
+    \end{align*}
+    is finitely generated. 
+    We will be mainly interested in the functions from the above space which are  characteristic functions of certain subsets of  $\atoms^{(d)}$. Among all subsets, we will be most interesting in the rectangular ones.  Define a    \emph{rectangular subset}  to be a subset of the form 
+    \begin{align*}
+    \atoms^{(d)} \cap (X_1 \times \cdots \times X_d)
+    \qquad \text{where each $X_i$ is a finitely supported subset of $\atoms$.}
+    \end{align*}
+    The sets $X_1,\ldots,X_d$ are called the \emph{sides} of the rectangular subset. We know that finitely supported subsets of the atoms are finite or co-finite, and thus the sides are finite or co-finite. 
+    An \emph{atomic rectangular set} is the special case where each side is either a singleton, or the full set of all atoms.  
+    
+    \begin{lemma}\label{lem:rectangular-set}
+        Every finitely supported function from $\atoms^{(d)}$ to the field is a finite linear combination of characteristic functions of atomic rectangular sets.
+    \end{lemma}
+    \begin{proof}
+        In the proof of the lemma, we abuse notation and identify sets with their characteristic functions. This means that we will talk about a linear combination of sets, when thinking of a  linear combination of their characteristic functions. (We have already done this before.)
+        Consider a finitely supported function $f$ from $\atoms^{(d)}$ to the field, say supported by a tuple $\bar a$. Define a $\bar a$-orbit in  $\atoms^{(d)}$ to be any set of the form 
+        \begin{align*}
+        \setbuild{ \pi(x)}{$\pi$ is an atom automorphism that fixes $\bar a$} \qquad \text{for some $x \in \atoms^{(d)}$}.
+        \end{align*}
+        This kind of orbits will be discussed again later in the book, see Definition~\ref{def:bar-a-orbit}.
+        An $\bar a$-orbit is easily seen to be a rectangular set, where each side is either an atom from the support $\bar a$, or the co-finite set of all atoms that are not in the support $\bar a$. In particular, there are finitely many possible $\bar a$-orbits. A function supported by $\bar a$ will give the same output for all inputs in the same $\bar a$-orbit, and therefore such a function is a finite linear combination of rectangular sets. Therefore, to prove the lemma, it is enough to show that every rectangular set is a finite linear combination of atomic rectangular sets.
+        
+        For a rectangular set, define an \emph{illegal side} to be a side that is neither a singleton nor the full set of atoms. An atomic rectangular set is one without illegal sides. We will use inductive procedure to eliminate illegal sides by using linear combinations.  Consider a rectangular set with an illegal side, which is either a finite set  $\set{a_1,\ldots,a_n}$ or a co-finite set $\atoms \setminus \set{a_1,\ldots,a_n}$. In the finite case, we can decompose the rectangular set into a disjoint union of $n$  rectangular sets in which the previously illegal side becomes a singleton. Since the union is disjoint, it can be described by a linear combination. In the co-finite case, we can decompose the set  as a set difference 
+        \begin{align*}
+       X \setminus (X_1 \cup \cdots \cup X_n),
+        \end{align*}
+        where $X$ uses $\atoms$ on the previously illegal side, and $X_j$  uses $\set{a_j}$. This decomposition can be described by a linear combination, since the sets $X_1,\ldots,X_n$ are disjoint and contained in $X$. All sets in the decomposition have fewer illegal sides, and therefore we can apply the induction hypothesis to each of them.
+    \end{proof}
+
+    The family of atomic rectangular sets is orbit-finite, since an atomic rectangular set is determined by the subset of coordinates that uses singletons (which can be chosen in finitely many ways), and the values of those singletons (which can also be chosen in orbit-finitely many ways). Therefore, thanks to the above lemma, the atomic rectangular sets form an orbit-finite spanning set, which completes the proof of the theorem. 
+\end{proof}
+
+In the theorem above, we have shown that function spaces are finitely generated if the output space is the field. We now generalise this result to general output spaces  that are any finitely generated. 
+
+\begin{theorem}
+\label{thm:fsfun-finite-generation-vector-spaces}
+    Assume the equality atoms, and a field of characteristic zero. If  $V$ and $W$ are finitely generated vector spaces with atoms, then the same is true for   $
+    \linfsfun V W$.
+\end{theorem}
+
+
+
+
+
+
+\begin{proof}
+    We begin with the special case when there is a basis for both the input and output spaces.
+    \begin{lemma}
+        If $X$ and $Y$ are orbit-finite sets, then following space is finitely generated:
+        \begin{align*}
+        \linfsfun {\lincomb X} {\lincomb Y}.
+        \end{align*}
+    \end{lemma}
+    \begin{proof}
+        The function space in the statement of the lemma is the same as 
+        \begin{align}\label{eq:fsfun-lincomb}
+        \fsfun X {\lincomb Y},
+        \end{align}
+        since defining a linear map on $\lincomb X$ is the same as defining a function on the basis $X$. This space in turn is contained in the space 
+        \begin{align}
+            \label{eq:fsfun-X-Y}
+        \fsfun {X \times Y } \field,
+        \end{align}
+        because a function from $X$ to linear combinations of $Y$ can be seen as a function that inputs a pair $(x,y)$ and returns the field coefficient of $y$ in the output for $x$. The space~\eqref{eq:fsfun-X-Y} is finitely generated by Theorem~\ref{thm:duals-finite-generation}, which completes the proof of the lemma. 
+    \end{proof}
+
+
+        
+    Before continuing, let us remark on the relationship between the two spaces~\eqref{eq:fsfun-lincomb} and~\eqref{eq:fsfun-X-Y} that were used in the proof of the above lemma. The second space can be seen as representing matrices. Each linear map has a corresponding matrix, which explains why the former space is contained in the latter. However, unlike for finite-dimensional spaces, there are more matrices than linear maps. This is because the matrices that arise from linear maps in~\eqref{eq:fsfun-lincomb} must satisfy the extra restriction that they have finitely many nonzero entries in each column. Therefore, the space in~\eqref{eq:fsfun-X-Y} is strictly bigger than the space in~\eqref{eq:fsfun-lincomb}.
+    
+    
+    We now resume the proof of the theorem. Consider finitely generated vector spaces $V$ and $W$, as in the statement of the theorem. 
+    By definition of finitely generated vector spaces, one can find orbit-finite sets $X$ and $Y$ and equivariant surjective linear maps
+    \begin{align*}
+    \varphi_V : \lincomb X \to V
+    \qquad \text{and} \qquad
+    \varphi_W : \lincomb Y \to W.
+    \end{align*}
+    We assume  that $X$ is a pof set, which will be useful later in the proof (we could also do this for $Y$, but this will not be necessary in the proof). We can make this assumption because every orbit-finite set admits a surjective equivariant function from a pof set.
+    As in the proof of Lemma~\ref{lem:reduce-to-atoms-d-duals}, we can pull back linear maps from $V$ to $W$ along $\varphi_V$, which shows that
+        \begin{align*}
+    \linfsfun V W \quad \text{is an equivariant subspace of } \quad \linfsfun {\lincomb X} {W}.
+    \end{align*}
+    Therefore, it remains to show that the larger space on the right  is finitely generated. To do this, we will show that 
+      \begin{align*}
+\myunderbrace{    \linfsfun {\lincomb X} W}{same space as \\ 
+$\fsfun X W$} \quad \text{is the image of an equivariant linear map from } \quad 
+\myunderbrace{\linfsfun {\lincomb X} {\lincomb Y}}{same space as \\
+$\fsfun X {\lincomb Y}$}.
+    \end{align*}
+    Since the space on the right is finitely generated by the previous lemma, and  finitely generated spaces are closed under taking surjective images, this will complete the proof of the theorem. 
+    
+    The linear map witnessing the image will simply post-compose with $\varphi_W$. This is clearly a linear equivariant map, but it is not immediately clear that it is surjective.
+    Surjectivity means that every finitely supported function from $X$ to $W$ can be lifted to a finitely supported function from $X$ to $\lincomb Y$. In other words, we need to show that 
+    for every finitely supported function $f : X \to W$, there is a finitely supported function $g$ which makes the following diagram commute: 
+    \begin{equation}
+    \label{eq:lifting-to-limcomb}
+    \begin{tikzcd}
+    & \lincomb Y
+    \ar[d,"\varphi_W"]\\
+        X 
+    \ar[ur,"g"]
+    \ar[r,"f"']
+    & 
+    W
+    \end{tikzcd}
+    \end{equation}
+    The reader might be alarmed at this point, since such a lifting seems to involve choice, which is problematic in the presence of atoms. Indeed, the lifted function  $g$ must choose for each  input $x \in X$ one of -- possibly many -- values in $\lincomb Y$ that map to $f(x)$ via $\varphi_W$.  However, in this particular situation we are saved by two things: (a) the set $X$ is a pof set; and (b) the function $g$ is not required to be equivariant, but only finitely supported. As we will see, under these conditions choice is possible.  This is proved in the following lemma. The lemma is called the \emph{uniformization lemma}, since the process of finding a function inside a relation is usually called uniformization. 
+
+    \begin{lemma}[Uniformization Lemma]\label{lemma:uniformization}
+        Let $R \subseteq X \times Z$ be a finitely supported  binary relation, where $X$ is a pof set and $Z$ is any set with an action of atom permutations. Assume that for every $x \in X$, there is at least one output, i.e.~at least one $z \in Z$ such that $R(x,z)$. Then there is a finitely supported function $h : X \to Z$ that is contained in $R$. 
+    \end{lemma}
+
+    Once we have proved uniformization, we can apply it in the situation where $Z$ is $\lincomb Y$, and the relation $R$ is the composition of $f$ with the inverse of $\varphi_W$.  This will establish the lifting in~\eqref{eq:lifting-to-limcomb}, and thus complete the proof of the theorem. It remains to prove the uniformization lemma.
+    \begin{proof} 
+        We only prove the lemma in the case when the relation $R$ is equivariant. The case when $R$ is finitely supported is proved in the same way, except that we need to take care of the atoms $\bar a$ that are in the support of $R$ when talking about orbits; this generalisation is left to the reader. Even under the assumption that the relation $R$ is equivariant, the uniformized function $h$ will still  be finitely supported, and it might be impossible to make it equivariant. To see this, consider the example where the input set $X$ is $\atoms$, the output set $Z$ is $\atoms^{(2)}$, and the relation $R$ is the full relation $R = X \times Z$. To uniformize this relation, we need to choose for every input atom an output pair that consists of  two atoms. This cannot be done in an equivariant way, but it can be done in a finitely supported way, by always choosing the same output pair $(\john,\eve)$ for every input atom.
+
+        
+        We will begin by reducing the lemma to the case when both $X$ and $Z$ are one-orbit sets. We first do this for the input set  $X$, which is immediate, since the relation can be uniformized separately for each orbit of the input. Next, we can restrict the relation $R$ to a single orbit, which will only make the problem more difficult, but it will still preserve the assumption that for every input there is at least one output. In particular, the output set will also be restricted to a single orbit. After the restriction to  a single orbit, the input set becomes
+        \begin{align*}
+        X = \atoms^{(d)}.
+        \end{align*}
+        It is important that there is no quotient by a group of permutations of coordinates, which would be the case for a generic one-orbit set, see Theorem~\ref{thm:classify-one-orbit}. This is because we assumed  that the original  input set was a pof set, and the orbits in pof sets do not use such quotients.  
+        For the output set $Z$, which does not have this assumption,  we might have such a quotient, i.e.~the output set will be of the form 
+        \begin{align*}
+        Z = \atoms^{(e)} / G \qquad \text{for some subgroup of all permutations of $\set{1,\ldots,e}$}.
+        \end{align*}
+        However, quotients are safe on the output side, in fact they can be eliminated. This is because we can first uniformize without the quotient on the output side, and then take the quotients. (This does not work on the input side.) Therefore, we assume that the output set is $\atoms^{(e)}$. Summing up, we have reduced the problem to uniformizing a one-orbit equivariant relation 
+        \begin{align*}
+        R \subseteq \atoms^{(d)} \times \atoms^{(e)}.
+        \end{align*}
+        Such a relation is described by a partial bijection between $\set{1,\ldots,d}$ and $\set{1,\ldots,e}$, that  says which output coordinates must be copied from the input coordinates. The remaining output coordinates can be chosen freely, as long as they do not appear in the input. The goal of the uniformization is to choose some values for these remaining output coordinates. This can be done with a finite set of constants, which are fixed before knowing the input, and are used  to fill in the missing output coordinates.  We fix some finite set of atoms, which has size at least $e+d$, and atoms from this set can be used to fill in the output coordinates that are not copied from the input. The size of this fixed set is large enough so that for every input, we have enough constants that are not in the input to fill in all output  coordinates.
+    \end{proof}
+
+\end{proof}

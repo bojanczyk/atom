@@ -1,0 +1,187 @@
+
+\NeedsTeXFormat{LaTeX2e}[1996/06/01]
+ \documentclass{book}
+ \usepackage{natbib}
+ \usepackage[figuresright]{rotating}
+ \usepackage{floatpag}
+ \rotfloatpagestyle{empty}
+ \usepackage{mathrsfs}
+ \usepackage{xspace}
+ \usepackage{amsthm,amsmath}
+ \usepackage{graphicx} 
+ \usepackage{mathtools}
+ \usepackage{txfonts}
+ \usepackage{multind}
+ \usepackage[breaklinks,hidelinks]{hyperref} 
+ \usepackage{color}
+ \usepackage{listings}
+%	this is for delayed exercises, I don't use it now
+%   \usepackage[lastexercise,answerdelayed]{exercise}
+ \usepackage[all]{xy}
+ \usepackage{alltt}
+ \usepackage[shortlabels]{enumitem}
+ \makeatletter
+\newcommand{\customlabel}[2]{%
+  \protected@edef\@currentlabel{#1}% Set the custom label
+  \label{#2}% Define the label
+}
+\makeatother
+ \usepackage{mik-makro}
+\usepackage{tikz-cd}
+\usepackage{libertine}
+\usepackage{inconsolata}
+
+% knowledge stuff
+\input{knowledge-config}
+
+ \makeindex{authors}
+ \makeindex{subject} 
+ \makeglossary 
+ \theoremstyle{plain}% default
+ \newtheorem{theorem}{Theorem}[chapter]
+ \newtheorem{lemma}[theorem]{Lemma}
+ \newtheorem{claim}[theorem]{Claim} 
+ \newtheorem{proposition}[theorem]{Proposition}
+ \newtheorem{corollary}[theorem]{Corollary}
+ \newtheorem{conjecture}[theorem]{Conjecture}
+ \newtheorem*{theorem*}{Theorem}
+ \newtheorem*{lemma*}{Lemma} 
+ \newtheorem*{proposition*}{Proposition}
+ \newtheorem*{corollary*}{Corollary}
+ \newtheorem*{conjecture*}{Conjecture}
+ \theoremstyle{definition}
+ \newtheorem{definition}[theorem]{Definition}
+ \newtheorem{example}[theorem]{example}
+ \newtheorem{prob}[theorem]{Problem}
+ \newtheorem{remark}[theorem]{Remark}
+ \newtheorem{notation}[theorem]{Notation}
+ \newtheorem{exer}[theorem]{Exercise}
+ \newtheorem*{definition*}{Definition}
+ \newtheorem*{example*}{myexample}
+ \newtheorem*{prob*}{Problem}
+ \newtheorem*{remark*}{Remark}
+ \newtheorem*{notation*}{Notation}
+ \newtheorem*{exer*}{Exercise}
+ \setcounter{tocdepth}{2}
+
+
+
+%  If I use the cambridge style, then I need extra macros
+% if I don't these should be commented out
+\newcommand{\ifcambridge}[1]{
+
+}
+% this is the book version, so the exercises are small and the solutions are not given 
+
+\newcommand{\mikexercise}[2]{
+	{\small
+\begin{mexercise} 
+	#1 
+\end{mexercise}
+	}
+}
+
+
+% Define custom settings for code listings
+\lstset{
+    basicstyle=\ttfamily\footnotesize, % Code font and size
+    % keywordstyle=\color{blue}\bfseries, % Keywords in bold blue
+    commentstyle=\color{gray}, % Comments in gray
+    stringstyle=\color{red}, % Strings in red
+    numbers=left, % Line numbers on the left
+    numberstyle=\tiny\color{gray}, % Line number style
+    stepnumber=1, % Line number step
+    numbersep=5pt, % Space between line numbers and code
+    backgroundcolor=\color{lightgray!20}, % Light gray background
+    % frame=single, % Frame around the code
+    tabsize=4, % Tab size
+    breaklines=true, % Line breaking
+    captionpos=b, % Caption position (bottom)
+    language=Python, % Default language
+    mathescape=true, % Allow math mode in code
+    escapechar=|,
+    aboveskip=10pt, % Space above the listing
+    belowskip=10pt,  % Space below the listing
+    xleftmargin=15pt, % Left margin inside the box
+    xrightmargin=15pt % Right margin inside the box
+}
+
+ \begin{document}
+ \input{macros} 
+
+ \title 
+ {Slightly Infinite Sets}
+\author{Miko{\l}aj Boja\'nczyk\\[3\baselineskip]
+\today \\ The latest version can be downloaded from:\\
+ mimuw.edu.pl/$\sim$bojan/paper/atom-book 
+ }
+ \ifcambridge{
+\bookabstract{This is the guide for authors who are preparing written,
+ rather than edited, books.}}
+\ifcambridge{\bookkeywords{\LaTeX; authored books; CUP style; cambridge7A.cls.}}
+\frontmatter 
+\maketitle
+ 
+\tableofcontents
+% \listofcontributors
+\include{authored_preface}
+\mainmatter 
+ 
+ 
+\begin{scope}\knowledgeimport{equality}
+\input{chapters/pof}
+\input{chapters/pof-automata}
+\input{chapters/pof-models}
+\input{chapters/finite-supports}
+\end{scope}
+
+
+\input{chapters/oligomorphism}
+\input{chapters/homogeneous}
+\input{chapters/case-study} 
+\input{chapters/vector-spaces}
+\input{chapters/turing} 
+\input{chapters/sets-with-atoms} 
+\input{chapters/computable}
+\input{chapters/poly}
+
+
+
+ 
+ 
+ 
+ \backmatter
+% \appendix
+% % if you only have one appendix, use \oneappendix instead of \appendix
+% \include{theorem}
+% \include{root}
+% \include{appnum}
+% \endappendix
+ \addtocontents{toc} {\vspace{\baselineskip}}
+ 
+% the following lines will give you references at the end of the book
+ \renewcommand{\refname}{Bibliography}% if you prefer this heading
+\ifcambridge{\bookreferences % if you already have references at the end of chapters,
+ % you will need this command to start a new \chapter* heading
+}
+ \bibliography{bib}\label{refs}
+ \bibliographystyle{cambridgeauthordate}
+
+ \cleardoublepage
+
+% end notes, if you have them
+% \theendnotes
+ 
+
+% glossary
+% \printglossary
+
+% indexes
+
+% for a single index
+% \printindex
+
+% for multiple indexes using multind.sty
+ \printindex{authors}{Author index}
+ \printindex{subject}{Subject index}
+ \end{document}

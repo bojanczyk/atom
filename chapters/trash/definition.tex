@@ -1,0 +1,166 @@
+
+
+
+\section{Sets with atoms} 
+\label{sec:definition-of-sets-with-atoms} Roughly speaking, a set with atoms is a set which contains atoms and simpler sets with atoms; although not every object built this way is going to be considered a set with atoms.
+The intuitive idea is that a set with atoms must be built using only the structure given by the atoms (i.e.~relations and functions from the vocabulary of the atoms) and finitely many constants referring to specific atoms. For example, in the equality atoms\footnote{Under the equality atoms, or the rational number atoms, a natural number like $2$ can be interpreted in two ways: as an atom, or as the set $\set{\emptyset, \set{\emptyset}}$ which represents $2$ according to the Von Neumann numeral encoding. To avoid this confusion, we use an underlined number $\underline 2$ for the first meaning and $2$ for the second meaning.} the set of even-numbered atoms $\set{\underline 0, \underline 2, \underline 4, \ldots}$ would \emph{not} be a set with atoms, because a definition of this set would need to either explicitly mention infinitely many atoms, or refer to the notion of ``even-numbered'' which is not available in the structure. 
+
+These ideas are formalised below using automorphisms of the atoms; the following definitions are central to the book.
+
+\begin{definition}[Sets with atoms] 
+	Let $\atoms$ be a logical structure, whose elements are called atoms.
+	\begin{itemize}
+		\item {\bf The cumulative hierarchy.} The \emph{cumulative hierarchy over $\atoms$} is a hierarchy of sets indexed by ranks that are ordinal numbers. There is only one set of rank $0$, namely the empty set. For an ordinal number $\alpha > 0$, a set of rank at most $\alpha$ is any set whose every element is an atom or a set of rank strictly less than $\alpha$.
+		\item {\bf Atom automorphisms.} An \emph{atom automorphism} is any permutation of the universe of $\atoms$ which preserves all predicates and functions in the structure.
+		\item {\bf Action of atom automorphisms on the cumulative hierarchy.} Let $\pi$ be an automorphism of the atoms. We inductively extend $\pi$ from atoms to sets in the cumulative hierarchy over $\atoms$ by defining $\pi(x)$ to be $\set{\pi(y) : y \in x}$.
+		\item {\bf Supports.} If an atom automorphism fixes a tuple of atoms $\bar a = (a_1,\ldots,a_n)$ (i.e.~maps the tuple to itself), then it is called an $\bar a$-automorphism. If $x$ is in the cumulative hierarchy over $\atoms$ and $\bar a$ is a tuple of atoms, then we say that $\bar a$ is a \emph{support} of $x$ if 
+		\begin{align*}
+			\pi(\bar a) =\bar a \quad \text{implies} \quad \pi(x)=x \qquad \text{for every atom automorphism $\pi$,}
+		\end{align*}
+		i.e.~$x$ is fixed by every $\bar a$-automorphism\footnote{The order or repetition of atoms in the tuple $\bar a$ is not relevant for the support, i.e.~only the set of atoms that appear in the tuple matters. For this reason, some authors use a set of atoms as a support, instead of a tuple of atoms. We use tuples so that we can distinguish between an $\set{a_1,a_2}$-automorphism and an $(a_1,a_2)$-automorphism. The former can swap $a_1$ and $a_2$, while the latter needs to fix both $a_1$ and $a_2$.}.		We say that $x$ is \emph{finitely supported} if it is supported by some finite tuple of atoms.
+		\item {\bf Set with atoms.} A \emph{set with atoms over $\atoms$} is any $x$ in the cumulative hierarchy which is finitely supported, has only finitely supported elements, and so on until atoms are reached. We write $\sets \atoms$ for all sets with atoms over $\atoms$. 
+	\end{itemize}
+	
+\end{definition}
+
+The rest of Section~\ref{sec:definition-of-sets-with-atoms} is devoted to exercises and examples which illustrate the above definitions. 
+An intuitive description of the support of a set is that the support consists of the atoms that are ``hard-coded'' into the definition of the set.
+The support of a set with atoms is not unique, because supports are closed under adding atoms. (For some atoms, such as $(\Nat,=)$ or $\qatom$, a canonical least support can be found, see Chapter~\ref{sec:least-supports}.) A set with empty support is called \emph{equivariant}. Intuitively speaking, an equivariant set is one which can be defined without referring to any specific atoms.
+
+
+
+\begin{myexample}\label{ex:cofinite-set}
+	Let $\atoms$ be the equality atoms $(\Nat, =)$ and consider the set
+	\begin{align*}
+		\setexpr{ a} {a} { a \neq \atomtwo}.
+	\end{align*}
+	This set is supported by the atom $\atomtwo$ because any $\atomtwo$-automorphism will map the set to itself, although it might rearrange its elements. The set is not equivariant, so $ \atomtwo$ is a minimal support, actually it is the least finite support.
+\end{myexample}
+
+\begin{myexample}
+	Let the atoms $\atoms$ be the ordered rational numbers $\qatom$ and consider the set of open intervals that contain the atom $\atomtwo$:
+	\begin{align*}
+		\setexpr { \setexpr{ c} {c} {a < c < b}} {a,b
+		} {a < \atomtwo < b}.
+	\end{align*}
+	This set is supported by $\atomtwo$. An element of this set is the open interval
+	\begin{align*}
+		\setexpr{ c} {c} {\underline 0 < c < \underline 3},
+	\end{align*}
+	which is a set that is supported by the atom tuple $(\underline 0, \underline 3)$.
+\end{myexample}
+
+
+Sets are -- no surprises here -- a natural choice for foundations of mathematics. In particular, using sets we can simulate data structures such as pairs, tuples, etc. To define pairs, we use Kuratowski pairing:
+\begin{align*}
+	(x,y) \quad \eqdef \quad \set{ \set x, \set{x,y}}.
+\end{align*}
+It is easy to see that if $x$ is supported by a tuple of atoms $\bar a$ and $y$ is supported by a tuple of atoms $\bar b$, then the pair $(x,y)$, in the Kuratowski sense defined above, is supported by the tuple $\bar a \bar b$. In particular, a pair of finitely supported objects is also finitely supported, and therefore sets with atoms are closed under pairing. 
+
+\begin{myexample} Regardless of the choice of atoms, the set $\atoms^*$ (defined using pairing in the natural way) is a set with atoms. It is equivariant, but its elements are typically not equivariant. For example, in the equality atoms, $\underline{12345} \in \atoms^*$ is finitely supported, but any finite support must include $\underline 1, \underline 2, \underline 3, \underline 4, \underline 5$. In particular, $\atoms^*$ contains elements with unboundedly large supports.
+\end{myexample}
+
+Using pairs, we can define sets with atoms which are binary relations, and using binary relations, we can define sets with atoms which are functions.
+
+
+\begin{myexample}\label{ex:choice}
+	Consider the equality atoms. Define a \emph{choice function for unordered pairs} to be a function
+	\begin{align*}
+		f : \set{ \set{a,b} : a,b \in \atoms} \to \atoms \qquad \text{ such that }f(\set{a,b}) \in \set{a,b} \text{ for every $\set{a,b}$},
+	\end{align*}
+	i.e.~a function which chooses an element for each unordered pair of atoms. 
+	 We claim that there is no finitely supported choice function. 	 (For this example it is crucial that the atoms have equality only. If there were a linear order in the atoms, then max would be a choice function.) Toward a contradiction, suppose that $f$ is a choice function with finite support $\bar a$. Choose two atoms $b,c$ that do not appear in the support $\bar a$, and let $\pi$ be the transposition which swaps $b$ with $c$. By definition of supports, since $\pi$ fixes $\bar a$, it must also fix $f$ seen as a set of pairs, i.e.~it must fix the graph of $f$. Therefore, the graph of $f$ must contain both pairs
+\begin{align*}
+	(\set{b,c},b) \quad\text{and} \quad (\set{b,c},c),
+\end{align*}
+which contradicts the assumption that $f$ is a function\footnote{
+	This example touches on the origins of sets with atoms. In 1922, Abraham Fraenkel showed that, when the atoms have equality only, then sets with atoms:
+\begin{itemize}
+		\item fail the axiom of choice, as shown in this exercise, but
+	\item satisfy axioms similar to the Zermelo-Fraenkel axioms of set theory.
+\end{itemize}
+The axioms satisfied by sets with atoms are not the real Zermelo-Fraenkel axioms, e.g.~extensionality fails because every atom has the same elements as the empty set. The independence of the axiom of choice from the real Zermelo-Fraenkel axioms had to wait for Cohen and forcing. See~\cite{sep-axiom-choice} for a discussion of this topic.}.
+\end{myexample}
+
+
+ The following example shows that finite supports are meaningless in atoms such as $(\Int,<)$.
+ \begin{myexample}\label{ex:integers-nonexample}
+Consider the integer atoms $(\Int, <)$. For these atoms, the automorphisms are translations, i.e.~functions of the form $a \mapsto a+k$ for some $k \in \Int$. The atom $\atomtwo$ is supported by itself, but it is also supported by $\underline 1$ because there is only one $\atomone$-automorphism, namely the identity. One explanation is that $\underline 2$ can be defined as ``the smallest element after $\underline 1$''. In fact, every set of atoms is finitely supported, e.g.~by $\atomone$, and therefore for the atoms $(\Int,<)$ there is no difference between a set in the cumulative hierarchy and a set with atoms. If we extend the structure $(\Int,<)$ by adding a constant $0$, then the only automorphism is the identity, and therefore every set in the cumulative hierarchy has empty support.
+ \end{myexample}
+ 
+
+
+
+
+
+An arbitrary subset of a set with atoms might not be finitely supported, and therefore sets with atoms are not closed under taking arbitrary subsets, but only under taking finitely supported subsets.
+
+
+
+
+
+In Examples~\ref{example:fs-powerset} and~\ref{example:totally-ordered-powerset}, the finitely supported subsets of the atoms coincide with subsets of the atoms that can be defined by quantifier-free formulas that can use constants from the atoms. The reason is that both examples of atoms are \emph{homogeneous} structures, see Chapter~\ref{sec:homogeneous-atoms}. When the atoms are homogeneous, finitely supported relations on the atoms are precisely those that can be defined using quantifier-free formulas.
+
+
+
+
+
+\exercisepart
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\mikexercise{Consider the equality atoms. Show a finitely supported graph, which admits a two-colouring that is not finitely supported, but does not admit any finitely supported two-colouring.}{The vertices are ordered pairs of atoms. From a vertex $(a,b)$ there is exactly one edge, which connects it to $(b,a)$. This graph is bipartite, so it admits a two-colouring. A finitely supported two-colouring, say by colours blue and yellow, would give a choice function, namely map a set $\set{a,b}$ to the unique pair in $\set{(a,b),(b,a)}$ which is coloured by blue.}
+
+
+\mikexercise{Consider the equality atoms. 		Show that for every finitely supported partial order $<$ on $\atoms$, all atoms outside the support are incomparable. }{Suppose that $<$ is a partial order, and $\atoma,\atomb$ are atoms outside the support. Choose $\pi$ to be the transposition that swaps $\atoma$ and $\atomb$; in particular $\pi$ is the identity on the support of $<$. It follows that $<$ is preserved when $\pi$ is applied to its arguments, and therefore $\atoma < \atomb$ is equivalent to $\atoma > \atomb$. By antisymmetry, neither property can hold.	}
+
+
+
+
+
+
+
+% There is an even more general definition of sets with atoms, which is due to Specker, and which is not used in this text. In the more general definition, the parameter is a set of atoms whose structure is given not by relations and predicates as in this text, but by a filter of subgroups of the permutation group of the atoms. Instead of requiring a set to have finite support, we require that its stabiliser (a subgroup of the permutations of the atoms) belongs to the filter. 
+%
+%For more on how sets with atoms are used for independence proofs in set theory, see the book~\cite{jech1973axiom}.
+%A more recent source of interest in sets with atoms comes from the semantics community. In this context, one mainly uses sets with equality atoms, under the name of \emph{nominal sets}. Nominal sets turn out to be a good foundation to the study of name binding in syntax, e.g.~in the syntax of the $\lambda$-calculus. This application is illustrated in the following example, which comes from the original paper on nominal sets by Gabbay and Pitts. For more on nominal sets, see the book~\cite{PittsAM:nomsns}. 
+
+
+
+
+%\begin{myexample}[Nominal sets and $\lambda$-terms]
+%	 Consider the set of $\lambda$-terms. For the moment, we distinguish terms even if they differ only in the bound variables, so $\lambda x.x$ and $\lambda y.y$ are different terms. The set of $\lambda$-terms is the least solution to the equation
+%		\begin{align}\label{eq:terms-as-a-solution}
+%			X \qquad = \qquad \mathrm{Variables} \quad \uplus \quad X \times X \quad \uplus \quad \mathrm{Variables} \times X,
+%		\end{align}
+%		where the middle component in the disjoint union stands for application, and the last component stands for $\lambda$-abstraction. Formally speaking, the equation above involves three operators which map sets to sets: namely the constant $\mathrm{Variables}$, as well as $X \mapsto X \times X$ and $X \mapsto \mathrm{Variables} \times X$.% 
+%	% Being a least solution can be interpreted as saying that the set of $\lambda$-terms has an inductive definition. 
+%
+%	What about $\lambda$-terms modulo renaming bound variables? Can this set be seen as a least solution to some equation which involves set to set operators? Gabbay and Pitts showed that to write such an equation, it is convenient to use sets with atoms (under the equality atoms), and assume that the variables are the atoms. Then renaming bound variables becomes the same thing as applying atom automorphisms, and one can get an elegant version of equation~\eqref{eq:terms-as-a-solution}, using a suitable modification of the product $\mathrm{Variables} \times X$, which describes the set of $\lambda$-terms modulo renaming bound variables.
+
+
+
+
+
+
+
+
+
+
+
+
+
+

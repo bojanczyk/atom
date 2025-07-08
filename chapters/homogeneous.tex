@@ -1,0 +1,705 @@
+
+\chapter{"Homogeneous" atoms}
+\label{sec:homogeneous-atoms}
+To define orbit-finiteness, we need atoms that are oligomorphic. 
+How does one get oligomorphic structures?
+
+This chapter is devoted to a method of producing oligomorphic structures, which is called the \fraisse limit\footnote{This is a basic notion in model theory. For further information, see e.g.~\cite[Section 7]{hodges1993model}. 
+}. The idea behind the \fraisse limit is that it inputs a class of finite structures, sufficiently well-behaved, and outputs a single countably infinite structure which contains all  the finite structures, and does so in a certain "homogeneous" way. The \fraisse limit can be applied to classes of finite structures such as all finite total orders, all finite directed graphs, all equivalence relations on finite sets, etc. 
+
+
+
+
+
+
+
+
+
+
+
+
+\section{Homogeneous structures} 
+Before defining homogeneous structures, we begin by recalling some terminology from logic. In the previous chapter, there was one structure, and we used logic to define relations on this structure. In this chapter, there will be many structures, but we will still want to compare them using a single formula. To do this, we use the notion of a  \emph{vocabulary}: this is a set of names for relations, each one with an associated arity in $\set{0,1,\ldots}$. Here are some examples of vocabularies: 
+\begin{align*}
+\myunderbrace{x \le y}{the vocabulary for \\ ordered structures \\ has one binary relation}
+\qquad \qquad \qquad 
+\myunderbrace{\text{edge}(x,y)}{the vocabulary for  graphs \\ has one binary relation}
+\qquad \qquad 
+\myunderbrace{x+y=z \quad x\times y = z}{the vocabulary for rings\\ has two ternary relations}.
+\end{align*}
+Note that the first two vocabularies are essentially the same, since they both have one relation of arity two. However, is useful to give different names to convey different intentions. In the third vocabulary, we use ternary relations instead of binary functions -- this is because we want to stick to relational vocabularies for simplicity. A structure over a given vocabulary is a structure in the sense of Definition~\ref{def:relational-structure}, together with a function (called the \emph{interpretation} of the vocabulary) that  assigns each relation name from the vocabulary to relation in the structure of the same arity. Thanks to the interpretation, we can evaluate a formula over the vocabulary in any structure over this vocabulary.  
+
+
+
+Consider two structures $\structa, \structb$ over the same vocabulary. An \emph{embedding} $f : \structa \to \structb$ is any injective function from the universe of $\structa$ to the universe of $\structb$ which preserves and reflects the relations in the following sense 
+\begin{align*}
+\underbrace{R(a_1,\ldots,a_n)}_{\text{in $\structa$}} \quad \Leftrightarrow \quad \underbrace{R(f(a_1),\ldots,f(a_n))}_{\text{in $\structb$}}.
+\end{align*}
+An \emph{isomorphism} is the special case of an embedding where the function is a bijection. 
+An \emph{embedded substructure} of a structure is defined to be any structure that embeds into it. A ""substructure"" is the special case where the embedding is simply an inclusion map. We will be mainly interested in (embedded or not)  substructures that are finite, i.e.~have finite universes. Here is the fundamental definition for this chapter. 
+
+\begin{definition}[Homogeneous structure]\label{def:homogeneous}
+A structure  is called ""homogeneous"" if every isomorphism between finite substructures extends to a full automorphism of the entire structure. 	
+\end{definition}
+
+Here is a diagram that describes the above definition.
+\[
+\forall \red{\exists} 
+\qquad 
+\begin{tikzcd}
+[column sep=large]
+\structb
+\ar[r,"\text{isomorphism}"]
+\ar[d,"\text{subset}"']
+&  \structc 
+\ar[d,"\text{subset}"] \\
+\structa 
+\ar[r,"\text{automorphism}"', color=red]
+& \structa 
+\end{tikzcd}
+\]
+
+\begin{myexample}
+	The equality atoms and the ordered atoms $\qatom$ are "homogeneous". Let us do the proof for the ordered atoms. A finite "substructure" is the same as a choice of $d$ rational numbers $x_1 < \cdots < x_d$. Any two such choices will be isomorphic, assuming the same dimension $d$. If we take two such choices, they will be in the same orbit, i.e.~the isomorphism will extend to an automorphism. \end{myexample}
+
+	\begin{myexample}\label{ex:nat-powerset}
+		Consider the structure which consists of finite subsets of  natural numbers, equipped with a binary relation for subset inclusion: 	
+			\begin{align*}
+				\atoms = (\powerset_{\text{fin}}(\Nat),\subseteq).
+			\end{align*}
+	We will show that this structure is not homogeneous. Consider a finite substructure $\structb$ that has only one element, namely the empty set, and another finite substructure $\structc$ that also has only one element, namely the singleton set $\set 1$. As finite structures, they are isomorphic -- the subset relation connects the unique element with itself in both of them. However, there is no automorphism of $\atoms$ that maps the empty set to a nonempty set. This structure is also not oligomorphic, because it has infinitely many orbits already in $\atoms^1$, namely sets of different finite sizes will be in different orbits.
+		\end{myexample}
+
+In principle, oligomorphism and homogeneity are incomparable notions, as explained in the following two examples.
+
+\begin{myexample}[Oligomorphic $\not \Rightarrow$ homogeneous]
+	Every finite structure is oligomorphic, but not every finite structure is a "homogeneous". For example, consider the three element path
+	\mypicb{6}	
+	Let the vertices be $1,2,3$. The substructures $\set{1}$ and $\set{2}$ are isomorphic, but there is no automorphism that maps $1$ to $2$.
+\end{myexample}
+\begin{myexample}
+[Homogeneous $\not \Rightarrow$ oligomorphic]
+Consider an infinite structure which has one unary relation for every possible singleton. This structure has no automorphism, and therefore it has infinitely many orbits. However, it is homogeneous for the trivial reason that the only isomorphism between finite "substructures" are between identical subsets.
+\end{myexample}
+
+However, the differences exhibited in the above examples are rather superficial. Every oligomorphic structure can be trivially made into a  homogeneous one by adding (infinitely many) relations: we can simply add a $d$-ary relation for every orbit in $\atoms^d$. An infinite vocabulary may indeed be needed, as witnessed by the bit-vector structure that will be discussed in Section~\ref{sec:bit-vectors}.
+For the converse implication, the  following theorem shows that most reasonable homogeneous structures are in fact oligomorphic.
+
+\begin{theorem}\label{thm:hom-oligo}
+If a structure is homogeneous,  then it is oligomorphic if and only if 
+\begin{itemize}
+	\item[(*)]for every $d \in \set{0,1,\ldots}$, it has finitely many substructures of size $d$, up to isomorphism.
+\end{itemize}
+\end{theorem}
+\begin{proof}
+	If we take  tuples $
+	(a_1,\ldots,a_d)$ and $(b_1,\ldots,b_d)$  
+	that are in the same orbit, then the function $a_i \mapsto b_i$ is an isomorphism between the substructures generated by the tuples. Therefore, if there are finitely many orbits in $\atoms^d$, then there are finitely many kinds of substructures of size $d$, up to isomorphism, which proves the left-to-right implication. For the converse implication, we use homogeneity: the orbit of a tuple is uniquely determined by the isomorphism type of the induces substructure, and the order and repetitions of the elements in the tuple, which can be chosen in finitely many ways. 
+\end{proof}
+
+A corollary of the above theorem is that for finite vocabularies, homogeneity implies oligomorphism. This is because condition (*) will automatically hold in the presence of a finite vocabulary. 
+	
+	
+
+
+
+
+
+ One of the fundamental properties of  oligomorphic structures was that equivariant relations were exactly those that could be defined in first-order logic, see Theorem~\ref{thm:ryll}. For homogeneous structures, quantifier-free formulas are enough. 
+
+\begin{theorem}\label{thm:fs-qf} Consider a  homogeneous structure $\atoms$. 
+	\begin{enumerate}
+		\item Two tuples from $\atoms^d$ are in the same orbit if and only if they satisfy the same quantifier-free formulas.
+		\item 	 If $\atoms$ additionally satisfies condition (*) from Theorem~\ref{thm:hom-oligo}, then the equivariant subsets of $\atoms^d$ are exactly those that are definable by quantifier-free formulas.
+	\end{enumerate}
+
+	\end{theorem}
+	\begin{proof} We begin with the equivalence in the first item. 
+		The  left-to-right implication is immediate: the truth-value of quantifier-free formula does not change when an automorphism is applied. Conversely, if two tuples of atoms satisfy the same quantifier-free formulas, then one can build an isomorphism between the substructures generated by them, which will extend to  an automorphism of the entire structure by homogeneity.
+
+		The second item follows from the first item, and the observation that under assumption (*), there are finitely many possible quantifier-free formulas with $d$ variables, up to logical equivalence. 
+	\end{proof}
+	
+\exercisepart
+
+\mikexercise{Which finite graphs are homogeneous?}{}
+
+\section{The \fraisse limit}
+\label{sec:fraisse}
+In this section, we describe the \fraisse limit, which is a way -- in fact the only way -- of constructing countable homogeneous structures. 
+Before defining the \fraisse limit, consider the following problem: for a class $\structclass$ of finite structures, find some (possibly infinite) structure $\atoms$ such that 
+	\begin{align*}
+	\structclass = \myunderbrace{\setbuild{\structb}{$\structb$ is a finite structure that embeds into $\structa$}}{this is called the \emph{age} of the structure $\structa$}.
+	\end{align*}
+For example, if $\structclass$ is  the class of all finite structures over an empty vocabulary, then it is the age of any  infinite structure over the empty vocabulary. If $\structclass$ is the class of finite total orders, then it is the age of any  infinite total order, such as 
+\begin{align*}
+(\Nat, <) \quad (\Int, < ) \quad (\mathbb Q, < ) \quad (\mathbb R, < ).
+\end{align*}
+However, if we want the total order to be countable and homogeneous, then the only choice is the rational numbers. Finally, not every class arises as the age of some structure. A necessary condition  is that every two structures from $\structclass$ can be embedded into a single structure from $\structclass$, since this is a property that will hold for the age of a single structure $\atoms$. For this reason, the class 
+\begin{align*}
+\structclass  = \setbuild{ G}{$G$ is a graph with at most 10 edges}
+\end{align*}
+is not the age of any structure.  
+The purpose of this chapter is to identify conditions which guarantee that $\structclass$ can be obtained as the age of some structure, and furthermore we want this structure to be homogeneous. These conditions are described in terms of amalgamations, so we begin by defining amalgamation. 
+
+
+\begin{definition}
+	[Amalgamation]An \emph{instance of amalgamation} is two embeddings with a common source:
+	\begin{equation}
+		\label{eq:instance-of-amalgamation}
+		\vcenter{\xymatrix @R=1pc {
+		& \structa\ar[dl]_{f_1}\ar[dr]^{f_2} \\
+		\structb_1 & & \structb_2
+		}}
+	\end{equation}
+	A \emph{solution} of the instance is a structure $\structc$ and two embeddings $g_1,g_2$ such that the following diagram commutes:
+	\begin{equation}\label{eq:solution-of-amalgamation}
+		\vcenter{\xymatrix @R=1pc {
+		& \structa\ar[dl]_{f_1}\ar[dr]^{f_2} \\
+		\structb_1\ar[dr]_{g_1} & & \structb_2\ar[dl]^{g_2}\\
+		& \structc
+		}}	
+	\end{equation}	
+\end{definition}
+
+
+\begin{definition}[\fraisse class]
+A \emph{\fraisse class} is a class of finite structures over a common vocabulary which is closed under isomorphism, substructures, and also: 
+\begin{itemize}
+	\item it is \emph{closed under amalgamation}, which means that for every instance of amalgamation which uses structures from the class, there is a solution which also uses a structure from the class.
+\end{itemize}
+\end{definition}
+
+A \fraisse class is called \emph{countable} if it has countably many structures, up to isomorphism. We are now ready to state the \fraisse theorem, which says that \fraisse classes are in one-to-one correspondence with countable homogeneous structures. 
+
+\begin{theorem}[\fraisse Theorem]
+	\label{thm:fraisse}
+	The map 
+	\begin{align*}
+	\atoms \qquad \mapsto \qquad \text{age of $\atoms$}
+	\end{align*}
+	is a bijection between countable homogeneous structures (modulo isomorphism) and countable \fraisse classes. In other words:
+	\begin{enumerate}
+		 \item \label{it:age-is-fraisse} the age of every countable homogeneous structure is a countable \fraisse class; and
+		 \item \label{it:age-surjective} every countable \fraisse class is obtained this way; and
+		 \item \label{it:age-injective} if two countable homogeneous structures have the same age, then they are isomorphic.
+	\end{enumerate}
+\end{theorem}
+
+The inverse of the age operation, i.e.~the map which inputs a \fraisse class and outputs the corresponding countable homogeneous structure (which is unique up to isomorphism thanks to the above theorem), is called the \emph{\fraisse limit}. 
+Before proving Theorem~\ref{thm:fraisse}, we give some examples and non-examples of \fraisse classes. In all these examples, closure under  substructures and isomorphism is immediate, and only amalgamation need be discussed. 
+ 
+
+\begin{myexample}
+	\label{example:pure-set-fraisse}
+	Consider the class of all finite structures over an empty vocabulary (in which case formulas can talk only about equality). This class is closed under amalgamation, by taking the disjoint union of two sets with a common subset. Here is an example of an instance of amalgamation and its solution:
+	\mypic{125}
+	When drawing amalgamation diagrams, we use the red colour for elements of $\structa$. 
+	In general, the same instance might have several solutions. Here is an example of a different solution to the instance above:
+	\mypic{126} In fact, the above instance has infinitely many solutions (because the solution can be arbitrarily large).
+	Note how the second solution uses the same black element as the target of both black nodes in the second row.
+\end{myexample}
+
+
+\begin{myexample} 
+	\label{example:directed-graphs-amalgamation}
+	Consider the class of finite undirected graphs. In other words, this is the class of all finite structures over a vocabulary which has one binary relation that is required to be symmetric and irreflexive. This class is closed under amalgamation (the same argument works for directed graphs), by taking the disjoint union of two directed graphs with a common induced subgraph. Here is an example:
+	\mypic{124}
+	As in Example~\ref{example:pure-set-fraisse}, there are other solutions to the above instance. 
+		More generally, for every relational vocabulary, the class of all finite structures over this vocabulary is closed under amalgamation. In particular, by Theorem~\ref{thm:fraisse}, each of these classes has a \fraisse limit. The limit for undirected graphs will be discussed in more detail in Section~\ref{sec:random-graph}. 
+\end{myexample} 
+\begin{myexample}
+	\label{example:planar-no-amalgamation}
+	 Consider the class of finite planar graphs. To simplify this example, we assume that a graph is represented (unlike in Example~\ref{example:directed-graphs-amalgamation}) as a structure where the universe is the  vertices and edges of the graph, and there is a binary relation for incidence between edges and vertices. (This representation of graphs means that an embedding can add edges without adding vertices, i.e.~embedding corresponds to subgraphs, and not induced subgraphs.) Under this representation, the class of planer graphs is  not closed under amalgamation. Here is an instance without a solution:
+	\mypic{78}
+	Any hypothetical solution to the above instance would have the 5-clique as a minor, and would therefore not be planar. 
+	A similar but more elaborate example would show failure of amalgamation for planar graphs under the modelling of graphs used by Example~\ref{example:directed-graphs-amalgamation}, where the universe of the structure is the vertices and there is a binary relation for the edges. 
+ \end{myexample}
+		\begin{myexample}\label{example:successor-no-amalgamation} Consider directed graphs
+			where the edge relation is a partial successor, i.e.~vertices have out-degree and in-degree at most one, and no loops. The class is not closed under amalgamation, here is an instance without a solution:
+		\mypic{77}	
+		\end{myexample}
+		
+\begin{myexample}\label{ex:amalgamation-total-orders}
+	Consider the class of finite total orders. This class is closed under amalgamation. Here is an example of an instance of amalgamation and its solution:
+	 \mypic{74}
+\end{myexample}
+
+
+ 
+
+We now begin the proof of the \fraisse Theorem. We first show item~\ref{it:age-is-fraisse}, which says that the age of a countable homogeneous structure is a \fraisse class. Next, we prove a slightly stronger result, which does not assume countability.
+
+\begin{lemma}
+	For every homogeneous structure, not necessarily countable, its age is a \fraisse class.
+\end{lemma}
+\begin{proof}
+	The only nontrivial part is amalgamation. Let $\structh$ be a homogeneous structure. 
+		Consider an instance of amalgamation which uses structures that embed into $\structh$, as in the following diagram (all arrows are embeddings):
+		\begin{align*}
+			\vcenter{\xymatrix @R=1pc {
+			& \structa\ar[dl]_{f_1}\ar[dr]^{f_2} \\
+			\structb_1\ar[d]^{h_1} & & \structb_2\ar[d]^{h_2}\\
+			\structh & & \structh
+			}}	
+		\end{align*}
+		The diagram distinguishes the targets of $h_1$ and $h_2$ because the embeddings $h_1 \circ f_1$ and $h_2 \circ f_2$ need not be the same embedding of $\structa$ in $\structh$. However, the images of both of these embeddings are isomorphic  finite substructures of $\structh$. Therefore, by homogeneity there is an automorphism $\pi$ which extends this partial automorphism. In other words, the following diagram commutes:
+		\begin{align*}
+			\vcenter{\xymatrix @R=1pc {
+			& \structa\ar[dl]_{f_1}\ar[dr]^{f_2} \\
+			\structb_1\ar[d]^{h_1} & & \structb_2\ar[d]^{h_2}\\
+			\structh \ar[rr]^\pi & & \structh
+			}}	
+		\end{align*}
+		If we restrict the right copy of $\structh$ to the union of the  images of the maps $h_2$ and $\pi \circ h_1$, then we get a solution of amalgamation.
+\end{proof}
+
+If a homogeneous structure is countable, then it has countably many embedded finite substructures. Therefore, by the above lemma, the age of a countable homogeneous structures is a countable \fraisse class. 
+We now establish item~\ref{it:age-injective} in the theorem, which says that the age uniquely identifies a countable homogeneous structure.
+
+\begin{lemma}\label{thm:age-is-all} A countable structure $\structh$ is homogeneous if and only if:
+	\begin{itemize}
+		\item[(*)] \label{it:embeddings-extend} If $\structa, \structb$ are finitely generated substructures of $\structh$ then
+		\begin{align*}
+		\forall \red{\exists}	\quad \xymatrix{ \structb \ar_f[dr] \ar^g[r] & \structa \ar@[red][d]^{\red h} \\ & \structh}
+		\end{align*}
+			\end{itemize}
+Furthermore, countable homogeneous structures with the same age are isomorphic. 
+\end{lemma} 
+\begin{proof}\ 
+\begin{itemize}
+		\item \emph{Homogeneous structures satisfy (*)}. 	 Let $g,f$ be as in (*). We assume without loss of generality that $g$ is an inclusion. Let $f'$ be an embedding of $\structa$ into $\structh$, which exists by the assumption that $\structa$ is a substructure. Here is a picture: 
+		\mypic{80}
+		By following the inverse of $f$ and then $f'$, we get a partial automorphism between two finitely generated substructures of $\structh$, namely the two red parts on the right. By homogeneity, this partial automorphism extends to a full automorphism. The function $f'$ composed with the inverse of that automorphism is the desired embedding.	
+		\item \emph{Structures satisfying (*) are homogeneous.} Here we use countability. The following claim, in the special case of $\structh = \structh_1 = \structh_2$, shows that $\structh$ is homogeneous. 
+		\begin{claim}\label{claim:extend-to-isomorphism}
+			Let $\structh_1,\structh_2$ be countable structures with the same age. If both satisfy (*), then every partial isomorphism between finite substructures of $\structh_1$ and $\structh_2$ extends to a full isomorphism.
+		\end{claim} 
+		\begin{proof}
+			 Let $f$ be an isomorphism between structures in the ages of $\structh_1$ and $\structh_2$, respectively, and let $a$ be an element of $\structh_1$. Let $\structa$ be the substructure of $\structh_1$ whose universe is $a$ plus the domain of $f$. Here is a picture:
+			 \mypic{123}
+			 The structure $\structa$ is in the age of $\structh_1$, and therefore by the assumption of the claim it embeds into $\structh_2$. By (*), $f$ extends to an embedding of $\structa$ into $\structh_2$. This argument and a symmetric one where $a$ is in $\structh_2$ establishes that:
+
+				\begin{itemize}
+					\item[(**)] For every isomorphism between structures in the ages of $\structh_1$ and $\structh_2$, respectively, and every element $a$ of either $\structh_1$ or $\structh_2$, the partial isomorphism can be extended to be defined also on $a$.
+				\end{itemize}
+
+
+				The conclusion of the claim follows from (**) using a back-and-forth construction. Define inductively a sequence of partial isomorphisms between finitely generated substructures of $\structh_1$ and $\structh_2$, such that the next one extends the previous one, and every element of both structures appears eventually in the source or target of a partial isomorphism from the sequence. The full isomorphism is then the limit of these partial isomorphisms.
+		\end{proof}
+			\item \emph{Homogeneous structures are uniquely determined by their finitely generated substructures.} By Claim~\ref{claim:extend-to-isomorphism} applied to the empty partial isomorphism between $\structh_1$ and $\structh_2$, we see that countable homogeneous structures are uniquely determined -- up to isomorphism -- by their age. 
+\end{itemize}
+\end{proof}
+
+
+To finish the proof of \fraisse Theorem, we need to show item~\ref{it:age-surjective}.
+
+\begin{lemma}\label{lem:fraisse-surjective}
+	Every countable \fraisse class $\structclass$ arises as the age of some countable homogeneous structure.
+\end{lemma}
+	\begin{proof}
+		Choose some enumeration 
+		\begin{align}\label{eq:fraisse-enumeration}
+		\structa_1,\structa_2,\ldots
+		\end{align}
+		of the structures in $\structclass$, which represents every structure up to isomorphism. We define a sequence 
+		 \begin{align}\label{eq:fraisse-limit-approximation}
+			\structh_0 \subseteq \structh_1 \subseteq\cdots \quad 
+		 \end{align}
+		 of structures in $\structclass$ as follows. Choose the first structure $\structh_0$ arbitrarily, say the empty structure. A new structure is obtained by applying the following claim. 
+		 
+		 \begin{claim}\label{claim:structh}
+			Suppose that $\structh_n$ is already defined. There is a structure $\structh_{n+1}  \supseteq \structh_n$ in $\structclass$ such that for every instance of amalgamation 
+			\[
+			\begin{tikzcd}
+			& \structa 
+			\ar[dl,hookrightarrow,"f"']
+			\ar[dr,hookrightarrow,"g"]
+			\\
+			\structb & & \structh_{n}
+			\end{tikzcd}
+			\]
+			where both $\structa, \structb$ are among the first $n$ structures in the enumeration of $\structclass$, there is a solution  of the form
+			\[
+				\begin{tikzcd}
+				\structb 
+				\ar[dr,hookrightarrow,"f'"']& & \structh_{n}
+				\ar[dl,hookrightarrow,"\text{inclusion}"]
+				\\
+				& \structh_{n+1}
+				\end{tikzcd}
+				\]
+		 \end{claim}
+		 \begin{proof}
+			There are finitely many possible instances of amalgamation as in the claim, because $\structa$ and $\structb$ can be chosen in finitely many ways, and there are finitely many possible embeddings between two finite structures.  Let  $m$ be the number of instances. By induction on $i \in \set{1,\ldots,m}$, we create a structure $\structh^i_{n+1}$ that solves the first $i$ instances; once we have done this we can use $\structh^m_{n+1}$ as the solution for all instances. The induction step is proved by applying amalgamation to the previous  solution.
+		 \end{proof}
+
+		 Define $\structh$ to be the limit (i.e.~union) of the sequence $\structh_1,\structh_2,\ldots$.  By construction, $\structh$ satisfies condition (*) from Lemma~\ref{thm:age-is-all}, and is therefore homogeneous. 
+
+
+		 
+		 To complete the proof, we justify that the age of $\structh$ is exactly $\structclass$. 
+		 Every finite structure that embeds into the limit $\structh$ must embed into some $\structh_n$, and is therefore in $\structclass$, because $\structh_n \in \structclass$ and the class is closed under substructures. Therefore, the age of $\structh$ is contained in $\structclass$. Let us prove the converse inclusion. Suppose that $\structa \in \structclass$. At some point $n$ in the enumeration, we have seen both $\structa$ and the empty structure. Therefore, $\structh_{n+1}$ will contain a solution to an instance of amalgamation where the empty structure is embedded into both $\structa$ and $\structh_{n+1}$. This means that $\structh_{n+1}$ contains an isomorphic copy of $\structa$.
+	\end{proof}
+
+This completes the proof of \fraisse Theorem. 
+
+
+\paragraph*{Computability.} 
+The \fraisse limit not only exists, but under mild assumptions on the \fraisse class, it can be computed. What does it mean to compute an infinite structure? This is formalized in the following theorem, which shows that one perform basic computational operations, such as counting orbits, deciding the first-order theory, and representing elements. 
+
+\begin{theorem}\label{thm:computable-fraisse}
+	Let $\structclass$ be a \fraisse class such that: 
+	\begin{itemize}
+		\item[(*)] there  is an algorithm that inputs $d$ and returns a finite list of all structures that represents all structures of size $d$ in $\structclass$, up to isomorphism.
+	\end{itemize}
+	Then its \fraisse limit, call it $\atoms$, has the following properties: 
+	\begin{enumerate}
+		\item \label{item:fraisse-lim-oligo} it is oligomorphic, and given $d$ one can compute the number of orbits in $\atoms^d$;
+		\item \label{item:fraisse-lim-effective-quantifier-elim} it has effective quantifier elimination, i.e.~for every first-order formula, one can compute an equivalent one that is quantifier-free;
+		\item \label{item:fraisse-lim-represenation} 	there is a function $
+		\rho : 2^* \to \atoms$, called a \emph{representation}, which has the following properties (when atoms are used in algorithms, they are represented as strings using the representation):
+		\begin{enumerate}
+			\item \label{item:fraisse-lim-representation-surjective} every atom is represented by at least one string;
+			\item \label{item:fraisse-lim-represenation-fo-theory} given a first-order formula $\varphi(x_1,\ldots,x_d)$ and $a_1,\ldots,a_d \in \atoms$, one can decide if 
+			\begin{align*}
+			\atoms \models \varphi(a_1,\ldots,a_d);
+			\end{align*}
+			\item \label{item:fraisse-lim-represenation-same-orbit} given two tuples in $\atoms^d$,  decide if they are in the same orbit.
+		\end{enumerate}
+	\end{enumerate}
+
+\end{theorem}
+\begin{proof}
+	We begin with item~\ref{item:fraisse-lim-oligo}. 
+	By assumption (*),  there are finitely many substructures of size $d$ in $\structclass$, up to isomorphism.	Therefore, $\structa$ is oligomorphic by  Theorem~\ref{thm:hom-oligo}.  An orbit in $\atoms^d$ is the same thing as a substructure with at most $d$ elements, together with a list of length $d$ that covers all of its elements, possibly with repetitions. Such objects can be counted, up to isomorphism, using  assumption (*).
+
+	We now show  item~\ref{item:fraisse-lim-effective-quantifier-elim}, about quantifier elimination.  
+	We assume that 
+	``true'' and ``false'' are quantifier-free formulas; these will be the only possible formulas when we apply the quantifier elimination to a sentence, i.e.~a formula without free variables. 
+	The proof  is by induction on the size of the formula. The only non-trivial case is eliminating a single quantifier, say an existential one (because eliminating a universal quantifier reduces to this case by De Morgan's laws):
+\begin{align*}
+	\exists x \underbrace{\varphi(x_1,\ldots,x_n,x)}_{\text{quantifier free}}.
+\end{align*}
+The inner formula $\varphi$ can be seen as describing structures with $n+1$ distinguished elements; with the distinguished elements not being necessarily pairwise distinct. Let us write $\structclass_\varphi$ for the corresponding structures, i.e.~this is the class 
+\begin{align*}
+	\structclass_\varphi = \set{(\structa,\overbrace{a_1,\ldots,a_n}^{\bar a},a) : \structa \in \structclass \text{ and $a_1,\ldots,a_n,a$ are elements that satisfy $\varphi$}}.
+\end{align*}
+Up to isomorphism, the above class is finite and can be computed thanks to  assumption (*). 
+Because the \fraisse limit is homogeneous, a tuple $\bar aa$ in the \fraisse limit satisfies $\varphi$ if and only if $\structclass_\varphi$ contains the substructure generated by $\bar a$ (together with the distinguished $\bar a$). Define 
+$\structclass_{\exists x\varphi}$ to be the following projection of $\structclass_\varphi$: for each $(\structa,\bar aa) \in \structclass_\varphi$, remove the last element $a$ from the list of distinguished elements. A tuple $\bar a$ in the \fraisse limit satisfies the quantified formula $\exists x \varphi$ if and only if $\structclass_{\exists x\varphi}$ contains the substructure generated by $\bar a$ (together with the distinguished $\bar a$). This property can be expressed using a quantifier-free formula.
+
+We now prove the last item~\ref{item:fraisse-lim-represenation}, about the representation. Here, we revisit the construction of the \fraisse limit in the proof of Lemma~\ref{lem:fraisse-surjective}. In that proof, we started off with an enumeration, see~\eqref{eq:fraisse-enumeration}, which represents all structures in $\structclass$ up to isomorphism. Thanks to  assumption (*), we can assume that this enumeration  is effective in the following sense: there is an algorithm that inputs $n$ and returns the $n$-th structure $\structa_n$ in the enumeration. The construction in Claim~\ref{claim:structh} preserves this notion of effectiveness, and therefore also the sequence $\structh_n$ is effective. Since the \fraisse limit is defined to be the union of the latter enumeration, it follows that the \fraisse limit is effective in the sense that one can define a surjective representation  $\rho : 2^* \to \structh$ that allows us to test if a given tuple of elements satisfies a given relation from the vocabulary. (The string representing an element from $\structh$ stores the following information: at which stage $n$ did the element appear in $\structh_n$, and which element of $\structh_n$ it is.) If we can decide the relations from the vocabulary, then we can decide quantifier-free formulas, and so we can also decide first-order formulas, as required by item~\ref{item:fraisse-lim-represenation-fo-theory}, thanks to the previous item about quantifier elimination. The last part of the theorem, in item~\ref{item:fraisse-lim-represenation-same-orbit}, is about deciding if two tuples are in the same orbit. By Theorem~\ref{thm:fs-qf}, we know that two tuples are in the same orbit if and only if they satisfy the same quantifier-free formulas. Although the vocabulary is in principle infinite, we can use assumption (*) to show that for every $d$, there is some finite part of the vocabulary such that quantifier-free formulas using only that part are enough to distinguish different orbits in $\atoms^d$. In combination with the previous observations about deciding quantifier-free formulas, we can get an effective criterion for checking if two tuples from $\atoms^d$ are in the same orbit.
+\end{proof}
+
+All \fraisse classes discussed in this chapter satisfy the assumptions of the above theorem. In particular, the corresponding \fraisse limit will have a decidable first-order theory, thanks to the special case of item~\ref{item:fraisse-lim-represenation-fo-theory} for formulas without free variables. Therefore,  we can apply Theorem~\ref{thm:olig-graph-reachability} to decide graph reachability. In the Chapter~\ref{cha:case-studies}, we will see many other examples of algorithms, beyond graph reachability, which can be used for atoms that arise a \fraisse limit. Before we do that, however, we present several interesting examples of \fraisse limits, which will illustrated the scope of applicability for the algorithms that will be presented in Chapter~\ref{cha:case-studies}.
+\exercisepart
+
+\mikexercise{\label{ex:amalgamation-partial-orders}
+	Consider the class of all finite partial orders, i.e.~binary relations that are reflexive and transitive. Show that this class is closed under amalgamation.
+}
+{
+	 Here is an example of an instance of amalgamation and its solution:
+	\mypic{75}
+	 	One way of amalgamating two partial orders, which is illustrated in the picture above, is to put the elements of the left (yellow) order after the elements of the right (blue) order, as long as they have the same relationship with the common (green) elements. Other strategies lead to other amalgamations.
+}
+
+\mikexercise{Are series parallel graphs closed under amalgamation?}{No.}
+
+\mikexercise{Show a \fraisse class where solutions to amalgamation necessarily violate the following condition:
+	\begin{itemize}
+		\item[(*)] the intersection of the images of $g_1$ and $g_2$, as per diagram~\eqref{eq:solution-of-amalgamation}, is exactly the image of $\structa$.
+	\end{itemize}
+}
+{
+	The family of structures with equality only (i.e.~an empty vocabulary) that have size at most 2.
+}
+
+\mikexercise{\label{ex:effective-fraisse}Assume a finite relational vocabulary. Suppose that $\mathscr A$ is a class of structures that satisfies the assumptions of Theorem~\ref{thm:fraisse}, and let $\atoms$ be its \fraisse limit. Show that if membership in $\mathscr A$ is decidable, $\atoms$ is an effective structure. }{
+In a homogeneous structure, two tuples are in the same orbit if they satisfy the same quantifier-free formulas. By the assumption that the vocabulary is relational (i.e.~has no function symbols) and finite, up to logical equivalence there are finitely many quantifier-free formulas over a given set of variables, and they can be computed. By the assumption on $\mathscr A$ having decidable membership, one can decide which quantifier-free formulas are satisfiable in the \fraisse limit $\atoms$. Furthermore, one can effectively eliminate quantifiers, i.e.~for every first-order formula (possibly with free variables) over the vocabulary of $\atoms$, one can compute an equivalent one which is quantifier-free. Using this observation, it follows that the first-order theory of $\atoms$ is decidable. Furthermore, $\atoms$ is effectively oligomorphic, in the sense of Exercise~\ref{ex:effective-oligo}, since the ``same orbit'' formula is the quantifier-free formula which checks that the same predicates from the finite vocabulary are satisfied. Therefore, $\atoms$ satisfies the assumptions of Exercise~\ref{ex:effective-oligo} and is thus an effective structure.}
+
+
+\mikexercise{\label{ex:homo-effective} Let $\structclass$ be a class of structures over a finite vocabulary, possibly including functions, which:
+\begin{enumerate}
+ \item \label{it:homo-decidable} has decidable membership;
+ \item \label{it:homo-homo} is closed under substructures, isomorphism and amalgamation;
+ \item \label{it:homo-blowup} given $k \in \Nat$ one can compute some $n \in \Nat$ such that structures in $\structclass$ with $k$ generators have size at most $n$. 
+\end{enumerate}
+Show that the \fraisse limit of $\structclass$ has a decidable first-order theory with constants and a computable Ryll-Nardzewski function. }{ By going through the proof of Theorem~\ref{thm:fraisse}.}
+
+
+\newcommand{\mso}{{\sc mso}\xspace}
+\mikexercise{\label{ex:rabin}Define \emph{monadic second-order logic} (\mso) to be the extension of first-order logic where one can also quantify over sets of vertices. A famous result on \mso is Rabin's Theorem\footnote{For an introduction to \mso and Rabin's Theorem, see~\cite[Theorem 6.8]{DBLP:books/el/leeuwen90/Thomas90}.}, which says that the structure $\set{0,1}^*$ equipped with functions $x \mapsto x0$ and $x \mapsto x1$ has decidable \mso theory, i.e.~one can decide if a sentence of \mso is true in it. Show that $\qatom$ has decidable \mso theory. }{
+A rational number can be viewed as node in Rabin's tree $\set{0,1}^*$ as follows \mypic{40} }
+
+
+% \mikexercise{\label{ex:random-tree}Define a \emph{tree} to be a weak tree in the sense of Exercise~\ref{ex:frai-tree}, together with a binary function which maps two nodes to their closest common ancestor. Show that the class of trees is closed under amalgamation. We use the name \emph{random tree} for the \fraisse limit of this class. }{Proof by picture: \mypic{56}}
+
+
+
+
+
+\mikexercise{
+	% \footnote{This exercise is essentially~\cite[Proposition 2]{DBLP:conf/pods/BojanczykST13}.} 
+	\label{ex:db-homo}If $\Sigma$ is a finite alphabet. We model a word $w \in \Sigma^*$ as a structure, where the universe is positions in $w$, there is a binary predicate $<$ for the order relation, and for every label $a \in \Sigma$ there is a unary predicate $a(x)$. We denote the vocabulary used for this structure by $\Sigma_<$.
+Show that for every regular language $L \subseteq \Sigma^*$ there is a homogeneous structure $\structa$ over a vocabulary containing $\Sigma_<$ such that the age of $\structa$ after restricting to $\Sigma_<$ is exactly the structures corresponding to $L$. }{See~\cite[Proposition 2]{DBLP:conf/pods/BojanczykST13}.}
+
+\section{Examples of homogeneous atoms}
+We end this chapter with three extended examples of homogeneous structures. 
+\subsection{The random graph}
+\label{sec:random-graph}
+
+We begin with  the \fraisse limit of all finite undirected graphs. As shown in Example~\ref{example:directed-graphs-amalgamation}, this is a \fraisse class, and therefore it has a \fraisse limit. Call this limit the \emph{random graph}. The name is justified by the following observation. 
+
+\begin{theorem} 
+ Consider a countably infinite undirected graph, where each the presence/absence of an edge is chosen independently with equal probability one half\footnote{The conclusion of the theorem would not change if we used a different distribution, e.g.~there would be an edge with probability 0.99.}. Almost surely (i.e.~with probability one) this graph is isomorphic to the random graph.
+\end{theorem} 
+\begin{proof}
+ Let us write $\structh$ for the graph that is chosen randomly. For a finite graph $G$, and a function $h$ from vertices of an induced subgraph $F \subseteq G$ to vertices of $\structh$, consider the event: ``either $h$ is not an embedding, or it can be extended to an embedding of $G$''. This event happens almost surely because failing the event would require infinitely many independent random events that go wrong. Since there are countably many choices of $F \subseteq G$ and functions $h$, up to isomorphism, it follows that almost surely the graph $\structh$ satisfies condition~(*) of Lemma~\ref{thm:age-is-all}, and therefore it is isomorphic to the random graph.
+\end{proof}
+
+Since the class of finite undirected graphs is clearly countable, its \fraisse limit is oligomorphic and has all the computability properties in the conclusion of Theorem~\ref{thm:computable-fraisse}. It follows that problems such as graph reachability or automaton emptiness are decidable, assuming that the inputs are orbit-finite automata, with orbit-finite sets represented as spof sets.
+
+ 
+
+
+\exercisepart
+
+ 
+\mikexercise{\label{ex:connected} Assume that the atoms are the random graph. Is the language
+\begin{align*}
+ \set{a_1 \cdots a_n \in \atoms: \text{the subgraph induced by $a_1,\ldots,a_n$ is connected}}
+\end{align*}
+recognised by a nondeterministic orbit-finite automaton? 
+}{No. The vertices might come in the wrong order. }
+\mikexercise{
+ Assume that the atoms are the random graph. Give examples and non-examples of graph properties $X$ such that the following language is recognised by a nondeterministic orbit-finite automaton:
+	\begin{align*}
+		L_X = \set{ \atoma_1 \cdots \atoma_n : \mbox{ the subgraph induced by $\atoma_1,\ldots, \atoma_n$ satisfies $X$}}.
+	\end{align*}
+	To recognise $L_X$, the automaton should be prepared for an arbitrary enumeration of the vertices of the graph, possibly with repetitions. }{Properties $X$ for which $L_X$ is recognizable by an automaton include ``contains a clique of size three'', ``is not a clique'', ``contains a vertex connected to all other vertices'' but do not include the complementary properties ``does not contain a clique of size three'' or ``is a clique''. A sufficient condition is definability by a formula of first-order logic with a quantifier prefix $\exists^* \forall$. Is this condition necessary? 
+}
+
+\mikexercise{
+ Assume that the atoms are the random graph. Show that there is no finitely supported total order on the random graph.
+}
+{
+ Toward a contradiction, suppose that $\le$ is a total order on the random graph that is supported by a tuple $\bar a = (a_1,\ldots,a_n)$. Choose some atoms $b,c$ which are isolated in the subgraph induced by $\set{a_,\ldots,a_n,b,c}$. It follows that 
+ \begin{align*}
+ (a_1,\ldots,a_n,b,c) \quad \mapsto \quad (a_1,\ldots,a_n,c,b)
+ \end{align*}
+ is a partial automorphism of the random graph. By homogeneity, it extends to a $\bar a$-automorphism, which preserves the total order, but swaps $b$ with $c$ 
+}
+
+\mikexercise{\label{ex:cannot-check-path-decompositions}Show that there is no orbit-finite automaton, even nondeterministic, which recognises the language of width $k$ path decompositions.}{
+ Both conditions (a) and (b) in the definition of path decompositions are problematic. Let us focus on condition (a), i.e.~that for every atom, the positions where it appears is an interval. To prove that a nondeterministic automaton cannot check this condition, one uses the same proof as in Exercise~\ref{ex:distinct-letters}.
+}
+
+\mikexercise{Assume that the atoms are the random graph. Show that for every \mso formula $\varphi(x_1,\ldots,x_n)$ with free variables that represent vertices (not sets of vertices) there is formula of first-order logic which is equivalent on the random graph. Nevertheless, there is no algorithm which computes such equivalent formulas.}{The truth value of an \mso formula $\varphi(x_1,\ldots,x_n)$ depends only on the orbit of the free variables. The random directed graph is homogeneous and without functions, and therefore by Exercise~\ref{ex:effective-fraisse} one can decide if a first-order formula with free variables has at least one satisfying assignment. Since the tuples which satisfy $\varphi$ form an equivariant set, this set is definable in first-order logic by Theorem~\ref{thm:ryll}. If the translation to first-order logic were computable, then one would be able to decide the \mso theory of the random directed graph. Since the random directed graph contains all finite directed graphs as induced subgraphs, e.g.~all directed grids, it has undecidable \mso theory.}
+
+\mikexercise{Assume that the atoms are the random graph. Show that solving equations, as discussed in Section~\ref{sec:equations-over-the two-element-field}, is undecidable.}
+{
+ \ 
+}
+
+
+ % This will follow from the following property of the random graph:
+ % \begin{quote}
+ % (*) Every finite partial automorphism $f$ of the atoms can be extended to a complete automorphism $\pi$, such that for some $n \in \Nat$:
+ % \begin{align*}
+ % \pi^n(a)=a \qquad \mbox{for every $a$ in the domain of $f$}.
+ % \end{align*}
+ % \end{quote} To prove (*), we use the following deep result of Hrushovski\footnote{~\cite{journals/combinatorica/Hrushovski92}}: 
+ % \begin{quote}
+ % (**) Every finite (undirected) graph $G$ embeds in some finite graph $H$ such that every partial automorphism of $G$ extends to a complete automorphism of $H$. 
+ % \end{quote}
+ % To prove property (*), let $f$ be a partial automorphism of the random graph, and let $G$ be the subgraph of the random graph induced by the domain and co-domain of $f$. Apply Theorem~\ref{thm:hrushovski}, yielding some $H$. By the universality property of the random graph, we may assume that $H$ is a finite induced subgraph of the random graph. By (*), $f$ extends to some full automorphism of $H$, and that automorphism extends to a full automorphism $\pi$ of the random graph, which preserves $H$ as a set. It follows that there is some $n$ such that $\pi^n$ is the identity when restricted to
+ % $H$. 
+
+
+\subsection{Bit vectors}
+\label{sec:bit-vectors}
+This section is about the \fraisse limit of finite vector spaces over the two element field. These atoms will also be discussed in Chapter~\ref{cha:turing}, where we will show that, over these atoms, deterministic polynomial time orbit-finite Turing machines are weaker than the nondeterministic ones.
+
+For the rest of this section, we only study vector spaces over the two element field, so we say vector space with the implicit assumption that the underlying field is the two element field. Every  vector space of finite dimension (which is equivalent to having finitely many vectors) is isomorphic to
+\begin{align*}
+(\set{0,1}^d, +) \qquad \text{for some $d \in \set{1,2,\ldots}$}
+\end{align*}
+where addition is modulo two.
+We model a -- possibly infinite -- vector space $V$ as a structure over the following infinite vocabulary: for every $d \in \set{0,1,\ldots}$ there is a relation which selects $d$-tuples of vectors that are linearly independent. Here, a $d$-tuple $\bar v \in V^d$ is called linearly independent if it does not satisfy any non-trivial dependency
+\begin{align*}
+\alpha_1 v_1 + \cdots + \alpha_d v_d = 0,
+\end{align*}
+where non-trivial means that at least one of the coefficients $\alpha_i$ is nonzero. In particular, if the tuple contains a repetition, then it is linearly dependent. If the vector space has finite dimension, then the relation will not select any tuple, once $d$ exceeds the dimension.
+
+
+It is not hard to see that finite vector spaces are a \fraisse class. Embeddings are the same thing as injective linear maps. To amalgamate two vector spaces, of dimensions say $d_1$ and $d_2$, one needs a vector space of dimension $\max(d_1,d_2)$. Therefore, there is a \fraisse limit of the finite vector spaces; and thanks to Theorem~\ref{thm:computable-fraisse} this limit is a countably oligomorphic structure.
+
+One can also construct the \fraisse limit explicitly. 
+The \fraisse limit must be a vector space, since any violation of the vector space axioms would need to happen already in a finitely generated substructure. Since the \fraisse limit is countable, its dimension must be countable, and since the \fraisse limit embeds all finite vector spaces, its dimension must be infinite. Therefore, the \fraisse limit is a vector space of countably infinite dimension. Up to isomorphism, there is a unique vector space like this. One way of representing this unique vector space is as follows. The elements are \emph{bit vectors}, which are defined to be $\omega$-sequences of zeroes and ones which have finitely many ones (if we allowed infinitely many ones, the resulting vector spaces would have uncountable dimension). By ignoring trailing zeroes, a bit vector can be represented as a finite sequence, such as $00101001$. Define the \emph{bit vector atoms} to be the bit vectors equipped with a function for coordinate-wise addition modulo two:
+	\begin{align*}
+		01011 + 11001 = 10010 = 1001.
+	\end{align*}
+An example basis consists of bit vectors which have a $1$ on the $n$-th coordinate:
+\begin{align*}
+	1, 01,001,0001,\ldots.
+\end{align*}
+Another example of a basis is
+\begin{align*}
+1,11,111,1111,\ldots.
+\end{align*}
+ 
+ 
+
+
+\paragraph*{Least supports.} We prove below that for the bit vector atoms, a version of the Least Support Theorem is true.  For bit vectors, least supports are not unique as sets, but as spanned subspaces. For example, the pair of atoms $(01,10)$ is supported by itself, but it is also supported by $(11,01)$. More generally, the following lemma shows that supporting and spanning are the same concepts, when talking about tuples of atoms. 
+\begin{lemma} Assume the bit vector atoms. 
+ An atom tuple $\bar a$ supports an atom tuple $\bar b$ if and only if all atoms in $\bar b$ are spanned by $\bar a$. 
+\end{lemma}
+\begin{proof}
+ The right-to-left implication is immediate. For the converse implication, suppose that some atom in $\bar b$ is not spanned by $\bar a$. By the Steinitz exchange lemma, this atom can be mapped to some other atom by a $\bar a$-automorphism.
+\end{proof}
+
+We are now ready to state the Least Support Theorem for bit vector atoms. 
+
+
+\begin{theorem}[Least Support Theorem]\label{thm:least-support-bit} Assume the bit vector atoms. Let $X$ be a set equipped with an action of atom automorphisms. If $x \in X$ has finite support, then there exists a tuple $\bar a$ of atoms which supports $x$, and which is least in the sense that if $\bar b$ supports $x$, then $\bar a$ supports $\bar b$. 
+\end{theorem}
+
+\begin{proof}
+	Without loss of generality, we assume that $X$ has one orbit.
+		The proof follows the same lines as the proof for the equality atoms,  except that vector independence plays the role of equality. Let us write $\indvec d$ for the set of $d$-tuples of  atoms which are linearly independent. This is a one orbit set. 
+		%  We first show that there is a surjective equivariant function $f : Y \to X$ from a straight set which satisfies a weaker property, see~\eqref{eq:same-image-same-space} below, and then we show that this condition implies that $f$ preserves and reflects supports.
+	
+\begin{lemma}
+	There is an equivariant function 
+	\begin{align*}
+		f : \indvec d \to X
+	   \end{align*}
+	   which satisfies the following condition\footnote{The conclusion of the implication in the lemma is equivalent to saying that $\bar a$ and $\bar b$ have the same algebraic closure, in the model theory sense, see~\cite[Chapter 4]{hodges1993model}.} for every $\bar a, \bar b \in \indvec d$: 
+	   \begin{align*}
+	   f(\bar a) = f(\bar b) 
+	   \quad \Rightarrow \quad 
+	   \text{every atom in $\bar a$ is spanned by $\bar b$ and vice versa.}
+	   \end{align*}
+\end{lemma}
+\begin{proof}
+	We start with some function $f : \indvec d \to X$ that is equivariant, but which does not necessarily satisfy the condition in the lemma. Such a function can be found, by taking some tuple $\bar a$ of independent atoms that supports some element $x \in X$, and extending it to an equivariant function. We will now show that  either $f$ satisfies  the condition, or  the dimension $d$ can be made smaller. By iterating this argument at most $d$ times, we get the conclusion of the lemma.
+	 
+	Suppose that $f$ violates the condition in the lemma, as witnessed by tuples $\bar a$ and $\bar b$,
+ which have the same image under $f$ but do not span each other. Some coordinates in $\bar a$ are spanned by $\bar b$, but at least one coordinate is not.  Without loss of generality, we assume that the first $i$ coordinates in the tuple $\bar a$ are not spanned by $\bar b$, and the remaining coordinates are spanned by $\bar b$. In other words, the tuple
+		\begin{align*}
+			(\myunderbrace{a_1,\ldots,a_i}{first $i$ atoms \\ in the tuple $\bar a$}, 
+			\myunderbrace{b_1,\ldots,b_d}{all atoms in\\ the tuple $\bar b$})
+		\end{align*}
+is linearly independent. Since the vector space $\atoms$ has infinite dimension, one can choose $a'_1,\ldots,a'_i \in \atoms$ which are linearly independent, and which are not spanned by $\bar a \bar b$. It follows that 
+\begin{align*}
+(a_1,\ldots,a_i) 
+\quad \stackrel \pi \mapsto \quad 
+(a'_1,\ldots,a'_i)
+\end{align*}
+holds for some atom automorphism $\pi$ that fixes $\bar b$. Because $\bar b$ supports $f(\bar b)$, which is the same as $f(\bar b)$, we have 
+\begin{align*}
+	f(\bar a) = f(\pi(\bar a)).
+	\end{align*}
+Since we have assumed that the  last $d-i$ coordinates of $\bar a$ are  supported by $\bar b$, it follows that the last $d-i$ coordinates in $\pi(\bar a)$ are the same as in $\bar a$. Summing up, we have found two inputs for the function $f$, namely $\bar a$ and $\pi(\bar a)$, which agree on the last $d-i$ coordinates, but which have independent atoms on the first $i$ coordinates. 
+By equivariance of $f$, this means that the first $i$ coordinates in a tuple from $\indvec {d}$ can be replaced by fresh independent atoms without affecting the value of $f$. It follows that $f$ does not depend on the first $i$ coordinates, and hence we can lower the dimension $d$.
+\end{proof}
+
+Take the function $f$ from the above lemma. This function is surjective, since an input orbit is mapped to an output orbit, and $X$ is assumed to be a one-orbit set. We will show that if $\bar a$ is the least support, in the sense of the theorem, for $f(\bar a)$. Indeed, suppose that $f(\bar a)$ would be supported by some tuple $\bar b$ which does not span $\bar a$. Then there would be an atom automorphism $\pi$ that would fix $\bar b$ -- and therefore also the output of the function -- but would map $\bar a$ to some tuple not spanned by $\bar a$. In this case, the inputs $\bar a$ and $\pi(\bar a)$ would be a violation of the above lemma.
+	\end{proof}
+
+	
+
+
+ \exercisepart
+
+ \mikexercise{\label{ex:bit-vector-relational} Let $\mathbb B$ be the structure where the universe is the same as in the bit vector atoms, but we only have the independence predicate for dimension 3, i.e.~there is a ternary predicate  ``the atoms $a,b,c$ are linearly independent''.
+ Show that $\mathbb B$ has the same automorphisms as the bit vector atoms.
+ }
+ { Linear independence can be expressed in terms of addition, and therefore all automorphisms of the bit vector atoms are also automorphisms of $\mathbb B$. For the converse inclusion, we observe that
+ \begin{align*}
+ a+ b = c
+ \end{align*}
+ is equivalent to:
+ \begin{enumerate}
+ \item $a=c$ and $b=0$; or
+ \item $b=c$ and $a=0$; or
+ \item all of $a,b,c$ are distinct and nonzero, and the tuple $abc$ is linearly dependent.
+ \end{enumerate}
+ }
+
+ \mikexercise{\label{ex:bit-vector-relational-homo}
+ Show that the structure $\mathbb B$ from Exercise~\ref{ex:bit-vector-relational} is not homogeneous. 
+ }
+ { 
+ To see that $\mathbb B$ is not homogeneous, consider the four vectors: 
+ \begin{align*}
+ 100 \quad 010 \quad 001 \quad 111.
+ \end{align*}
+Every three out of four are linearly independent, but all four are linearly independent. Therefore, mapping the above four vectors to some four independent vectors is a partial automorphism which does not extend to a full automorphism. 
+ }
+
+ \mikexercise{Consider vector spaces over the three element field, with the independence relations.  Is the class of finite-dimensional vector spaces a \fraisse class? }{
+ }
+
+ 
+
+ 
+ % Consider a Turing machine $M$, with state space $Q$ and work alphabet $\Gamma$. Apply the Lemma~\ref{lem:as-tuple-vector}, yielding equivariant functions
+ % \begin{align*}
+ % f_Q : Q' \to Q \qquad f_\Gamma : \Gamma' \to \Gamma
+ % \end{align*}
+ % which have straight domains and preserve and reflect supports. Using Claim~\ref{claim:lift-vector} in the same ways as in Lemma~\ref{lem:dofa-to-straight}, we equip $Q'$ and $\Gamma'$ with the structure of a deterministic Turing machine $M'$, such that the functions $f_Q$ and $f_\Gamma$ become a homomorphism of deterministic Turing machines (such homomorphisms are defined in the same spirit as for automata). homomorphisms do not change the recognised language, or the running time. 
+ % \end{proof}
+
+\subsection{Trees and forests}
+\label{sec:trees}
+
+In this section, we study the \fraisse limit of trees and forests\footnote{This section is based on~\cite{DBLP:conf/pods/BojanczykST13}.}.
+The trees and forests we study are rooted, unlabelled, and unordered, as explained in the following picture: 
+\mypic{91} 
+A tree is the special case of a forest when there is exactly one root. 
+
+The purpose of this section is to show that care is needed when choosing predicates and functions to model a combinatorial object, like a tree or forest, if we want to have a \fraisse limit. The following list shows three ways of modelling trees as logical structures; only the third way will admit a \fraisse limit. In all cases, the universe of the structure is the nodes of the tree.
+\begin{enumerate}
+ \item There is a binary predicate for the parent relation. A finite forest is characterised by the requirement that each node has at most one parent. This way of modelling forests leads to a class that is not closed under amalgamation. Here is an instance of amalgamation that has no solution:
+ \mypic{92}
+ \item There is a binary predicate for the ancestor relation. A finite forest is characterised by the requirement that for every node, its ancestors are totally ordered. This way of modelling forests also leads to a class that is not closed under amalgamation. Here is an instance of amalgamation that has no solution:
+ \mypic{93} 
+ \item We have a ternary relation 
+ \begin{align*}
+ z = \text{closest common ancestor of $x$ and $y$}.
+ \end{align*}
+ The class of trees modelled this way is closed under amalgamation, as illustrated in Figure~\ref{fig:trees-amalg}. Therefore, it has a \fraisse limit, which we call the \emph{universal forest}. (This forest is connected, because by amalgamation we can connect any two forests.) 
+\end{enumerate}
+
+\begin{figure}
+ \mypic{56}
+ \caption{\label{fig:trees-amalg} Amalgamation for forests with a relation for closest common ancestor.}
+\end{figure}
+
+\exercisepart
+
+% \mikexercise{ Assume that the atoms are the random graph. Show that for every $k \in \set{1,2,\ldots}$ there is an orbit-finite context-free grammar, which generates a language $L \subseteq \atoms^*$ such for every finite $G \subseteq \atoms$, the following conditions are equivalent:
+% \begin{itemize}
+% \item the subgraph induced by $G$ has treewidth at most $k$;
+% \item $a_1 \cdots a_d \in L$ for some ordering $a_1,\ldots,a_d$ of $G$ which has no repetitions. 
+% \end{itemize}
+% }{ The grammar describes tree decompositions. }
+\mikexercise{Assume the universal forest atoms. Find a finitely supported equivalence relation on the atoms which has infinitely many infinite equivalence classes. }{Fix some atom $a$. Define the equivalence relation to be $b \sim c$ if the closest common ancestor of $b, c$ is a proper descendant of $a$. }
+\mikexercise{Assume the universal forest atoms. Show that one cannot find an infinite equivariant set $X$ and an equivariant relation on it which is a total dense order. Equivariance is important here, since if we only want a finitely supported one then this is easily accomplished by taking the path connecting some two atoms $a < b$, and using the order inherited from the atoms.
+}{}
+
+\mikexercise{Show that the universal forest has decidable \mso theory.}{
+We will show how this universal forest can be interpreted in the complete binary tree using \mso. To prove this, consider a transformation $f$ which inputs a tree $t$ (i.e.~a structure with the closest common ancestor function where for each element, the ancestors are a totally ordered) and outputs the tree depicted in the following picture: \mypic{58}
+Define $t_\infty$ to be a limit of this procedure, i.e.~a tree satisfying
+\begin{align*}
+ t_\infty \quad \mbox{ is isomorphic to }\quad f(t_\infty).
+\end{align*}
+We will show that $t_\infty$ is the universal tree. To show this, we need to show that it is (a) homogeneous; and (b) it contains every tree as an induced substructure. Both properties are not difficult to show. Using the idea from Exercise~\ref{ex:rabin} and the recursive nature of Rabin's tree, one can show that the structure $(\mathbb Q^*, \preceq)$ consisting of sequences of rational numbers ordered lexicographically has decidable \mso theory. The tree $t_\infty$ can be described in terms of $(\mathbb Q^*, \preceq)$, with nodes being coded as odd length sequences of rational numbers (i.e.~every second level of $(\mathbb Q^*, \preceq)$ is used), and the descendant relation defined using an \mso formula $\varphi(x,y)$ which uses the definition of the tree $t_\infty$ in terms of the function $f$. This implies that $t_\infty$ has decidable \mso theory, since it can be interpreted inside a structure with decidable \mso theory.
+
+}
+
+
+

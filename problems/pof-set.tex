@@ -1,0 +1,20 @@
+
+
+
+\mikexercise{
+\label{ex:equal-subsets}    
+Consider the following problem: given two subsets of a pof set decide if they are equal. Show that this problem is: (a) in deterministic logarithmic space under the generating set representation; and (b) complete for coNP under the formula representation.}{
+    This problem is complete for coNP. 
+}
+
+
+
+\mikexercise{To specify a subset of $X \subseteq \atoms^d$, we can also use a formula with quantifiers (which range over atoms). 
+ Show that for every such formula, there is an equivalent formula that is quantifier-free. For example, the formula 
+ \begin{align*}
+ \varphi(x_1,x_2) = \exists y \ (x_1 \neq y) \land (x_2 \neq y),
+ \end{align*}
+ is equivalent to ``true''.
+}{
+    Even with quantifiers, formulas can only define equivariant subsets. This is shown by induction on formula size. Equivariant subsets, in turn, can be defined in a quantifier-free way.
+}

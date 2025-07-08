@@ -1,0 +1,485 @@
+\chapter{Polynomial orbit-finite sets}
+\label{sec:pof-sets}
+
+The general idea in this book is to discuss sets which are built from some basic infinite set $\atoms$, and which are simple enough to be represented finitely and manipulated algorithmically. These sets will be called \emph{orbit-finite sets}. The fully general notion will be described in Chapters~\ref{cha:orbit-finite-equality} and~\ref{ch:beyond-equality}, but we begin  the book with a special case, called \emph{"polynomial orbit-finite sets"}, which is simpler to formalize, and yet general enough to describe most interesting examples. 
+
+For the first few chapters of this book, the  basic infinite set $\atoms$ that will be used to build the other sets will have no structure except equality. The idea of having ``no structure except equality'' will be formalized later on, by using invariance under "atom permutations". For the moment, this idea will be apparent in the examples, and our convention that elements of $\atoms$ -- which will be called \emph{atoms} -- are names such as John or Eve. Everybody knows that names have no structure beyond equality.
+
+Before formally defining "polynomial orbit-finite sets", we begin with several examples. These  examples are based on automata theory, which was the original motivation for these notions.
+
+\begin{myexample}\label{ex:pof-dfa}
+    Consider the language 
+    \begin{align*}
+    \setbuildoneline{w \in \atoms^*}{\text{the first and last letters of $w$ are the same}}.
+    \end{align*}
+    To recognise this language, we use a deterministic automaton that remembers the first letter seen in its state, plus one extra bit of information that tells us whether the last letter seen is the same as the first. This state space  consists of an initial state, and two disjoint copies of the atoms. We write this state space as  follows, where $+$ is used to denote disjoint union:
+    \begin{align*}
+        \set{\text{initial}} 
+        \quad + \quad 
+        \myunderbrace{\atoms}{equal}
+        \quad + \quad 
+        \myunderbrace{\atoms}{nonequal}.
+    \end{align*}
+    There are two copies of the atoms: the ``equal'' copy and the ``nonequal'' copy. For an atom $a \in \atoms$, we write $\text{equal}(a)$ for its first copy, and $\text{nonequal}(a)$ for its second copy. The choice of copy corresponds to storing one bit of information.
+    The  transition function of the automaton, which is a function because the automaton is deterministic, consists of the following transitions, where $a$ and $b$ range over~$\atoms$:
+    \begin{align*}
+    \text{initial}  & \stackrel a \to \text{equal}(a) \\
+    \text{equal}(a) & \stackrel b \to
+    \begin{cases}
+        \text{equal}(a) & \text{if $a = b$} \\
+        \text{nonequal}(a) & \text{if $a \neq b$}
+    \end{cases}\\
+    \text{nonequal}(a) & \stackrel b \to
+    \begin{cases}
+        \text{equal}(a) & \text{if $a = b$} \\
+        \text{nonequal}(a) & \text{if $a \neq b$}.
+    \end{cases}
+    \end{align*}
+    The accepting states are those from the first copy of $\atoms$. 
+\end{myexample}
+
+The automaton in the above example was deterministic. Here is an example of an automaton that is nondeterministic.
+\begin{myexample}\label{ex:pof-nfa} 
+    Consider the language 
+        \begin{align*}
+        L = \setbuild{w \in \atoms^*}{some letter appears  at least twice}.
+        \end{align*}
+        When it reads an input letter, the  recognizing  automaton uses nondeterminism to guess if this letter will appear a second time. It then loads that letter into its state, and waits for a second appearance, upon which it enters an accepting sink state. The state space is 
+        \begin{align*}
+            \set{\text{initial, accept}} 
+            \quad + \quad 
+            \atoms.
+        \end{align*}
+        The first two states are the initial and accepting states, respectively. 
+        The transitions of this automaton are listed below, where $a$ and $b$ range over $\atoms$:
+        \begin{align*}
+        \text{initial} & \stackrel a \to \text{initial}\\
+        \text{initial} & \stackrel a \to a \\
+        a & \stackrel b  \to 
+        \begin{cases}
+            \text{accept} & \text{if $a = b$} \\
+             a & \text{if $a \neq b$}
+        \end{cases}\\
+        \text{accept} & \stackrel a \to \text{accept}.
+        \end{align*}
+        The nondeterminism is in the first two kinds of transitions. When the automaton is in the initial state, and it sees a letter $a$, then it can choose to either remain in the initial state, to go to state $a$. The first choice is made if the automaton does not expect $a$ to appear again, otherwise the second choice is made.
+        We will later show that this language cannot be recognised by a deterministic automaton, but this will require a formal definition of the model.
+\end{myexample}
+
+In the automata from the above examples, the state space could be infinite, but it had a very special form: each state would store some finite information (for example, is the state accepting or rejecting), and some atoms. So far, each state would store zero or one atom, but one could of course imagine that more atoms are stored, e.g.~we could have a state space of the form 
+\begin{align*}
+\atoms^0 + \atoms^0 + \atoms^1 + \atoms^7.
+\end{align*}
+As before, we write $+$ for disjoint union of sets. In the disjoint union above,  the  "components" of the form $\atoms^0$ represent states where no atoms are stored, such as the initial states in the two examples.  This leads us to the following definition.
+
+\begin{definition}[Pof set]\label{def:pof-set}
+    A ""polynomial orbit-finite set"", "pof set" for short, is any finite disjoint union 
+    \begin{align*}
+    \atoms^{d_1} + \cdots + \atoms^{d_k}
+    \end{align*}
+    for some $k,d_1,\ldots,d_k \in \set{0,1,\ldots}$. 
+\end{definition}
+
+It should be clear why we use the word ``polynomial'' in the name -- syntactically a "pof set" is the same thing as a univariate polynomial with coefficients in the natural numbers. The meaning of the words ``orbit-finite'' will become apparent later in this section, when we discuss "orbits" under the action of   "atom permutations". In a "pof set", we use the name ""component"" for summands in the disjoint union. The "pof set" in the above definition has $k$ component, and the $i$-th component is  $\atoms^{d_i}$. The ""dimension"" of a "component" is the exponent $d$, the "dimension" of a "pof set" is the maximal  "dimension" of its "components". 
+
+In the first chapters of this book, we will be interested in computational models, such as automata or Turing machines, where instead of finite sets, we use "pof sets". We already saw this in Examples~\ref{ex:pof-dfa} and~\ref{ex:pof-nfa}, which used automata where the  state spaces and input alphabets were "pof sets". This resulting theory will generalize the standard theory of finite objects, because a finite set can be seen as a "pof set" of  "dimension" zero. For example, a set with three elements can be seen as a "pof set" 
+\begin{align*}
+\atoms^0 + \atoms^0 + \atoms^0
+\end{align*}
+that has three "components" of dimension zero. We use the notational convention where $1$ is the set $\atoms^0$, and therefore the above set can also be denoted as 
+\begin{align*}
+1 + 1 + 1.
+\end{align*}
+One can further streamline the notion, and write $3$ for this set, which is something that we will also sometimes do.
+
+In order to get a meaningful theory,  we need to make some restrictions on the way that elements of "pof sets" are manipulated. Otherwise, we would be working with models that use countable sets instead of finite ones, and without further restrictions there is nothing interesting that can be said at this level of generality, at least as long as we care about computability. 
+
+The restriction that we make formalizes the  notion that atoms have no structure beyond equality. The idea is that if atoms are renamed in a way that preserves equality, then  all properties should be preserved. For example, if an automaton has a transition of the form  
+\begin{align*}
+(\john, \eve) 
+\quad \stackrel \adam \to \quad 
+(\adam, \john)
+\end{align*}
+then the same automaton should also have a transition of the form 
+\begin{align*}
+    (\tom, \adam) 
+    \quad \stackrel \john \to \quad 
+    (\john, \tom),
+    \end{align*}
+because the equality patterns are the same in both transitions. This notion is formalized in the following definition, by using ""atom permutations"", which are  defined to be bijective functions of type $\atoms \to \atoms$. We use the convention that "atom permutations" are denoted by $\pi$ or $\sigma$. 
+
+\begin{definition}[Equivariant subset]\label{def:equivariant-pof}   
+    A subset $X \subseteq \atoms^d$ is called ""equivariant"" if it is stable under applying "atom permutations", i.e. 
+    \begin{align*}
+    (a_1,\ldots,a_d) \in X 
+    \quad \Leftrightarrow \quad
+    (\pi(a_1),\ldots,\pi(a_d)) \in X
+    \end{align*}
+    holds for every "atom permutation"  $\pi$. A subset of a "pof set" is called "equivariant" if its intersection with each "component" is "equivariant".
+\end{definition}
+
+\begin{myexample}[Orbits in $\atoms^3$]\label{ex:pof-orbits-3}
+    Consider the set $\atoms^3$. Up to "atom permutations", this set contains five kinds of  elements, namely a non-repeating triple 
+    \begin{align*}
+    (\john,\eve,\tom),
+    \end{align*}
+    three kinds of triples that use two atoms 
+    \begin{align*}
+    (\john,\eve,\eve), \quad (\eve,\john,\eve), \quad (\eve,\eve, \john),
+    \end{align*}
+    and  a triple that uses the same atom three times 
+    \begin{align*}
+    (\john,\john,\john).
+    \end{align*}
+    These five elements represent all possible equality types that can arise in triples of atoms. Depending on its equality type,  every other element of $\atoms^3$ can be mapped to one of the above five example using an "atom permutation", and the five kinds are all different, i.e.~none of them can be mapped to another by an "atom permutation". If we want to choose an "equivariant" subset of $\atoms^3$, we need to decide for each of the five kinds whether we want to include it or not. The five decisions are independent, and therefore there are $2^5$ possibilities of choosing an "equivariant" subset. 
+\end{myexample}
+
+The kinds of elements, as described in the above example, will be called \emph{"orbits"}. This is because they are the special case of the general notion of "orbits" under a group action, in the case where the group is the  group of all "atom permutations". 
+
+\begin{definition}
+    [Orbit]\label{def:orbit-in-pof} The ""orbit"" of an element $x$ in a "pof set" $X$ is the set 
+    \begin{align*}
+    \setbuild{\pi(x)}{$\pi$ is an "atom permutation"}.
+    \end{align*}
+\end{definition}
+
+\begin{myexample}[Orbits in $\atoms^d$]\label{ex:how-many-orbits-in-power-of-atoms}
+    In Example~\ref{ex:pof-orbits-3}, we showed that the set $\atoms^3$ has five "orbits". More generally, the number of "orbits" in $\atoms^d$ is the number of equivalence relations on the set $\set{1,\ldots,d}$. This is because an orbit describes an equality type, i.e.~information about which coordinates in the tuple are equal to each other. Therefore, counting orbits in $\atoms^d$ is the same as counting equivalence relations on $\set{1,\ldots,d}$.  The number of such equivalence relations  is called the Bell number, and it grows exponentially with $d$. For example, the 4-th Bell number is 15, and the 5-th Bell number is 52.
+\end{myexample}
+
+In the above example, we have argued that for sets of the form $\atoms^d$, the number of "orbits"  is finite, albeit exponential. Since every "equivariant" set is a union of orbits, it follows that the number of "equivariant" subsets in $\atoms^d$ is also finite, albeit doubly exponential in the dimension $d$. These results extend immediately to "pof sets", which are finite disjoint unions of such sets. This is because the number of orbits in a disjoint union $X+Y$ is the sum of the numbers of orbits in the summands $X$ and $Y$.  Hence, we get the following result, which explains the expression ``orbit-finite'' in the name ``polynomially orbit-finite''.
+\begin{lemma}\label{lem:pof-finitely-many-equivariant}
+    Every "pof set" has finitely many "orbits", and finitely many "equivariant" subsets. 
+\end{lemma}
+
+The orbit count for a product $X \times Y$ is more subtle, and will be discussed later on. For example $\atoms^1$ has one orbit and $\atoms^2$ has two orbits, while their product $\atoms^3$ has five orbits, which shows that the formula cannot be completely trivial.
+
+
+In Definition~\ref{def:equivariant-pof}, we defined "equivariant" subsets of one "pof set". This extends naturally to relations on "pof sets", e.g.~binary relations 
+\begin{align*}
+R \subseteq X \times Y,
+\end{align*}
+where $X$ and $Y$ are "pof sets". This is because the product of two "pof sets" can itself be seen as a new "pof set", by distributing products across disjoint unions:
+\begin{align*}
+(\sum_{i \in I} \atoms^{d_i})
+\times 
+(\sum_{j \in J} \atoms^{e_j})
+\quad \equiv \quad 
+\sum_{\substack{ i \in I \\ j \in J}} \atoms^{d_i + e_j}.
+\end{align*}
+Equivariant relations can also be described directly: a binary relation is equivariant if and only if  membership in it is stable under applying the same atom permutation to both coordinates:
+\begin{align*}
+(x,y) \in R 
+\quad \Leftrightarrow \quad 
+(\pi(x),\pi(y)) \in R
+\qquad 
+\text{for every atom permutation $\pi$.}
+\end{align*}
+The above discussion was for binary relations, but the same idea extends to relations of any finite arity.
+Similarly, we can also talk about "equivariant" functions $f : X \to Y$. These are the same as binary relations that are both "equivariant" and functional, i.e.~for every input $x \in X$ there exactly one output $y \in Y$ such that $(x,y)$ belongs to the relation. 
+
+\begin{myexample}[Functions with Boolean outputs]\label{ex:functions-with-boolean-outputs}
+    To represent booleans, we can use the set $2$, which is the disjoint union $1+1$, where $1$ is defined to be the set $\atoms^0$. An element of the  set $2$ consists of one bit of information, and no atoms. Sets which are disjoint union of several copies of $1$ will be called ""atomless"", and they will correspond to the usual finite sets. For an atomless set, the action of atom permutations is trivial, i.e.~$\pi(x)=x$, since there are no atoms to change. 
+For a "pof set" $X$, an "equivariant" function of type $X \to 2$ is the same thing as an "equivariant" subset of $X$. This is because, by triviality of the action on the output set, we have 
+\begin{align*}
+f(x) = y \quad \Leftrightarrow \quad f(\pi(x)) = y \qquad \text{for every $y \in 2$},
+\end{align*}
+which means that the function has the same outputs for every two inputs in the same orbit.
+\end{myexample}
+
+\begin{myexample}[Equivariant functions of type $\atoms \to \atoms$] In this example, we show that there is only one "equivariant" function of type $\atoms \to \atoms$, namely the identity. Clearly the identity is "equivariant", since the corresponding set of pairs is the diagonal 
+    \begin{align*}
+    \setbuild{(a,a)}{$a \in \atoms$},
+    \end{align*}
+    and this set is "equivariant". (It happens to be exactly one orbit.) Let us now prove that there is no other "equivariant" function of this type. Toward a contradiction,  suppose  that an "equivariant" function would map some input atom $a$ to an output atom $b \neq a$. From the pair $(a,b)$ we can go to any pair $(a,c)$ with $a \neq c$ by applying an "atom permutation". This would yield a violation -- in fact infinitely many violations -- of the functionality condition, which says that each input has only one output. 
+\end{myexample}
+\begin{myexample}[Equivariant functions of type $\atoms^2 \to \atoms$]
+    \label{ex:equivariant-functions-of-type-atoms2-to-atoms}
+    Let us list all "equivariant" functions of type $f : \atoms^2 \to \atoms$.  
+    If the input to such a function is a repeating pair $(a,a) \in \atoms^2$, then the output has to be $a$, by the same argument as in the previous example. If the input is a non-repeating pair $(a,b)$ with $a \neq b$, then the output must be either the first argument $a$ or the second argument $b$, and it cannot be a fresh atom, again by the same argument as in the previous example. Furthermore, this choice must be uniform: if for some input that is a  non-repeating pair the output is the first coordinate, then this is true for all other inputs that are non-repeating pairs. This is because every non-repeating pair can be mapped to every other non-repeating pair by an "atom permutation". Therefore, there are two possibilities for $f$: it is either the projection to the first coordinate, or the projection to the second coordinate.
+\end{myexample}
+
+\begin{myexample}
+    An example of an "equivariant" function of type $\atoms^3 \to \atoms$ is the following function, which projects onto the second or third coordinate, depending on whether the first two coordinates are equal or not:
+    \begin{align*}
+    (a,b,c) 
+    \quad \mapsto \quad 
+        \begin{cases}
+            c & \text{if $a \neq b$} \\
+            b & \text{if $a = b$}.
+        \end{cases}
+    \end{align*}
+    Generally speaking, an "equivariant" function of type $\atoms^d \to \atoms$ will look at the equality type (i.e.~the orbit) of the input, and based on that orbit it will choose one of the input coordinates to be sent to the output. Therefore, the number of such functions is the product
+    \begin{align*}
+    \prod_X  \text{(number of distinct atoms in the orbit $X$)},
+    \end{align*}
+    where $X$ ranges over orbits in the set $\atoms^d$. 
+\end{myexample}
+
+As shown in Lemma~\ref{lem:pof-finitely-many-equivariant}, a "pof set" will have finitely many "equivariant" subsets. If $X$ and $Y$ are "pof sets", then the same will be true for $X \times Y$, and therefore there will be  finitely many "equivariant" relations $R \subset X \times Y$. Only some of these relations will be functions. Summing up, for every pair of "pof sets" $X$ and $Y$, there will be finitely many "equivariant" functions of type $X \to Y$.
+
+
+\exercisepart
+\input{problems/pof-set-intro}
+\section{Representation of "equivariant"  subsets}
+\label{sec:pof-representation}
+The central idea of this book is that sets such as  "pof sets"  can be used instead of finite sets, and the resulting computational problems can be studied.  
+If we want to reap the benefits of finiteness, we must use functions and subsets that respect the structure, which means that they are  "equivariant".  For example, in "pof graph", the set of vertices is a "pof set", and the edge relation is required to be "equivariant". In a  "pof automaton",   the state space and input alphabet are "pof sets", while the initial and final subsets, as well as the transition relation, are all required to be  "equivariant".  (This was the case for the automata from Examples~\ref{ex:pof-dfa} and~\ref{ex:pof-nfa}.) 
+
+We will be interested in decision problems, such as reachability for  "pof graphs" or emptiness for "pof automata". 
+In order to meaningfully discuss these decision problems, we need   some finite representation of their inputs. An input will typically consider of one or more "pof sets" (such as the input alphabet and state space of an automaton) and some equivariant relations that relate these sets (such as the transition relation in an automaton). Therefore, we need some finite representations of "pof sets" and "equivariant" relations on them. 
+
+For "pof sets", there is little doubt: a "pof set" 
+\begin{align*}
+\atoms^{d_1} + \cdots + \atoms^{d_k},
+\end{align*}
+is represented by the list of natural numbers $d_1,\ldots,d_k$, which describe the "dimensions" of the various "components". The relevant question is about representation of "equivariant" subsets. We think of an "equivariant" subset in a "pof set" as being a family of "equivariant" subsets, one for each "component" $\atoms^{d_i}$, and therefore we focus on representing "equivariant" subsets of a single "component". There will be two representations: one will use generating sets, and the other one will use formulas. 
+
+\paragraph*{Generating sets.} 
+\label{sec:generating-sets}
+The first representation of an equivariant subset is based on giving examples of elements in the set, which are then assumed to be generalised by using atom permutations. For example, the subset of $\atoms^2$ that consists of non-repeating pairs is generated by one example, namely (\john, \eve), and all other elements in this subset are the same, up to choosing different names. This leads to the following definition.
+
+\begin{definition}[Generated subset]\label{def:generated-subset}
+    For a "pof set" $X$, the subset  \emph{generated} by  $Y \subseteq X$ is defined to be 
+\begin{align*}
+\setbuild{ \pi(y)}{$y \in Y$ and $\pi$ is an "atom permutation"}.
+\end{align*}
+\end{definition}
+
+In other words, this is the union of "orbits" of the elements from $Y$. The idea behind the terminology in the above example is that a "pof set" can be seen as a set equipped with infinitely many unary operations,  one for each "atom permutation". The subset generated by $Y$ is then the  least set that contains $Y$ and is closed under applying the operations. This perspective will also be used in Chapter~\ref{chap:vector-spaces}, where the sets will have additional structure, namely that of a vector space, and subsets will be generated by both atom permutations and linear combinations. 
+
+\begin{myexample}\label{ex:generating-subsets}
+    The full set $\atoms^2$ is generated by the two pairs 
+    \begin{align*}
+    (\eve,\eve), (\john,\eve).
+    \end{align*}
+    As explained in Example~\ref{ex:how-many-orbits-in-power-of-atoms}, the set $\atoms^d$ is generated by a finite subset, whose size is the $d$-th Bell number. In particular, in order to generate the full set $\atoms^d$ we need a number of generators that is exponential in the dimension $d$. 
+\end{myexample}
+
+\begin{myexample}
+    An equivariant function $f : X \to Y$ is seen as a special case of an equivariant subset of $X \times Y$. Therefore, we can use generating sets to describe such functions.  For example, the identity function of type $\atoms^2 \to \atoms^2$ is generated by
+    \begin{align*}
+    (\john,\john) \mapsto (\john,\john) \qquad  
+    (\john,\eve) \mapsto (\john,\eve).
+    \end{align*}
+    In the above, we write $a \mapsto b$ instead of $(a,b)$ when  describing input/output pairs that belong to the graph of a function
+\end{myexample}
+
+We  use finite generating subsets as a representation of "equivariant" subsets. This assumes that we can represent individual atoms; for the moment we simply assume that atoms are strings over some finite alphabet, but the  issue of representations  will be discussed in more detail in Section~\ref{sec:pof-turing-machines-equality}. 
+The  representation by generating subsets is general enough to cover all "equivariant" subsets, as shown in the following lemma.
+
+
+\begin{lemma}\label{lem:generating-representation}
+    Every "equivariant" subset of a "pof set" is generated by finitely many elements.
+\end{lemma}
+\begin{proof}
+    There are finitely many "orbits", and an "equivariant" subset is a union of some of these "orbits". For each "orbit", we need only one generator. 
+\end{proof}
+
+The above lemma shows that finite generating sets can be used as a way of representing  "equivariant" subsets.
+The representation has several advantages, but conciseness is not one of them. (Non-conciseness can also be framed as an advantage, since making the inputs longer for an algorithm can give a better bound on its running time, as we will see in the next section.)
+ For example, to represent the full subset of $\atoms^d$ we need a number of generators that is exponential in the dimension $d$. Another disadvantage is that this representation is not well suited to basic operations on sets. For example, the empty set has a very small representation, but its complement does not. Another example is taking pairs, as we explain below.
+
+
+\begin{myexample}\label{ex:pof-product-generating-set}
+    Consider the subset of $\atoms^d$ that contains only non-repeating pairs. We write $\atoms^{(d)}$ for this subset. This subset is generated by one element, e.g.~if $d=3$ then a generator is
+    \begin{align*}
+    (\john, \adam, \tom).
+    \end{align*}
+    However, if we want to take the product of this subset with itself, which is an "equivariant" subset of $\atoms^{2d}$,  then we will need a number of generators that is exponential in $d$. This is because $\atoms^{(d)} \times \atoms^{(d)}$   consists of tuples of length $2d$ where the first half is non-repeating and the second half is also non-repeating, but  there is no further restriction on the equalities between the first half and the second half.  In particular, this set will contain any tuple where the second half is a permutation of the first half, such as 
+    \begin{align*}
+    ((\john,\adam,\tom),(\tom,\john,\adam)).
+    \end{align*}
+    Each permutation will need a new generator, and therefore we will need at least $d!$ generators. The set will also contain tuples where some atoms are shared between the first and second half, and some atoms are not, such as 
+    \begin{align*}
+    ((\john,\adam,\tom),(\tom,\john,\eve)).
+    \end{align*}
+    Different kinds of sharing will also need different generators, which also gives an exponential number of generators, in terms of the dimension $d$.
+\end{myexample}
+
+The disadvantage described above will be rectified by a second representation, using formulas, which is described below.
+\paragraph*{Formulas.}
+ As an alternative to generating sets, we can use formulas to represent "equivariant" subsets. For example, the set of non-repeating tuples in $\atoms^3$ can be described by the formula 
+\begin{align*}
+x_1 \neq x_2 \land x_1 \neq x_3 \land x_2 \neq x_3.
+\end{align*}
+The variables of the formula refer to the coordinates in the tuple, and the formula is true for exactly those tuples which satisfy the desired condition (in this case, being non-repeating). 
+The formulas that we use have no quantifiers, and are only Boolean combinations of equalities on the coordinates (quantifiers will appear later in the book).
+
+The formula representation can be exponentially more concise than the generating set representation. For example, the full set $\atoms^d$ can be represented by the short formula ``true'', while the number of generators is exponential in $d$. Also, the representation efficiently and trivially supports such operations as complementation, which is implemented by  adding $\neg$ to the formula, or intersection, which is implemented by combining to formulas with the logical connective $\land$. The following lemma shows that the formula representation is equivalent to the generating set representation, in the sense that both define the same subsets, namely the "equivariant" subsets.
+
+\begin{lemma}\label{lem:formula-representation}
+ A subset $X \subseteq \atoms^d$ is "equivariant" if and only if it can be defined by a formula $\varphi(x_1,\ldots,x_d)$ that is constructed using equality comparisons $x_i = x_j$ and Boolean operations $\land, \lor, \neg$.
+\end{lemma}
+\begin{proof}
+    For the implication $\Leftarrow$, we observe that if we apply an "atom permutation" to a tuple in $\atoms^d$, then this will not change the pattern of  equalities between coordinates. Therefore, the truth value of a formula that uses only equality will be preserved.
+
+    For the implication $\Rightarrow$, consider an "equivariant" subset $X \subseteq \atoms^d$. This subset is generated by a finite set $Y \subseteq X$, thanks to  Lemma~\ref{lem:generating-representation}. The "orbit" of each generator $y \in Y$ is described by a formula, which asserts the pattern of equalities in this generator: 
+    \begin{align*}
+       \big(\myunderbrace{\bigwedge_{i,j} x_i = x_j}{conjunction ranges over \\  those coordinates \\ $i,j \in \set{1,\ldots,d}$ \\ such that $y[i] = y[j]$} \big)
+    \quad \land \quad \big(\myunderbrace{\bigwedge_{i,j} x_i \neq x_j}{conjunction ranges over \\ those coordinates \\  $i,j \in \set{1,\ldots,d}$ \\ such that $y[i] \neq y[j]$} \big).
+    \end{align*}
+    Since there are finitely many generators, to define $X$ we can take the finite disjunction of these formulas, ranging over the generators. 
+    The size of the formula is the number of generators, times a factor that is polynomial in the dimension $d$. 
+\end{proof}
+
+The formula representation is not without its disadvantages. For example, if we want to check if a set $X$ is nonempty, under the formula representation, then we need to check if the corresponding formula is satisfiable. It is an easy exercise, see Exercise~\ref{ex:equal-subsets}, to show that nonemptiness is  an NP-complete problem under the formula representation. This is in contrast to the  generating set representation, where nonemptiness is trivial: if there is at least one generator, then the generated set is nonempty. Nevertheless, in this book we will typically use the  formula representation, because of how it supports basic operations on subsets. 
+
+\exercisepart
+
+\input{problems/pof-set}
+
+
+
+\section{Graph reachability}
+\label{sec:pof-graphs}
+As we mentioned before, the purpose of "pof sets" is to consider decision problems where the instances use "pof sets" instead of finite sets. We begin a simple problem of this kind, which will be used frequently later in the book, namely reachability in directed graphs. 
+
+\begin{definition}[Pof graph]
+    A directed ""pof graph"" consists of a set of vertices $V$, which is a pof set, and an edge relation $E \subseteq V^2$ that is equivariant. 
+\end{definition}
+
+In this section, we will show that graph reachability is decidable, i.e.~given a "pof graph" with designated source and target vertices, we can decide whether there is a directed source-to-target path. Before presenting the algorithm, and discussing its complexity, we will give some examples of "pof graphs".
+
+\begin{myexample}[Cliques]
+    Consider the clique on the  atoms: the set of vertices  is $\atoms$, and all edges are allowed, i.e. 
+    \begin{align*}
+    E = \setbuild{ a \to b}{$a,b \in \atoms$}.
+    \end{align*}
+    This is clearly a pof graph, since the edge set is equivariant. Similarly, we could consider a clique on any set of vertices that is a pof graph. As long as we take an infinite pof sets for the vertices, these cliques will be isomorphic as graphs, because they will be countably infinite cliques. However, they will not admit any equivariant isomorphism. For example, the cliques on $\atoms^2$ and $\atoms$ are not isomorphic, since there is no equivariant bijection between the two sets. (As explained in Example~\ref{ex:equivariant-functions-of-type-atoms2-to-atoms}, the equivariant functions of type $\atoms^2 \to \atoms$ are the projections, and these are not bijections.)
+\end{myexample}
+\begin{myexample} The cliques from the previous example had a symmetric edge relation. Here is a non-symmetric example. The vertices are pairs of atoms, i.e.~$\atoms^2$, and the edges are 
+    \begin{align*}
+    E = \setbuild{ (a,b) \to (b,c)}{$a,b,c \in \atoms$}
+    \end{align*}
+    This graph is strongly connected, i.e.~one can go from any vertex to any other vertex via a finite path. In fact, any two vertices can be connected by a  path of length two: 
+    \begin{align*}
+    (a,b) \to (b,c) \to (c,d).
+    \end{align*}
+    This is not a coincidence: for every directed pof graph, if two vertices can be connected by a path, then they can be connected by a path whose length is bounded by a constant that depends only  on the graph, and not the vertices, see Exercise~\ref{pof-graph-diameter}.
+\end{myexample}
+
+A directed pof graph can be represented in a finite way, by giving the pof set for the vertices, and a representation (generating set or formula) for the edge relation. Therefore, it is meaningful to discuss decision problems for pof graphs, such as reachability. 
+
+
+
+\begin{theorem}\label{thm:reachability-decidable-pof}
+    The following problem is decidable: 
+    \begin{itemize}
+        \item \textbf{Input:} A pof graph, and two equivariant subsets of vertices $S,T \subseteq V$.
+        \item \textbf{Question:} Is there a path from some vertex in  $S$ to some vertex in $T$?
+    \end{itemize}
+    The complexity depends on the representation of equivariant subsets:
+    \begin{itemize}
+        \item \textsc{PSpace}-complete under the formula representation;
+        \item \textsc{NL}-complete under the generating set representation.
+    \end{itemize} 
+\end{theorem}
+\begin{proof}
+We give three variants of the algorithm. The first variant is a deterministic algorithm, and it illustrates the essential concept of this book, which is that exhaustive search for infinite sets is possible, if we assume equivariance and orbit-finiteness. This variant will also be the basis for extensions that will be discussed later in the book, such as the nonemptiness algorithm for pushdown automata that will be discussed in Chapter~\ref{cha:more-models}, and for general frameworks, such as the programming language that will be discussed in Chapter~\ref{cha:while-programs}. The other two variants of the algorithm, which witness the complexity bounds from the statement of the theorem, are nondeterministic algorithms that are more directly tailored to the graph reachability problem. 
+
+In all algorithms, the crucial  observation  is that   the set of reachable vertices  is equivariant, and remains so if we fix a bound on the number of steps. This is because if we take any path 
+\begin{align*}
+S \ni v_0  \to v_1 \to \cdots \to v_n
+\end{align*}
+that begins in the source set, 
+and we apply the same  "atom permutation" $\pi$ to all  vertices in the path, then the new sequence of vertices will also be a path
+\begin{align*}
+S \ni \pi(v_0) \to \pi(v_1) \to \cdots \to \pi(v_n),
+\end{align*}
+thanks to equivariance of the source set and the edge relation. By varying the atom permutation $\pi$, we can reach all vertices in the "orbit" of the last vertex $v_n$. This shows, that if a vertex can be reached in $n$ steps, then  the same is true for every vertex in the orbit of $v_n$. In other words, the set of vertices reachable in $n$ steps is equivariant, and therefore it can be represented, using either generating sets or formulas. 
+
+We now describe the first variant of the reachability algorithm. This is a deterministic algorithm, which computes for each $n$ a representation  of all vertices reachable in at most $n$ steps. (We use generators for the representation in this algorithm.) If the number of steps $n$ exceeds the number of orbits of  reachable vertices in the graph, then no further orbits will be added, and therefore the algorithm will terminate. Initially, for $n=0$, we use the generating set for the source vertices.  Suppose that we have a generating set $\Gamma_n$ for the vertices reachable in $n$ steps. The new set of generators for step $n+1$ is computed using the following code:
+\begin{lstlisting}
+    $\Gamma_{n+1}$ = $\Gamma_n$
+    for $(v,w) \in $ generators of edges: 
+      for $v \in$ $\tt{set}$ generated by $\Gamma_n$: 
+        if $w \not \in$ $\tt{set}$ generated by $\Gamma_n$:
+          $\Gamma_{n+1}$ = $\Gamma_{n+1} \cup \set w$
+\end{lstlisting}
+The test in line 3 is implemented by enumerating through all generators in $\Gamma_n$, and checking if there is one that has the same component and equality type as $v$. It is now easy to show the invariant of the program, which is that $\Gamma_n$ is a generating set of the vertices reachable in $n$ steps. In each step, we add some orbits of vertices. Since there are finitely many such orbits, the algorithm is guaranteed to stabilise, i.e.~no new vertices will be added at some point. At this point, we can check if the set $\Gamma_n$ contains some vertex in the same orbit as some generator of the target set, and this will tell us whether there is a path from the source set to the target set. A simple analysis of this code shows that it runs in time that is polynomial in the number of generators in the vertex set, and the number of generators in the edge set.  
+
+
+
+The rest of the proof, with proves the exact complexity bounds for the two representations, is mere bookkeeping.
+
+\paragraph*{Generating set representation.}
+We begin with complexity of the problem under the generating set representation. In order to formally speak of this representation, we need to discuss how individual atoms are represented. We assume that atoms are bit strings, i.e.~$\atoms = 2^*$. (This is a bit inconsistent with our convention of representing atoms as names, but of course names can be encoded in bit strings.) We will show that, under the generating set representation,  the reachability problem is complete for  the complexity class of nondeterministic logarithmic space (NL). When talking about logarithmic space, we  use a two-tape model for Turing machines: a read-only input tape, and a read-write work tape of logarithmic size. 
+\begin{itemize}
+    \item \textbf{Lower bound.} A special case of our problem is reachability for finite graphs, since pof sets subsume finite sets. The reachability problem is hard for NL in the case of finite graphs, and therefore this lower bound carries over to the more general atom version of the problem. 
+    \item \textbf{Upper bound.} The algorithm for the upper bound is similar to the deterministic algorithm at the beginning of this proof, except that instead of deterministically computing all reachable orbits, we nondeterministically guess a source-to-target path, which requires storing only a single orbit at a given moment. Furthermore, the input representation contains an explicit list of all possible orbits (by looking at the generators of the edges), and therefore an orbit can be stored in logarithmic space, by pointing to the input tape. 
+    
+     More formally, we reduce the problem to the special case of finite graphs.  Reachability in the latter case can be solved in NL, using a naive algorithm that nondeterministically guesses a path, and stores the current vertex by using a pointer to the input tape (logarithmic space suffices for that). Suppose that the original instance, for reachability on "pof graphs", has a list of generators 
+    \begin{align*}
+    v_1 \to w_1, \ldots, v_n \to w_n
+    \end{align*}
+    for the edges.  Based on the original instance (which uses a "pof set" for the vertices), the 
+     reduction produces a new instance (which uses a finite set for the vertices):
+    \begin{itemize}
+        \item The vertices of the new instance are $v_1,w_1,v_2,w_2,\ldots,v_n,w_n$, i.e.~the vertices that appear in the edge generators of the original instance. This is a finite set of vertices.
+        \item  In the new instance, there is an edge $v \to w$ if  and only if there is some generator $v_i \to w_i$ which is in the same orbit. (Here, we talk about orbits of pairs of vertices in the original instance.) This means that the components are the same for $v$ and $v_i$, the components are the same for $w$ and $w_i$, and furthermore the  equality types are the same. When talking about equality types, we also refer to  comparisons between the source and target vertices in the edge.  For example, if the first atom used by $v$ is equal to the second atom used by $w$, then the same is true for $v_i$ and $w_i$.
+        \item In the new instance, the source vertices are those which are in the same orbit as some generator of the source set $S$ in the original instance.
+        \item In the new instance, the target vertices are those which are in the same orbit as some generator of the target set $T$ in the original instance.
+    \end{itemize}
+    The correctness of the reduction is given in the following claim.
+    \begin{claim}
+        The original instance has a source-to-target path if and only if the same is true in the new instance.
+    \end{claim}
+    \begin{proof}
+        Using equivariance of the edge relation, 
+        one shows that for every vertex in the original instance, it is reachable from a source if and only if some vertex in the same orbit is reachable in the new instance. 
+    \end{proof}
+      
+    The reduction can be computed in logarithmic space, even deterministically, and therefore the reachability problem is in \textsc{NL}.
+
+\end{itemize}
+
+
+\paragraph*{Formula representation.}  We now discuss the reachability problem under  the formula representation. Here,  the complexity will be exponentially higher, namely polynomial space instead of logarithmic space. 
+
+\begin{itemize}
+    \item \textbf{Upper bound.} We use the same kind of  nondeterministic guessing algorithm that was used for the generating set representation. We are allowed to use nondeterminism, since \textsc{PSpace} is equal to \textsc{NPSpace} by Savich's Theorem.   This time, we will store on the tape a reachable vertex. (In the previous item, for the generating set representation, we could store a pointer to the input tape, but this is no longer available, which is the entire reason for  the exponentially larger complexity.)  At each step, the algorithm guesses a new vertex, with atoms represented as strings, and it then checks if the formula for the edge relation allows a connection. The space used by this algorithm is polynomial in: 
+    \begin{enumerate}
+        \item the representation of the graph;
+        \item the space used to represent atoms.
+    \end{enumerate}
+    We will now justify why the space used by atoms is small, in fact logarithmic in the graph (polynomial would be enough for our purposes).  In every transition, there are at most 
+    \begin{align*}
+    d  = 2 \cdot \text{(dimension of $V$)}
+    \end{align*}
+    atoms that are used. When we are guessing a new vertex, we might need to get some new atoms that were not seen in the previous vertex. We can always take the shortest unused atoms, and so we will always be using the first $d$ atoms, which can be stored using $\log d$ bits.
+
+    \item \textbf{Lower bound.}  This is a routine reduction  from the corridor tiling problem. Let us begin by recalling what this problem is. In the corridor tiling problem, we have a finite set  of square tiles, with each tile having a colour on each of its four sides. This is formalized as a finite set of colours $C$, together with a set of functions of type 
+    \begin{align*}
+     \myunderbrace{\set{\text{N, S, E, W}} \to C}{a tile has colours on the four directions of the compass}.
+    \end{align*}
+    Each such function (which is a 4-tuple of colours)  will be called a tile.
+    Here is a picture of a set of tiles that uses three colours:
+    \mypicb{1}
+    Apart from the colours and tiles, in the instance of the problem we are also  given source and target rows $s,t$, which are sequences of tiles of the same length, say $n$. This length will be the width of the corridor. A solution to the corridor tiling problem is an $n \times m$ rectangle labelled by the tiles, such that the first row is $s$, the last row is $t$, and every two adjacent tiles have the same colour on their connecting side. Here is a picture of a solution: 
+    \mypicb{2}
+
+    The corridor tiling problem, i.e.~deciding if there exists a solution, is known to be  \textsc{PSpace}-complete. We will show that the corridor tiling problem reduces to the graph reachability problem under the formula representation, thus proving \textsc{PSpace}-hardness for the latter problem. 
+    
+    In the reduction, a vertex  of the graph will store the representation of  a row in the solution.
+    Assuming that there are $k=|C|$ colours, one row will be represented by  $k + 4n$ atoms
+\begin{align*}
+(\myunderbrace{a_1,\ldots,a_k}{distinct atoms \\ that represent \\ the tile colours}, \myunderbrace{n_1,s_1,e_1,w_1, \ldots, n_n,s_n,e_n,w_n}{four atoms for each tile in the row,\\ corresponding to the colours on the sides \\ north, south, east, west }).
+\end{align*}
+Not every tuple of length $k  +4n$ will represent a row, but the tuples that do so can be specified by a formula that has size polynomial in $k$ and $d$, as follows: 
+\begin{align*}
+& \myunderbrace{\bigwedge_{i \neq j \in \set{1,\ldots,n}} a_i \neq a_j}{atoms for colours are distinct}  \\
+& \land \myunderbrace{\bigwedge_{i \in \set{1,\ldots,n-1}} e_i = w_{i+1}}{colours match horizontally}\\
+& \land \myunderbrace{\bigwedge_{i \in \set{1,\ldots,n}} \bigvee_{t \in T} n_i = a_{t(\text{north})} \land s_i = a_{t(\text{south})} \land e_i = a_{t(\text{east})} \land w_i = a_{t(\text{west})}}{each position is occupied by a legitimate tile}.
+\end{align*}
+ We can further refine the formula to say that the row represents the source row, or the target row, by restricting the tile $t$ from the last condition to be the one that should be used. This way, we get formulas for the source vertices $S$ and the target vertices $T$ in the instance of graph reachability that is produced by the reduction.  Finally, we need to specify the formula for the edge relation. This formula has 
+\begin{align*}
+\myunderbrace{k+4n}{old \\ row} + 
+\myunderbrace{k+4n}{new \\ row},
+\end{align*}
+variables. It says that both the old and new rows are valid, in the sense described above, and furthermore the south atoms of the old row match the north atoms of the new row. This, again, can be described by a formula polynomial in $k$ and $n$. It is now easy to see that accepting runs of the automaton correspond to solutions of the corridor tiling problem, and therefore the nonemptiness problem is \textsc{PSpace}-hard.
+\end{itemize}
+\end{proof}
+
+\exercisepart
+\input{problems/pof-automata-graph}

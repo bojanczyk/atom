@@ -1,0 +1,44 @@
+
+
+\mikexercise{\label{pof-cfg-exptime}
+    Show that emptiness for pof context-free grammars is \textsc{ExpTime}-complete.
+}{
+    Same kind of  argument as in Problem~\ref{pof-graph-reachability}.  This time, however, the appropriate model is alternating Turing machines with polynomial space; which are complete for \textsc{ExpTime}. The states of type $\forall$ correspond to rules 
+    \begin{align*}
+    X \to YZ,
+    \end{align*}
+    sinc in order for $YZ$ to be nonempty, both $Y$ and $Z$ need to be nonempty. The states of type $\exists$ correspond to choosing some rule, since in order for $X$ to be nonempty, there needs to be at least one rule where $X$ appears on the left-hand side, and which has nonempty nonterminals on the right-hand side.
+}
+
+\mikexercise{\label{pof-cfg-finite-alphabet}Show that if the set of terminals (i.e.~the input alphabet), is finite (i.e.~pof of dimension zero), then pof context-free grammars are the same as usual context-free grammars.}
+{
+    Let $k$ be the maximal number of atoms used by a rule of the grammar. This is a finite number, since rules have bounded length. Choose some set $A$ of $k$ atoms. Using the same argument as in Problem~\ref{pof-reach-path-few-atoms}, one can show that for every derivation tree in the grammar, there is another derivation tree that generates the same word, has a root nonterminal in the same orbit, and uses only atoms from $A$. It follows that the same words are  generated if we only keep nonterminals that use atoms from $A$. There are finitely many such nonterminals, and thus the corresponding grammar is a usual context-free grammar without atoms. 
+}
+
+
+
+\mikexercise{\label{pof-chomsky}
+    Show that pof context-free grammars can be converted into Chomsky normal form, where all rules are of the form $X \to YZ$ with $X,Y,Z$ nonterminals, or $X \to a$ with $X$ a nonterminal and $a$ a terminal.
+}{
+We use the usual argument. Let $k$ be the maximal length of a right-hand side in the grammar. We add new nonterminals 
+\begin{align*}
+\Mm = (\Sigma + \Nn)^{\leq k}.
+\end{align*}
+The new nonterminals are a pof set. For every new nonterminal 
+\begin{align*}
+(X_1,\ldots,X_i) \in \Mm \qquad \text{with $i \in \set{1,\ldots,k}$}
+\end{align*}
+we add a rule 
+\begin{align*}
+(X_1,\ldots,X_i) \to X_1 \cdot (X_2,\ldots,X_i) 
+\end{align*}
+and we replace every rule 
+\begin{align*}
+N \to \myunderbrace{X_1 \cdots X_i}{a sequence of $i \leq k$ nonterminals or terminals \\ in the original grammar}
+\end{align*}
+in the original grammar by a rule 
+\begin{align*}
+N \to \myunderbrace{(X_1, \ldots, X_i)}{one  nonterminal from $\Mm$}.
+\end{align*}
+}
+

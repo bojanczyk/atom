@@ -1,0 +1,411 @@
+ \chapter{Two variable logic and data automata}
+This chapter presents an automaton model -- \emph{data automata} -- which recognises properties of data words without using registers. There are three reasons to discuss data automata: (1) the study of emptiness of data automata is a pretext to use an important decidability result about vector addition systems; (2) there is a nontrivial result that data automata generalise nondeterministic register automata; (3) data automata have a natural correspondence to two variable logic over data words\footnote{The model of data automata and its application to logic is from~\cite{bojanczyk_two-variable_2011}. Tree generalisations of two variable logic on data words and data automata were discussed in~\cite{DBLP:journals/jacm/BojanczykMSS09} and~\cite{DBLP:journals/corr/JacquemardSD16}; 
+these problems are connected to \emph{branching vector addition systems}, see~\cite{DBLP:conf/icalp/GollerHLT16} and the references therein.}.
+
+\section{Data automata}
+In the definition of a data automaton, we use a nondeterministic transducer over words without data, so we begin by describing this transducer.
+\paragraph*{Letter-to-letter transductions.} Suppose that $\Gamma$ and $\Sigma$ are finite alphabets (no atoms involved). 
+Consider a nondeterministic finite automaton with input alphabet $\Sigma$ where every transition is labelled by a letter of $\Gamma$. We view this automaton as a device which inputs a word over $\Sigma$ and outputs all possible words that label accepting runs. In other words, the semantics of such an automaton is a binary relation 
+\begin{align*}
+	R \subseteq \Sigma^* \times \Gamma^*. 
+ \end{align*}
+ A relation 
+is called a \emph{nondeterministic letter-to-letter transduction} if it can be described this way. Such a relation will only contain pairs of words of the same length.
+
+
+\begin{myexample}\label{ex:underliner}
+Consider the set of pairs
+\begin{align*}
+(w,v) \in \set{a,b}^* \times \set{a,b,\underline a,\underline b}^*
+\end{align*}
+such that $v$ is obtained from $w$ by underlining exactly one position. This relation is realised by the following automaton: \mypic{21}	
+\end{myexample}
+
+
+
+\paragraph{Data automata.} We are now ready to define data automata.
+\begin{definition}
+The syntax of a data automaton is given by:
+\begin{itemize}
+	\item finite input and work alphabets $\Sigma$ and $\Gamma$;
+	\item a nondeterministic letter-to-letter transduction $R \subseteq \Sigma^* \times \Gamma^*$;
+	\item a regular language $L \subseteq \Gamma^*$ called the \emph{class condition}.
+\end{itemize}	
+\end{definition}
+A data automaton is used to accept or reject data words in $(\Sigma \times \atoms)^*$. For a data word, define a \emph{class} to be a maximal set of positions with the same data value, and define a \emph{class string} to be a sequence in $\Sigma^*$ obtained by taking some class and reading all of its labels from left to right. A data automaton accepts a data word if the sequence of labels can be transformed by the transducer so that in the resulting data word in $(\Gamma \times \atoms)^*$, all class strings are in $L$. Here is a picture: \mypic{23}
+The language recognised by a data automaton is the set of accepted data words.
+
+
+\begin{myexample}
+	A data automaton can check that each data value appears exactly twice (or not at all). The transducer is the identity, while the class condition contains all words of length exactly two.
+\end{myexample}
+
+\begin{myexample}
+	A data automaton can check that some data value appears an even number of times. The transducer underlines exactly one position, as in Example~\ref{ex:underliner}. The class condition says that if a word contains an underlined position, then it has even length.
+\end{myexample}
+
+\begin{myexample} Suppose that the labels are $\set{a,b}$. Consider a data automaton where the transducer is the identity and the class condition is $\set{ab,ba}$. The language recognised by this data automaton, after erasing data values, is the set of words in $\set{a,b}^*$ where $a$ occurs the same number of times as $b$. The same idea would work for labels $\set{a,b,c}$.
+\end{myexample}
+
+
+
+\paragraph{Vector addition systems.}
+We will prove that emptiness for data automata is decidable, as it reduces to reachability problem for vector addition systems, which is known to be decidable, although highly challenging. 
+
+\begin{definition}[Vector Addition System]
+	A \emph{vector addition system} is any finite set $\delta \subseteq \Int^d$ of integer vectors with a common dimension $d$, called the \emph{transitions}. A run of a vector addition system is a sequence
+	\begin{align*}
+		v_0,v_1,\ldots,v_n \in \Nat^d \qquad\mbox{such that $v_i - v_{i-1} \in \delta$ for every $i \in \set{1,\ldots,n}$}.
+	\end{align*}	
+\end{definition}
+
+Note that all vectors in the run must be non-negative on all coordinates, even though $\delta$ can use negative numbers. Here is a picture in two dimensions: \mypic{27}
+The \emph{reachability problem} for vector addition systems is to decide, given two vectors of natural numbers, if there exists a run that begins in the first vector and ends in the second one. The following famous result uses one of the more difficult decidability proofs in computer science\footnote{The decidability of reachability for vector addition systems, i.e.~
+Theorem~\ref{thm:vas-decidable}, was originally shown by Mayr in~\cite{DBLP:journals/siamcomp/Mayr84}, other proofs include~\cite{DBLP:conf/stoc/Kosaraju82} and~\cite{DBLP:journals/corr/abs-1009-1076}. The current best lower bound for the problem is a tower of exponentials~\cite{czerwinski_reachability_2018} and the current best upper bound is primitive recursive for fixed dimension~\cite{leroux_reachability_2019}.
+}; this proof is not included in these lecture notes.
+\begin{theorem}\label{thm:vas-decidable}
+	The reachability problem for vector addition systems is decidable.
+\end{theorem}
+
+
+A vector addition system can be used as a language recogniser in the following way. Define a \emph{multicounter automaton} to be a vector addition system $\delta \subseteq \Int^d$ together with designated initial and final vectors in $\Nat^d$, plus an output function $\delta \to \Sigma^*$ which associates to each transition a word that is produced by that transition. A word in $\Sigma^*$ is accepted if there exists a run from the initial to the final vector which produces the word after applying the output function to each transition. Emptiness for multicounter automata is the same problem as reachability for vector addition systems, and is therefore decidable.
+
+\begin{myexample}
+Here is a multicounter automaton which recognises the set of words over $\set{a,b}$ where the number of $a$'s is equal to the number of $b$'s. We use two counter names $a,b$. When reading an $a$ letter, we can either increment the $a$ counter, or decrement the $b$ counter. When reading a $b$, we can either increment the $b$ counter or decrement the $a$ counter. The initial vector is $(0,0)$ and the final vector is also $(0,0)$.
+\end{myexample}
+
+\begin{lemma}\label{lem:mulitcounter-do-regular}
+Every regular language is recognised by a multicounter automaton.
+\end{lemma}
+\begin{proof}
+Consider a regular language recognised by a nondeterministic automaton with states which are numbers $\set{1,\ldots,n}$. By using $\varepsilon$-transitions, we can assume that the automaton has one initial state, one accepting state, and these are not the same state. To simulate the automaton, we use a multicounter automaton with $n$ counters where state $q$ is encoded by a vector
+\begin{align*}
+ (0,\ldots,0,\underbrace{1}_{\text{$q$-th counter}},0,\ldots,0).
+\end{align*}
+A transition which goes from $q$ to $p$ is represented by the integer vector which decrements $q$ and increments $p$. 	
+\end{proof}
+
+
+
+
+
+
+
+For a language $L \subseteq \Sigma^*$, define $\mathsf{shuffle}L$ to be all words in $\Sigma^*$ which can be labelled with data values so that all class strings are in $L$. 
+
+\begin{lemma}\label{lem:shuffle}
+If $L$ is regular, then $\mathsf{shuffle}L$ is recognised by a multicounter automaton.
+\end{lemma}
+\begin{proof}Suppose that $L$ is recognised by a deterministic automaton with states $Q$. Without loss of generality assume that this automaton has no self-loops, i.e.~transitions which have the same source and target state. We define a multicounter automaton with one counter per state from $Q$. The initial and final vectors are the same, namely the zero vector. For every transition $q \stackrel a \to p$ of the automaton recognising $L$, we create a transition in the multicounter automaton which reads $a$, decrements counter $q$ and increments counter $p$. If $q$ is the initial state, then we also create a transition which reads $a$ and only increments counter $p$. If $p$ is a final state, then we also create a transition which reads $a$ and only decrements counter $q$. \end{proof}
+
+\paragraph*{Emptiness for data automata.} In the proof of the following theorem, we show that emptiness for data automata is the same thing as emptiness for multicounter automata and, therefore, the same thing as reachability for vector addition systems.
+\begin{theorem}\label{thm:data-emptiness}
+	Emptiness is decidable for data automata.
+\end{theorem}
+\begin{proof}
+	A data automaton is nonempty if and only if there exists a word over the work alphabet which is a possible output of the transducer, and such that the word can be labelled by data values so that every class string is in the class condition of the data automaton. The set of possible outputs of the transducer is easily seen to be a regular language (a nondeterministic automaton can guess the input and the run of the transducer on it). Using the shuffle terminology, we have just shown that emptiness of data automata reduces to the following problem: given regular languages $L,K \subseteq \Gamma^*$ decide if
+\begin{align*}
+	K \cap \mathsf{shuffle}L = \emptyset.
+\end{align*}
+The language $K$ is recognised by a multicounter automaton thanks to Lemma~\ref{lem:mulitcounter-do-regular}, while $\mathsf{shuffle}L$ is recognised by a multicounter automaton thanks to Lemma~\ref{lem:shuffle}. Languages recognised by multicounter automata are easily seen to be closed under intersection and, therefore, the problem above boils down to testing nonemptiness for an effectively obtained multicounter automaton, which is decidable thanks to Theorem~\ref{thm:vas-decidable}.\end{proof}
+
+\pagebreak
+\exercisepart
+\mikexercise{Theorem~\ref{thm:data-emptiness} reduces emptiness for data automata to reachability for vector addition systems. Show a converse reduction.}
+{
+	
+}
+
+\mikexercise{Show that languages recognised by data automata are not closed under Kleene star.}{If there was closure under Kleene star, then we would have undecidable emptiness, by finding a data automaton recognising the encodings of computations of Minsky machines used in Exercise~\ref{ex:minsky}. Since data automata are closed under intersections, it suffices to find data automaton recognising just one counter with zero tests. If there was closure under Kleene star, then we could check one counter with zero tests: the zero tests can be performed only when the star proceeds to the next iteration.}
+
+\mikexercise{Show that emptiness is decidable for vector addition systems if the definition of a run is modified so that the intermediate vectors are allowed to use negative coordinates, i.e.~the intermediate coordinates are vectors in $\Int^d$.}{Suppose that the transitions are 
+\begin{align*}
+ \delta_1,\ldots,\delta_n \in \Int^d.
+\end{align*}
+There is a run (which can use negative coordinates) that goes from $v \in \Int^d$ to $w \in \Int^d$ if and only 
+\begin{align*}
+ v = w + a_1 \delta_1 + \cdots + a_n \delta_n \qquad \mbox{for some $a_1,\ldots,a_n \in \Nat$}
+\end{align*}
+This is an instance of integer linear programming, and it is known that such instances can be solved in {\sc np}. Another answer is that integer linear programming is a special case of Presburger arithmetic, which is decidable.
+
+
+}
+
+
+\section{Two-variable first-order logic on data words}
+\label{sec:fo2}
+At the end of Section~\ref{sec:alternating-automata}, we described a logic for data words that had decidable satisfiability by virtue of a translation into alternating automata. We now do the same thing for data automata: we describe a logic for data words which has decidable satisfiability by virtue of a translation into data automata. The logic is a fragment of first-order logic, i.e.~it uses variables and quantifiers, as opposed to the temporal logic in Section~\ref{sec:alternating-automata}, which had a variable-free syntax. We already saw this logic in Exercise~\ref{ex:fo-data-word}, but we now describe it in more detail. 
+
+To describe properties of data words using first-order logic, we view a data word with labels from a finite set $\Sigma$ as a relational structure, where the universe is the positions in the data word, and which is equipped with the following relations:
+\begin{align*}
+	\underbrace{x < y }_{\substack{\text{position $x$}\\ \text{is before}\\ \text{position $y$}}} \qquad \underbrace{x = y+1 }_{\substack{\text{position $x$ is }\\ \text{the successor}\\ \text{of position $y$}}} \qquad \underbrace{x \sim y }_{\substack{\text{positions $x,y$}\\ \text{have the same}\\ \text{data value}}} \qquad \underbrace{a(x).}_{\substack{\text{position $x$}\\ \text{has label $a \in \Sigma$}}}
+\end{align*}
+With the above representation of data words as relational structures, we can use first-order logic to express properties of data words. 
+For example, 
+\begin{align*}
+	\forall x \ \forall y \ x =y +1 \Rightarrow x \not \sim y
+\end{align*}
+says that every two consecutive positions have different data values, while
+\begin{align*}
+	\forall x \ \forall y \ a(x) \land a(y) \Rightarrow x \sim y
+\end{align*}
+says that all positions with label $a$ have the same data value. The successor relation can be defined using first-order logic in terms of order:
+\begin{align*}
+x = y+1 \quad \text{iff} \quad 	y < x \land \neg \exists z \ (y < z \land z < x).
+\end{align*}
+However, we will be mainly interested in the fragment of first-order logic that can only use two variables, and in this fragment the definition of successor in terms of order no longer works.
+
+The idea of representing words with relational structures, and then using logic to express their properties, dates back to the famous result of B\"uchi, Elgot and Trakhtenbrot\footnote{See~\cite{DBLP:reference/hfl/Thomas97} for an introduction to the topic.}, which says that -- without data values -- every formula of first-order logic (even monadic second-order logic) can be translated into an equivalent finite automaton. Does this work for data words? As shown in Exercise~\ref{ex:fo-data-word}, the satisfiability for first-order logic over data words is undecidable, and the proof only needs three variables. The rest of this section is devoted to showing that the two variable fragment is decidable.
+
+\begin{theorem}\label{thm:fo2} The following problem is decidable. 
+	\decisionproblem{
+	A sentence of first-order logic which uses two variables and relations 
+	\begin{align*}
+		x < y \quad x = y +1 \quad x \sim y \quad a(x).
+	\end{align*}
+}{
+	Is the sentence true in some finite word?
+}
+\end{theorem}
+
+Before proving the theorem, let us give some more examples which illustrate the power of the two variable fragment. The sentence
+\begin{align*}
+	\forall x \ \forall y\ x \neq y \Rightarrow x \not \sim y
+\end{align*}
+ says that all positions have different data values. This property is not recognised by any nondeterministic register automaton. Another example is 
+ \begin{align*}
+	 \forall x \ a(x) \Rightarrow \exists y \ (y < x \land y \sim x),
+ \end{align*}
+ which says that no class string begins with $a$. This property is not recognised by any alternating one register automaton without guessing, which can be proved using the same reasoning as in Exercise~\ref{ex:alternating-reversal}.
+
+ An important feature of two variable first-order logic is reusing variables. 
+This allows us to say that there are at least four positions, without assigning four variable names to those positions:
+\begin{align*}
+	\exists x\ \overbrace{(\exists y \ y > x \land \underbrace{(\exists x \ x > y \land (\exists y \ y > x)}_{\text{there are at least two positions after $y$}})}^{\text{there are at least three positions after $x$}}.
+\end{align*}
+
+
+To prove Theorem~\ref{thm:fo2}, we will show that for every formula of two variable first-order logic there is a data automaton which accepts the same data words. Before we do this, we show how data automata can deal with the successor relation.
+
+\subsection*{Recognising equality with successors}
+In two variable first-order logic, we have a successor predicate, which can be used to compare data values in consecutive positions, e.g.~by saying ``every two consecutive positions have different data values''. On the way to our final result, which is a translation from two variable first-order logic into data automata, we first show how data automata can compare data values in consecutive positions. This is done in the following lemma.
+\begin{lemma}\label{lem:bjo-schwe}
+	There is a data automaton which accepts a data word over labels
+\mypic{105}
+if and only if it satisfies conditions (a) and (b) described below:
+\mypic{26}
+ \end{lemma}
+\begin{proof} For a data word over the alphabet from the statement of the lemma, define a \emph{consistent colouring} to be a colouring of the semicircles with two colours as in the following picture:\mypic{25}
+
+To prove the lemma, we show that there is a consistent colouring if and only if the word belongs to the language from the statement of the lemma, and furthermore a data automaton can check if there is a consistent colouring. 
+\begin{itemize} 
+\item We first show that data automaton can check if there is a consistent colouring.
+	The transducer chooses the colours, and checks if condition (1) in the definition of a consistent colouring is satisfied. Conditions (2) and (3) are checked by looking at the class strings, as explained in the following picture: \mypic{45}
+\item We now show that every data word in the language admits a consistent colouring.
+Consider a data word in the language. We need to colour each grey circle (i.e.~pairs of consecutive positions with different data values) with a single colour so that condition (2) is satisfied. We say that two circles are in conflict if the left half of the left circle has the same data value as the right half of the right circle, and this data value does not appear in between, as in the following picture: \mypic{28}
+Condition (2) in the definition of consistency says that conflicting circles cannot have the same colour. If we view the conflict relation as a directed graph on circles, with arrows pointing from left to right, then this graph is a disjoint union of paths, i.e.~every circle has in-degree and out-degree at most one. Such a graph can be coloured with two colours so that edges have endpoints with different colours.
+\item Finally, we show that if a data word can be coloured consistently, then it is in the language.
+Suppose that a data word can be coloured consistently. We need to show that there is a circle connecting two consecutive positions if and only if these positions have different data values.
+
+For the left-to-right implication, consider a circle connecting $x$ and its successor. By condition (2), the next position in the class of $x$ has its left side coloured with a different colour, and hence the next position in the class of $x$ cannot be the successor of $x$, because all circles are monochromatic by condition (1).
+
+We prove the right-to-left implication by doing an inductive left-to-right pass. Consider consecutive positions $x$ and $x+1$ with different data values. To prove that they are connected by a circle, by condition (1) it suffices to prove that the left side of $x+1$ has a semicircle. If $x+1$ is the first position in its class, then it has a semicircle on its left by condition (3), otherwise $x+1$ has a previous position in its class and then we use the induction assumption.
+\end{itemize}
+\end{proof}
+
+The ideas in the above proof can be extended to show that data automata are more expressive than nondeterministic register automata, see Exercise~\ref{ex:data-generalise-register}.
+
+\subsection*{Two-variable logic}
+We now use the results about successor to complete the proof of Theorem~\ref{thm:fo2}, about satisfiability for two variable first-order logic over data words. We show that every formula can be converted into a data automaton that accepts the same data words. We begin by converting the formula into a normal form.
+
+\paragraph*{Normal form.} We say that a formula of two-variable logic is in \emph{normal form}\footnote{The normalisation process in Lemma~\ref{lem:scott-normal} is related to what is known as Scott Normal Form for two variable first-order logic, see~\cite{scott_decision_1962}.} if every subformula with one free variable is a Boolean combination of formulas of the form
+\begin{align*}
+	\varphi(x) = \exists y\ (\alpha \land \beta \land 
+	\underbrace{\psi(y)}_{\text{normal form}})
+\end{align*}
+where $\alpha$ and $\beta$ are quantifier-free constraints of the following kinds:
+\begin{eqnarray}
+	\label{eq:alpha-normalform}
+	\alpha &\quad \in \quad& \set{y < x-1, \ \ y=x-1, \ \ y=x, \ \ y=x+1, \ \ y> x+1}\\
+	\label{eq:beta-normalform}
+	\beta & \quad \in \quad & \set{x \sim y, \ \ x \not \sim y}.
+\end{eqnarray}
+\begin{lemma}\label{lem:scott-normal}
+	Every formula is equivalent to one in normal form.
+\end{lemma}
+\begin{proof}
+	Induction on formula size. Since formulas in normal form are closed under Boolean combinations, it is enough to show how to normalise a formula that uses a quantifier:
+		 \begin{align*}
+		\varphi(x) = \exists y\ \psi(x,y).
+		\end{align*}
+		For every pair of positions $x,y$ in a data word, there is a unique choice of $\alpha$ as in~\eqref{eq:alpha-normalform} which is true for the pair. Likewise, there is a unique $\beta$ as in~\eqref{eq:beta-normalform} which is true for the pair. Therefore, $\varphi(x)$ is equivalent to 
+		\begin{align*}
+			 \bigvee_{\alpha,\beta} \exists y\ \alpha \land \beta \land \psi(x,y),
+			\end{align*}
+			where $\alpha$ and $\beta$ range over formulas as in~\eqref{eq:alpha-normalform} and~\eqref{eq:beta-normalform}. 
+			To finish the proof of the lemma, it is enough to show that for every fixed $\alpha, \beta$ the formula 
+			\begin{align*}
+				\exists y\ \alpha \land \beta \land \psi(x,y)
+			\end{align*}
+is equivalent to one in normal form. 
+			Like any formula with two variables, the formula $\psi(x,y)$ is a Boolean combination of formulas which are either binary relations from the vocabulary (e.g.~$x \sim y$ or $x < y$), or have one free variable. Each binary relation is either implied by or contradictory with a given choice of $\alpha \land \beta$. Therefore, once we have fixed $\alpha$ and $\beta$, each of the binary relations in the Boolean combination constituting $\psi(x,y)$ can be replaced by either true or false, leading to a Boolean combination of formulas with one free variable. The formulas with one free variable can be transformed into normal form using the induction assumption. 
+\end{proof}
+
+ 
+\paragraph*{From a formula to a data automaton.} To complete the proof of Theorem~\ref{thm:fo2}, we convert every normal form sentence $\varphi$ into an equivalent data automaton. The idea is that the data automaton guesses, for each subformula with one free variable, what positions satisfy it, and then checks in parallel, for each subformula, if its guessed positions are consistent with those of its immediate subformulas. Let $\Sigma$ be the labels used in $\varphi$ and let $\Gamma$ be the set of subformulas of $\varphi$ that have exactly one free variable. 
+For a data word $w$ with labels $\Sigma$ -- i.e.~for a potential model of $\varphi$ -- define its \emph{annotation} $w^\varphi$ to be the data word with labels $\Sigma \times \powerset \Gamma$ that is obtained from $w$ by extending the label of each position with the set of formulas from $\Gamma$ that are satisfied when the unique free variable is set to that position. 
+
+\begin{myexample}
+Consider the formula
+\begin{align*}
+	\varphi = \forall x \ \underbrace{\overbrace{\exists y\ y = x+1 \land x \sim y \land a(y)}^{\phi_2(x)} \lor \overbrace{\exists y\ y = x-1 \land x \not\sim y \land b(y)}^{\phi_3(x)}
+	}_{\phi_1(x)}.
+\end{align*}
+The set $\Gamma$ is 
+\begin{align*}
+	\set{\phi_1(x),\phi_2(x),\phi_3(x), a(y), b(y)}.
+\end{align*}
+Although each formula in $\Gamma$ has one free variable, this free variable is sometimes $x$ and sometimes $y$. Here is an example of annotation for $\varphi$: \mypic{106}
+\end{myexample}
+
+\begin{lemma}\label{lem:fo2-to-data-automaton}
+	The following language is recognised by a data automaton
+	\begin{align*}
+		\set{w^\varphi : w \text{ is a data word with labels $\Sigma$}}.
+	\end{align*}
+\end{lemma}
+
+Before proving the above lemma, let us use it to complete the proof of Theorem~\ref{thm:fo2}. Every sentence $\varphi$ of two variable logic is a positive Boolean combination of quantified formulas
+\begin{align*}
+	 \exists x\ \phi(y) \qquad \text{or} \qquad \forall x \ \phi(x).
+\end{align*}
+Such a quantified formula is true in $w$ if and only if the annotation has $\phi(y)$ in the label of some (respectively, every) position. This can be checked by a data automaton running on the annotation $w^\varphi$, without even looking at the data values. Since languages recognised by data automata are closed under positive Boolean combinations, it follows from Lemma~\ref{lem:fo2-to-data-automaton} that there is a data automaton which recognises annotations of data words that satisfy $\varphi$. If the data automaton is only given $w$ and not its annotation $w^\varphi$, it can use nondeterminism of the transducer to guess the annotation, and therefore the language of $\varphi$ is also recognised by a data automaton. Together with the decidability of emptiness for data automata, we get Theorem~\ref{thm:fo2}. It remains to prove the lemma.
+
+\begin{proof}[Proof of Lemma~\ref{lem:fo2-to-data-automaton}] Define an \emph{annotation candidate} to be a data word with labels in $\Sigma \times \powerset \Gamma$. We say that an annotation candidate is correct for a subformula $\psi \in \Gamma$ if $\psi$ belongs to the label of exactly those positions which satisfy $\psi$. By definition, $w^\varphi$ is the unique annotation candidate which is correct for all subformulas and projects to $w$ if the annotation is ignored. To prove the lemma, we will show that for every $\psi$ there is a data automaton $\Aa_\psi$ which recognises the following property of annotation candidates:
+	\begin{itemize}
+		\item[(*)] If the input annotation candidate is correct for all proper subformulas of $\psi$, then $\Aa_\psi$ accepts if and only if the input is also correct for $\psi$. 
+	\end{itemize}
+	In (*), there are no requirements for the behaviour of $\Aa_\psi$ on annotation candidates that are not correct for proper subformulas of $\psi$. An annotation candidate is of the form $w^\varphi$ if and only if it is accepted by all automata $\Aa_\psi$, with $\psi$ ranging over subformulas with one free variable. Since languages recognised by data automata are closed under intersection, the lemma will follow once we construct the automata $\Aa_\psi$. 
+
+	 If $\psi$ is a conjunction $\psi_1 \land \psi_2$, then $\Aa_\psi$ simply checks if $\psi$ is used in the labels of exactly those positions that have both $\psi_1$ and $\psi_2$ in their labels. The same idea works for $\lor$ and $\neg$, while formulas $a(x)$ are checked by comparing the annotation with the label in the underlying data word. The interesting case is when $\psi$ is a quantified formula
+	\begin{align*}
+		\psi(x) = \exists y\ \alpha \land \beta \land 
+		\phi(y).
+	\end{align*}
+where $\alpha$ and $\beta$ are as in the definition of normal form. Without loss of generality we assume that the quantifier is existential, since the formulas can use negation. 
+
+If $\beta$ is $x \sim y$, then $\psi(x)$ corresponds to a regular property of the class strings, which is checked by the class condition. To know which positions in the class string are consecutive in the input word (i.e.~are not separated by positions from outside the class), we use the labelling from Lemma~\ref{lem:bjo-schwe}. If $\alpha$ says that $y$ is the successor or predecessor of $x$, then we can also use Lemma~\ref{lem:bjo-schwe} to check if the input word is correct for $\psi$.
+
+The remaining case is when $\beta$ is $x \not \sim y$ and $\alpha$ is one of $y < x-1$ or $y > x+1$. By symmetry, we assume that $\alpha$ is $y < x-1$. In words, $\psi(x)$ says that there exists a position $y < x-1$ which has a different data value than $x$ and $\phi(y)$ in its label. The general idea is that there are two best candidates for this position $y$, namely $y_1$ and $y_2$ as described in the following picture:
+ \mypic{29} 
+The positions $y_1$ and $y_2$ might be undefined, e.g.~$y_1$ is undefined if no position has $\phi$ in its label, and $y_2$ is undefined if at most one data value is used for positions with $\phi$ in their label. A short analysis reveals that the label $\psi$ should be found in the label of positions $x$ which satisfy:
+\begin{align*}
+	x \not \sim y_1 \land y_1 < x-1 \qquad \lor \qquad x \sim y_1 \land y_2 < x-1.
+\end{align*}
+The positions $x$ satisfying the above criteria can be identified using a finite automaton, assuming that the positions $y_1$ and $y_2$, their successors, are marked. These positions can be guessed and checked by a data automaton, with special colours used to mark the classes of $y_1$ and $y_2$.
+\end{proof}
+
+
+\exercisepart
+
+
+\mikexercise{Let $k \in \set{0,1,\ldots}$. \label{ex:distance-k} Show that there is a data automaton which recognises the set of data words where each position $x$ is labelled by the set of those $i \in \set{0,1,\ldots,k}$ such that $x$ and $x+i$ have the same data value.}{Languages recognised by data automata are closed under inverse images of the following operations on data words: ``remove the first position'' and ``keep only positions divisible by $k$''. Therefore, we can apply Lemma~\ref{lem:bjo-schwe} to get the desired result.
+}
+\mikexercise{\label{ex:alur-class} Recall the notion of class string in the definition of a data automaton, where the positions from outside the class are erased, as in this picture:
+\mypic{36}
+ Consider an alternative definition of class string, where the positions from outside are replaced by question marks, like this: \mypic{38} Show that data automata defined with this alternative notion of class string have the same expressive power as the original model of data automata\footnote{This exercise is based on~\cite[Theorem 2]{Alur2009}.}.}{Let us use the name \emph{enriched data automaton} for the model from this exercise, and the name \emph{standard data automaton} for the original model. To prove the exercise, we introduce an intermediate model, called a \emph{semi-enriched data automaton}. In semi-enriched model, there is some $k$ such that only the following information is stored about each block of question marks: the exact length if the block has length $\le k$, and the remainder modulo $k$ if it the block has length $\ge k$. It is not difficult to see that the enriched and semi-enriched models have the same expressive power. To show that the semi-enriched model has the same expressive power as the standard one, we use Exercise~\ref{ex:distance-k} and a labelling of every position by its offset from the beginning modulo $k$.}
+
+\mikexercise{\label{ex:class-automata}In the spirit of the previous exercise, consider yet another definition of class string, where the positions from outside the class are coloured red, like this: \mypic{37} Show that data automata defined with this alternative definition are strictly more expressive than the original model of data automata\footnote{This model is called \emph{class automata}, and is studied in~\cite{DBLP:journals/corr/abs-1201-0597,DBLP:conf/fsttcs/BaranyBFP12}. 
+}.}{With the more powerful model from this exercise, one can recognise computations of counter machines as used in Exercise~\ref{ex:one-register-undec}. This would contradict Theorem~\ref{thm:data-emptiness} that emptiness is decidable for data automata.}
+
+
+\mikexercise{\label{ex:chosen-data-automata}
+Consider a sequence of data values where every position is labelled by a subset of \{cut, chosen\}. We say a position is chosen if its label contains ``chosen'' and we say that two positions $x < y$ are in \emph{the same interval} if ``cut'' does not appear in the labels of positions $x+1,\ldots,y$. 
+Show that there is a data automaton recognising the data words which satisfy the following two conditions:
+\begin{itemize}
+	\item all chosen positions in the same interval have the same data value; and
+	\item there is no non-chosen position which has the same data value as some chosen position in the same interval.
+\end{itemize}
+}{
+A position is called \emph{opening} if it is the first chosen position in its interval, and a \emph{closing} position if it is the last chosen position in its interval. The following lemma characterises the language in the statement of the exercise in terms of a condition that can clearly be recognised by a data automaton. Therefore, to solve the exercise it remains to prove the lemma.
+\begin{lemma}
+	A data word belongs to the language in the exercise if and only if:
+\begin{enumerate}
+	\item every class string satisfies the following expression:
+\begin{align*}
+	\big((\underbrace{\mbox{open}}_{\text{opening but not closing}}\ \overbrace{\mbox{middle}^*}^{\text{remaining cases}}\ \underbrace{\mbox{close})}_{\text{closing but not opening}} \ + \ \underbrace{\mbox{clopen}}_{\text{opening and closing}}\ + \ \underbrace{\bot }_{\text{not chosen}}\big)^*
+\end{align*}	
+\item one can colour the intervals with four colours so that:
+\begin{enumerate}
+\item for every opening position, the previous position with the same data value does not exist or is in an interval with a different colour;
+\item for every closing position, the next position with the same data value does not exist or is in an interval with a different colour.
+\end{enumerate}
+\end{enumerate}
+\end{lemma}
+\begin{proof}
+We begin with the bottom-up implication. Suppose that conditions 1, 2 hold. We show membership in the language:
+\begin{itemize}
+	\item \emph{All chosen positions in the same interval have the same data value.} By induction on the left-to-right order on positions, we prove that every chosen position $x$ has the same data value as all earlier chosen positions in its interval. If $x$ is an opening position, then this statement vacuously true, since there are no earlier chosen positions in the same interval. Assume then that $x$ is chosen but not opening. By condition 1, $x$ cannot be the first position in its class. Let $y$ be the previous position in the class of $x$. We need to show that $y$ is in the same interval as $x$. By condition 1, $y$ is a chosen but not closing position. Therefore, there must be a closing position in the interval of $y$, call it $z$, which is strictly after $y$. We cannot have $y < z < x$ since then we could apply the induction assumption to $z$ and show that it is in the same class as $x$, contradicting the choice of $y$ as the previous position in the class. Therefore, $z \ge x$, and thus $x$ is in the same interval as $y$. 
+	\item \emph{There is no non-chosen position which has the same data value as some chosen position in the same interval.} Consider an interval. If the interval has no chosen position, the condition is vacuously true. Otherwise, let $d$ be the data value in the chosen positions, which is unique by the previous item. There cannot be any non-chosen position in the interval with data value $d$ that is before the opening position, since otherwise we would get a contradiction with 2a). A symmetric argument holds for non-chosen positions after the closing position. Between the opening and closing position there cannot be non-chosen positions by condition 1.
+\end{itemize}
+We now show that top-down implication. Condition 1 is easy to see, so we focus on condition 2. We say that two intervals $I$ and $J$ are in conflict if $I$ contains the class predecessor (i.e.~previous position in the same class) of the opening position in $J$. Condition 2a) says that conflicting intervals have different colours. The key observation is that the conflict relation is a forest. This is because every interval has at most one opening position, and every opening position has at most one class predecessor. Every forest can be coloured with two colours so that no edge is monochromatic, which shows that two colours are enough to satisfy 2a). A symmetric argument shows that two colours are enough to satisfy 2b), and therefore the product colouring with four colours will satisfy both 2a) and 2b). 
+\end{proof}
+}
+
+
+\mikexercise{\label{ex:data-generalise-register}Show that every language recognised by a nondeterministic register automaton is also recognised by a data automaton\footnote{This exercise is based on~\cite[Theorem 4.1]{DBLP:journals/tcs/BjorklundS10}.}. (Hint: use the previous exercise.)}{
+For the sake of this exercise, we consider a model of register automaton where undefined registers are not allowed. The initial configuration has the initial state and the first data value in all the registers. It is not difficult to see that this model is equivalent to the original model of register automata. 
+
+Take some nondeterministic register automaton where undefined registers are not allowed, in the sense described above. Without loss of generality, we assume that it is weakly guessing in the sense of Exercise~\ref{ex:weakly-guessing}.
+Consider a run of this automaton.
+
+
+	For a register $r$, an \emph{$r$-interval} is a maximal connected set of positions in the input word such that every transition in the interval has the same contents of $r$ in its source configuration. Define the \emph{$r$-chosen} data value of an $r$-interval, which may be undefined, to be the contents of register $r$ that is used throughout the interval (in the source configurations). Call a position \emph{$r$-chosen} if the input data value is equal to the $r$-chosen data value of the containing $r$-interval. Here is a picture of a run for an automaton with registers \{A, B, C\} together with the corresponding intervals and their chosen positions.
+	\mypic{33}
+	In the picture above, the chosen positions are marked by black circles and the non-chosen positions are marked by white circles. To describe the run, the data automaton uses nondeterminism to guess this part of the above picture: \mypic{34}
+	Using the solution to Exercise~\ref{ex:chosen-data-automata}, the data automaton checks for each register $r$ that for every $r$-interval, all $r$-chosen positions have the same data value, and all non-$r$-chosen positions have a different data value than the $r$-chosen ones. Since the automaton is weakly guessing, every $r$-interval contains some $r$-chosen position. The above picture is sufficient to reconstruct the entire run including the register contents, in a way which can be checked by the finite states of the transducer in the data automaton.
+}
+
+
+\mikexercise{\label{ex:class-successor} Extend two variable logic, as considered in Theorem~\ref{thm:fo2}, with 
+a binary relation $s(x,y)$ called \emph{class successor} which holds if $y$ is the least position $y > x$ that has the same value as $x$. Show that the resulting logic is still decidable. }{
+	Immediate.
+}
+\mikexercise{Show that satisfiability for the logic in Exercise~\ref{ex:class-successor} is at least as hard as emptiness for data automata.}{If the run of the transducer is given explicitly in the data word, and every position is labelled by the state in the run of an automaton recognising the class language, then the correctness of such a labelling can be checked by a formula of the logic.}
+
+\mikexercise{\label{ex:fo2-order}Show that satisfiability for two variable logic becomes undecidable if the data values are ordered, and there is a predicate $x \preceq y$ for testing the order on these data values.} {}
+
+
+\mikexercise{\label{ex:alt-moda}Consider the following alternating automaton based on the modal logic\footnote{Similar automata models are considered in~\cite{manuel_walking_2016} and~\cite{colcombet_textdollarmutextdollar-calculus_2014}}.
+ The automaton has a set of states $Q$, an initial state $q_0$, a partition of states into universal and existential, and a finite transition relation
+ \begin{align*}
+ \delta \subseteq Q \times \text{(formulas of two variable logic with free variables $x,y$)} \times Q.
+\end{align*}
+The automaton accepts a data word $w \in (\Sigma \times \atoms)^*$ if player $\exists$ has a winning strategy in the following game played by players $\exists$ and $\forall$. The game begins in the first position and the initial state. If the game is in position $x$ and state $q$, then the player who owns $q$ chooses a transition $(q,\varphi(x,y),p) \in \delta$ and a position $y$ such that $\varphi(x,y)$ holds. If there is no such transition or position, the player who owns $q$ loses immediately. Otherwise, the game proceeds to state $p$ and position $y$. If the game lasts forever, player $\forall$ wins. Show that such an automaton can recognise the language
+\begin{align*}
+ \set{a_1 \cdots a_n a_1 \cdots a_n : \mbox{$a_1,\ldots,a_n$ are distinct data values}}.
+\end{align*}\ 
+ } {The automaton checks that the following conditions are all satisfied:
+ \begin{enumerate}
+ \item Every data value appears exactly twice. 
+ 	\item Let us use the name \emph{middle} for the second appearance of the data value in the first position. Every data value before the middle appears also after or at the middle. Every data value after the middle appears also before the middle.
+ 	\item Regardless of the choices by player $\forall$, the following procedure is bound to terminate by reaching the last position in step (c).
+ 	\begin{enumerate}
+ 	\item Player $\forall$ chooses a position $x$ before the middle.
+ 	\item Let $x'$ be the position after or at the middle with the same data value as $x$. 
+ 	\item If $x$ is the last position, then terminate. Otherwise, player $\forall$ chooses some position $y > x'$.
+ 	\item Let $x$ be the position before the middle with the same data value as~$y$. 
+ 	\item Goto (b)
+ 	\end{enumerate}
+ \end{enumerate}
+ It is not difficult to see that the conditions above are satisfied by every word from the language. For the converse, we prove that if a word does not belong to the language, then items 1 and 2 imply that 3 does not hold. Suppose that 1 and 2 hold, which means that the word is of the form
+ \begin{align*}
+ a_1 \cdots a_n a_{\pi(1)} \cdots a_{\pi(n)}.
+\end{align*}
+for some distinct data values $a_1,\ldots,a_n$ and some permutation $\pi$ of $\set{1,\ldots,n}$. In particular, there must be some $i < j$ such that $\pi(i) > \pi(j)$. In step (a), player $\forall$ chooses $a_j$ before the middle, and in step (b) player $\forall$ chooses $a_i$ after the middle.}
+
+
+\mikexercise{Show that the automaton model in Exercise~\ref{ex:alt-moda} has undecidable emptiness\footnote{Undecidability is based on~\cite[Proposition 9]{manuel_walking_2016}.}. Show that if infinite plays are won by $\exists$ then emptiness becomes decidable\footnote{Decidability is based on~\cite[Theorem 3.8]{colcombet_textdollarmutextdollar-calculus_2014}.}.}
+{For undecidability, we could extend the idea from Exercise~\ref{ex:alt-moda} to recognise use the encoding of Turing machine computations from Theorem~\ref{thm:register-undecidable-universality}. For the decidability, we use a data automaton. The data automaton guesses for each position what are the states from which this position would be accepted, i.e.~from which states would player $\exists$ win if the game started in that position. Then only a local consistency check is needed, in the spirit of Lemma~\ref{lem:fo2-to-data-automaton}.}
+
+

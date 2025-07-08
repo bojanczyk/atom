@@ -1,0 +1,148 @@
+\newcommand{\exercises}{
+
+\bigskip
+
+{\noindent \large \bf Exercises}
+\medskip
+
+}
+\newcommand{\setexpr}[3]{\set{#1 : \text{ for }#2 \in \atoms \text{ such that }#3}}
+\newcommand{\setexprtrue}[2]{\set{#1 : \text{ for }#2 \in \atoms}}
+
+\newcommand{\aequiv}[1]{\stackrel{#1}\sim}
+\newcommand{\locations}{\mathsf{Loc}}
+
+\newcommand{\bibnotes}[1]{
+\bigskip
+{\footnotesize
+\noindent {\bf Bibliographic notes for Section~\arabic{section}. }
+#1}
+}
+\renewcommand{\ExerciseHeader}{\noindent \textbf{\ExerciseName~\ExerciseHeaderNB\ExerciseHeaderTitle
+\ExerciseHeaderOrigin. }}
+
+\renewcommand{\AnswerHeader}{\noindent {\textbf{Solution to \ExerciseName\ \ExerciseHeaderNB.\\}}}
+
+\newcommand{\mikexercise}[2]{
+\begin{Exercise} 
+	#1 
+	% #2
+\end{Exercise}
+
+
+\medskip
+\begin{Answer}
+	#2
+\end{Answer}
+}
+
+
+\newcommand{\pv}[1]{{\mathtt{#1}}}
+\newcommand{\mypic}[1]{
+\begin{center}
+	\includegraphics[page=#1,scale=0.5]{pics/register-automata}
+\end{center}
+}
+
+%\newcommand{\notin}{\not \in}
+
+\newcommand{\sets}{\mathsf{set}}
+\newcommand{\setbuil}{\mathsf{setbuil}}
+\newcommand{\defset}{\mathsf{hdef}}
+\newcommand{\hofset}{\mathsf{hof}}
+
+\newcommand{\deflift}{{\mathsf{def}}}
+\newcommand{\tti}{{\mathtt I}}
+\newcommand{\ttj}{{\mathtt J}}
+\newcommand{\qatom}{(\mathbb Q, <)}
+\newcommand{\sem}[1]{[\![#1]\!]}
+\newcommand{\fraisse}{Fra\"iss\'e } 
+
+\newcommand{\saut}[1]{\mathrm{G}_{#1}}
+\newcommand{\aut}{\mathrm{G}}
+\newcommand{\secfm}{\bfseries{\scshape{fm\ }}}
+%\newcommand{\fm}{\textsc{fm}\ }
+\newcommand{\tneq}{\(\neq\)}
+\newcommand{\tin}{\(\in\)}
+\newcommand{\tnotin}{\(\notin\)}
+\newcommand{\tcup}{\(\cup\)}
+\newcommand{\temptyset}{\(\emptyset\)}
+\newcommand{\tcap}{\(\cap\)}
+\newcommand{\ttimes}{\(\times\)}
+
+\newcommand{\structclass}{\mathscr A}
+\newcommand{\structa}{\mathfrak A}
+\newcommand{\structb}{\mathfrak B}
+\newcommand{\structc}{\mathfrak C}
+\newcommand{\structh}{\mathfrak H}
+
+\newcommand{\atoms}{\mathbb A}
+\newcommand{\universe}[1]{\mathrm{universe(#1)}}
+\newcommand{\Fff}{\mathscr F}
+\newcommand{\limmodel}{\underline \structa}
+\newcommand{\arity}{\mathrm{arity}}
+
+\newcommand{\atoma}{{a}}
+\newcommand{\atomb}{{b}}
+\newcommand{\atomc}{{c}}
+\newcommand{\atomd}{{d}}
+
+\newcommand{\atomq}{{q}}
+\newcommand{\atomzero}{{\underline 0}}
+\newcommand{\atomone}{{\underline 1}}
+\newcommand{\atomtwo}{{\underline 2}}
+\newcommand{\atomthree}{{\underline 3}}
+
+ 
+\newcommand{\atomseta}{{A}}
+\newcommand{\atomsetb}{{B}}
+\newcommand{\atomsetc}{{C}}
+\newcommand{\atomsets}{{S}}
+\newcommand{\atomsett}{{T}}
+
+\newcommand{\Qfin}{Q_{\mathrm{fin}}}
+\newcommand{\Afin}{A_{\mathrm{fin}}}
+
+\newcommand{\bind}{\nabla}
+\newcommand{\powerset}{{\mathsf P}}
+\newcommand{\decproblem}[3]
+{\begin{center}
+\fbox{
+\begin{tabular}{rl}
+\textsc{Problem}: & #1 \\
+\textsc{Input}: & #2\\
+\textsc{Output}: & #3
+\end{tabular}
+}
+\end{center}}
+
+\newcounter{openquestioncounter}
+\newenvironment{openquestion}{
+\medskip
+
+\refstepcounter{openquestioncounter}
+\smallskip\noindent{\textbf{{Open question \arabic{openquestioncounter}. }}}}{\hfill $\Box$
+\medskip 
+}
+
+% \newcounter{ourexamplecounter}
+\newenvironment{ourexample}{
+\medskip
+
+\refstepcounter{ourexamplecounter}
+\smallskip\noindent{\textbf{{Example \arabic{ourexamplecounter}. }}}}{\hfill $\Box$
+\medskip
+}
+
+
+
+\newcounter{exercisecounter}
+\newenvironment{exercise}{
+\medskip
+
+\refstepcounter{exercisecounter}
+\smallskip\noindent{\textbf{{Exercise \arabic{exercisecounter}. }}}}{\hfill $\Box$
+\medskip 
+}
+
+\newcommand{\eqdef}{\stackrel {\mathrm{def}} = }

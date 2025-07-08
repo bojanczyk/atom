@@ -1,0 +1,242 @@
+\section{Alternating register automata}
+\label{sec:alternating-automata}
+In a nondeterministic automaton, each transition is chosen nondeterministically in favour of acceptance, i.e.~for acceptance it suffices that there is at least one choice of transitions that gives an accepting run. An alternating automaton is a generalisation of a nondeterministic automaton, where the syntax specifies which locations choose transitions in favour of acceptance, and which locations choose transitions against acceptance. The main result of this section is that emptiness is decidable for a restricted version of alternating register automata\footnote{The main result of Section~\ref{sec:alternating-automata}, namely decidability of emptiness for alternating one-way register automata with one register, was first shown in~\cite{DBLP:journals/tocl/DemriL09}. A tree extension of the result can be found in~\cite{DBLP:journals/tocl/JurdzinskiL11}.}. 
+
+
+ 
+\paragraph*{Alternating register automata.}
+The syntax of an \emph{alternating register automaton} is defined the same way as for a nondeterministic register automaton, except that there is an additional partition of the locations into two parts, called \emph{existential} and \emph{universal}. 
+
+We define the semantics of the automaton using \emph{bags}\footnote{An alternative but equivalent semantics would use a game played by two players, called ``universal'' and ``existential''.}, where a bag is defined to be a set of states. Here is a picture of a bag:
+\mypic{65}
+	We write $P,Q$ for bags. Bags can be infinite, but for the automata that we will mainly be interested in -- non-guessing ones -- only finite bags will play a role. If $a$ is an input letter (consisting of a label and a data value) and $P,Q$ are bags then we write
+	\begin{align*}
+		P \stackrel a \to Q	
+	\end{align*}
+	 if the following conditions hold: 
+\begin{itemize} 
+	\item for every state $p \in P$ with an existential location, the bag $Q$ contains some state $q$ such that $(p,a,q)$ is a transition; and
+	\item for every state $p \in P$ with an universal location, the bag $Q$ contains all states $q$ such that $(p,a,q)$ is a transition. 
+\end{itemize} 
+A data word $a_1 \cdots a_n$ is accepted by an alternating automaton if there exists a run, which is defined to be a sequence of bags
+\begin{align*}
+\overbrace{\set{\text{initial state}}}^{\text{initial bag}}= Q_0 \stackrel {a_1} \to Q_1 \stackrel {a_2} \to \cdots \stackrel {a_{n}} \to Q_n 
+\end{align*}
+where the last bag is accepting, in the sense that all of its states use accepting locations. 
+ We define $\to$ to be the union of all relations $\stackrel a \to$, ranging over all letters $a$. In terms of this notation, an alternating automaton is nonempty if and only if some accepting bag is reachable from the initial bag via a finite number of steps using the relation $\to$.
+
+Languages recognised by alternating register automata are closed under complementation, essentially by design, see Exercise~\ref{ex:alternating-complement}.
+
+
+
+
+\paragraph*{An emptiness algorithm using well quasi-orders.} Nondeterministic register automata are the special case of alternating register automata where all states are existential.
+By Exercise~\ref{ex:alternating-complement}, the emptiness and universality problems for alternating register automata are essentially the same problem, which is undecidable by Theorem~\ref{thm:register-undecidable-universality}. 
+
+We now identify a restriction on alternating automata which makes emptiness (or universality) decidable. 
+We consider alternating automata that are \emph{non-guessing}, see Exercise~\ref{ex:guessing}, which means that for every transition $(p,a,q)$, each atom that appears in $q$ must appear in either $p$ or $a$. 
+By the remarks in Exercise~\ref{ex:one-register-undec}, universality is undecidable for non-guessing nondeterministic automata with two registers, or even guessing nondeterministic automata with one register. Therefore, emptiness is undecidable for alternating automata that are either non-guessing with two registers, or guessing with one register. Anything below that is decidable:
+ 
+ \begin{theorem}\label{thm:one-register-alternating}
+ 	Emptiness is decidable for alternating non-guessing automata with one register.
+ \end{theorem}
+ 
+ The rest of this section is devoted to proving the above theorem. Nonemptiness is semi-decidable, i.e.~there is an algorithm (guess a word and run the automaton on it) which terminates if and only if the input automaton is nonempty. Therefore, in order to prove decidability it suffices to show that emptiness is also semi-decidable. The rest of this section is devoted to designing an algorithm which inputs an automaton (alternating, non-guessing, and with one register) and terminates if and only if the input automaton is empty. In other words, we are searching for a finite and computable witness of emptiness. 
+
+ Fix an alternating non-guessing automata with one register. Because the automaton is non-guessing, only finite bags can be reached from the initial state. Therefore, from now on, all bags are assumed to be finite.
+
+ 
+ As in the definition of semantic equivariance from Section~\ref{sec:register-automata}, permutations of the atoms can be applied to states and to bags of states. The following order on bags is the key to our proof: we write $P \le Q$ if there is some permutation of the atoms $\pi$ such that $P \subseteq \pi(Q)$. Here is a picture:
+\mypic{13}
+ The relation $\le$ is easily seen to be a quasi-ordering, i.e.~it is transitive and reflexive, but not necessarily anti-symmetric. 
+ Call a set of bags \emph{upward closed} if whenever it contains a bag $P$, and $P \le Q$, then it also contains $Q$. The \emph{upward closure} of a set of bags is the least upward closed set of bags that contains it. 
+ To show that emptiness is semi-decidable, we will use upward closed invariants as described in the following lemma.
+ \begin{lemma}\label{lem:upward-closed-invariant}
+An alternating non-guessing automata with one register is empty if and only if there is an upward closed invariant, i.e.~a family of bags $\Qq$ which:
+\begin{enumerate}
+	\item is upward closed; and
+	\item \label{it:no-accepting-bags} contains no accepting bags; and
+	\item contains the initial bag; and
+	\item is closed under transitions, i.e.~$P \to Q$ and $P \in \Qq$ imply $Q \in \Qq$.
+\end{enumerate}
+\end{lemma}
+\begin{proof}
+	Clearly, if there is an upward closed invariant, then the automaton is empty. For the converse implication, suppose that the automaton is empty, and define $\Qq$ to be the bags that cannot reach an accepting bag. By definition, $\Qq$ contains no accepting bags, and by assumption on emptiness, $\Qq$ contains the initial bag. Also, $\Qq$ is closed under transitions. To prove the lemma, it remains to show that $\Qq$ is upward closed. This will follow from the following property of the transition relation. 
+	
+	\begin{claim}\label{lem:wts} The order $\le$ on bags is compatible with the transition relation~$\to$ in following sense: for every transition $P \to Q$ and every $P' \le P$ there exists some $Q' \le Q$ with $P' \to Q'$.
+	\end{claim}
+	\begin{proof}
+	Here is the picture of compatibility: \mypic{17}
+	Because $\to$ is closed under atom permutations, and also closed under making the first argument a smaller bag.
+	\end{proof}
+
+	Since the family of accepting bags is downward closed, a corollary of compatibility as in the above claim is that if a bag can reach an accepting bag, then the same is true for any smaller bag. The contrapositive is that if a bag belongs to $\Qq$, then the same is true for any bigger bag. 
+\end{proof}
+
+The general idea behind the semi-algorithm for emptiness is to search for upward closed invariants as in the above lemma. To represent these invariants in a finite way, we will use the following result. 
+\begin{lemma}\label{lem:invariant-finitely-generated}
+	Every upward closed invariant is the upward closure of some finite family of bags.
+\end{lemma}
+
+Before proving the above lemma, we use it to complete the proof of Theorem~\ref{thm:one-register-alternating}. This semi-algorithm for emptiness works as follows: searches through all finite families of bags, and terminate with success if there is a finite family whose upward closure is an upward closed invariant in the sense of Lemma~\ref{lem:upward-closed-invariant}. By Lemmas~\ref{lem:upward-closed-invariant} and~\ref{lem:invariant-finitely-generated}, this semi-algorithm terminates with success if and only if the automaton is empty. It remains to show how one can check, given a finite family of bags, if its upward closure is an upward closed invariant. The first condition, about upward closure, is vacuously satisfied. The second condition, about having no accepting bags, corresponds to checking that the finite family has no accepting bags because upward closure cannot add accepting bags. The third condition, about containing the initial bag, corresponds to checking if the finite family contains either the initial bag or the empty bag (which is the unique bag that is strictly smaller than the initial bag). Finally, we are left with checking if the upward closure is closed under transitions. By compatibility, see Claim~\ref{lem:wts}, the upward closure of a finite family $\Qq$ is closed under taking transitions if and only if for every bag $Q \in \Qq$ and every transition $Q \to P$, the target bag is in the upward closure of $\Qq$, which can easily be checked by enumerating all finitely many candidates for the transition $Q \to P$. Closure under transitions is illustrated in the following picture: \mypic{15} 
+The idea is that the orange area, i.e.~the upward closure of $\Qq_0$, is a trap in the sense that no transition can leave the orange area.
+
+It remains to prove Lemma~\ref{lem:invariant-finitely-generated}, which we do in the rest of this section. This is done using well quasi-orders. We say that a quasi-order is a \emph{well quasi-order} if it is well-founded (no infinite strictly decreasing chains) and has no infinite antichains. The technique of well quasi-orders\footnote{The well quasi-order technique was independently introduced in~\cite{DBLP:journals/iandc/AbdullaCJT00} and~\cite{DBLP:journals/tcs/FinkelS01}, and is currently known as the technique of \emph{well-structured transition systems}.}, as used in the following proof, is a common method of proving decidable properties for systems with infinitely many configurations.
+ 
+\begin{lemma}\label{lem:wqo-finite-basis}
+	In a well quasi-order, every upward closed set is the upward closure of a finite set.
+\end{lemma}
+\begin{proof}
+By well-foundedness, every upward closed set is the upward closure of its minimal elements. The minimal elements form an antichain, and hence there can only be finitely many of them (up to the equivalence where $x$ and $y$ are equivalent if $x \le y$ and $y \le x$).
+\end{proof}
+
+To prove Lemma~\ref{lem:invariant-finitely-generated}, and therefore also Theorem~\ref{thm:one-register-alternating}, it is enough to establish that the relation $\le$ on bags is a well quasi-order. 
+\begin{lemma}\label{lem:bag-is-wqo}
+	The relation $\le$ on bags is a well quasi-order.
+\end{lemma}
+\begin{proof} 
+It is clear that the relation is well-founded, since a strict decrease on bags implies a strict decrease in the cardinality (recall that we only consider finite bags). It remains to show that there is no infinite antichain. Define 
+	\begin{align*}
+		 	\xymatrix@C=2cm{
+			\text{bags} \ar[r]^<<<<<<<<<<<{\text{\small profile}} & 	\set{\text{true, false}}^{\text{ locations}} \times \Nat^{\text{ nonempty subsets of locations}}
+		}
+	\end{align*}
+	to be the function
+	which maps a bag to the information explained in the following picture:
+	\mypic{112}
+	The profile mapping reflects the order in the following sense 
+	\begin{align}\label{eq:profile-monotone}
+		\text{profile}(P) \le \text{profile}(Q) \quad \text{implies} \quad P \le Q,
+	\end{align}
+	where the order on profiles is coordinate-wise, with false $\le$ true (see Exercise~\ref{ex:right-order-on-profiles} for why the converse implication fails). Because the order is reflected, the profile mapping maps antichains of bags to antichains of profiles. Since there are no infinite anitichains of profiles by Exercise~\ref{ex:wqo-dixon}, it follows that there are no infinite antichains of bags.
+\end{proof}
+
+
+ 
+
+
+
+\paragraph*{The general technique.}
+Using the same proof, we obtain the following generalisation of Theorem~\ref{thm:one-register-alternating}.
+\begin{theorem}\label{thm:wts}
+The following problem is decidable.
+\decisionproblem{
+	\begin{itemize}
+		\item A directed graph where every node has finite outdegree;
+		\item A well quasi-order $\le$ on vertices which satisfies the following condition:
+	\mypic{114}
+		\item A source vertex plus a set of target vertices that is downward closed.
+	\end{itemize}
+	The input is represented by algorithms for: enumerating the vertices, testing membership in the target set, testing the well quasi-order, and computing the neighbour list of a given vertex.
+}
+{
+	Is there a path from the source to one of the targets?
+}
+\end{theorem}
+
+
+
+\paragraph*{A temporal logic for data words.} 
+One register alternating automata can be dressed up in the syntax of a temporal logic. The idea is to add one register to linear temporal logic {\sc ltl}. We do not give the detailed syntax and semantics, only some examples. We are extending {\sc ltl}, so we can write a formula 
+\begin{align*}
+ a \ \mathsf{until}\ b,
+\end{align*}
+which is true in a (data) word if there is some position with label $b$ such that all earlier positions have label $a$. Instead of $a,b$ we could have used previously defined formulas, and Boolean combinations are also allowed. There is also an operator $\mathsf{next}$ to access the next position. For example, the formula 
+\begin{align*}
+ \underbrace{(a \lor \neg a)}_{\top} \ \mathsf{until}\ (a \land \ \mathsf{next} \ a)
+\end{align*}
+says that there exist two consecutive positions with label $a$. We use $\mathsf{finally}\ \varphi$ as syntactic sugar for $\top\ \mathsf{until}\ \varphi$. If we only use the operators $\mathsf{until}$ and $\mathsf{next}$, then we have exactly the logic {\sc ltl}, which is insensitive to the data values. To access the data values, we can add an operator $\mathsf{store}$ which stores the current data value and a formula $\mathsf{same}$ which is true whenever the current value is equal to the stored one. For example, the formula
+\begin{align*}
+ \mathsf{store}\big( \mathsf{next}\ \neg \big(\mathsf{finally \ same} )\big)
+\end{align*}
+says that the first data value does not repeat, i.e.~after storing it one cannot find the same one again. In principle, we could have several different registers for storing data values, but if we want to translate the logic to one register alternating automata, then only one register is allowed (and hence there is no need to give it a name). The register can be reused, e.g.~the following formula says that whenever the first data value of the word is used, then the next two positions have distinct data values:
+\begin{align*}
+ \mathsf{store}\big( \mathsf{next}\ \neg \big(\mathsf{finally} (\mathsf{same} \land \mathsf{next}\ (\mathsf{store} (\mathsf{next} \ \mathsf{same}) ) )\big) \big)
+\end{align*}
+Every formula of this temporal logic can be converted into an alternating one register automaton, and therefore one can decide if a formula is true in at least one data word.
+
+%\mikexercise{Consider a one register alternating automaton over infinite words, with a safety acceptance condition, which means that a runs are infinite sequences of bags (and there is no requirement that some configuration is reached in infinitely often or at least once). Show an automaton which recognises the language
+%\begin{align*}
+% \set{w_1 \# w_2 \# \cdots : w_1,w_2,\ldots \in \atoms^* \mbox{ and all but finitely many of the words $w_i$ are equal}}
+%\end{align*}
+%
+%}{}
+%It will be easier to describe the complement. 
+%\begin{itemize}
+%	\item For infinitely many $i$, some data value appears in $w_i$ but not in $w_{i+1}$;
+%	\item One can execute the following program
+%	\begin{enumerate}
+%		\item Go to some position $x$;
+%		\item Find some position $y > x$ such that there is no $\#$ between $x$ and $y$
+%		\item With $y$ as in the previous step, find some position $x > y$ such that $y,x$ have the same data value;
+%		\item Goto step 2.
+%	\end{enumerate}
+%\end{itemize}
+
+\exercisepart
+
+
+\mikexercise{\label{ex:alternating-complement}Show that languages recognised by alternating register automata are closed under complementation.}{Let $\Aa$ be an alternating register automaton, and define the \emph{dual} of $\Aa$ to be the same automaton but where we swap universal locations with existential locations, and we swap accepting locations with nonaccepting locations. We claim that $\Aa$ accepts a word if and only if its dual rejects. 
+
+We prove that for every state $q$ and input data word $w$, the automaton $\Aa$ accepts $w$ starting in the bag $\set q$ if and only if the dual rejects $w$ starting in $\set q$. The proof is by induction on the length of the input. For the induction base of empty inputs, we use the fact that accepting and nonaccepting locations are swapped. Let us do the induction step. Suppose that the input is $aw$ for some letter $a$ and remaining input $w$. If the state $q$ uses an existential location, then saying that $\Aa$ accepts $aw$ from $q$ means that there is some transition $(q,a,p)$ such that $\Aa$ accepts $w$ from $p$. By the induction assumption, the dual rejects $w$ from $p$. Since $q$ is universal in the dual, it follows that the dual rejects $aw$ from $q$, since there is some transition which leads to rejection. The case when $q$ uses a universal state in $\Aa$ is done the same way.
+}
+
+
+
+\mikexercise{\label{ex:wqo-monot}Show that a quasi-order is a well-quasi-order if and only if every infinite sequence contains a monotone subsequence, i.e.~one where $i \le j$ implies $x_i \le x_j$.}
+{The right-to-left implication is immediate because infinite antichains and infinite strictly decreasing sequences are both examples of infinite sequences without infinite monotone subsequences. Let us prove the remaining implication, i.e.~in a well quasi-order every infinite sequence has an infinite monotone subsequence.
+
+Let $x_1,x_2,\ldots$ be some sequence in a well quasi-order. Consider the set of minimal elements that appear in the sequence. This set must be finite up to equivalence in the quasi-order, otherwise we would have an infinite antichain. Furthermore, for every element in the sequence there must be some smaller or equal element that is minimal, since otherwise we would have an infinite strictly decreasing sequence. Cut off a finite prefix of the sequence where all minimal elements are found up to equivalence, and reapply the argument, and continue doing this forever. In the limit we get a partition of the sequence into finite factors
+\begin{align*}
+ \underbrace{x_1, \ldots, x_{i_1}}_{\text{factor 1}}, \underbrace{x_{i_1+1}, \ldots, x_{i_2}}_{\text{factor 2}}, \ldots
+\end{align*}
+such that every element from outside the first factor is greater or equal to some element that appears in the previous factor. We can view this factorisation as a directed acyclic graph on the indices $\set{1,2,\ldots}$ which has an edge from $i$ to $j$ if $x_i \le x_j$ and $i,j$ are in consecutive factors. This directed acyclic graph has finite degree because factors are finite, and it has arbitrarily long paths. Therefore, it must have an infinite path by K\"onig's lemma.
+
+ Another solution uses Ramsey's Theorem. Take some infinite sequence $x_1,x_2,\ldots$ and colour each pair $i < j$ with ``smaller'', ''bigger or equal'' or ``incomparable'', depending on the relationship of $x_i$ and $x_j$. By Ramsey's theorem, there is an infinite subsequence where all pairs get the same colour. This colour has to be ``bigger or equal'', since the other possibilities would imply an infinite antichain or descending sequence.}
+
+%
+% has an infinite monotone subsequence, i.e.~a subsequence $x_1,x_2,\ldots$ where $x_i \le x_j$ holds whenever $i \le j$. }{An infinite antichain or a violation of well-foundedness are both examples of sequences without infinite monotone subsequences, which shows the right-to-left implication. It remains to show the converse implication, i.e.~that in a well-quasi order every infinite sequence has an infinite monotone subsequence.
+%
+%We use the following observation: in a well-quasi order every downward closed set has 
+%
+%Define a \emph{bad sequence} to be an infinite sequence without monotone subsequences. We need to show that there are no bad sequences. 
+%
+%
+%Define $B \subseteq X^*$ to be the prefixes of bad sequences and order this set lexicographically.
+%Define a tree labelled by 
+%Choose $x \in X$ to be a minimal element such that there is no 
+%
+%}
+\mikexercise{\label{ex:wqo-dixon}Show that for every dimension $d \in \set{1,2,\ldots}$, the set $\Nat^d$ is a well quasi-order with respect to the coordinatewise ordering.}{Using Exercise~\ref{ex:wqo-monot} it suffices to show that every infinite sequence in $\Nat^d$ has an infinite monotone subsequence. This is shown by induction on $d$. The induction base of $d=1$ is easy to see. For the induction step, consider a sequence
+\begin{align*}
+ x_1,x_2,\ldots \in \Nat^{d+1}. 
+\end{align*}
+By the induction assumption, there is an infinite subsequence such that the projection onto the first coordinate is monotone. By induction assumption again, that subsequence has an infinite subsequence where the projection onto the remaining coordinates is monotone, and the result follows.
+ }
+
+
+\mikexercise{\label{ex:right-order-on-profiles} Show that the converse implication in~\eqref{eq:profile-monotone} is not true. Find a well quasi-order on profiles which turns the implication into an equivalence. }
+{The counterexample is the bags
+	\mypic{113} 
+	which have profiles that are coordinate-wise incomparable (an equivalence in~\eqref{eq:profile-monotone} would be recovered if we considered a slightly different order on profiles, but we do not do this only the implication~\eqref{eq:profile-monotone} is needed for our reasoning). }
+
+\mikexercise{For a possibly infinite alphabet $\Sigma$, define the Higman ordering on $\Sigma^*$ to be the relation of not necessarily connected substrings. Show that this is a well quasi-ordering. }{See~\cite[Exercise 1.10]{schmitz:cel-00727025}}
+
+\mikexercise{Suppose that the atoms are equipped with a total order. Show that emptiness remains decidable for one register alternating automata without guessing, even when the machine can use the order to compare the register with the current data value\footnote{The paper~\cite{lasota_wqo_2018} investigates what structure on the atoms can be used so that the order $\le$ on bags is a well quasi-order.}. }{The same proof as without order. The only difference is that order-preserving bijections are used in the definition of the quasi-order, and the Higman order is used to show that this is a well quasi-order. More specifically, when proving the variant of Lemma~\ref{lem:bag-is-wqo}, instead of using vectors of natural numbers indexed by subsets of locations, we use sequences of subsets of locations, ordered by the Higman ordering.
+ } 
+\mikexercise{For a Turing machine with one tape, define a \emph{gain} to be the process of taking a configuration and inserting nondeterministically one new cell in some position not below the head, with any label from the work alphabet. 
+Define a \emph{gainy computation step} of a Turing machine to be a finite (possibly zero) number of gains followed by a normal step of computation. Show that the halting problem is decidable for Turing machines with semantics defined using gainy computation steps. }{Using Theorem~\ref{thm:wts} and the Higman ordering on configurations. }
+
+\mikexercise{\label{exercise:higman}Show that there is an infinite antichain for the following order on $\atoms^*$:
+\begin{align*}
+ w \le v \quad \mbox{if} \quad \mbox{$w$ is Higman smaller or equal to $\pi(v)$ for some permutation of $\atoms$. }
+\end{align*}
+
+ }{ This solution is by Klin and Lasota.
+Let $W$ be the set of words like the one depicted on the following picture, with circles denoting consecutive data values, and dotted lines denoting equality:
+\mypic{72}
+Note that the atom in the first letter is special because it appears four times and all other atoms appear two times. We claim that if $w$ and $v$ are words in $W$ of different lengths, then $w$ is not in the same orbit (i.e.~equivalent up to atom permutations) as any subsequence of $v$. In other words, there is no mapping $f$ from positions of $w$ to positions of $v$ which preserves the order and equality on data values. Indeed, such a mapping would have to map the first position to the first position (because the first letter contains the special atom that appears four times), and therefore also the third position to the third position. It follows that the second position must be mapped to the second position, and therefore also the fifth position to the fifth position. 
+Arguing inductively, we see that the $i$-th position needs to be mapped to the $i$-th position. In other words, $w$ needs to be mapped to a prefix of $v$. This cannot be, because, the last position of $w$ is mapped to the last position of $v$.
+}
+
+\mikexercise{Show that there is a language $L \subseteq \atoms^*$ that is upward closed under the Higman order, but is not recognised by a nondeterministic register automaton. }{Consider the set $W$ of words in the solution to Exercise~\ref{exercise:higman}. Let $W_P \subseteq W$ be the subset of words that have a prime number of different atoms. Finally, let $L$ be the upward closure of $W_P$ under the Higman order. We claim that this language is not recognised by a nondeterministic register automaton. Otherwise, such an automaton would need to tell the difference between words from $W$ that have prime and non-prime length. By choosing some non-computable set of numbers instead of the prime numbers, we can get a language that is not computable.} 

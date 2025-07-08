@@ -1,0 +1,112 @@
+\section{A semantic version}
+\label{sec:semantic-poly}
+ 
+In the previous section, we gave a syntactic description of \fdp, where the running time was polynomial in the size of the representation, assuming that the dimension was fixed. In this section, we give a semantic description, which does not refer to representations. 
+
+Recall that we had two notions of dimension: one semantic notion for representable sets in Definition~\ref{def:dim-sem}, and one syntactic notion  for their representations as set builder expressions in Definition~\ref{def:dim-synt}. We have also argued that these two notions coincide in Lemma~\ref{lem:dim-sem-synt}, i.e.~the semantic dimension is the minimal syntactic dimension. Let us now extend this correspondence to the notion of size (which is what algorithms are supposed to be polynomial in). The syntactic notion is the size of a set builder expression. The semantic notion is defined below.
+
+\begin{definition}[Size of a representable set]\label{def:size-sem} Assume the equality atoms. Define the \emph{size} of a representable set $X$, denoted  by $\semsize X$ to be the number of $\bar a$-orbits in the downset $\downset X$, where $\bar a$ is the least support of $X$. 
+\end{definition}
+
+
+
+\begin{myexample}\label{ex:sem-size-bell}
+ Consider the set $X= \atoms^d$. The set builder expression 
+  \begin{align*}
+ \setexprtrue {(x_1,\ldots,x_d)} {x_1,\ldots,x_d}
+ \end{align*}
+that represents this set 
+ has size linear in $d$, even if we account for the encoding of lists as pairs. On the other hand, the size of this set according to Definition~\ref{def:size-sem} is exponential in $d$.  
+\end{myexample}
+
+The above example shows that the size of a set, as per Definition~\ref{def:dim-sem}, can be exponentially larger than the size of a set builder expression that represents it. Nevertheless, as we will explain below, the exponential uses the dimension, and becomes a polynomial once the dimension is fixed.
+
+
+
+\paragraph*{Fixed dimension polynomial while programs.} To end this chapter, we show a sufficient condition for fixed dimension polynomial time, which does not mention any representation of hereditarily orbit-finite sets, such as set builder expressions. The sufficient condition is defined as a restriction on the while programs from Chapter~\ref{cha:while-programs}. The general idea is to bound the time and space used by a while program so that it is fixed dimension polynomial. To do this, we need to define the time and space used by a while program. To define time, we add a new program variable called {\tt time}, which stores the running time encoded as a Von Neumann numeral. The variable is initialised to $0$. To update the {\tt time} variable, we modify the original program by inserting an instruction
+\begin{center}
+ \tt{ time := time }$\cup\ \set{\mathtt{time}}$
+\end{center}
+after every instruction, which
+ increments the numeral representing the time. For Von Neumann numerals, maximum is the same as set union, and therefore the running time of a for loop is the same as the maximal running time of each of its threads. The running time of a program is then defined to be the value of the {\tt time} variable at the end of the program. 
+
+\begin{myexample}
+ Recall the program which projects a Kuratowski pair {\tt p} to its first coordinate.
+Here is its annotation with the {\tt time} variable:
+\begin{alltt}
+    ret := \ensuremath{\emptyset}
+    time := time \ensuremath{\cup} \tset{time}
+    for a in p do 
+      for x in a do 
+        for y in p do 
+          if p = \tset{{x},\tset{x,y}} then	
+            ret:=\tset{x};
+            time := time \ensuremath{\cup} \tset{time}
+          time := time \ensuremath{\cup} \tset{time}
+        time := time \ensuremath{\cup} \tset{time}
+      time := time \ensuremath{\cup} \tset{time}
+    time := time \ensuremath{\cup} \tset{time}
+    \end{alltt}
+
+ The running time of this program is $5$ or $6$, depending on whether the {\tt if} is executed. More generally, every program that does not use {\tt while} has constant running time. 
+\end{myexample}
+
+To define the space consumption, we use a similar idea. We add a variable {\tt space}, initially set to be the empty set, and modify the original program by adding 
+\begin{center}
+ \tt{ space := space }$\cup\ \set{\mathtt{x, y, z, ..}}$
+\end{center}
+after each instruction, where {\tt x}, {\tt y}, $\ldots$ are all of the program variables (a finite list for every program). The space consumption is then defined to be the size of the variable {\tt space} at the end of program execution, with size measured according to Definition~\ref{def:dim-sem}.
+
+\begin{definition}\label{def:fdp-while}
+ A \emph{fixed dimension polynomial while program} is a while program\footnote{We assume that while programs have a built-in atomic operation {\tt X:=|Y|}
+ which computes the size of the set stored in {\tt Y}, and loads the corresponding Von Neumann numeral into {\tt X}. This operation can be computed in exponential time -- and is therefore not needed if we do not care about running time -- but it is needed as a primitive if we want to have any hope to capture polynomial time. } where the running time and space consumption (both of which are natural numbers) are fixed dimension polynomial in terms of the input (the size and dimension of the input are measured according to Definition~\ref{def:dim-sem}). Furthermore, the dimension of the output must be bounded by a function of the dimension of the input. 
+\end{definition}
+ A more detailed analysis of the semantics of while programs shows that
+ \begin{align*}
+ \underbrace{\text{\small fixed dimension polynomial while programs}}_{\text{Definition~\ref{def:fdp-while}}} \quad \subseteq \quad \underbrace{\text{\small fixed dimension polynomial time.}}_{\text{Definition~\ref{def:fdp}}}
+ \end{align*}
+ In general, the above inclusion is strict, which follows from similar results about Choiceless Polynomial Time, see~\cite[Section 6]{rossman_choiceless_2010}. 
+ For decision problems, where the output is just true or false, the above inclusion could be an equality, for all we know. However, proving equality for decision problems would imply that Choiceless Polynomial Time captures polynomial time for decision problems, which is a well-known open problem. All of these results can be found in~\cite{bojanczyk_computability_2018}.
+
+
+
+% We begin by choosing for each hereditarily orbit-finite set $X$ a set builder expression which represents it, called the \emph{canonical expression} of $X$. The atoms that appear as constants in the canonical expression are going to be exactly the least support of $X$. 
+% The canonical expression is defined by induction on the rank of the set $X$, i.e.~the nesting of set brackets. Let $\bar a$ be the least support of $X$. Consider the partition of $X$ into $\bar a$-orbits. If $X$ has more than one $\bar a$-orbit, then the canonical expression of $X$ is the union of the canonical expressions for its finitely many $\bar a$-orbits. We are left with the case when $X$ consists of one $\bar a$-orbit. Choose some $x \in X$ and let $b_1,\ldots,b_n$ be the atoms that are in the least support of $x$ but not in $\bar a$. Consider the canonical expression of $x$ obtained by induction assumption, and replace each atom $b_i$ by a fresh variable $x_i$, yielding an set builder expression $\beta(x_1,\ldots,x_n)$. 
+% The only atom constants that appear in $\beta$ are from $\bar a$. One can show that $\beta(x_1,\ldots,x_n)$ does not depend on the choice of $x \in X$, up to permutations of the variables $x_1,\ldots,x_n$. To break symmetry, we choose $\beta$ to be minimal, among these permutations, with respect to some linear order on set builder expressions. The canonical expression for $X$ is defined to be 
+% \begin{align*}
+% \setexpr{ \beta(x_1,\ldots,x_n) } {x_1,\ldots,x_m} {\varphi(x_1,\ldots,x_n)}
+% \end{align*}
+% where $\varphi$ is the quantifier-free formula which defines the $\bar a$-orbit of $(b_1,\ldots,b_n)$. This completes the definition of the canonical expression.
+
+
+% \begin{lemma}
+% The dimension of the canonical expression is equal to the semantic dimension.
+% \end{lemma}
+% \begin{proof}
+% Every subexpression $\beta$ of the canonical expression can be obtained as follows: take the canonical expression of some $x \in X_*$ and replace all atom constants that are not in $\bar a$ with free variables. It follows that the number of free variables in $\beta$ is at most the semantic dimension.
+% \end{proof}
+
+
+% To finish the proof of the lemma, we show below that the dimension of the canonical expression is equal to both the semantic and syntactic dimensions of $X$. We begin with semantic dimension.
+% \begin{claim}
+% For every hereditarily orbit-finite set, the semantic dimension is equal to the dimension of the canonical expression.
+% \end{claim}
+% \begin{proof}
+% Fix for the proof of this claim a hereditarily orbit-finite set $X$. 
+% Define a \emph{membership chain} to be a sequence of sets
+% \begin{align*}
+% X = X_1 \ni X_2 \ni \cdots \ni X_n.
+% \end{align*}
+% By induction on the length of the chain, one shows that there is a subexpression $\beta$ of $\alpha$ such that the final set $X_n$ in the chain is obtained from $\beta$ by evaluating the free variables using atoms from the least support of $X_n$. Furthermore, the free variables of $\beta$ correspond to atoms that are in the least support of $X_n$, but are not in the least support of at least one of the sets $X_1,\ldots,X_{n-1}$. In other words, the number of variables $\beta$ is the size of the set 
+% \begin{align}\label{eq:dimension-in-canonical}
+% \leastsup {X_n} - \bigcap_{i < n} \leastsup {X_i}.
+% \end{align}
+% Since every subexpression of $\alpha$ can be obtained as $\beta$ for some membership chain, and the dimension of the canonical expression is the maximal number of variables ranging over subexpressions, it follows that the dimension of the canonical expression is the maximal size of sets as in~\eqref{eq:dimension-in-canonical}, ranging over membership chains. On the other hand, the semantic dimension of $X$ is defined to be the maximal size of a set 
+% \begin{align}\label{eq:dimension-in-semantic}
+% \leastsup {X_n} - \leastsup {X_1},
+% \end{align} 
+% again ranging over membership chains. Therefore, to prove the claim, we need to show that the sets~\eqref{eq:dimension-in-canonical} and~\eqref{eq:dimension-in-semantic} have the same maximal sizes.
+
+% We say that a membership chain is \emph{normal} if whenever an atom appears in the least support of sets $X_i$ and $X_j$, then it also appears in the least supports of all the sets $X_l$ with $i \le l \le j$. If a membership chain is normal, then atoms that are in the least support of both $X_1$ and $X_n$ are also the least supports of all the set $X_1,\ldots,X_n$. It follows that for normal membership chains, the sets~\eqref{eq:dimension-in-canonical} and~\eqref{eq:dimension-in-semantic} have the same size. Finally, a short analysis shows that every membership chain can be converted into a normal one, without decreasing the sizes of the sets~\eqref{eq:dimension-in-canonical} and~\eqref{eq:dimension-in-semantic}. It follows that the maximal sizes of these sets are the same, thus proving the claim.
+
+\exercisepart

@@ -1,0 +1,58 @@
+\mikexercise{\label{ex:alternating-reversal} Show that languages recognised by one way non-guessing alternating automata are not closed under reversals.}
+{
+Let $L$ be the language ``for every position $x$ with label $inc$, there is a later position $y$ with label $dec$ and the same data value, such that label $zero$ does not appear between positions $x$ and $y$''. This language is recognised by a one way non-guessing alternating automaton. If its reversal were also recognised, then we could use the same proof as in Exercise~\ref{ex:one-register-undec} to get undecidability. 
+}
+
+
+
+\mikexercise{\label{pof-dickson-omega}
+    Show that the order defined in~\eqref{eq:atom-dickson} is no longer a well-quasi ordering if we use infinite subsets of $\atoms$. 
+}
+{
+    It is not well-founded.
+}
+
+
+
+\mikexercise{\label{pof-dickson-dim-2}
+    Show that the order defined in~\eqref{eq:atom-dickson} is no longer a well-quasi ordering if we use finite subsets of $\atoms^2$ instead of $\atoms$. For example, we have 
+    \begin{align*}
+    \set{ (\text{John, Eve}), (\text{John, John})} 
+    \quad \le \quad  
+    \set{\myunderbrace{(\text{Eve, Tom})}{this pair\\ is deleted}, \myunderbrace{(\text{Mark, John}), (\text{Mark, Mark})}{to the remaining elements, we \\\ apply an atom permutation with \\
+    Mark $\mapsto$ John  and John $\mapsto$ Eve} .
+     } 
+    \end{align*}
+}
+{
+    Consider a subset which is a cycle of length $n$: 
+    \begin{align*}
+    \set{(a_1,a_2),(a_2,a_3),\ldots,(a_{n-1},a_n),(a_n,a_1)},
+    \end{align*}
+    for $n$ distinct atoms. For different values of $n$, these subsets are incomparable with respect to the order. Therefore, we have an infinite antichain, thus violating the wqo condition.
+}
+
+\mikexercise{\label{pof-higman}
+    Consider the following ordering on $\atoms^*$. We say that $w \leq v$ if one can obtain $w$ from $v$ as follows: (a) first delete some letters from $v$; then (b) apply some atom permutation. Is this a well-quasi-ordering?
+}
+{ 
+    No. We construct an antichain. For each even $n$, the antichain has a word  $a_1 \cdots a_n$  where the  equalities are arranged as in the following picture:
+    \begin{quotation}
+        (picture copy) 5
+    \end{quotation}
+
+
+ }
+
+\mikexercise{\label{pof-upward-closed}
+    We say that a language $L \subseteq \Sigma^*$ is \emph{upward closed} if it is closed under inserting letters. In other words, 
+    \begin{align*}
+    wv \in L 
+    \quad \Rightarrow \quad
+    wav \in L 
+    \quad \text{for every $w,v \in \Sigma^*$ and $a \in \Sigma$}.
+    \end{align*}
+    Is it true that every language that is both equivariant and upward closed is necessarily recognised by a nondeterministic pof automaton?
+}{
+    No. This is because there are uncountably many upward closed languages. Consider the alphabet $\Sigma = \atoms$, and the antichain from the previous problem. Take any set $I \subseteq \set{2,4,6, \cdots}$ of even numbers, which can be chosen in uncountably many elements. Take the antichain from the previous problem, restrict it to elements with length $n \in I$, and then take the  upward closure of this antichain. For each different subset $I$ we get a different language.  
+}

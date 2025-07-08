@@ -1,0 +1,179 @@
+\mikexercise{\label{pof-det-pumping}
+    Let  $L \subseteq \Sigma^*$ be a language recognised by a deterministic pof automaton. Show that there is some $k$ with the following property: for every $w \in \Sigma^*$  there are atoms $a_1,\ldots,a_k \in \atoms$ such that for every atom permutation $\pi$ that fixes all atoms from $a_1,\ldots,a_k$, and every $v \in \Sigma^*$ we have 
+    \begin{align*}
+    wv \in L \quad \Leftrightarrow \quad \pi(w)v \in L.
+    \end{align*}
+}
+{
+    Choose $k$ to be the atom dimension of the state space of the recognizing automaton, i.e.~the maximal number of atoms that can be kept in a state. Then the atoms $a_1,\ldots,a_k$ are those that appear in the state after reading $w$, possibly padded with some other atoms in case there are fewer atoms in the state. 
+}
+
+
+\mikexercise{\label{pof-nondet-pumping}
+    Suppose that $L \subseteq \Sigma^*$ is recognised by a nondeterministic pof automaton. Show that there is some $k$ such that for every $w \in \Sigma^*$ longer than $k$  one can find 
+    \begin{enumerate}
+        \item a decomposition $w = xyz$ with $y$ nonempty; and 
+        \item an atom permutation $\pi$ that moves finitely many atoms
+    \end{enumerate}
+    such that for every $n \in \set{0,1,\ldots}$ we have 
+    \begin{align*}
+    x y \pi^1(y) \pi^2(y) \cdots \pi^n(y) \pi^n(z) \in L.
+    \end{align*}
+}
+{
+    Let $k$ be the number of orbits in the state space.  If the word $w$ is longer than $k$ then in the accepting run we must find a repetition of some orbit, i.e.~there must be a partition $w = xyz$ and runs 
+    \begin{align*}
+    I \ni p \stackrel x \to 
+    q \stackrel y \to
+    r \stackrel z \to
+    s \in F
+    \end{align*}
+    such that $q$ and $r$ are in the same orbit. This means that there is some atom permutation $\pi$ that maps $q$ to $r$. This permutation can be chosen so that it moves finitely many atoms, namely the ones that appear in $q$. By equivariance, we have 
+    \begin{align*}
+        \pi^{n}(q) \stackrel {\pi^n(y)} \to \pi^{n}(r) = \pi^{n+1}(q)
+        \quad \text{and} \quad
+        \pi^{n}(r) \stackrel {\pi^n(z)}  \to \pi^{n}(s) \in F.
+    \end{align*}
+    Putting these runs together, we get accepting runs for the words in the statement of the problem.
+
+}
+
+\mikexercise{\label{pof-example-all-letters-different}Is there a deterministic pof automaton for the following language?
+\begin{eqnarray*}
+    \setbuild{w \in \atoms^*}{all letters are different} 
+\end{eqnarray*}
+}
+{No. Suppose that the language would be recognised by some deterministic pof automaton. 
+Apply the result from Problem~\ref{pof-det-pumping}, yielding some constant $k$. Take a word $w$ that has $k+1$ distinct atoms. Some atom $a$  that appears in $w$ is not in the list $a_1,\ldots,a_k$ from result in Problem~\ref{pof-det-pumping}. Take some permutation $\pi$ that fixes the atoms $a_1,\ldots, a_k$ but moves $a$ to some other atom $b$. We should have 
+\begin{align*}
+wa \in L \quad \Leftrightarrow \quad \pi(w)a \in L,
+\end{align*}
+but the right word is in the language, while the left word is not. 
+}
+
+
+
+
+\mikexercise{\label{pof-det-closure}
+    Which of the following closure properties are true for the class of languages recognised by deterministic pof automata?
+    \begin{enumerate}
+        \item Complementation;
+        \item union;
+        \item intersection;
+        \item reverse;
+        \item concatenation;
+        \item Kleene star.
+    \end{enumerate}
+}{
+    \begin{enumerate}
+        \item \emph{Complementation: true.} We simply complement the accepting set of states. 
+        \item \emph{Union: true.} We use a product construction $Q_1 \times Q_2$, which can be done since pof sets are closed under taking products. The accepting set consists of pairs that have an accepting state on either the first or second coordinate. 
+        \item \emph{Intersection: true.} A product construction as for union.
+        \item \emph{Reverse: false.} As a counterexample, consider the language 
+        \begin{align*}
+        L = \setbuild{w \in \atoms^*}{the first letter of $w$ appears also later}.
+        \end{align*}
+        This language is recognised by a deterministic pof automaton, with states
+        \begin{align*}
+        \myunderbrace{\atoms^0}{initial} 
+        \quad + \quad
+        \myunderbrace{\atoms}{first \\ letter \\ seen}
+        \quad + \quad
+        \myunderbrace{\atoms^0}{accepting}.
+        \end{align*}
+
+        Let us now prove that the reverse of $L$ is not recognised by any deterministic pof automaton.    The proof is exactly the same as in Problem~\ref{pof-det-non-repeating}.     Consider a hypothetical deterministic pof automaton that recognises the reverse of $L$.  Apply the result from Problem~\ref{pof-det-pumping}, yielding some constant $k$. Take a word $w$ that has $k+1$ distinct atoms. Some atom $a$  that appears in $w$ is not in the list $a_1,\ldots,a_k$ from result in Problem~\ref{pof-det-pumping}. Take some permutation $\pi$ that fixes the atoms $a_1,\ldots, a_k$ but moves $a$ to some other atom $b$. We should have 
+        \begin{align*}
+        wa \in L \quad \Leftrightarrow \quad \pi(w)a \in L,
+        \end{align*}
+        but the left word is in the language, while the right word is not. 
+        
+        
+        \item \emph{Concatenation: false.} As a counterexample, consider the alphabet  $\atoms$, and  the concatenation $LK$ where $L$ is the full language $\atoms^*$ and  $K$ is the language from Problem~\ref{pof-example-dfa-first-last}, which consists of words where the first and last letters are equal.  The concatenation $LK$ is the words where the last letter appears again, and this language is not recognised by any deterministic pof automaton, as we have proved in the previous item.
+        \item \emph{Kleene star: false.}  Let $L$ be the language from Problem~\ref{pof-example-dfa-first-last}, i.e.~words where the first and last letters are equal. (To-do complete.)
+    \end{enumerate}
+
+}
+
+
+
+\mikexercise{\label{pof-nondet-closure}
+    Which of the closure properties from Problem~\ref{pof-det-closure} hold for nondeterministic pof automata?
+}{
+\begin{enumerate}
+    \item \emph{Complementation: false.} Consider the language 
+    \begin{align*}
+    \setbuild{w \in \atoms^*}{some letter appears twice}.
+    \end{align*}
+    This language is recognised by a nondeterministic pof automaton. The state space of the automaton is 
+    \begin{align*}
+    \atoms^0 + \atoms^1 +  \atoms^{0}. 
+    \end{align*}
+    The state from the first component is initial, and the state from the third component is final. The idea is that the automaton nondeterministically guesses when an input letter will be repeated, and loads it into the state (in the second component). Upon a second appearance of this letter, it moves to the final state. 
+    
+    Let us now show that the complement of this language  is not recognised by any nondeterministic pof automaton. The complement is the words where all atoms are distinct. To see that the complement is not recognised, we apply the pumping lemma from Problem~\ref{pof-nondet-pumping}. Since the permutation $\pi$ moves finitely many atoms, some power $\pi^n$ of this permutation will be the identity, and therefore the pumping property will ensure that the automaton accepts some word that has a repeated letter.
+    \item \emph{Union: true}. We can simply take the disjoint sum of two automata. 
+    \item \emph{Intersection: true}. The product construction works. 
+    \item \emph{Reverse: true}. Reverse all arrows, and swap initial with accepting. This preserves equivariance.
+    \item \emph{Concatenation: true}. The usual construction works, where we have the two automata connected by $\varepsilon$-transitions, which can be eliminated, see Problem~\ref{pof-epsilon-nondet}.
+    \item \emph{Kleene star: true}. Again, the usual construction works.
+\end{enumerate}
+
+}
+
+\mikexercise{\label{pof-complement-ww}
+    Show that the complement of the language 
+    \begin{align*}
+    \setbuild{ww}{$w \in \atoms^*$ is non-repeating}
+    \end{align*}
+    is recognised by a nondeterministic pof automaton.
+}
+{
+    A word belongs to the complement of the language if and only if it has one of the following properties (which we call ``problems''):
+    \begin{enumerate}
+        \item some atom does not appear exactly two times; or 
+        \item for some atom $a$, the first appearance of $a$ is followed by an atom $b$, but the second appearance of $a$ is followed by an atom $c \neq b$; or
+        \item if $a$ is the first atom in the word, then the second appearance of $a$ is preceded by the last atom in the word.
+    \end{enumerate}
+    Each of these problems can be recognised by a nondeterministic pof automaton, and thus so is their union.
+}
+
+
+
+\mikexercise{\label{pof-regexp}
+    In this exercise, we consider a variant of regular expressions. Consider the least class of languages that: 
+    \begin{enumerate}
+        \item contains every equivariant set of words that has bounded length;
+        \item is closed under union and concatenation;
+        \item is closed under Kleene star $L^*$.
+    \end{enumerate}
+    Show that these languages are a strict subset of nondeterministic,  pof automata.
+}{
+By the closure properties from Problem~\ref{pof-nondet-closure}, every regular expression can be recognised by some nondeterministic pof automaton. Let us show that the inclusion is strict. As a counterexample language, i.e.~one that can be recognised by an automaton but not by a regular expression, consider 
+\begin{align*}
+\setbuild{ w \in \atoms^*}{every two consecutive letters are different}.
+\end{align*}
+We will show that this language cannot be defined by any regular expression. The general idea is that whenever we use concatenation or Kleene star, then all atoms are forgotten, and thus we cannot enforce the inequality in the definition of the language. 
+
+Here is a more formal proof. 
+Suppose that we have a concatenation $L_1 L_2$ of two equivariant  languages. Then for every word $ \in LK$, there is some decomposition $w = w_1 w_2$ such that 
+\begin{align}\label{eq:w1w2-decomposition}
+w_1 \cdot \pi(w_2) \in L_1 L_2 
+\qquad \text{for every atom permutation $\pi$.}
+\end{align}
+Using this observation and a similar one for the Kleene star, one shows that for every regular expression $L$ as in the statement of the problem, there is some $n \in \set{0,1,\ldots}$ such that if $L$ contains a word $w$ that is longer than $n$, then there is a decomposition $w = w_1 w_2$ such that~\eqref{eq:w1w2-decomposition}. This property does not hold for the counterexample language that we have proposed.
+}
+
+\mikexercise{\label{pof-regexp-intersection}
+    Show that the regular expressions from the previous exercise are not closed under intersection.
+    }{
+    Consider the language 
+    \begin{align*}
+        L = \setbuild{ab }{$a \neq b \in \atoms$}
+        \end{align*}
+of  words of length two that use different atoms. This language is a regular expression in the sense of Problem~\ref{pof-regexp}, because it is equivariant and has bounded length. Consider now the  counterexample as in the previous problem. This counterexample is equal to
+    \begin{align*}
+        (\atoms \cdot L \cdot \atoms \cap L)  \cup (\atoms \cdot L \cap L \cap \atoms).
+    \end{align*}
+Therefore, if  regular expressions would be closed under intersection, then the counterexample would be a regular expression, which is not the case.
+    }

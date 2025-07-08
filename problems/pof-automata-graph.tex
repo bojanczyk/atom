@@ -1,0 +1,55 @@
+\mikexercise{\label{pof-undirected-reachability} Show that the reachability problem remains \textsc{PSpace}-complete when we restrict it to symmetric graphs, i.e.~graphs where the edge relation is symmetric\footnote{Note that in the case of finite graphs, the complexity drops from NL to L when restricting to symmetric graphs, as shown  in~\cite{reingold2008undirected}.}. }{}
+
+\mikexercise{\label{pof-spanning-tree} Consider an undirected pof graph, i.e.~a graph where the edge relation is symmetric.   Does it necessarily have a spanning tree that is equivariant?}{
+    No. Consider the clique on the vertex set $\atoms$. If a hypothetical equivariant spanning tree would contain an edge $ab$ for some atoms $a \neq b$,  it would need to contain every such edge.
+}
+
+\mikexercise{\label{pof-graph-isomorphism}Consider two undirected pof graphs, which are isomorphic. Is there necessarily an isomorphism that is equivariant? }{ No. Consider the cliques on $\atoms$ and $\atoms^2$. A hypothetical isomorphism would need to be a bijection between the two sets, and no such bijection exists. This is a because there is only one  equivariant function of type $\atoms \to \atoms^2$, namely $a \mapsto (a,a)$. }
+
+
+\mikexercise{\label{pof-graph-diameter}
+    Show that given a directed pof graph,  one can compute a number $k \in \set{0,1,\ldots}$ such that for every two vertices $s$ and $t$, if there is a path from $s$ to $t$, then there is a path of length at most $k$. 
+}
+{
+    Define $R_n \subset V \times V$ to be the binary relation which tells us which pairs can be reached by a path of length at most $n$. This relation is defined by the equations 
+    \begin{align*}
+    R_0 = \set{ (v,v) \mid v \in V} \\
+    R_{n+1} = R_n \circ E \cup R_n.
+    \end{align*}
+    By definition, we have a chain
+    \begin{align*}
+        R_0 \subset R_1 \subset R_2 \subset \cdots.
+    \end{align*}
+    Since $R_{n+1}$ is defined based on $R_n$, it follows that if the chain has two consecutive equal elements, then all subsequent elements are equal. Such equal elements must occur, since all relations $R_n$ are equivariant subsets of $V \times V$, and there are finitely many such subsets. Therefore, the chain stabilizes after some finite number of steps, thus giving the bound in the problem. All of this can be computed.
+}
+
+\mikexercise{\label{pof-infinite-path-in-graph}
+    Consider a directed pof graph. Show that there is an infinite path if and only if there is a cycle.
+}
+{
+    Up to atom permutations, there are finitely many vertices. Therefore, if there is an infinite path, then there is a path $v \to w$ such that $v$ and $w$ are equal up to atom permutations, i.e.~there is some atom permutation $\pi$ such that $w = \pi(v)$. We can choose this permutation so that it moves only finitely many atoms, namely those that appear in $v$. Since reachability is equivariant, we know that there is an infinite path
+    \begin{align*}
+        \pi^0(v) \to \pi^1(v) \to \pi^2(v) \to \cdots .
+    \end{align*} 
+    By the assumption that $\pi$ moves finitely many atoms, we know that for some $n$, the permutation $\pi^n$ is the identity, and thus the path returns to the original vertex $v$. 
+}
+
+\mikexercise{\label{pof-graph-acyclic-upper-bound}
+    Consider a  directed pof graph. Show that if the graph is acyclic, then there is a finite upper bound $k$ on the length of paths.
+}{
+    If paths had unbounded length, then we could find a path $v \to w$ such that $v$ and $w$ are in the same orbit. Using the same argument as in the previous problem, we could get an infinite path. 
+}
+
+\mikexercise{\label{pof-finite-outdegree}Show that the following problem is decidable: given a directed pof graph, decide if it has finite outdegree, i.e.~for every vertex $v$, there are finitely many vertices $w$ with an edge $v \to w$. }
+{
+We will show that  a pof directed graph has infinite outdegree if and only if 
+\begin{itemize}
+    \item[(*)] there is some edge $v \to w$ such that some atom from $w$ does not appear in $v$.
+\end{itemize} 
+This will solve the problem, since (*) is easily seen to be decidable. Let us now prove the equivalence. Clearly if (*) holds, then the outdegree of $v$ is infinite, since the atom that does not appear in $v$ can be chosen in infinitely many possible ways. Conversely, if (*) does not hold, then for every $v$ there are finitely many possible choices for $w$ with $v \to w$, because there are finitely many elements in a pof set that use a give finite set of atoms.
+}
+
+
+\mikexercise{\label{ex:no-infinite-finitely-supported-path} Assume the equality atoms. Show a graph which has an infinite path, but does not have any infinite finitely supported path.}{ The vertices are nonrepeating tuples of atoms, and there is an edge $\bar a \to \bar b$ whenever $\bar a$ is a proper prefix of $\bar b$. This graph clearly contains an infinite path, but every such path uses infinitely many atoms, and is therefore not finitely supported. 
+}
+

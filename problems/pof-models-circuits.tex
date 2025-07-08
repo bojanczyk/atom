@@ -1,0 +1,48 @@
+
+\mikexercise{\label{of-dnf-cnf}
+ Show that satisfiability is undecidable for pof circuits.
+}{
+    We will reduce from the following problem: given a first-order formula that describes directed graphs, decide if the formula is true in at least one graph. Before presenting the reduction, let us describe this problem in more detail. An instance of the problem is a formula that quantifies over vertices of the graph, and can talk about the edge relation, as in the following example: 
+    \begin{align}\label{eq:fo-formula-on-graphs}
+        \forall x \  \exists y\ \quad  \text{edge}(x,y).
+         \end{align}
+    The formula in the above example says that every vertex $x$ in the graph has at least one outgoing edge to some vertex $y$. The following problem is undecidable: given a formula $\varphi$, decide if it is true in some infinite graph. By the Skolem-Lowenheim theorem, if the formula is ture in some infinite graph, then it is true in some countably infinite graph, which means that it is true in some graph where the vertices are $\atoms$. 
+
+We now describe the reduction, i.e.~we show that the satisfiability problem for orbit-finite circuits is at least as hard as the problem described in the previous paragraph. 
+    Suppose that the set of variables is $\atoms^2$, which means that for every pair of atoms $(a,b) \in \atoms^2$ we have a variable, which will denote by $X_{ab}$. An assignment of these variables is the same as a directed graph where the vertices are atoms, i.e.~a solution to the problem from the previous paragraph. To prove the reduction, we will show that for every first-order formula $\varphi$  that describes properties of graphs, as in the previous paragraph, there is an equivalent orbit-finite circuit. In this circuit there is a gate for every pair $(\psi,\bar a)$ where $\psi$ is a subformula of $\varphi$, and $\bar a$ is a tuple of atoms that represents an assignment to the free variables of $\psi$. For example, if $\phi$ is the formula in~\eqref{eq:fo-formula-on-graphs}, then a possible choice of $\psi$ is 
+    \begin{align*}
+    \psi(x) = \exists y \in \atoms \ \text{edge}(x,y),
+    \end{align*} 
+    which is a formula with one free variable $x$, and for this formula $\psi$ we will have one gate for each choice of atoms $a \in \atoms$. The wires in the circuit, i.e.~the edges in the corresponding directed acyclic graph, describe the subformula relation. For example, a quantified formula $\forall x \psi(x)$ will have edges to all possible ways of choosing an atom $a$ for the value of the free variable. Universal quantifiers are implemented as conjunctions, and existential quantifiers are implemented as disjunctions; similarly for the other connectives. A gate which corresponds to an atomic formula is implemented as a variable.
+}
+
+\mikexercise{\label{of-circuit-to-tree}
+    A circuit is called a \emph{formula} if the directed acyclic graph is a tree. Show that every pof circuit can be transformed into an equivalent formula.
+}{
+    By Problem~\ref{pof-graph-acyclic-upper-bound}, since the graph is acyclic, there is some finite upper bound $k$ on the length of paths. We can now unfold the circuit into a tree, by creating gates of the form 
+    \begin{align*}
+    (v_1,\ldots,v_i) 
+    \end{align*}
+    for every path $v_1 \to \cdots \to v_i$ in the original circuit. Since there is a fixed upper bound on the length of such paths, the unfolded circuit still has a pof set of gates.}
+
+
+
+\mikexercise{\label{of-dnf-circuit-decidable}
+    A pof circuit is said to be in DNF form if the root gate is a disjunction, its children are conjunctions, and their children are variables or their negations. Show that satisfiability is decidable for circuits in DNF form.
+}{
+We can guess the disjunct that is true, since there are orbit-finitely many possiblities. Therefore, the problem reduces to satisfiability of circuits that are a disjunction of literals (i.e.~variables or their negations). Such a conjunction is satisfiable if and only if it does not contain an direct contradiction, i.e.~both a variable and its negation.
+}
+
+\mikexercise{\label{of-dnf-to-cnf}CNF normal form is defined dually to DNF normal form. Show that not every pof DNF circuit can be transformed into an equivalent pof CNF circuit.}{ A corollary of the solution to Problem~\ref{of-dnf-circuit-decidable} is that if a pof circuit in DNF form is satisfiable, then there is a satisfying assignment that is finitely supported.  We will show that this is no longer true for CNF form, and therefore the two forms cannot be equivalent.
+
+Here is an example. Suppose that the set of variables is $\atoms^{(2)}$. This means that a Boolean assignment for these variables is the same as an irreflexive directed graph over vertices $\atoms$. Conider the following formula:
+\begin{align*}
+\myunderbrace{\bigwedge_{a \neq b} X_{ab} \iff X_{ba} }{the graph is symmetric}
+\quad \land \quad 
+\myunderbrace{\bigwedge_{a} \bigvee_{b \neq a} X_{ab}}{each vertex has \\ at least one 
+\\ outgoing edge} 
+\quad \land \quad 
+\myunderbrace{\bigwedge_{(a,b,c) \in \atoms^{(3)}} \neg X_{ab} \lor \neg X_{ac}}{each vertex has \\ at most one \\ outgoing edge}.
+\end{align*}
+A satisfying assignment is an undirected graph over $\atoms$ where every vertex has exactly one neighbour. (It is therefore necessarily a matching.) This can be done, but not in a finitely supported way.
+}

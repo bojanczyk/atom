@@ -1,0 +1,474 @@
+\chapter{More computational models with atoms}
+\label{cha:more-models}
+In the previous sections, we discussed pof variants of deterministic and nondeterministic automata. In this chapter, we give a sample of  other models of computation, namely alternating automata, two-way automata, circuits, context-free grammars, and Turing machines. 
+This material  is nothing but a collection of exercises, each one preceded by a brief description of the relevant model of computation.
+
+
+
+
+We begin with some more variants of finite automata.
+In the previous  chapter, we showed that in the pof setting, nondeterministic automata are no longer equivalent to deterministic. There are two more examples of this phenomenon, namely two other variants of automata that are equivalent to the usual automata in the atom-free case, but are no longer equivalent in the presence of atoms. These are alternating automata and two-way automata, which are discussed in Sections~\ref{sec:pof-alternating} and~\ref{sec:pof-two-way}.
+
+
+
+\section{Alternating automata}
+\label{sec:pof-alternating}
+
+\emph{Alternating pof automaton} are a generalization of  nondeterministic automata, which is self-dual in the sense that it does not privilege existential choice over universal choice. Let us describe this model.
+
+\begin{definition}
+	[Pof alternating automaton]
+	\label{def:pof-alternating-automaton}
+	The syntax of a pof alternating automaton consists of two pof sets $Q$ and $\Sigma$ for the states and input alphabet, as well as:
+\begin{enumerate}
+	\item an initial state $q_0 \in Q$, which is equivariant (i.e.~contains no atoms);
+	\item a partition of  $Q$ into two equivariant subsets, called \emph{existential} and \emph{universal};
+	\item an equivariant set of transitions $\delta \subseteq Q \times (\Sigma + \set{\epsilon}) \times Q$,
+\end{enumerate}
+\end{definition}
+
+Note that the automaton does not have an accepting set of states.
+The language recognised by such an automaton is defined in terms of a game, which is played by two players, called the existential and universal player. The existential player represents acceptance, i.e.~the word is accepted when the existential player wins.  Intuitively speaking, the game is designed so that the two   players construct a run of the automaton by  choosing transitions, with the choice being made by the player who owns the current state. The goal of each player is to force the opponent into a situation where they need to choose a transition, but there is no transition that is available. Once such a situation arises, the player who cannot choose a transition loses, and the game is terminated immediately. Since the automaton has $\varepsilon$-transitions, the game might last forever, in which case we assume that the existential player wins (unfortunately, this breaks the symmetry between the players in the  model, which is an issue that we will discuss below).
+
+Here is a more detailed description of the game.
+A position of the game  is a pair $(q,w)$ consisting of a state $q$ and a possibly empty input word $w$. In such a position, the player who owns the state $q$ according to the partition on states picks a transition 
+\begin{align*}
+(q,a,p) \in \delta
+\end{align*}
+such that: (1) the source state $q$ of the transition is the same as in the current position; and (2) the letter $a$ of the transition is either $\epsilon$ or  the first letter of the word $w$ in the current position. If there is no  transition which satisfies the two criteria (for example, the word $w$ is empty and there are no $\varepsilon$-transitions), then the game is terminated immediately, and the  player making the choice loses. Otherwise, the position is updated by using the target state $p$ of the chosen transition, and updating the input word $w$ by removing the letter $a$ from the beginning (which has no effect if $a = \varepsilon$). Then the game continues from the new position. The game might last forever, by repeatedly using $\varepsilon$-transitions. If the game lasts forever then we assume that the existential player wins. An input word $w$ is accepted by the automaton if the existential player has a strategy to win the game, starting from the position $(q_0,w)$.
+
+In the atomless case, the alternating model is equivalent to usual automata, i.e.~it recognises exactly the regular languages over finite alphabets, see Exercise~\ref{ex:alternating-atomless}. In fact, alternating automata are an important model, especially for infinite objects, such as infinite words or trees.
+ In the presence of atoms, this model is more powerful than nondeterministic automata, as we will see in Example~\ref{example:all-distinct-alternating}.
+We begin with a very simple example of an alternating automaton, which explains how accepting states can be simulated in the model.
+
+
+\begin{myexample}
+	[A letter appears at least twice] \label{example:twice-alternating}  Recall the nondeterministic automaton from Example~\ref{ex:pof-nfa}, which accepted words in $w \in \atoms^*$ where some atom appeared at least twice. This automaton had a state space of the form 
+        \begin{align*}
+            \myunderbrace{\set{\text{initial, accept}}}{formally speaking, two copies of $\atoms^0$}
+            \quad + \quad 
+            \atoms.
+        \end{align*}
+	We can view this automaton as an alternating automaton, which recognises the same language, as follows. All states are made  existential, except the accepting state, which is universal. The automaton has the same  transitions as in Example~\ref{ex:pof-nfa}, except that we remove the outgoing transitions from the accepting state: 
+	        \begin{align*}
+        \text{initial} & \stackrel a \to \text{initial}\\
+        \text{initial} & \stackrel a \to a \\
+        a & \stackrel b  \to 
+        \begin{cases}
+            \text{accept} & \text{if $a = b$} \\
+             a & \text{if $a \neq b$}.
+        \end{cases}
+        \end{align*}
+	Since the accepting state is universal, and it has no outgoing transitions, the universal player immediately loses upon reaching this state, and therefore this state accepts all words. The remaining states of the automaton are existential, and therefore in order to win the game, the existential player must ensure that the accepting state is reached. This can only be done by finding a second appearance of some atom, as was the case in Example~\ref{ex:pof-nfa}.
+\end{myexample}
+
+\begin{myexample}
+	[All letters distinct] \label{example:all-distinct-alternating} We now complement the alternating automaton from the previous example. This automaton has no $\varepsilon$-transitions, which means that the corresponding game is played in a finite number of rounds, with each round consuming an input letter. For such automata, the role of the two players is completely symmetric (the only asymmetry in the model would arise for infinite plays, which were arbitrarily chosen to be winning for the existential player). Thanks to this symmetry, we can swap the two players, which means that for each input word, the winner turns into the loser and vice versa. After this swap, the automaton recognises the complement of the language. In the case of the automaton from Example~\ref{example:all-distinct-alternating}, the complement language is the set of words where all letters are distinct.
+\end{myexample}
+
+\begin{myexample}[The empty word] \label{example:empty-word-alternating} 
+	Here is an alternating automaton that accepts only the empty word. There are two equivariant states: which are called  ``empty'' and $\bot$. Formally  the state space is $1+1$, with the two components corresponding to the two states. The initial state is ``empty''. The state $\bot$ is owned by the existential player, and  has no outgoing transitions. This means that it rejects all words (it is dual to the accepting state from Example~\ref{example:twice-alternating}). The state ``empty'' is owned by the universal player, and it enables all transitions 
+	\begin{align*}
+	\text{empty} \stackrel a \to \bot \qquad \text{with $a \in \Sigma$}.
+	\end{align*}
+	If we run the automaton on an empty input word, then the universal player cannot pick a transition from the initial state, and thus  the existential player wins immediately,  witnessing acceptance. Otherwise, if the input word is nonempty, then the universal player can pick a transition which goes to the state $\bot$, where the existential player has no choice, and therefore loses, witnessing rejection. 
+\end{myexample}
+
+\begin{theorem}
+	Alternating pof automata generalise nondeterministic pof automata.
+\end{theorem}
+\begin{proof}
+	Take a nondeterministic pof automaton (without $\varepsilon$-transitions), and interpret it as an alternating automaton, by making all states existential. For the moment, this construction is incorrect. This is because when the input word ends, the existential player will lose, for a lack of possible transitions. Therefore, this automaton will reject all words. Another problem with this construction is that it ignores the accepting states of the original nondeterministic automaton.
+
+	Let us fix this construction, by taking into account the accepting states. We add a copy of the automaton for the empty word from Example~\ref{example:empty-word-alternating}, which has two states ``empty'' and $\bot$. For each transition $(p,a,q)$, in the original nondeterministic automaton, if $q$ is an accepting state, then we add a new transition $(p,a,\text{empty})$. The idea is that the existential player guess that the input word will end in a moment,  leading to acceptance. Therefore, the automaton can enter state that will only accept the empty word.  
+\end{proof}
+
+One of the principal motivations behind alternating automata is that Boolean operations have natural constructions.  For intersection and union, we take the disjoint union of two automata, and combine them by adding a new initial state. In the new initial state,  the owner of the state chooses the initial state of the  two original automata, and goes there via an $\varepsilon$-transition. If the new initial state is existential, then the construction gives us the union, and if it is universal, then we get the intersection. The more interesting construction concerns complementation. 
+For this construction, we make another assumption on the model, which  disallows infinite sequences of $\varepsilon$-transitions.
+
+\begin{definition}[Well-founded]
+	\label{def:well-founded}
+	An alternating automaton is called well-founded if there is no infinite sequence of $\varepsilon$-transitions 
+	\begin{align*}
+	q_1 \stackrel \varepsilon \to q_2 \stackrel \varepsilon \to q_3 \stackrel \varepsilon \to \ldots
+	\end{align*}
+\end{definition}
+\begin{theorem}
+	Well-founded alternating pof automata are closed under complementation.
+\end{theorem}
+\begin{proof} The well-foundedness assumption ensures that the model is symmetric, since every play in the game is finite. Therefore, the automaton is complemented by swapping the two players, as  we did in Example~\ref{ex:distinct-letters}. 
+\end{proof}
+
+
+One could extend the complementation construction to general alternating automata, if we extended the model to be more self-symmetric. This could be achieved, for example, by using a parity condition for infinite runs. However, we do not discuss such extensions in more detail, since already without such extensions the model is undecidable for essentially any problem, such as  emptiness or universality. In light of this undecidability, there seems to be little motivation for seriously studying the model, as opposed to studying general Turing machines. 
+
+
+\exercisepart
+\input{problems/pof-models-alternating}
+
+
+
+
+\section{Two-way automata}
+\label{sec:pof-two-way}
+We now describe a second extension of finite automata, which is equivalent to the usual automata in the atom-free case, but not in the presence of atoms. This is a two-way automaton,  where the head can move both left and right. This model is the same as Turing machines that have a read-only input tape and no work tape. We will consider the pof variant of this model, in the deterministic case.
+A \emph{deterministic two-way pof  automaton} is defined like a deterministic pof automaton, except that the transition function is of type 
+\begin{align*}
+Q \times 
+\myunderbrace{(\Sigma + \set{\vdash,\dashv} )}{input letters or endmarkers}  
+\ \to\ 
+\set{\text{accept, reject}} + 
+(Q \times 
+\myunderbrace{\set{\text{left, stay, right}}}{head movement}).
+\end{align*}
+The automaton can also reject by entering an infinite loop.
+
+\exercisepart
+\input{problems/pof-models-two-way}
+
+\section{Circuits}
+\label{sec:circuits}
+In this group of problems, we consider the pof version of circuits.     A pof circuit consists of:
+\begin{enumerate}
+    \item a pof set $X$ of variables;
+    \item a pof directed acyclic graph whose vertices are called  \emph{gates};
+    \item a distinguished output gate;
+    \item an equivariant labelling from gates to $X + \set{\lor,\land}$.
+\end{enumerate}
+Given a valuation of the variables $X \to \set{\text{true, false}}$, the circuit computes a value in the natural way, which is the value of the output gate.
+
+\exercisepart
+\input{problems/pof-models-circuits}
+
+
+\section{Pushdown automata and context-free grammars}
+\label{sec:cfl}
+In this section, we discuss pof variants of  pushdown automata\footnote{Context-free languages for infinite alphabets were originally introduced by~\cite{DBLP:journals/acta/ChengK98}, who proved equivalence for register extensions of context-free grammars and pushdown automata. The generalisation to orbit-finite pushdown automata and context-free grammars is from~\cite{DBLP:journals/corr/BojanczykKL14}. See also~\cite{DBLP:conf/mfcs/MurawskiRT14,DBLP:conf/csl/ClementeL15,DBLP:conf/lics/ClementeL15}. } and context-free grammars.  We show that basic results, such as equivalence of pushdown automata and context-free grammars, or decidability of emptiness,  transfer easily to the pof setting. We also motivate the models by giving examples of automata and grammars that use atoms. 
+    % Turing machines will be discussed in Section~\ref{cha:turing}.  
+
+ 
+ \begin{definition}\label{def:orbit-finite-pushdown}  
+	A \emph{pof pushdown automaton}  consists of 
+	\begin{align*}
+  \underbrace{Q}_{\text{states}} \quad   \underbrace{\Sigma}_{\substack{\text{input}\\ \text{alphabet}}} \quad  \underbrace{\Gamma}_{\substack{\text{stack}\\ \text{alphabet}}} \quad    \underbrace{q_0 \in Q}_{\text{initial state}} \quad   \myunderbrace{\gamma_0 \in \Gamma}{initial stack\\ symbol},
+\end{align*}
+such that the initial state and initial stack symbol are equivariant, together with an equivariant transition relation
+\begin{align*}
+	\delta \qquad \subseteq \qquad  Q\ \  \times \overbrace{\Gamma^*}^{\text{popped}} \times \ \  \overbrace{(\Sigma \cup \epsilon)}^{\text{input}} \ \  \times \ \  Q\ \  \times \overbrace{\Gamma^*}^{\text{pushed}}
+\end{align*}
+such that the popped and pushed strings have bounded length.
+\end{definition}
+
+The language recognised by such an automaton is defined in the usual way.  We assume that the automaton accepts via empty stack, i.e.~a run is accepting if the last configuration (state, stack contents) has an empty stack.  
+
+Similarly, we can define a pof pushdown grammar.
+\begin{definition}
+	A ""pof context-free grammar"" consists of 
+	\begin{align*}
+		\underbrace{N}_{\text{nonterminals}} \quad   \underbrace{\Sigma}_{\substack{\text{input}\\ \text{alphabet}}}  \qquad  \underbrace{R \subseteq N \times (N + \Sigma)^*}_{\text{rules}} 
+		\qquad \myunderbrace{S \in N}{initial\\ nonterminal}
+	  \end{align*}
+	where the nonterminals and input alphabet are pof sets, the set of rules is equivariant and has bounded length, and the initial nonterminal is equivariant.
+\end{definition}
+The language generated by a grammar  is defined in the usual way. 
+
+
+
+
+\begin{myexample}\label{example:palindrome-pda}[Pushdown automaton for palindromes.]
+	For a pof alphabet $\Sigma$, consider the language of palindromes, i.e.~words which are equal to their reverse.
+	This language is recognised by a pof pushdown automaton which works exactly the same way as the usual automaton for palindromes, with the only difference being that the stack alphabet $\Gamma$ is now a pof  set, namely  $\Sigma$. For instance, in the case when $\Sigma = \atoms$, the automaton keeps a stack of atoms during its computation. The automaton has two control states: one for the first half of the input word, and one for the second half of the input  word. As in the standard automaton for palindromes, this automaton uses nondeterminism to guess the middle of the word.
+	\end{myexample}
+	
+	
+	\begin{myexample}\label{example:mid-palindrome-pda}[Pushdown automaton for modified palindromes.]
+		The automaton in Example~\ref{example:palindrome-pda} had two control states, which did not store any atoms. In some cases, it might be useful to have a set $Q$ of control states that uses atoms. Consider  the set of odd-length palindromes where the middle letter is equal to the first letter. 
+		A natural automaton  recognising this language would be similar to the automaton for palindromes, except that it would store the first letter $a_1$ in its control state. 
+		
+		Another solution would be an automaton which keeps the first letter in every token on the stack. This automaton has a stack alphabet of $\Gamma = \Sigma \times \Sigma$, and after reading letters $a_1 \cdots a_n$ its stack is
+		\begin{align*}
+			(a_1,a_1),(a_1,a_2),\ldots,(a_1,a_n).
+		\end{align*}
+		This automaton needs only two control states. Actually, using the standard construction, one can show that every orbit-finite pushdown automaton  can be converted into one that has one control state, but a larger stack alphabet.
+	\end{myexample}
+	
+	The following example gives some motivation for studying orbit-finite pushdown automata.
+		\begin{myexample}[Modelling  recursive programs] \label{example:model-recursive-programs}
+		Pushdown automata without atoms are sometimes used to model the behaviour of recursive  programs with Boolean variables. By adding atoms,  
+	we can also model programs that have variables ranging over atoms. 	Consider  a recursive function such as the following one (this program does not do anything smart):
+
+
+
+
+
+\begin{lstlisting}
+function f(a: atom)
+begin 
+	b:=read() // read an atom from the input
+	if b != a then
+		f(b)
+		if b != read() then 
+			fail() // terminate the computation
+end
+\end{lstlisting}
+	The behaviour of this program can be modelled by a pof pushdown automaton. The input tape corresponds to the {\tt read()} functions. The stack corresponds to the call stack of the recursive functions; the stack stores atoms since the functions take atoms as parameters. Since the only variables are atoms, the set of possible call frames (i.e.~the stack alphabet) is a pof set. Pof 
+ pushdown automata could also be used to model more sophisticated behaviour, including mutually recursive functions and boolean variables. 
+	\end{myexample}
+
+
+
+\begin{theorem}\label{thm:pof-equality-pushdown}
+	Pushdown automata recognise the same languages as context-free grammars. 
+	Furthermore, emptiness is decidable.
+\end{theorem}
+\begin{proof}
+We just redo the classical constructions, which are so natural  that they easily go through in the pof extension. 
+	\begin{itemize}
+		\item \emph{From a pushdown automaton to a context-free grammar.} Without loss of generality, we assume that each transition either: pops nothing and pushes one symbol; or pops one symbol and pushes nothing.  We also assume that in every accepting run, the stack is nonempty until the last configuration.  Every pushdown automaton can be transformed into one of this form, without changing the recognised language, by using additional states and $\varepsilon$-transitions. The transformation can be done in polynomial time, assuming that equivariant subsets are represented using formulas.
+		
+		Assuming that the pushdown automaton has the form discussed above, the corresponding grammar is defined as follows. The nonterminals   are 
+	  \begin{align*}
+		   N \qquad  =  \qquad \underbrace{\set S}_{\text{an initial nonterminal}} + \qquad  Q \times \Gamma \times Q.
+	  \end{align*}
+	The language generated by a nonterminal $(p,\gamma,q)$ is going to be the set of words which label runs of the following form:
+		\mypic{69}To describe these runs, we use the following grammar rules. All  the sets  below are equivariant and have bounded length: 
+	 \begin{enumerate}
+		 \item \emph{Transitive closure}. For every  $p,q,r \in Q$ and $\gamma \in \Gamma$, there is a rule
+		 \begin{align*}
+			 (p,\gamma,q) \to (p,\gamma,r)(r,\gamma,q).
+		 \end{align*}
+		 \item \emph{Push-pop.} For every pair of transitions
+		 \begin{align*}
+			 \underbrace{(p,\epsilon, a, p', \gamma')}_{\text{push}} \quad \text{and} \quad 
+			  \underbrace{(q',\gamma', b, q, \epsilon)}_{\text{pop}}
+		 \end{align*}
+		 there is  a rule
+		 \begin{align*}
+			 (p,\gamma,q) \to a (p',\gamma',q') b.
+		 \end{align*}
+		 \item \emph{Starting.}  For every transition that pops the initial stack symbol $\gamma_0$
+		   \begin{align*}
+			\underbrace{(p,\gamma_0, a, q, \epsilon)}_{\text{pop}}
+		\end{align*} there is a rule 
+		 \begin{align*}
+			 S \to (q_0,\gamma_0,p) a .
+		 \end{align*}
+	 \end{enumerate} 
+	  	\item  \emph{From a context-free grammar to a pushdown automaton.}  The automaton keeps a stack of nonterminals. It begins with just the starting nonterminal, and accepts when all nonterminals have been used up. In a single transition, it replaces the nonterminal on top of the stack by the result of applying a rule. This automaton has one state (if we disregard the restriction that all transitions have to be either push or pop). 
+	  	\item \emph{Emptiness is decidable.} We now show that emptiness is decidable. We use the context-free grammars, and the usual algorithm. This algorithm stores an equivariant subset of the nonterminals that are known to be nonempty (also known as productive nonterminals). Initially, the subset is empty. In each step, we add a nonterminal $X$ to the subset if there is some rule in the grammar, where the left-hand side has $X$, and the right-hand side has only terminals and nonterminals that are already in the subsets. Because the set of rules is equivariant, in each step the subset is equivariant. Therefore, the subset can grow only in finitely many steps before stabilizing. The number of steps is at most the number of orbits in the set of nonterminals, which is at most exponential in the representation of the grammar.
+	\end{itemize}
+\end{proof}
+	
+
+	
+	% A configuration of the automaton is a pair in $Q \times \Gamma^*$, where the first coordinate represents the control state and the second coordinate represents the stack contents.  One defines a relation
+% 	\begin{align*}
+% 		 \delta^* \subseteq  (Q \times \Gamma^*) \times A^* \times (Q \times \Gamma^*)
+% 	\end{align*} 
+% 	which says how to go from one configuration to another reading a given input word. It is easy to see that the relation $\delta^*$ is supported by any set which supports the automaton itself. It follows that the language recognised by the automaton, which is defined as 
+% \begin{align*}
+% 	 \set{ w : ((q_I,\gamma_I),w,(p,\epsilon)) \in \delta^*} 
+% \end{align*}
+% is finitely supported, and therefore a legal set with atoms. In particular, if the automaton is equivariant, then so is its recognised language.
+
+
+
+	\exercisepart
+
+	\mikexercise{ Consider the following extension\footnote{This extension is based on~\cite{DBLP:conf/mfcs/MurawskiRT14}.} of pof pushdown automata, where a new kind of transition is allowed:
+		\begin{align*}
+			q \stackrel  {\text{\small fresh($a$)}} \to p \qquad \text{for states $p,q$ and an input letter $a \in \atoms$.}
+		\end{align*}
+		 When executing this transition, the automaton reads letter $a$ and changes state from $q$ to $p$, but only under the condition  that all atoms from the input letter $a$ are  fresh (i.e.~do not appear in) with respect to every letter on the stack and the current state $q$. Show that emptiness is decidable. } {
+Using the usual construction, one can convert the automaton into one which operates on the stack only via push and pop, i.e.~apart from the fresh transitions of the type in the statement of the exercise, we only allow transitions of the form:
+	\begin{eqnarray*}
+			q \stackrel  {\text{\small read($a$)}} \to p & \quad &\quad\mbox{read input letter $a \in \Sigma$ and do not change the stack}\\
+					q \stackrel  {\text{\small push($a$)}} \to p & \quad &\quad\mbox{read nothing and push symbol $a$ on the stack}\\
+					q \stackrel  {\text{\small push($a$)}} \to p & \quad &\quad\mbox{read nothing and pop symbol $a$ from the stack}
+		\end{eqnarray*}
+
+For states $q,p$ and a stack symbol $a$, we write $q \stackrel a \Rightarrow b$ if  the automaton has a run of the following form:\mypic{54}
+
+The following claim implies decidability. This is because it shows that the relation $q \stackrel a \Rightarrow b$ can be computed, and hence one can check if there is a run which eventually pops the initial stack symbol.
+\begin{claim} Suppose that $\bar c$ is some tuple of atoms which supports the transition relation. 
+The relation $q \stackrel a \Rightarrow b$ is generated by the following rules:
+\begin{enumerate}
+	\item for every stack symbol $a$, the binary relation $\stackrel a \Rightarrow$ is transitive and reflexive;
+	\item for every $q,p,q',p', \in Q, b \in \Sigma, a,a' \in \Gamma$ we have
+	\begin{eqnarray*}
+  q \stackrel  {\text{\small read($b$)}} \to p \quad &\text{implies}& \quad q \stackrel a \Rightarrow b
+\\  q \stackrel  {\text{\small fresh($b$)}} \to p \quad &\text{implies}& \quad q \stackrel a \Rightarrow b   \qquad \mbox{if $b$ is fresh with respect to $q,a,\bar c$}\\
+  q \stackrel  {\text{\small push($a'$)}} \to q' \stackrel {a'} \Rightarrow p' \stackrel  {\text{\small pop($a'$)}} \to p   \quad &\text{implies}& \quad q \stackrel a \Rightarrow b.
+\end{eqnarray*}
+\end{enumerate}
+\end{claim}
+\begin{proof}
+The proof has two parts: soundness (the relation $q \stackrel a \Rightarrow b$ satisfies the rules) and completeness (the relation $q \stackrel a \Rightarrow b$ is the least one which satisfies the rules).
+	Completeness of the rules is shown as usual for pushdown automata (by induction on the length of the run). Soundness needs a little care, because of the rule for freshness. Here, the observation is that we can always map the  stack  to some stack which is fresh with respect to $b$, by using a $\bar c$-automorphism which fixes the state $q$ and the topmost stack symbol $a$. Such an operation is admissible, because reachable configurations are closed under applying $\bar c$-automorphisms.
+\end{proof}}
+
+
+	
+
+	
+	
+
+\mikexercise{\label{ex:higher-order}Consider the  following higher-order variant of  orbit-finite pushdown automata\footnote{This exercise is based on~\cite[Section 6]{DBLP:conf/mfcs/MurawskiRT14}.
+}. The automaton has a stack of stacks (one could also consider stacks of stacks of stacks, etc., but this exercise is about stacks of stacks). There are operations as in a usual pushdown automaton, which apply to the topmost stack. There is also an operation ``duplicate the topmost stack'' and an operation ``delete the topmost stack''. Show that emptiness is undecidable.}{
+Before giving the solution, we point out that without atoms, emptiness is decidable for higher order pushdown automata, even for orders $\ge 3$. For undecidability, it suffices to have a stack of at most two stacks.  We assume that $\epsilon$-transitions are available, which changes the expressive power of the model, but does not influence decidability of emptiness.
+
+We only show that such an automaton  can recognise  
+	\begin{align*}
+		L = \set{(w\#)^n : w \in \atoms^* \mbox{ has no repetitions and }n \in \Nat}
+	\end{align*}
+	over the alphabet $\atoms \cup \set \#$. The same construction can be modified so that the automaton checks that consecutive blocks between $\#$ symbols, instead of being equal as in $L$, are consecutive configurations of a Turing machine.
+	
+	In a first phase, the automaton puts $w$ into the (first) stack and checks that it has no repetitions. This is done as follows. For every new letter $a$, the automaton stores $a$  in its state. Then it duplicates the stack, and searches if $a$ appears on the duplicated stack, destroying the duplicate in the process.  If it does not find $a$ on the duplicated stack, it pushes $a$ onto the first stack, and proceeds to the next input letter.
+	
+	Once it has checked that $w$ has no repetitions, and stored $w$ on the stack, the automaton proceeds to the second phase, which checks that the rest of the input consists of copies of $w$ separated by $\#$ symbols. The second phase is done essentially the same way as the first. For every two consecutive letters $a$ and $b$ in the rest of the input  the automaton does the following. 
+	\begin{quote}
+		If $a = \#$  then $b$ must be the first letter of $w$, which is stored in the state. If $b=\#$, then $a$ must be the last letter of $w$, which is stored in the state. Finally, suppose that neither $a$ nor $b$ are $\#$. The automaton needs to check that $a$ and $b$ are consecutive letters in $w$. To do this, the automaton duplicates the stack, and searches through this stack to check that $a$ and $b$ are consecutive symbols on the stack.		
+	\end{quote}
+Maybe the above undecidability argument shows that our definition of higher-order pushdown automata for atoms is the wrong one. If it is wrong, then which one is right?}
+
+	
+
+	
+	
+
+
+
+% \mikexercise{\label{ex:context-free-grammar}Define an orbit-finite context-free grammar like a normal context-free grammar, except that the terminals, nonterminals and rules can all be orbit-finite sets. Show that orbit-finite pushdown automata and orbit-finite context-free grammars define the same language classes.}{
+% 		The proof is the same as the standard proof for normal sets. 
+
+% \begin{itemize}
+% 	\item  When transforming a  context-free grammar into a pushdown automaton, we do not need any assumptions on the atoms.  The classical construction works.  The automaton keeps a stack of nonterminals. It begins with just the starting nonterminal, and accepts when all nonterminals have been used up. In a single transition, it replaces the nonterminal on top of the stack by the result of applying a rule. Here it is useful to assume that the grammar is in Chomsky normal form. 
+	
+% 	\item When transforming a pushdown automaton into a context-free grammar, we use the assumption that the atoms are homogeneous over a finite vocabulary, since we need closure of orbit-finite sets under products.
+% 	  The nonterminals are going to be 
+% 	\begin{align*}
+% 		\Nn = Q \times \Gamma \times Q.
+% 	\end{align*}
+% 	(Here we need the assumption on the atoms, since $\Nn$ is a product of orbit-finite sets.)
+% 	The language generated by a nonterminal $(p,\gamma,q)$ is going to be the set of words which take the automaton from a configuration with state $p$ and $\gamma$ on top of the stack, to another configuration with state $p$ and $\gamma$ on top of the stack, such that during the run the symbol $\gamma$ is not removed from the stack.  The rules of the grammar are as in the classical construction; it is easy to see that the set of rules is orbit-finite.
+% \end{itemize}
+% }
+
+\mikexercise{Show  a language that is generated by a pof context-free grammar, but not by any pof context-free grammar with a finite (not just pof) set of nonterminals. } {The language is odd length palindromes where the first letter is equal to the middle letter. If it were generated by an orbit-finite context-free grammar with finitely many terminals (but possibly an orbit-finite set of rules), then the language would have the following property for some tuple of atoms $\bar a$ (the support of the hypothetical grammar), which it does not have:
+	  \begin{quote}
+	  	For every sufficiently long  $w$, there is a decomposition $w=w_1 w_2 w_3$, with $w_2$ and $w_1w_3$ nonempty  such that
+	\begin{align*}
+		w_1( \pi \cdot w_2) w_3  
+	\end{align*}
+	is a palindrome for every $\bar a$-automorphism $\pi$.
+	  \end{quote}		}
+	  
+	  
+
+
+
+\input{problems/pof-models-cfg}
+
+
+
+
+\section{Turing machines}
+\label{sec:pof-turing-machines-equality}
+In this section, we discuss the pof version of Turing machines.
+A pof Turing machine is defined like a Turing machine, except that the set of states, and the alphabets are pof sets, and the transition function is equivariant. 
+
+We assume that the reader is familiar with Turing machines, but we give a more detailed description of our modal to fix notation.
+The input alphabet $\Sigma$, the work alphabet $\Gamma$, and the set of states $Q$ are all pof sets. We assume that the work alphabet contains the input alphabet, and there is some designated blank symbol
+\begin{align*}
+\text{blank} \in \Gamma \setminus \Sigma
+\end{align*}
+that is equivariant. One could have a two tape model, but since we will not be interested in machines with sublinear space (e.g.~logarithmic space), we use the one tape model for simplicity. In this model, there is one  tape that is read-write, which initially contains the input string, and which is also used for storing intermediate computations.  The tape is infinite in both directions. A configuration of the Turing machine consists of the tape contents (i.e.~each cell has some letter from the work alphabet), a head position (which points to some cell), and a state from $Q$. The initial configuration looks like this: 
+\mypicb{7}
+
+The behaviour of the Turing machine is specified by its transition function, which is an equivariant function of type 
+        \begin{gather*}
+            \myunderbrace{Q \times \Gamma}{current state and \\ letter  under \\ the head}   
+            \qquad \rightarrow \qquad 
+            \set{\text{accept, reject}} +  (Q \times
+            \myunderbrace{\set{\text{left, stay, right}}}{head movement} \times 
+            \myunderbrace{\Gamma}{what is \\ written on \\ the  tape}).
+            \end{gather*}
+Using the transition function, the machine computes a new configuration in the expected way, or it accepts/rejects. This leads to a computation (a sequence of configurations), which is either finite -- when an accept/reject instruction is executed -- or infinite. 
+In a nondeterministic machine, instead of a function we have a binary relation, and an input string might have more than one computation. The language \emph{recognised by}  a (possibly nondeterministic) Turing machine is the set of words that have at least one accepting computation.
+
+
+\begin{myexample}[A Turing machine checking that all letters are different]\label{ex:distinct-letters}
+	Consider the equality atoms.
+		Assume that the input alphabet is $\atoms$. 	We show a deterministic Turing machine which accepts words where all letters are distinct.
+		The idea is that the machine iterates the following procedure until the tape contains only blank symbols: if the first non-blank letter on the tape is $a$, replace it by a blank and load $a$ into the state, scan the word to check that $a$ does not appear again (if it does appear again, then reject immediately), and after reading the entire word go back to the beginning of the tape. If the tape is entirely erased, then accept. The sets of states is $\atoms$, plus two extra states for the scanning, which are depicted using red and blue in Figure~\ref{fig:distinct-turing}. 
+\begin{figure}
+\mypicb{8}	
+\caption{\label{fig:distinct-turing}An accepting run of the Turing machine from Example~\ref{ex:distinct-letters}.}
+\end{figure}
+\end{myexample}
+
+Having defined Turing machines, we get the usual notions of semi-decidability (the language of some Turing machine) and decidability (the language of some Turing machine that always halts).
+The Church-Turing Thesis states that there is only one notion of decidable language, which is captured by Turing machines. Does introducing atoms give a violation of this thesis? What does that even mean? One way of answering this question is to relate computation with atoms to the classical notion of computation without atoms. A word with atoms can be represented by a word without atoms, by writing down the atoms, such as ``John'' or ``Mary'' using a finite alphabet. Under such a representation, we  get a usual word over a finite alphabet, which can be used as an input for the classical atom-free models of computation. We will show later in this section that Turing machines with atoms can be simulated by machines without atoms, and vice versa, and thus the two models of computation are essentially equivalent. Using this equivalence, we can carry over to the atom world classical results, such as equivalence of deterministic and nondeterministic machines in the presence of unbounded computation time. However, in  Chapter~\ref{cha:turing} we will discover a twist in the story -- if we use a more general notion of pof sets, namely (not necessarily polynomial) orbit-finite sets, then some  equivalences break down, for example nondeterministic machines are not equivalent to deterministic ones. Before we get to the twist, let us tell the untwisted story, which involves pof sets. 
+
+We begin by formalizing what it means to ``write down'' an atom.
+
+
+
+\begin{definition}\label{def:representation-equality}
+    A \emph{representation} of the atoms is any function 
+    \begin{align*}
+    r : 2^* \to \atoms
+    \end{align*}
+    which is surjective (every atom has at least one representation) and such that one can decide if two strings represent the same atom.
+\end{definition}
+
+An alternative choice of definition would require the function to be bijective, which would also give a simpler algorithm for deciding if two strings represent the same atom. We choose to use the above definition because it will more naturally extend to atoms with more structure.
+
+Suppose that we have a representation of the atoms. We can extend  it to represent elements of a pof set: an element of such a set is described by indicating which component $\atoms^{d_i}$ is used,  followed by a representation of the $d_i$ atoms  in the tuple. We can also extend the representation to describes words over a pof set, by using separator symbols between the letters. Summing up, once we know how to represent atoms with atom-less strings, we can do the same for words over a pof alphabet.  In the following theorem, we show that the atom version of Turing machines correspond to the usual Turing machines without atoms, via the representation. Furthermore, the choice of  representation is not important. 
+
+\begin{theorem}\label{thm:pof-turing}
+    The following conditions are equivalent for every language $L \subseteq \Sigma^*$ over a pof alphabet:
+    \begin{enumerate}
+        \item \label{item:turing-pof-det-pof} $L$ is recognised by a deterministic pof  Turing machine;
+        \item \label{item:turing-pof-nondet-pof} $L$ is recognised by a nondeterministic pof  Turing machine;
+        \item \label{item:turing-pof-every-rep} $L$ is equivariant and for every representation $r$, 
+        \begin{align*}
+            \setbuild{ w }{ $w$ represents, under $r$, some word in $L$}
+            \end{align*}
+         is recognised by  a nondeterministic  Turing machine;
+        \item \label{item:turing-pof-every-rep-det} as in the previous item, but the machine is deterministic;
+        \item \label{item:turing-pof-some-rep} as in the previous item, but the representation $r$ is quantified existentially.
+    \end{enumerate}
+\end{theorem}
+\begin{proof}
+    The implications \ref{item:turing-pof-det-pof} $\Rightarrow$ \ref{item:turing-pof-nondet-pof} and \ref{item:turing-pof-every-rep-det} $\Rightarrow$ \ref{item:turing-pof-some-rep} are trivial. 
+    For the implication~\ref{item:turing-pof-nondet-pof} $\Rightarrow$ \ref{item:turing-pof-every-rep}, we use a straightforward simulation, where the simulating machine stores representations of the simulated Turing machine.
+    Implication \ref{item:turing-pof-every-rep} $\Rightarrow$ \ref{item:turing-pof-every-rep-det} is the classical fact that, without atoms, deterministic and nondeterministic Turing machines compute the same languages. The interesting implication is \ref{item:turing-pof-some-rep} $\Rightarrow$ \ref{item:turing-pof-det-pof}, which is proved below.
+    
+    Let $r$ be a representation as in the assumption~\ref{item:turing-pof-some-rep}, and let us write $s : 2^* \to \Sigma^*$ for the extension of this representation to words over the alphabet $\Sigma$. The main idea is that this representation can be inverted, up to atom permutations, by a deterministic pof Turing machine. This is proved in the following lemma, which we call the deatomisation lemma, because it transforms a word with atoms into a representation without atoms.   (We use the standard notion of Turing machines for computing a function -- there is an output tape, the machine always halts, and the contents of the output tape is the output of the function.)
+
+    \begin{lemma}[Deatomisation]\label{lem:deatomisation}
+        There is a function $f: \Sigma^* \to 2^*$, 
+         computed by a deterministic pof Turing machine,  such that  every word $w \in \Sigma^*$ is in the same orbit as $s(f(w))$.
+    \end{lemma}
+
+    Before proving the above lemma, we use it to prove the implication \ref{item:turing-pof-some-rep} $\Rightarrow$ \ref{item:turing-pof-det-pof}. Using the atom-less Turing machine from the  assumption, we know that there is a Turing machine that  in puts $w \in \Sigma^*$, and checks if  $s(f(w))$ belongs to the language. By the assumption that the language is equivariant, this is the same as checking if $w$ belongs to the language. It remains to prove the Deatomisation Lemma.
+
+    \begin{proof}
+        Consider some computable enumeration of representations of the atoms, i.e.~an infinite list of strings in $2^*$ 
+        which is computed by a Turing machine, and such that every atom is represented by exactly one string on the list. Such an enumeration can be found for every representation. 
+
+        Using this enumeration, we define the deatomisation function $f$ from the statement of the lemma. 
+        Consider an input string $w \in \Sigma^*$. The string $w$ contains some atoms, and these atoms can be listed in the order of their first appearance in the string. For each of these atoms, we choose a string representation according to the enumeration in the previous paragraph, i.e.~the atom with the leftmost appearance gets the first representation, the atom with the second leftmost appearance gets the second representation, and so on. We then apply this choice consistently to the entire string. All of this can be implemented by a deterministic pof Turing machine.
+    \end{proof}
+
+    This completes the proof of the implication \ref{item:turing-pof-some-rep} $\Rightarrow$ \ref{item:turing-pof-det-pof}, and therefore also of the theorem. We would like to remark that the proof of the Deatomisation Lemma given above will fail for more general input alphabets which will be considered later in the book. The issue is that the proof above refers to the order of appearance of atoms in the input string, and this will no longer be meaningful for some input alphabets, such as unordered pairs of atoms, which will be legitimate alphabets in the more general settings. 
+\end{proof}
+
+
+
+
+
+
+\exercisepart
+\input{problems/pof-models-turing}

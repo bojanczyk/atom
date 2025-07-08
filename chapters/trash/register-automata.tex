@@ -1,0 +1,269 @@
+\chapter{Register automata}
+\label{sec:register-automata}
+
+A data word is a word where each letter carries two pieces of information: a \emph{label} from a finite set, and a \emph{data value} from an infinite set. Here is a picture:
+\mypic{107}
+For the rest of Part I, fix a countably infinite set $\atoms$. Elements of this set, called the \emph{atoms}, will be used for the data values. 
+Formally, a \emph{data word} over a finite set of labels $\Sigma$ is defined to be a word in
+\begin{align*}
+	w \quad \in \quad \big(\underbrace{\Sigma}_{\text{label}} \quad \times \underbrace{\atoms}_{\text{data value}}\big)^*.
+\end{align*}
+When describing properties of data words, we will be able to test the labels explicitly by asking questions like 
+\begin{center}
+	does the second letter have $a \in \Sigma$ as its label?
+\end{center}
+but we will only test the data values for equality, e.g. ask 
+\begin{center}
+	do the third and fifth letters have the same data value?
+\end{center}
+Later in the book, we will formalise what it means to only test data values for equality, but for now the intuitive understanding should be enough. 
+
+\begin{myexample}\label{ex:data-languages}
+By abuse of notation, we assume that a word in $\atoms^*$ is also a data word, which uses no labels. Here are examples of languages of data words, in all of these examples we use no labels:
+\begin{enumerate}
+	\item the first data value is the same as the last data value;
+\item some data value appears twice;
+\item no data value appears twice;
+\item the first data value appears again;
+\item every three consecutive data values are pairwise distinct.
+\end{enumerate}	
+\end{myexample} 
+
+We will introduce automata models for data words that recognise the above languages. These models use registers to talk about data values.
+
+
+
+\section{Nondeterministic register automata}
+We begin our discussion with some of the simplest automaton models for data words, namely nondeterministic and deterministic register automata\footnote{Register automata where introduced in~\cite{DBLP:journals/tcs/KaminskiF94}, under the name of \emph{finite memory automata}, together with a decidability proof for the emptiness problems in the deterministic and nondeterministic one-way cases (Theorem~\ref{thm:register-decidable-emptiness} in this text). The presentation using syntactic and semantics equivariance, in particular Lemma~\ref{lem:two-types-of-equivariance}, is essentially due to~\cite{DBLP:journals/mst/Bojanczyk13,DBLP:journals/corr/BojanczykKL14}.
+ }. 
+\begin{definition}[Nondeterministic register automaton]
+	The syntax of a \emph{nondeterministic register automaton} consists of:
+\begin{itemize}
+	\item a finite set $\Sigma$ of \emph{labels};
+	\item a finite set $\locations$ of \emph{locations}\footnote{We use the name location instead of state because the state of the automaton will store additional information, namely the contents of the registers.};
+	\item a finite set $R$ of \emph{register names};
+	\item an \emph{initial location} $\ell_0 \in \locations$ and a set of \emph{accepting locations} $F \subseteq \locations$;
+	\item a \emph{transition relation}
+\begin{align}\label{eq:register-automaton-transitions}
+ \delta \subseteq \underbrace{\locations \times \overbrace{(\atoms \cup \set \bot)^R}}^{ \qquad \substack{\text{register valuations, i.e.}\\\text{partial functions}\\ \text{from registers}\\ \text{to atoms}}
+ }
+ _{\text{states}} \times \underbrace{\Sigma \times \atoms}_{\text{input}} \times \underbrace{\locations \times (\atoms \cup \set \bot)^R}_{\text{states}}
+\end{align}
+ subject to an equivariance condition described below.	
+\end{itemize}
+\end{definition}
+
+
+
+The automaton is used to accept or reject data words with labels $\Sigma$, i.e.~words where each position is labelled by $\Sigma \times \atoms$. After processing part of the input, the automaton keeps track of a \emph{state}, which is defined to be a location plus a register valuation. Initially, the state consists of the initial location and a completely undefined register valuation. For each input letter, the state is updated according to the transition relation $\delta$, and the automaton accepts if at the end of the input word the state is accepting, in the sense that the location belongs to the accepting set.
+
+How is the transition relation described? Since the state space is infinite, some restrictions on the transition relation are needed to represent it in a finite way. We choose the following restriction, called \emph{equivariance}: the transition relation can only compare atoms with respect to equality, and is not allowed to depend on any specific atoms. Equivariance can be formalised in two different ways, as described below.
+
+\paragraph{Semantic equivariance.} A permutation $\pi : \atoms \to \atoms$ of the atoms (i.e.~a bijection from the atoms to themselves) can be applied to states in the natural way, and therefore also to triples in the transition relation $\delta$ (the locations and undefined values are not affected, only the atoms). Here is a picture:
+\mypic{108}
+We say that $\delta$ is \emph{semantically equivariant} if the set of transitions is invariant under actions of atom permutations, i.e.
+\begin{align*}
+ \pi(t)\in \delta \qquad \mbox{for every $t \in \delta$ and every permutation $\pi : \atoms \to \atoms$}.
+\end{align*}
+The advantage of semantic equivariance is that the definition is short, and easy to generalise to other models like alternating automata or pushdown automata. The disadvantage is that it is not clear how to represent a semantically equivariant transition relation, e.g.~for the input of a nonemptiness algorithm. The converse situation holds for syntactic equivariance, as presented below.
+\paragraph{Syntactic equivariance.} We say that $\delta$ is \emph{syntactically equivariant} if it can be defined by a finite boolean combination of constraints of the following types:
+\begin{enumerate}
+	\item the location in the source / target state is $\ell \in \locations$;
+	\item the label in the input letter is $a \in \Sigma$;
+	\item register $r \in R$ is undefined in the source / target state;
+	\item the atom in the input letter is the same as in register $r \in R$ of the source / target state;
+	\item \label{it:sem-equiv-registers-equal} register $r \in R$ of the source / target state stores the same atom as register $s \in R$ of the source / target state.
+\end{enumerate}
+In the above, source / target means that the constraint can be instantiated with either ``source'' or ``target''. For example, 
+in item~\ref{it:sem-equiv-registers-equal}, there are four possibilities regarding the choice of source vs target, since the choice is taken independently for $r$ and $s$. 
+
+
+\begin{lemma}\label{lem:two-types-of-equivariance}
+Semantic and syntactic equivariance are the same.
+\end{lemma}
+\begin{proof}
+	It is not difficult to see that semantically equivariant subsets of the set~\eqref{eq:register-automaton-transitions} are closed under boolean combinations. Since the bijections of data values do not affect satisfaction of the constraints 1-5 used in the definition of syntactic equivariance, it follows that syntactic equivariance implies semantic equivariance.
+	
+	We now show that semantic implies syntactic. Define an \emph{orbit of transitions} to be a set of the form 
+	\begin{align*}
+		\set{\pi(t) : \text{$\pi$ is a permutation of the atoms}} \qquad \text{for some transition $t \in \delta$}.
+	\end{align*}
+	Here is a picture of an orbit of transitions:
+	\mypic{109}
+	 nonempty subset of the set~\eqref{eq:register-automaton-transitions} which is semantically equivariant and which is minimal for that property with respect to inclusion. 
+	\begin{claim}
+		Every orbit of transitions is syntactically equivariant.
+	\end{claim}
+	\begin{proof}[Proof of the claim]		
+	An orbit of transitions is uniquely defined by its locations, which registers are undefined, what is the label of the input letter, and what is the equality type of the tuple of atoms in the defined registers and the input letter. All of this information can be expressed using the constraints 1-5 in the definition of syntactic equivariance.
+	\end{proof}
+	
+	Once the number of registers and locations is fixed, there are finitely many possible constraints as in the definition of syntactic equivariance. Boolean combinations make the number of possibilities grow, but it remains finite. Therefore, thanks to the above claim, there are finitely many possible orbits of transitions. Finally, every semantically equivariant relation is easily seen to be the union of the orbits contained in it. This union is finite, and each part of the union is syntactically equivariant, hence the result follows.
+\end{proof}
+
+
+This completes the definition of nondeterministic register automata: the transition relation is required to be equivariant in either of the two equivalent senses defined above. The transition relation is called \emph{deterministic} if the source state and the input letter determine uniquely the target state.
+
+
+\begin{myexample}
+Here is a deterministic register automaton which recognises language 1 from Example~\ref{ex:data-languages}, i.e.~the words in $\atoms^*$ where the first and last data values are equal. The automaton stores the first data value in its register, and then toggles between accepting or rejecting states depending on whether the input agrees with the register. Here is a picture: \mypic{4}
+The above picture should be interpreted as follows. There are three locations, standing for the three coloured circles, with initial and final locations depicted using dangling arrows. Since there is one register, a state consists of a location and an atom, with the atom possibly undefined. Such states can be found in the picture above. For every pair of distinct atoms $a \neq b$, we add a transition from the above picture to the automaton. Note how every arrow in the picture corresponds to an orbit of transitions.
+
+The method of drawing above has its limitations. For example, if we wanted to add a transition that would involve the orange location with an undefined register, we would need to draw a separate instance of the orange state. 
+\end{myexample}
+
+
+\begin{myexample}\label{ex:no-complement}
+	Languages recognised by nondeterministic register automata are not closed under complement. Consider the language 
+	\begin{align*}
+		L = \set{w \in \atoms^* : \text{some data value appears twice in $w$}}.
+	\end{align*} 
+	This language is recognised by a nondeterministic register automaton with one register and three locations. The automaton uses nondeterminism to guess the repeating data value. Here is a picture:
+	\mypic{122}
+	We now show that the complement of this language -- namely the words where no data value repeats -- is not recognised by any nondeterministic register automaton. Toward a contradiction, suppose that there is such a nondeterministic automaton, say with $<k$ registers, and consider an accepting run over a word with $2k$ distinct data values:
+	\begin{align}\label{eq:alleged-accepting-run}
+	q_0 \stackrel {a_1} \to q_1 \stackrel {a_2} \to \cdots \stackrel {a_{2k}} \to q_{2k}
+	\end{align}
+	Since the automaton has $<k$ registers then there must be some atoms
+	\begin{align*}
+		a \in \set{a_1,\ldots,a_k} \qquad b \in \set{a_{k+1},\ldots,a_{2k}}
+	\end{align*}
+	such that neither $a$ nor $b$ appear in the registers of state $q_k$. Let $\pi$ be the atom permutation which swaps $a$ and $b$. If we apply $\pi$ to the second half of the run in~\eqref{eq:alleged-accepting-run}, then we also get an accepting run (because transitions and accepting states are closed under applying permutations, and the permutation $\pi$ does not affect the state $q_k$ in the middle of the run). This new run sees the atom $a$ twice.
+\end{myexample}
+\exercisepart
+
+\mikexercise{\label{ex:simple-automata}Show that deterministic register automata can recognise languages 4 and 5 from Example~\ref{ex:data-languages}.}{
+Consider language 4, i.e.~the first atom appears again. The automaton stores the first atom in its unique register and then waits for a repetition to enter an accepting sink state. Here is the picture:
+\mypic{5}
+Consider now language 5, i.e.~every three consecutive atoms are pairwise distinct. The automaton uses two registers to store the last two atoms. There is only one control state. Here is the picture:
+\mypic{6}
+The unique location is the yellow one shown above and thus different occurrences of the yellow state should be seen as self-loops. The picture depicts three kinds of self-loops in this unique control state: a self-loop which goes from zero defined registers to one defined register, a self-loop which goes from one defined register to two defined registers, and a self-loop from two defined registers to two defined registers.
+}
+
+\mikexercise{\label{ex:epsilon-transitions} Show that the expressive power of nondeterministic register automata is not affected if we allow $\varepsilon$-transitions.}{The classical construction works. 
+	This is most easily seen using semantic equivariance. Let $Q$ be the states of the automaton (recall that a state consists of a location and a register valuation). Consider an automaton which uses $\varepsilon$ transitions, i.e.~it has two transition relations:
+	\begin{align*}
+		\underbrace{\delta_\varepsilon \subseteq Q \times Q}_{\text{$\varepsilon$-transitions}} \qquad \underbrace{\delta \subseteq Q \times (\Sigma \times \atoms) \times Q}_{\text{usual transitions}},
+	\end{align*}
+	both of which are semantically equivariant. It is not hard to see that if $\delta_\varepsilon$ is semantically equivariant, then the same is true for its reflexive transitive closure $\delta_\varepsilon^*$. Also, semantically equivariant relations are closed under composition, and therefore $\gamma = \delta \circ \delta_\varepsilon^*$ is semantically equivariant. We replace the original transition relation by $\gamma$. We also replace the final states by those states that can reach a final state via $\delta_\varepsilon^*$, the resulting set of final states is also equivariant. The resulting automaton has no $\varepsilon$-transitions, and it recognises the same language as the original one. 
+}
+
+
+
+\mikexercise{\label{ex:myhill-wrong-for-register}For languages of data words one can also define the Myhill-Nerode relation, as used in minimisation of deterministic automata. Show a language of data words where every deterministic register automaton that recognises the language distinguishes (by its state) some two words which are Myhill-Nerode equivalent.}{An example of such a language is $\set{abc : \mbox{$a,b,c \in \atoms$ are distinct}}$. After reading $ab$, the automaton should be in the same state as after reading $ba$. This example would go away if automata had registers that store unordered pairs of atoms. But then we could consider the following language, where addition is done modulo 3:
+\begin{align*}
+ \set{a_0a_1a_2 a_{i} a_{i+1} a_{i+2} : a_0,a_1,a_2 \in \atoms \mbox{ are distinct}}.
+\end{align*}
+To have a minimal automaton for the above language, we would need registers that store triples of atoms modulo cyclic permutations. Groups other than $\mathbb Z_3$ could also be used. In Section~\ref{sec:orbit-finite-automata}, we introduce an extension of register automata that does not suffer from the problems described in this exercise. } 
+
+
+
+\mikexercise{Show that a nondeterministic register automaton can recognise language 2 from Example~\ref{ex:data-languages}, but a deterministic one cannot.}{Language 2 says that some data value appears twice. After reading sufficiently many letters, a deterministic register automaton will necessarily forget one of the previously read letters, in the sense that it will not be in any register. This letter can be read again. How arguments of this type should be formalised can be seen in the solution to the next exercise, Exercise~\ref{ex:guessing}.}
+
+\mikexercise{\label{ex:guessing}Call a nondeterministic register automaton \emph{guessing} if there exists a transition $t \in \delta$ such that some data value in the target state appears neither in the source state nor in the input. Give an example of a language that needs guessing to be recognised. }{ The alphabet is $\atoms$ and the language, call it $L$, is ``the atom in the last position does not appear on other positions''. This language is the reverse of language 4. (This exercise also shows that nondeterministic automata without guessing are not closed under reverses.) With guessing, the language $L$ can easily be recognised, by simply reversing all arrows in the automaton for language 4 from Exercise~\ref{ex:simple-automata}. The guessing corresponds to this reversed arrow:
+\mypic{7}
+ Let us prove that $L$ is not recognised by any nondeterministic automaton without guessing. Toward a contradiction, suppose that $L$ is recognised by an automaton without guessing. Let $n$ be strictly bigger than the number of registers. The word $a_1 \cdots a_{n+1}$ consisting of $n+1$ distinct atoms belongs to the language, and hence must admit an accepting run. Decompose this accepting run as $\sigma \cdot t$ where $t$ is the last transition, which reads the letter $a_{n+1}$, and $\sigma$ is the rest of the run, which reads the letters $a_1 \cdots a_{n}$. Since the automaton is not guessing, none of the states in the run $\sigma$ contains $a_{n+1}$. Furthermore, by assumption on $n$ being greater than the number of registers, some $a \in \set{a_1,\ldots,a_n}$ does not appear in the last state of $\sigma$. Let $\pi$ be a permutation of the atoms which swaps $a$ with $a_{n+1}$. Applying $\pi$ to $\sigma$ yields a new run $\pi(\sigma)$ which has the same last state as $\sigma$, since the swapped atoms are not present in that state. Therefore, $\pi(\sigma) \cdot t$ is also an accepting run, but the word it accepts contains the last letter $a_{n+1}$ twice.
+}
+
+ 
+A corollary of the above two exercises is that:
+\begin{align*}
+\text{deterministic} \subsetneq \text{nondeterministic without guessing} \subsetneq \text{nondeterministic}.
+\end{align*}
+ 
+\mikexercise{\label{ex:weakly-guessing} Call a nondeterministic register automaton \emph{weakly guessing} if every accepting run has the following property: if 
+the transition reading the $i$-th letter loads a data value $a$ into some register $r$, then $a$ appears in some position $j \ge i$ such that the transitions reading letters $\set{i,\ldots,j}$ do not remove $a$ from register $r$. Show that for every nondeterministic register automaton there is a weakly guessing one which accepts the same words. }{Instead of storing an atom that does not appear in the input before it is erased from the registers, use an undefined register with a special marker stored in the control state.}
+
+\section{Emptiness and universality for register automata}
+In this section, we discuss two decision problems for register automata:
+\begin{itemize}
+	\item nonemptiness (does the automaton accept at least one input word); and
+	\item universality (does the automaton accept all input words).
+\end{itemize}
+ When talking about decidability, we assume that the transition function in a register automaton is represented according to the syntactic equivariance condition.
+\begin{theorem}\label{thm:register-decidable-emptiness}Emptiness is decidable for nondeterministic register automata.
+\end{theorem}
+\begin{proof} This proof just sketches the decidability argument, the complexity is discussed in Exercise~\ref{ex:emptiness-complexity}.
+Similarly to the orbits of transitions used in the proof of Lemma~\ref{lem:two-types-of-equivariance}, we define an \emph{orbit of states} to be a set of the form
+\begin{align*}
+	\set{\pi(q) : \text{$\pi$ is a permutation of the atoms}} \qquad \text{for some state $q$.}
+\end{align*}
+For example, if the automaton has three locations (orange, red and blue) and two registers, then there are 15 orbits of states, as shown in the following picture, with orbits represented by examples of states that use atoms $1$ and $2$:
+\mypic{111}
+ As in Lemma~\ref{lem:two-types-of-equivariance}, an orbit of states can be defined by saying what is the location, which registers have defined values, and what is the equality type of the atoms stored in the defined registers. Such a description takes finite space to store, and there are finitely many possible descriptions (although the number of orbits is exponential in the number of registers). The key observation is that being in the same orbit of states respects reachability, i.e.~if two states are in the same orbit, then both are reachable or both are unreachable. 	The algorithm for nonemptiness computes the orbits of reachable states. Initially, we have the orbit of the unique initial state, which has all registers undefined. If we have the equality type of some state, we can easily compute the equality types of all states reachable from it in one step; thus finishing the description of the algorithm.
+\end{proof}
+
+
+\begin{theorem}\label{thm:register-undecidable-universality}Universality is undecidable\footnote{This proof follows the same lines as the undecidability for a stronger model, namely timed automata, see~\cite[Theorem 5.2]{alur_theory_1994}.} for nondeterministic register automata.
+\end{theorem}
+\begin{proof}
+We reduce from the halting problem for Turing machines, i.e.~the problem of deciding if a given Turing machine has at least one accepting computation. Suppose that we have a Turing machine which is an instance of the halting problem. We encode a computation of a Turing machine as a data word according to the following picture:
+\mypic{1}
+Each letter encodes a single cell in a single configuration of the Turing machine. The data word represents a sequence of configurations, padded with blanks so that they all have the same length. The configurations are separated by a letter $\#$. The labels are used to store the contents of the cell plus the control state of the head if the head happens to be over that cell. Finally, each cell gets a unique identifier, which is its data value (the same cell in consecutive configurations gets the same identifier). 
+\begin{claim}
+There is a nondeterministic register automaton which accepts a data word if and only if it is \emph{not} an encoding of an accepting computation of the Turing machine.	
+\end{claim}
+It follows that the Turing machine has no accepting computation if and only if the nondeterministic register automaton accepts all inputs. Therefore, universality of nondeterministic register automata is undecidable.
+\begin{proof}[Proof of the claim]
+ To prove the claim, we list the mistakes that can happen in a data word that does not encode an accepting computation of a Turing machine:
+\begin{enumerate}
+	\item The data values identifying the cells are chosen incorrectly. This means that:
+\begin{enumerate}
+\item the separator $\#$ is used with more than one data value; or
+\item there exist positions $i,j$ with the same data value such that the successor positions $i+1$ and $j+1$ are defined and have distinct data values.
+\end{enumerate}
+The first condition can be tested using one register, the second condition using two registers.
+\item There is a mistake between two consecutive configurations. Assuming that the identifiers are chosen correctly, this mistake can be tested using only one register, which is used to identify corresponding cells in consecutive configurations.
+\item The first configuration is not initial, or the last configuration is not accepting. For this, no registers are needed.
+\end{enumerate}
+\end{proof}
+\end{proof}
+
+\exercisepart
+
+
+\mikexercise{\label{ex:emptiness-complexity} The complexity of the emptiness problem for nondeterministic register automata depends on how the size $|\Aa|$ of the input automaton is measured. Show that emptiness is:
+\begin{itemize}
+	\item {\sc pspace}-complete if $|\Aa|$ is the number of locations and registers;
+	\item {\sc np}-complete if $|\Aa|$ is the number of reachable orbits of states;
+	\item polynomial time if $|\Aa|$ is the number of orbits of transitions.
+\end{itemize}
+}{
+\begin{enumerate}
+		\item
+		\begin{itemize}
+			\item \textsc{pspace} membership. A nondeterministic \textsc{pspace} algorithm can guess the accepted word. If the automaton has $n$ registers, then data values that are numbers $\set{0,\ldots,2n}$ are enough.
+			\item \textsc{pspace} hardness. The problem is already hard for automata which ignore the input letters in the sense that acceptance for a word is uniquely determined by its length. If the state space is $n$-tuples of atoms, then an arbitrary vector of $n-1$ bits can be encoded by the pattern in which the coordinates $2,\ldots,n$ are equal to the first coordinate. Therefore, one can think of the state as coding vector of $n-1$ bits, which can be used to store the tape contents of a Turing machine. A quantifier-free formula of size polynomial in $n$ can be used to describe the transitions of the machine.
+		\end{itemize} 
+		\item
+		\begin{itemize}
+			\item \textsc{np} hardness. We reduce from the following problem: given a formula
+			\begin{align*}
+ \varphi(a_1,\ldots,a_n,b_1,\ldots,b_n)
+\end{align*} which is a Boolean combination of equalities and inequalities, decide if there is a satisfying assignment where all $a_i$ are pairwise different and all $b_i$ are pairwise different. This is an \textsc{np}-hard problem because the pattern of equalities between $\bar a$ and $\bar b$ can be used to encode an arbitrary vector of $n$ bits (say that bit $i$ is true if and only if the vectors $\bar a$ and $\bar b$ agree on coordinate $i$). The above problem is at least as hard as emptiness for register automata, even when there are three orbits of reachable states. Indeed, suppose that the automaton has two locations $\ell_0$ and $\ell_1$, one initial and final, and three orbits of reachable configurations:
+\begin{align*}
+\underbrace{ \ell_0(\bot,\ldots,\bot)}_{\text{orbit 1}} \qquad \underbrace{\ell_0(\overbrace{a_1,\ldots,a_n}^{\text{distinct data values}})}_{\text{orbit 2}} \qquad \underbrace{\ell_1(\overbrace{b_1,\ldots,b_n}^{\text{distinct data values}})}_{\text{orbit 3}}
+\end{align*} The formula $\varphi$ could be used as a guard in a transition that goes from the second orbit to the third orbit. 			
+			\item \textsc{np} membership.
+			Consider a graph, where the vertices are orbits of states, and there is an edge from orbit $Q_1$ to orbit $Q_2$ if and only if there is some transition from some state in $Q_1$ to some state in $Q_2$. Because the automaton is equivariant, the following conditions are equivalent 
+			\begin{enumerate}
+				\item There exists a state $q_1$ in orbit $Q_1$ and a state $q_2$ in orbit $Q_2$ such that some transition leads from $q_1$ to $q_2$ in one step.
+								\item For every state $q_1$ in orbit $Q_1$ there exists a state $q_2$ in orbit $Q_2$ such that some transition leads from $q_1$ to $q_2$ in one step.
+			\end{enumerate}
+			It follows that the automaton is nonempty if and only if the graph described above contains a path from some orbit in the initial states to some orbit in the accepting states. Necessarily such a path has length bounded by the number of orbits. By testing quantifier-free formulas for satisfiability, one can test this in \textsc{np}.			
+		\end{itemize}
+		\item \textsc{ptime} membership. We do the same argument as in \textsc{np} membership, only this time the edges of the graph can be computed in polynomial time.
+	\end{enumerate}}
+
+
+\mikexercise{\label{ex:minsky}\label{ex:one-register-undec}The undecidability proof in Theorem~\ref{thm:register-undecidable-universality} used automata with two registers but no guessing (as defined in Exercise~\ref{ex:guessing}). Show that, in the presence of guessing, universality remains undecidable even with one register.}{
+We prove that the (non-)halting problem for Minsky machines reduces to this universality. Recall that a Minsky machine has a finite set of states, two counters storing natural numbers, and a set of transitions which can increment the counters, decrement them and test them for zero. It is an undecidable problem to decide, given a Minsky machine and two control states $p,q$, if the machine admits a run that goes from $p$ with both counters empty to $q$ with both counters empty. We can view a run of a Minsky machine as a sequence which alternates between control states and counter operations, in a way consistent with the transition relation, as in the following picture:
+\mypic{2}
+The counter operations are valid if for every counter $c \in \set{\text{A, B}}$, one can pair (the arcs in the picture above) the increments and decrements on counter $c$ such that the increment comes before, and there is no zero test in between. Such a run with a pairing can be encoded as a data word, by adding a unique data value for each arc and using some special data value for positions that are not on arcs (i.e.~states or zero tests), as in the following picture:
+\mypic{3}
+We claim that a nondeterministic automaton with one register (but with guessing) can recognise the set of data words that are not the encoding of an accepting run with a pairing, and hence undecidability of universality follows in the same way as in Theorem~\ref{thm:register-undecidable-universality}. The most interesting type of problem is that some arc is wrong: for this the automaton guesses some atom $a$ at the beginning, and checks that this atom is either not used exactly two times, or the first use is not an increment, or the second use is not a decrement of the same counter, or in between there is a test for zero on the appropriate counter.}
+
+
+
+\input{chapters/alternatingautomata}
+\input{chapters/automata-classification}

@@ -1,0 +1,866 @@
+
+\chapter{Turing machines}
+\label{cha:turing}
+Without atoms, the notion of ``computability'' is formalised using Turing machines, and there is a thesis -- called the Church-Turing Thesis -- which says that there is any other hypothetical model of computation would need to be captured by Turing machines. 
+
+What happens to this thesis in the presence of atoms? We begin a discussion in this chapter, by introducing orbit-finite Turing machines. This is an interesting and natural model of computation. However, as we will discover already in this chapter and then later on in this book,  using Turing machines as the definition of computability is problematic.  The main issue is that the basic data structure in a Turing machine is a list, and arranging objects in lists requires a form of choice, which typically impossible in the presence of atoms.  We will overcome these limitations in later chapters, by using models of computation that are based on sets instead of lists.
+
+Nevertheless, there are interesting things to say about Turing machines with atoms, and we say some of them in this chapter. The highlights are that, for Turing machines with atoms, one can prove nontrivial separations for complexity classes:
+\begin{itemize}
+ \item In Section~\ref{sec:pnp-bitvector}, we prove that $\text{\sc p} \neq \text{\sc{np}}$ holds in the bit vector atoms. It is worth underlying that this result has no bearing on the usual version of the question, without atoms. This is because we prove a much stronger result, which is clearly false without atoms, namely  that deterministic orbit-finite Turing machines running in polynomial time are incapable of recognizing even some languages that are recognised by nondeterministic orbit-finite automata. 
+ The separating language is 
+ \begin{align*}
+ \set{a_1 \cdots a_n \in \atoms : \text{$a_1,\ldots,a_n$ are not linearly independent}}.
+ \end{align*}
+This language is recognised in by a nondeterministic automaton (guess the linear combination that gives zero) or deterministic exponential time Turing machine (try all combinations), but it is not recognised in deterministic polynomial time.
+ \item In Section~\ref{sec:triangles}, we prove a similar separation for the equality atoms. We show that there is a language which is recognised by a nondeterministic Turing machine (even in polynomial time), but not recognised by any deterministic Turing machine (even without restrictions on running time). This separation is harder than in Section~\ref{sec:pnp-bitvector}, and uses the Cai-F\"urer-Immerman construction from finite model theory. As in the previous item, this  separation is unlikely to be useful in separating complexity classes without atoms. The accompanying proof is based on the limited access that Turing machines have to their input and on the symmetries that result from applying atom automorphisms.
+\end{itemize}
+
+
+
+
+
+
+
+ \section{Orbit-finite Turing machines}
+ Before presenting the separation results about Turing machines, we begin by defining the model and discussing some examples.
+
+ \begin{definition}[Orbit-finite Turing machine]
+	\label{def:of-turing-machine}  An \emph{orbit-finite Turing machine} is defined in the same way as in Section~\ref{sec:pof-turing-machines-equality}, except that instead of polynomial orbit-finite sets, we use (not necessarily polynomial) orbit-finite sets, and the  atoms need not be the equality atoms, but they can be any oligomorphic structure.
+ \end{definition}
+
+ 
+ At first glance, the difference  seems to be minor. By Theorems~\ref{thm:subquotiented-pof-representation} and~\ref{thm:spof=orbit-finite}, an orbit-finite set is the same as a polynomial orbit-finite set quotiented by  some partial equivalence relation, and therefore the only difference between pof sets and orbit-finite sets is the presence of subquotients.  As we will see, the subquotients  have profound impact, and break results such as the characterization from Theorem~\ref{thm:pof-turing}, even under the equality atoms. 
+
+ To illustrate the roles of subquotients, consider the following example. The example is a positive one -- i.e.~we can still solve the problem using a deterministic orbit-finite Turing machine -- but later on we will see negative examples. 
+
+
+
+% Many results for Turing machines remain true for orbit-finite Turing machines, such as equivalence of single-tape and multi-tape machines, using the standard proofs. What does not work, however, is determinisation; this will be discussed in Sections~\ref{sec:pnp-bitvector} and~\ref{sec:triangles}. For all we know, nondeterministic machines are weaker than alternating machines; this will be discussed later in this section.
+
+
+
+\begin{myexample}[An input alphabet with quotients]\label{example:deatomisation-set}
+	Consider the equality atoms. Let the input alphabet $\Sigma$  be sets of atoms of size at most ten. This is the quotient of $\atoms^{10}$ under the partial equivalence relation that identifies two tuples if they use the same set of atoms. (Formally speaking, this quotient does not cover the empty set. To work around this minor issue, we can either use $\atoms^{10}+\atoms^0$, or  we can stay with $\atoms^{10}$ and  modify the equivalence relation, so that the empty set is represented by some redundant orbit. This is because sets of non-maximal size, say size 1,  are represented by many orbits, and one of these can be spared to represent the empty set.) 
+	
+	Here is an example of an input word over this alphabet $\Sigma$ that has six letters:
+	\begin{align*}
+		\set{\john,\eve,\mary} \set{\john,\eve,\tom}
+		\set{\john,\eve} \set{\john,\eve,\mary}	 \set{\john,\eve} \set{\tom}.
+	\end{align*}
+The letters are sets, which means that there is no order on the atoms that appear in a given letter. This will prevent a machine from doing operations like ``load the first atom from the letter under the head'', witnessing the difficulties of input alphabets with subquotients. However, as we show in this example, the difficulties can be overcome for this particular input alphabet. 
+
+Consider the language: ``some atom appears in an odd number of letters''.	This language can easily be recognised by a nondeterministic Turing machine, in fact even a nondeterministic orbit-finite automaton. The challenge is doing this with a deterministic machine, because there is no apparent mechanism for pointing to the atom that appears in an odd number of letters.  To see this, consider the example input word from the previous paragraph.	Both atoms $\john$ and $\eve$ appear in an odd number of letters, but an equivariant deterministic Turing machine cannot see any difference between these two atoms, because every set contains either both or none of the atoms $\john$ and $\eve$.
+
+	Here is a solution to the problem, i.e.~a deterministic orbit-finite Turing machine that recognises the language. Suppose that the input word is $A_1 \cdots A_n$, where each $A_i$ is a letter from the alphabet, i.e.~a set of at most ten atoms.
+The Turing machine executes the following program:
+\begin{enumerate}
+	\item Generate a copy of the input word. After this step the tape has the form
+	\begin{align*}
+	\underbrace{A_1 \cdots A_n}_{\text{first copy}} | \underbrace{A_1 \cdots A_n}_{\text{second copy}}.
+	\end{align*}
+	\item As long as possible, iterate these steps on the second copy of the tape: 
+	\begin{enumerate}
+		\item if some set appears multiple times, remove all  the duplicates;
+		\item if $A,B$ are two distinct intersecting sets that appear in the second copy, then remove them and add the three  sets $A \setminus B, B \setminus A, A \cap B$. 
+	\end{enumerate}
+	This stage ends when all sets in the second copy are pairwise disjoint.
+	\item At this point, the second contains equivalence classes of the relation ``appears in the same sets from $A_1,\ldots,A_n$''. Check if some equivalence class (i.e.~some set from the second copy) is contained in an even number of sets from the first copy.
+\end{enumerate}
+	
+All the above steps can be performed by a deterministic orbit-finite Turing machine. To process sets, the machine can use state space which stores a set of at most 10 atoms.
+	\end{myexample}
+
+In the above example, the symmetries in the input alphabet required some nontrivial programming tricks. As we will see later in this chapter, when the symmetries get more complicated, the tricks will run out. 
+
+Before showing these negative results, we begin with a positive result, which involves nondeterministic machines. In Theorem~\ref{thm:pof-turing}, we showed that for the equality atoms and polynomial orbit-finite sets,  Turing machines with atoms are computationally complete, in the sense that they recognise the same languages as the usual atom-less Turing machines, assuming that atoms are represented in an atom-less way.  
+The proof of that theorem  does not extend  to (not necessarily polynomial) orbit-finite sets. The issue is with the deatomisation construction in Lemma~\ref{lem:deatomisation}, which assumes that one can order the atoms from the input string in their order of appearance, and speak of the ``leftmost atom'', or the ``second leftmost atom''. Such an order exists when the alphabet is a pof set, because letters are ordered tuples of atoms, but it does not necessarily exist for more general alphabets,  e.g.~when letters are sets as in Example~\ref{example:deatomisation-set}. 
+Therefore, we need to revisit the  questions for the more general setting of orbit-finite sets. 
+
+Later in this chapter, we will show that not only the proof of Theorem~\ref{thm:pof-turing} fails to work for orbit-finite sets that are not polynomial, but the result itself is false, because deterministic and nondeterministic orbit-finite machines have different computational power. However, we can at least show that the nondeterministic machines are computationally complete, under a mild assumption on the atoms, which is true for all atom structures discussed in this book.
+
+The additional assumption is that the vocabulary is finite, and every first-order formula is equivalent to an existential formula, which is a formula of the shape 
+\begin{align*}
+\varphi(x_1,\ldots,x_n) 
+\quad = \quad 
+\myunderbrace{\exists y_1,\ldots,y_m}{prefix of existential\\ quantifiers}\  \myunderbrace{\varphi(x_1,\ldots,x_n,y_1,\ldots,y_m)}{a quantifier-free formula}.
+\end{align*}
+Most atom structures that we have used so far -- such as the equality atoms, the ordered atoms, or the graph atoms -- have an even stronger property, namely every formula is equivalent to a quantifier-free formula. This is because they are homogeneous structures over a finite vocabulary, and for homogeneous structures, every first-order formula is equivalent to a quantifier-free formula, see Theorem~\ref{thm:fs-qf}. The only exception is the bit-vector atoms, which are homogeneous, but over an infinite vocabulary. However, also these atoms can be made compliant, if we change the vocabulary, as explained in the following example. 
+
+\begin{myexample}\label{ex:bit-vector-addition-relation}
+	Consider the bit-vector atoms. As we have defined them in Section~\ref{sec:bit-vectors}, this is a homogeneous structure over an infinite vocabulary, which has a dependence relation for every dimension $d$. We can, however, use a different vocabulary, namely one ternary relation  
+	\begin{align*}
+	x + y  = z
+	\end{align*}
+	for addition of vectors. This relation is equivariant, since automorphisms of the atoms are linear maps, and therefore it can be defined using a quantifier-free formula by Theorem~\ref{thm:fs-qf}, see Exercise~\ref{ex:bit-vector-addition} for an explicit formula. Conversely, each of the dependence relations can be expressed using  only the addition relation. Therefore, we can think of the bit-vector atoms as having only on relation, namely addition. (For this new vocabulary, the structure is no longer homogeneous, see Exercise~\ref{exercise:bit-vector-not-homogeneous-with-addition}.) In the new vocabulary, every first-order formula is equivalent to an existential one, since: (a) every first-order formula is equivalent to a  quantifier-free formula using dependence only, and (b) both dependence and independence can be defined using existential formulas that use addition only. 
+\end{myexample}
+
+
+
+
+In Theorem~\ref{thm:nondeterministic-turing-completeness} below, we will show that nondeterministic orbit-finite Turing machines are computationally complete, which means that they are equivalent to Turing machines that use atom-less strings as representations of atoms. This notion of representation was formalised in  Definition~\ref{def:atom-representation}, as a function $r : 2^* \to \atoms$, subject to certain assumptions. Once we know how to represent individual atoms as atom-less strings, we can easily extend the representation to   represent  elements of  orbit-finite sets, as explained in the following definition.
+
+\begin{definition}\label{def:atom-representation-extended-to-pof-sets}
+	Let $r$ be an atom representation. We extend this representation from atoms to elements of pof sets, as well as elements of subquotiented pof sets, as follows: 
+\begin{enumerate}
+	\item\label{it:representation-for-pof-sets} to represent an element of a pof set, we indicate the "component" and a list of  representations of the atoms in the corresponding tuple;
+	\item \label{it:representation-for-spof-sets} to represent an element of subquotiented pof set, we indicate  a representation of some element in the corresponding equivalence class;
+	\item \label{it:representation-for-orbit-finite-sets} to represent an element of an orbit-finite set, we fix an equivariant bijection with a subquotiented pof set, which must exist by Theorem~\ref{thm:spof=orbit-finite}, and then use the representations for the latter set.
+\end{enumerate}
+We assume that all of these representations are words over the binary alphabet, by using some binary encoding of data structures such as lists.
+\end{definition}
+
+
+
+The extensions are used in the following theorem, which shows that nondeterministic orbit-finite Turing machines are the ``right'' model for languages over orbit-finite alphabets.
+
+
+
+\begin{theorem}\label{thm:nondeterministic-turing-completeness}
+	Assume that the atoms are effectively oligomorphic, have a finite vocabulary, and every first-order formula is equivalent to an existential one.  Then the following conditions are equivalent for every $L \subseteq \Sigma^*$ where $\Sigma$ is an orbit-finite alphabet: 
+    \begin{enumerate}
+        \item \label{item:turing-of-nondeterministic-pof} $L$ is recognised by a nondeterministic orbit-finite  Turing machine;
+        \item \label{item:turing-of-every-rep} $L$ is equivariant and for every atom representation, see Definition~\ref{def:atom-representation},  the language
+        \begin{align*}
+        \setbuild{ w \in 2^*}{ $w$ represents  some word in $L$}
+        \end{align*}
+         is recognised by a  nondeterministic   Turing machine (without atoms);
+        \item \label{item:turing-of-every-rep-det} as in the previous item, but the machine is deterministic;
+        \item \label{item:turing-of-some-rep} as in the previous item, but the representation is quantified existentially.
+    \end{enumerate}
+\end{theorem}
+\begin{proof}
+	The implications  \ref{item:turing-of-nondeterministic-pof} $\Rightarrow$ \ref{item:turing-of-every-rep} $\Rightarrow$ \ref{item:turing-of-every-rep-det} $\Rightarrow$ \ref{item:turing-of-some-rep} are proved in the same way as in Theorem~\ref{thm:pof-turing}.  Let us very briefly recall those arguments. For the implication \ref{item:turing-of-nondeterministic-pof} $\Rightarrow$ \ref{item:turing-of-every-rep}, we extend the representation from atoms to configurations of Turing machines, and show that the one-step successor relation is decidable, which can be used to recognise the language in item~\ref{item:turing-of-every-rep}. The implication \ref{item:turing-of-every-rep} $\Rightarrow$ \ref{item:turing-of-every-rep-det} follows from the fact that deterministic and nondeterministic Turing machines without atoms  recognise the  same languages. Finally, the implication \ref{item:turing-of-every-rep-det} $\Rightarrow$ \ref{item:turing-of-some-rep} is trivial (``every'' implies ``some'', as long as an atom representation exists, and it does exist by Theorem~\ref{thm:atom-represenation-must-exist}).
+
+	We are left with the implication \ref{item:turing-of-some-rep} $\Rightarrow$ \ref{item:turing-of-nondeterministic-pof}. 	
+	We begin by reducing to the  case where the input alphabet is $\atoms$.
+	
+	\begin{lemma}\label{lem:reduction-to-atom-alphabet} If the implication \ref{item:turing-of-some-rep} $\Rightarrow$ \ref{item:turing-of-nondeterministic-pof} holds in the special case when the  input alphabet $\Sigma$ is $\atoms$, then it holds for every orbit-finite alphabet.
+	\end{lemma}
+	\begin{proof}
+The reduction is based on the following observation.
+		
+		\begin{claim}\label{claim:surjective-from-tuples}
+			For every orbit-finite set $\Sigma$, there exists  $d \in \set{0,1,\ldots}$ and a surjective equivariant partial function $f : \atoms^d \to \Sigma$. 
+		\end{claim}
+		\begin{proof}
+			By Theorem~\ref{thm:spof=orbit-finite}, we know that  $\Sigma$ admits an equivariant bijection with a subquotiented  pof set. By removing the subquotients, it follows that there is a surjective  equivariant partial function from some pof set (without subquotients) to $\Sigma$. (The function is partial, because the subquotienting might have removed some tuples, and once we no longer take the subquotient, the function will not be defined on these tuples. In general, we cannot find a function that is total, see Exercise~\ref{ex:no-total-from-pof-to-non-repeating-pairs}.) 
+			Therefore, it enough to prove the claim for the case when $\Sigma$ is a  pof set (without a subquotient). To get such a surjective function 
+			\begin{align*}
+	f : \atoms^d \to			\myunderbrace{\atoms^{d_1} + \cdots + \atoms^{d_k}}{a pof set},
+			\end{align*}
+			we choose $d$ to be the maximal dimension among $d_1,\ldots,d_k$ plus some constant $e$, which is chosen to be so that $\atoms^e$ has at least $k$ orbits. We use the orbit of the last $e$ atoms to  choose the component in $i \in \set{1,\ldots,k}$, and the remaining atoms to get the content of tuple in $\atoms^{d_i}$. 
+		\end{proof}
+
+		We use the above claim to prove the lemma. 
+		Let  $L \subseteq \Sigma^*$ be a language over some orbit-finite alphabet, which satisfies condition~\ref{item:turing-of-some-rep}, i.e.~for some atom representation $r$, the language 
+		\begin{align*}
+		\setbuild{ w \in 2^*}{ $w$ represents some word in $L$}
+		\end{align*}
+		is recognized by a deterministic Turing machine without atoms.
+		Apply Claim~\ref{claim:surjective-from-tuples} to get a surjective function $f$, and  extend it to lists, giving a  surjective equivariant function  
+		\begin{align*}
+		f^* : (\atoms^d)^* \to \Sigma^*.
+		\end{align*}
+		We can pull back the language $L$ along $f^*$, yielding a new language 
+		\begin{align*}
+			K = \setbuild{ v \in (\atoms^d)^* }{$f^*(v) \in L$}.
+			\end{align*}
+		We can think of the new language as being a language over alphabet $\atoms$, which contains only words with length divisible by $k$.  Therefore, we can apply the implication \ref{item:turing-of-some-rep} $\Rightarrow$ \ref{item:turing-of-nondeterministic-pof} to the pulled back language $K$, thanks to the assumption of the lemma. To complete the proof of the lemma, we will prove the implication~\ref{item:turing-of-some-rep} $\Rightarrow$ \ref{item:turing-of-nondeterministic-pof} for  $L$, by first transferring the assumption from $L$ to the pulled back language, then using the implication for the pulled back language, and then transferring the conclusion back to the original language, as explained in the following diagram:
+		\[
+		\begin{tikzcd}
+		\text{\ref{item:turing-of-some-rep}  holds for $L$} 
+		\ar[d,Rightarrow,"\text{see step (a) below}"] \\
+		\text{\ref{item:turing-of-some-rep}  holds for $K$}
+		\ar[d,Rightarrow,"\text{because $K$ has input alphabet $\atoms$}"] \\
+		\text{\ref{item:turing-of-nondeterministic-pof} holds for $K$}
+		\ar[d,Rightarrow,"\text{see step (b) below}"] \\
+		\text{\ref{item:turing-of-nondeterministic-pof} holds for $L$}
+		\end{tikzcd}
+		\]
+
+		To complete the proof of the lemma, it remains to show the steps (a) and (b) from the above diagram.
+		\begin{itemize}
+			\item[(a)] \emph{Transfer of Condition~\ref{item:turing-of-some-rep}.} 		Let us first explain how condition~\ref{item:turing-of-some-rep} transfers from the original language $L$ to the pulled back language $K$.   The main observation is that representations of letters for $K$ can be transformed into representations of the corresponding letters for $L$, as shown in the following claim.
+		
+		\begin{claim}
+					There is a function $g$, which is computable in the usual sense without atoms, and makes the following diagram commute:
+		\[
+		\begin{tikzcd}
+		2^* 
+		\ar[r,"g"]
+		\ar[d,"\text{representation $r$ for $\Sigma$}"']
+		&
+		2^* 
+		\ar[d,"\text{representation $r$ for $\Sigma$}"]
+		\\
+		\atoms^{d}
+		\ar[r,"f"']
+		& 
+		\Sigma
+		\end{tikzcd}
+		\]
+		\end{claim}
+		\begin{proof}
+			As in Definition~\ref{def:atom-representation-extended-to-pof-sets}, when representing elements of $\Sigma$ we think of it as being equal to a  subquotiented pof set. By inspecting the definition of the function $f$ from the proof of Claim~\ref{claim:surjective-from-tuples}, we see that it can be lifted to representations, as required in the proof of the current claim. The function $f$ begins by checking the orbit of a suffix of the input tuple, and then based on this orbit it gives the output component and the corresponding output atoms, which are selected from the input atoms. 
+		\end{proof}
+
+		Using the above claim, we show that the pulled back language $K$ satisfies condition~\ref{item:turing-of-some-rep}, i.e.~representations of words in this language are recognised by a Turing machine without atoms. 
+		Given a representation of a word for $K$, a Turing machine can compute a representation of  its image under $f^*$, thanks to the above claim, and then use the Turing machine from assumption the original language. This shows the transfer of condition~\ref{item:turing-of-some-rep}.
+		\item[(b)] 	\emph{Transfer of condition~\ref{item:turing-of-nondeterministic-pof}.}	Let us now explain how condition~\ref{item:turing-of-nondeterministic-pof} transfers from the new language $K$ to the original language $L$. Condition~\ref{item:turing-of-nondeterministic-pof} says that the language is recognised by a nondeterministic orbit-finite Turing machine. Given an input word for the original language $L$, the orbit-finite machine uses nondeterminism to guess some input for the new language which maps to it along $f^*$, and then calls on the Turing machine for the new language $K$.
+		\end{itemize}
+	The proof of this lemma crucially uses nondeterminism, in the last step where an inverse image under $f^*$ is guessed. As we will see later in this chapter, this is unavoidable, since nondeterministic orbit-finite Turing machines are strictly more expressive than deterministic ones. 
+	\end{proof}
+
+
+
+	Having proved the reduction in Lemma~\ref{lem:reduction-to-atom-alphabet}, it remains to prove implication \ref{item:turing-of-some-rep} $\Rightarrow$ \ref{item:turing-of-nondeterministic-pof} for languages over the alphabet $\atoms$. Let then $L \subseteq \atoms^*$ be a language that satisfies condition~\ref{item:turing-of-some-rep}, i.e.~it is recognised by a Turing machine without atoms, under some representation. When we speak of representations of atoms or lists of atoms below, we refer to this representation.
+
+	We begin by showing that if we bound  the computation time, then the accepted words can be defined using first-order formulas.
+
+	\begin{lemma}\label{lem:compute-first-order-formula} Consider a Turing machine $M$ that inputs representations of words in $\atoms^*$. 
+		Given an input length $d$ and bounds $t$ and $s$ on the time and space of the computation, one can compute a first-order formula which defines the language 
+		\begin{align*}
+		\setbuild{ w \in \atoms^d}{ some word in the orbit of $w$ has a representation  which  \\ is accepted by $M$ in time at most $t$ and space at most $s$ }.
+		\end{align*}
+	\end{lemma}
+	\begin{proof}
+		Let $F$ be the finite set of words (without atoms) that are accepted by $M$ in at most $n$ computation steps, and which represent some word in $\atoms^d$. This set can be computed given the parameters $d,s,t$.  To prove the lemma, we show that  we can compute formulas that describe the orbits of the words represented by  $F$. The main observation is in the following claim, which shows that the partition of $\atoms^d$ into orbits, with each orbit described by a first-order formula, can be computed.
+		\begin{claim}\label{claim:compute-orbit-formulas}
+			Given $d$, one can compute first-order formulas that describe all orbits in $\atoms^d$.
+		\end{claim}
+		\begin{proof}
+			By the assumption that the structure is effectively oligomorphic, we can compute the number of orbits in $\atoms^d$, say it is $n$. Next, we can start enumerating $n$-tuples of first-order formulas in $d$ variables, until we find an $n$-tuple where all formulas describe nonempty subsets which are pairwise disjoint. These subsets must be the orbits of $\atoms^d$.  The stopping criterion is decidable, since the structure has a decidable first-order theory, and the procedure must stop, since every orbit is first-order definable by Theorem~\ref{thm:ryll}. 
+		\end{proof}
+		Using the above claim, we can check which of the orbit formulas are satisfied by the tuples (represented by strings) in $F$. This check is decidable, by definition of atom representations.  The disjunction of the resulting formulas defines  the language in the statement of the lemma.
+	\end{proof}
+	
+	Using the above lemma, we can complete the proof of implication \ref{item:turing-of-some-rep} $\Rightarrow$ \ref{item:turing-of-nondeterministic-pof}, by showing that  the language $L$ is recognised by a nondeterministic orbit-finite Turing machine.
+ Thanks to the above 
+	lemma, we can compute a first-order formula which tells us if the input word belongs to the language as witnessed by a run of given length. The Turing machine recognising $L$ will evaluate the formula, for ever larger resource bounds, and it will accept once it finds some resource bounds for which the formula is true. If the word is not in the language, then the procedure will not terminate, since no resource bounds be found. The important thing, however, is that the procedure will terminate with acceptance when the word is in the language. To evaluate the formulas, we use the following lemma.
+	
+
+	\begin{lemma}\label{lem:compute-first-order-formula-using-turing}
+		There is a nondeterministic orbit-finite Turing machine that inputs 
+		\begin{align*}
+		\myunderbrace{a_1 \cdots a_d \in \atoms^*}{a list of atoms}
+		\qquad \text{and} \qquad 
+		\myunderbrace{\varphi(x_1,\ldots,x_d)}{a first-order formula}
+		\end{align*}
+		and answers if the formula is true for the given atoms.
+	\end{lemma}
+	\begin{proof}
+		The input alphabet is the disjoint union of $\atoms$, which is used for the list of atoms, and some finite alphabet which is used to represent the formula.  The proof of this lemma is the only place where we use the assumption that  every formula is equivalent to an existential one.
+		
+		We begin with the special case of the lemma when the formula $\varphi$ is quantifier-free. A quantifier-free formula is a Boolean combination of  atomic formulas 
+		\begin{align*}
+		R(x_{i_1},\ldots,x_{i_k})
+		\end{align*}
+		where $R$ is a relation from the vocabulary, and the indices $i_1,\ldots,i_k$ indicate the variables in question. For each such atomic formula, the Turing machine moves it head to the positions $i_1,\ldots,i_k$ on the input list of atoms, and collects their values into a single tuple from $\atoms^k$.  Since the vocabulary is finite, the dimension $k$ has a fixed upper bound that does not depend on the input, and therefore this tuple can be stored in the state. The relations from the vocabulary can  be hard-coded into the transition function of the Turing machine, since they are equivariant, and there are finitely many possibilities by the assumption that the vocabulary is finite. Therefore, the Turing machine can use a single transition to check if the relation $R$ is satisfied by a tuple that is stored in its state.
+		
+		We now consider the general case, where the input formula is not necessarily quantifier-free.
+		By the assumption on the atom structure, we  know that the input formula is equivalent to an existential formula  
+		\begin{align*}
+		\exists y_1 \cdots \exists y_n\  \psi(x_1,\ldots,x_d,y_1,\ldots,y_n).
+		\end{align*}
+		Not only does this existential formula exist, but we can also compute it. This is done by enumerating all candidates for the existential formula and using decidability of the first-order theory to check if the candidate is equivalent to the input formula. We know that an equivalent candidate will eventually be found. Once we have found the appropriate candidate, it can be evaluated for the input list of atoms: use  nondeterminism to guess the values of the existential variables, write them on the tape, and then check if the quantifier-free part $\psi$ is true using the procedure from the previous paragraph. 
+	\end{proof}
+
+		By putting together the above lemma with Lemma~\ref{lem:compute-first-order-formula}, we complete the proof of 
+	implication \ref{item:turing-of-some-rep} $\Rightarrow$ \ref{item:turing-of-nondeterministic-pof}, and also the proof of  the theorem. 
+\end{proof}
+
+
+In the above theorem, we use nondeterministic Turing machines and the assumption that first-order logic collapses to its existential fragment.  This assumption covers all atom structures used in this book, and we are not aware of any example that is not covered. However, it is natural to ask about what happens without this assumption. We will show that without this assumption, a variant of the above theorem can still be recovered, at the cost of using a slightly more general model, namely alternating machines. 
+
+Let us begin by describing the model. The syntax of an alternating Turing machine is the same as for a nondeterministic one, except that the states are additionally partitioned into two parts: \emph{existential} and \emph{universal}. (The idea is that a nondeterministic machine is the special case when all states are existential.)
+	The semantics of  is defined in terms of a game, which is played by two players, called the \emph{existential player} and the \emph{universal player}. A position in the game is a configuration of the machine. In a given configuration, the player who owns the control state chooses a transition, which results in a new configuration, or in acceptance/rejection. The language recognised by the machine is defined to be the words for which the existential player has a strategy in the game that ensures acceptance, assuming that one begins with the initial configuration for the input string. This means that for every strategy of the universal player, a finite number of rounds is played and then the machine accepts.
+
+
+
+\begin{theorem}\label{thm:alternating-turing-completeness}
+	Assume that the atoms are effectively oligomorphic and have a finite vocabulary.  Then for  every language $L \subseteq \Sigma^*$ over  orbit-finite alphabet, conditions \ref{item:turing-of-every-rep}--\ref{item:turing-of-some-rep} from Theorem~\ref{thm:nondeterministic-turing-completeness} are equivalent each other, and also to:
+    \begin{enumerate}
+        \item[1*] \customlabel{1*}{item:turing-of-alternating-of} $L$ is recognised by an alternating orbit-finite  Turing machine.
+    \end{enumerate}
+\end{theorem}
+\begin{proof}
+	The implications  \ref{item:turing-of-alternating-of} $\Rightarrow$ \ref{item:turing-of-every-rep} $\Rightarrow$ \ref{item:turing-of-every-rep-det} $\Rightarrow$ \ref{item:turing-of-some-rep} are proved in the same way as in Theorem~\ref{thm:pof-turing}. The only difference is that for the first implication, we need the observation that without atoms, alternating and nondeterministic Turing machines are equivalent. This is a classical result, which is proved by showing that a nondeterministic Turing machine can enumerate through all possible strategies for the existential player.
+
+	For the implication \ref{item:turing-of-some-rep} $\Rightarrow$ \ref{item:turing-of-alternating-of}, we can use the same proof structure as in the proof of Theorem~\ref{thm:nondeterministic-turing-completeness}. As we remarked in that proof, Lemma~\ref{lem:compute-first-order-formula-using-turing} is the only part of the proof which used the assumption that every formula is equivalent to an existential one. Therefore, it remains to prove that lemma, without this assumption, but using alternating machines instead of nondeterministic ones in the conclusion. In this version, the lemma becomes essentially trivial, since the alternation can be used to simulate both kinds of quantifiers, universal and existential.
+\end{proof}
+
+
+\exercisepart
+
+\mikexercise{\label{ex:no-total-from-pof-to-non-repeating-pairs} Show that Claim~\ref{claim:surjective-from-tuples} cannot be strengthened to have a total (not partial) function. }{
+Consider the equality atoms and the  set $\Sigma = \atoms^{(d)}$. We claim that there is no total equivariant function from a pof set to this set. The problem is that there will be an input that has support of size at most one (because in a pof set, we can always find a tuple that uses at most one atom), and equivariant functions can only remove atoms from the support. Therefore, if there was such a function, then the output set would have an element with support of size at most one, which is not the case for $\atoms^{(2)}$.
+}
+
+\mikexercise{\label{ex:bit-vector-addition} Consider the bit-vector atoms. Write a quantifier-free formula for $x+y=z$, which uses the dependence relations.}{
+We can express that a vector is zero by saying that it is dependent as a single vector. Then $x+y=z$, which is the same as $x+y+z=0$ under the two-element field is the same as: 
+\begin{enumerate}
+	\item all vectors are zero;
+	\item some vector is zero and the other two are equal to each other;
+	\item no vector is zero, no two vectors are equal to each other, but all three vectors are dependent.
+\end{enumerate}
+}
+
+\mikexercise{\label{exercise:bit-vector-not-homogeneous-with-addition} Consider the bit-vector atoms with the ternary addition relation from Example~\ref{ex:bit-vector-addition-relation} and no other relations. Show that this structure is not homogeneous.}{}
+
+\mikexercise{\label{exercise:turing-machines-to-existential-formulas} Assume oligomorphic atoms. Let $M$ be a nondeterministic orbit-finite Turing machine with input alphabet $\atoms$. Show that there is a finite family $\Rr$ of equivariant relations on the atoms such that  for every $n,t,s \in \set{0,1,\ldots}$, the property
+\begin{align*}
+\setbuild{ w \in \atoms^n}{$M$ accepts $w$ in time at most $t$ and space at most $s$}
+\end{align*}
+can be defined by an existential formula that uses only relations from $\Rr$.}{
+	Using Claim~\ref{claim:surjective-from-tuples}, we can assume without loss of generality that both the work alphabet and the state space of the Turing machine are sets of the form $\atoms^d$. A computation of running time $t$ and space $s$ can be viewed as a $t \times s$ grid, with each cell labelled by a constant size tuple of atoms. Such a grid is a computation  of the Turing machine if and only if each $2 \times 2$ window is consistent with the semantics of the Turing machine. Since the size of windows is constant, and the number of atoms in each such window is constant, there is some fixed upper bound $k$ such that each constraint discusses at most $k$ atoms. Let $\Rr$ be the family of all equivariant subsets of $\atoms^\ell$ with $\ell \le k$. This is a finite family of relations, by oligomorphism, and all the constraints used to define a computation come from this family. The atoms used in the computation can be quantified existentially, this giving a formula as in the exercise.
+}
+
+\mikexercise{\label{exercise:existential-collapse-is-necessary} Assume that the atoms are effectively oligomorphic. Prove a converse of Theorem~\ref{thm:nondeterministic-turing-completeness}: if the conditions in the theorem are equivalent, then every first-order formula is equivalent to an existential one.}{
+	Consider some first-order formula $\varphi(x_1,\ldots,x_d)$. Choose some atom representation $r$, which exists by Theorem~\ref{thm:atom-represenation-must-exist}. By condition~\ref{item:atom-representation-fo-theory-decidable} in Definition~\ref{def:atom-representation}, there is a Turing machine that inputs representations of $d$ atoms, and tells us if the formula $\varphi$ is true for them. Because we assume that the conditions in Theorem~\ref{thm:nondeterministic-turing-completeness} are equivalent, it follows that there is a nondeterministic Turing machine which recognises the language (of constant length) of tuples that satisfy $\varphi$. Since the language itself is orbit-finite, because it has constant length words, there is some finite upper bound on the running time and space that is needed to accept all words in the language. For this upper bound, we can apply Exercise~\ref{exercise:turing-machines-to-existential-formulas}. 
+}
+
+
+
+
+
+\mikexercise{\label{ex:algebra-turing}Assume that the atoms are oligomorphic. 
+Let $\Sigma$ be an orbit-finite input alphabet. Show that a language $L \subseteq \Sigma^*$ is recognised by a deterministic orbit-finite Turing machine if and only if:
+\begin{itemize}
+	\item [(*)] There is an orbit-finite set $A \supseteq \Sigma$, a finite set $\Ff$ of functions (each one being an equivariant function $A^k \to A$ for some $k$) and an equivariant subset $F \subseteq A$ such that given $n \in \Nat$, one can compute a term using the  functions $\Ff$ and has $n$  variables such that
+	\begin{align*}
+ a_1 \cdots a_n \in L \quad \mbox{iff} \quad t(a_1,\ldots,a_n) \in F \qquad \mbox{for every $a_1,\ldots,a_n \in \Sigma$.}
+\end{align*}
+
+\end{itemize}
+}{
+Let us begin by explaining some definitions used in the exercise. A term is a finite tree where internal nodes are the functions, and the leaves are variables or constant operations (operations of arity zero). Given a term $t$ with $n$ variables, and elements $a_1,\ldots,a_n$ of the universe of the algebra, we write $t(a_1,\ldots,a_n)$ for the element in the universe of the algebra which is obtained by evaluating the term, using $a_i$ instead of the $i$-th variable.
+
+Let us now prove the equivalence in the exercise.
+
+ Let us begin with the right-to-left implication. Assume (*). Since the number of operations is finite, one can easily write a deterministic Turing machine which on input $a_1 \cdots a_n$ enumerates all terms with $n$ variables, and then evaluates each term on arguments $a_1,\ldots,a_n$. It is important here that we have finitely many operations. If the family of operations would be orbit-finite, then a nondeterministic Turing machine would be needed to produce the terms.
+
+Let us now do the left-to-right implication. Consider a deterministic Turing machine. The set $A$ is going to contain the work alphabet and the state space of the Turing machine, and the functions $\Ff$. For every $n,k,i \in \Nat$ there exist terms $s_{n,k}$ and $t_{n,k,i}$, each one with $k$ arguments, such that for every input word $a_1 \cdots a_k$, the value 
+\begin{align*}
+ s_{n,k}(a_1,\ldots,a_k)
+\end{align*}
+ is the state of the machine after $n$ computation steps, and the value 
+\begin{align*}
+ t_{n,k,i}(a_1,\ldots,a_k)
+\end{align*}
+ is the symbol of the work alphabet that is stored in the $i$-th cell of the tape after $n$ computation steps. These terms are produced by unfolding the definition of the computation of a deterministic Turing machine.
+
+}
+
+
+\mikexercise{\label{ex:det-turing-qf-formula}Assume that the atoms are oligomorphic and admit least supports. Show that a language $L \subseteq \atoms^*$ is recognised by a deterministic orbit-finite Turing machine if and only if:
+\begin{itemize}
+	\item [(**)] There exists a finite family $\Ff$ of functions (each one being an equivariant function $ \atoms^k \to \atoms$ for some $k$) and relations (each one being a subset of $\atoms^k$ for some $k$) such that given $n \in \Nat$, one can compute a quantifier-free formula with functions $\Ff$ that has $n$ free variables and  defines $L \cap \atoms^n$.
+\end{itemize}
+} 
+{The right-to-left implication is shown the same way as in Exercise~\ref{ex:algebra-turing}. For the left-to-right implication, we need a stronger version of Exercise~\ref{ex:algebra-turing}, where in condition (*) the set $A$ is equal to $\atoms^k$ for some $k$. Suppose then that (*) holds for some $A,\Ff$ and $F$. By Exercise~\ref{ex:lift-repr} (actually, a small strengthening to tuples of functions which can be obtained using the same proof), there exists some $k \in \Nat$ and finitely supported functions
+\begin{align*}
+ g : \atoms^k \to A \qquad h : \atoms \to \atoms^n \qquad \set{f' : \atoms^{\text{arity}(f) \cdot k} \to \atoms^k}_{f \in \Ff}
+\end{align*}
+such that the following diagrams commute for every $f \in \Ff$:
+\begin{align*}
+\xymatrix{\atoms \ar[r]^h \ar[dr]_{\text{identity}} & \atoms^k \ar[d]^g \\ & \atoms} \qquad 
+\xymatrix{\atoms^{\text{arity}(f) \cdot k} \ar[d]_{f'} \ar[r]^{(g,\ldots,g)}& A^{\text{arity}(f)} \ar[d]^{f}\\ \atoms^k \ar[r]_g & A}
+\end{align*}
+From (*) it follows that for every $n$ one can compute a term $t$ over the functions $\set{f'}_{f \in \Ff}$ such that a word $a_1 \cdots a_n$ is accepted by the Turing machine if and only if 
+\begin{align*}
+ g(t(h(a_1),\ldots,h(a_n))) \in F.
+\end{align*}
+The above is a quantifier-free formula using the functions $\set{f'}_{f \in \Ff}$ and $h$, together with the relation $g^{-1}(F)$.
+}
+
+
+
+
+% \mikexercise{\label{ex:nondet-turing-existential-formula}Assume that the atoms are oligomorphic. Show that a language $L \subseteq \atoms^*$ is recognised by a nondeterministic Turing machine if and only if:
+% \begin{itemize}
+% 	\item [(***)] There exists a finitely supported relation $S \subseteq \atoms^k$
+% such that for every $n \in \Nat$, one can compute an existential formula that uses only the relation $S$ and equality, and defines the $L \cap \atoms^n$. Here an existential formula is one of the form $\exists \bar y \in \atoms^m \varphi(\bar x \bar y)$ where $\varphi$ is quantifier-free.
+% \end{itemize}
+% }{One could use Exercises~\ref{ex:algebra-turing} and~\ref{ex:det-turing-qf-formula}, but we present here a self-contained proof.
+ 
+%  The right-to-left implication is straightforward, so we only do the left-to-right implication. Consider a nondeterministic Turing machine which recognises the language $L$. 
+% Let $Q$ be the states of the machine and let $\Gamma$ be the work alphabet of the machine. We assume that the work alphabet already contains the blank symbol.
+%  Define a \emph{configuration} of the machine to be a word in
+%  \begin{align*}
+% \Gamma^* (\Gamma \times Q) \Gamma^* 
+% \end{align*}
+% with the usual interpretation. Define 
+% \begin{align*}
+%  \Delta = \Gamma \cup (\Gamma \times Q).
+% \end{align*}
+% The following claim is a formalisation of the standard observation that the contents of cell $i$ in a configuration depend only on the contents of cells $i-1,i,i+1$ in the previous configuration. 
+%  \begin{claim}\label{claim:quantifier-free-turing} There exists a finite family of finitely supported relations
+%  \begin{align*}
+%  \mathcal R = \set{R_i \subseteq \Delta^{n_i}}_{i \in I}
+% \end{align*}
+%  such that for every $n \in \Nat$, the relations
+% \begin{center}
+% 	$\bar a, \bar b \in \Delta^n$ are configurations and the machine can go in one step from $\bar a$ to $\bar b$
+% \end{center}
+% is defined by a quantifier-free formula in $2n$ variables using only relations from $\mathcal R$.
+%  \end{claim}
+%  \begin{proof}
+% We use relations to check if: a letter contains the state (arity 1), a transition is correctly applied (arity 3).
+%  \end{proof}
+% The following claim uses the previous claim and existential quantification to guess computations.
+%  \begin{claim}\label{claim:existential-turing}
+%  There exists a finite family of finitely supported relations
+%  \begin{align*}
+%  \mathcal R = \set{R_i \subseteq \Delta^{n_i}}_{i \in I}
+% \end{align*}
+%  such that for every $n \in \Nat$, the relation 
+% \begin{center}
+% 	$\bar a \in \atoms^n$ is accepted by the Turing machine $M$ 
+% \end{center}
+% is defined by a formula of the form $\exists \bar b \in \Delta^m \varphi(\bar a \bar b)$ such that $\varphi$ is quantifier-free formula and uses only relations from $\mathcal R$.
+%  \end{claim}
+%  \begin{proof}
+%  	Let $\bar c$ be a support of the Turing machine $M$. By Lemma~\ref{lem:principle-of-equivariance}, the function
+%  	\begin{align*}
+%  t : \atoms^* \to \Nat \cup \set \infty
+% \end{align*}
+% which maps an input word to the smallest length of an accepting computation (which is $\infty$ for rejected inputs) is also supported by $\bar c$. 
+
+% Let $n \in \Nat$. By the assumption that the atoms are oligomorphic, there are finitely many $\bar c$-orbits of $\atoms^n$. Let $m$ be the maximal value finite of the function $t$ on $\atoms^n$, i.e.~every input of length $n$ is either rejected or accepted in at most $m$ computation steps. The formula in the statement of the claim quantifies existentially over computations of length at most $m$, and then uses the quantifier-free formula from Claim~\ref{claim:quantifier-free-turing} to check if a computation is correct (we also need additional predicates to check if a configuration is initial/accepting).
+%  \end{proof}
+ 
+ 
+% By the assumption on oligomorphism there exists some $n$ and a surjective finitely supported function $g : \atoms^k \to \Delta$.
+% Let $\Rr$ be the family from Claim~\ref{claim:existential-turing}. For $i \in I$ define $S_i \subseteq \atoms^{n_i \cdot k}$ to be the relation defined by
+% \begin{align*}
+%  S_i(\bar a_1,\ldots,\bar a_{n_i}) \quad \mbox{iff} \quad R_i(g(\bar a_1),\ldots,g(\bar a_{n_i})) \qquad \mbox{for }\bar a_1,\ldots,\bar a_{n_i} \in \atoms^k.
+% \end{align*}
+% From Claim~\ref{claim:existential-turing} it follows that for every $n$, the set
+% \begin{center}
+% 	$\bar a \in \atoms^n$ is accepted by the Turing machine $M$ 
+% \end{center}
+% is defined by a formula of the form $\exists \bar b \in \atoms^m \varphi(\bar a \bar b)$ such that $\varphi$ is quantifier-free and uses only relations from $\set{S_i}_{i \in I}$.
+
+% To finish the exercise, we only need to reduce the finite set of relations $\set{S_i}_{i \in I}$ to a single relation. Suppose that the finite set consists of relations $S_1,\ldots,S_p$. Without loss of generality, we assume that all relations have the same arity $n$ (otherwise we can add unused arguments). We can code them as a single relation $S$ of arity $p+1+n$ defined by
+%  \begin{align*}
+%  S(a_0,a_1,\ldots,a_p, b_1,\ldots,b_n) \quad \mbox{iff} \quad \bigwedge_{i \in \set{1,\ldots,p}}(a_0 = a_i) \Rightarrow S_i(b_1,\ldots,b_n).
+% \end{align*}
+% Each of the relations $S_i$ can be defined in terms of $S$ using an existential formula. For this encoding to work, one need $\atoms$ to have size at least two, but if $\atoms$ has only one element, then the exercise is immediate, since there is only one word of each length.}
+
+
+\mikexercise{Assume that the atoms admit least supports, and are homogeneous over a relational vocabulary. Show that nondeterministic and deterministic orbit-finite Turing machines recognise the same languages over input alphabet $\atoms$.
+}{In this case, conditions (**) from Exercise~\ref{ex:det-turing-qf-formula} and (***) from Exercise~\ref{ex:nondet-turing-existential-formula} are the same.}
+
+% \mikexercise{\label{ex:open-problem-dealternation} 
+% Let $\atoms$ be an oligomorphic structure, with decidable first-order theory with parameters and a computable Ryll-Nardzewski function. 
+%  Show that following conditions are equivalent: 
+% \begin{enumerate}
+% 	\item nondeterministic Turing machines recognise the same languages as alternating ones;
+% 	\item $\atoms$ has the same automorphism group as a structure where the vocabulary is finite, and for every first-order formula (with free variables) one can compute an equivalent existential one (i.e.~one which uses only existential quantifiers in prenex normal form).
+% \end{enumerate}
+% }
+% {By the proof of Theorem~\ref{thm:alternating-turing}, item 1 from the exercise is equivalent to the following property:
+% \begin{itemize}
+% \item[(*)] there exists a nondeterministic Turing machine which recognises the following language over input alphabet $\atoms \cup \set{0,1}$:
+%  \begin{align*}
+%  \set{a_1 \cdots a_n \underline \varphi : a_1,\ldots,a_n \in \atoms \mbox{, $\varphi$ has $n$ free variables, and $\atoms \models \varphi(a_1,\ldots,a_n)$ }}.
+% \end{align*}
+% \end{itemize}
+% Therefore, to prove the exercise, we will show that item 2 in the exercise is equivalent to (*). The implication from 2 to (*) is straightforward. For the converse implication, one uses Exercise~\ref{ex:nondet-turing-existential-formula} and (*) to show that there exists a single finitely supported relation $S \subseteq \atoms^k$ such that every first-order formula $\varphi$ is equivalent to an existential formula $\hat \varphi$ (i.e.~a prefix of existential quantifiers followed by a quantifier-free formula) that uses only the predicate $S$. Since the language in (*) is equivariant, from the proof of Exercise~\ref{ex:nondet-turing-existential-formula} one can conclude that also $S$ is equivariant. Furthermore, the formula $\hat \varphi$ can be computed based on $\varphi$; this is because the language from (*) is self-dual, and therefore one can compute for every $n$ an upper bound on the length of computations needed to accept all inputs of length at most $n$.
+% It follows that the structure $\atoms$ has the same automorphism group as the structure $(A,S)$. }
+
+
+
+
+
+
+\section{For bit vector atoms, P 
+\texorpdfstring{$\neq$}{!=}
+NP}
+\label{sec:pnp-bitvector}
+Recall the bit vector atoms that were introduced in Section~\ref{sec:bit-vectors}.  This is the vector space over the two-element field of countably infinite dimension, i.e.~these are vectors in $\set{0,1}^\omega$ that have finitely many nonzero entries. Equivalently, this is the \fraisse limit of finite-dimensional vector spaces over this field.  As explained in Example~\ref{ex:bit-vector-addition-relation}, we can view this as a structure with one ternary relation $x+y=z$, or alternatively with infinitely many relations for linear dependence. 
+
+In this section, we show that {\sc{p} $\neq$ \sc{np}} holds for these atoms.  Actually, we prove that deterministic polynomial time orbit-finite Turing machines are not even capable of simulating  nondeterministic orbit-finite automata. The separating language consists of lists of vectors that have some nontrivial linear dependency.
+
+\begin{theorem}\label{thm:bit-vector-p-np}
+	Assume the bit vector atoms. The language
+	\begin{align*}
+		\setbuild{ a_1 \cdots a_n \in \atoms^*}{for some nonempty subset $I \subseteq \set{1,\ldots,n}$ we have $0=\sum_{i \in I}a_i$} 
+	\end{align*}
+	is recognised by a nondeterministic orbit-finite automaton (and therefore also by a nondeterministic polynomial time orbit-finite Turing machine), but it is not recognised by any deterministic polynomial time orbit-finite Turing machine.
+\end{theorem}
+\begin{proof}
+The upper bound in the  theorem -- about recognisability by an orbit-finite automaton -- was shown in Example~\ref{ex:linearly-dependent-automaton}. One can also have an alternative upper bound: the language can be recognised by a deterministic orbit-finite Turing machine in exponential time, by enumerating through all possible coefficients in the linear combination. 
+
+The rest of this section is devoted to proving the lower bound for deterministic Turing machines that run in polynomial time. 	
+Fix some deterministic orbit-finite Turing machine.  We will show that if the machine runs in polynomial time and rejects some linearly independent tuple, then it will also reject some linearly dependent tuple. 
+
+	We begin by introducing some notation. 
+	Let $\Gamma$ be the work alphabet and let $Q$ be the state space of the fixed Turing machine. A computation of the machine that uses $t$ time steps and $s$ units of space can be seen as a rectangular grid \begin{align*}
+	\rho : \myunderbrace{\set{1,\ldots,t} \times \set{1,\ldots,s}}{pairs in this set\\ will be called tiles} \to 	\underbrace{\Gamma + \Gamma \times Q}_{\text{labels of tiles}},
+	\end{align*}
+	where
+ labels from $\Gamma \times Q$ are used for tiles containing the head, and labels from $\Gamma$ are used for the other tiles. Not every function $\rho$ of the above type is a computation, because $\rho$ must also respect the transition function of the machine. The following straightforward lemma says that respecting the transition function is a property that depends on at most three tiles at a time. 
+
+
+\begin{lemma}\label{lem:turing-three-consistency}
+	Suppose that 
+	\begin{align*}
+		\rho, \sigma : \set{1,\ldots,t} \times \set{1,\ldots,s} \to \Gamma + \Gamma \times Q 
+	\end{align*}
+	are similar in the sense that for every three tiles $x,y,z$, the triples
+\begin{align*}
+	(\rho(x), \rho(y), \rho(z)) \qquad ( \sigma(x), \sigma(y), \sigma(z))
+\end{align*}
+	are in the same orbit. Then $\rho$ is a computation if and only if $\sigma$ is a computation, and $\rho$ is rejecting if and only if $\sigma$ is rejecting. 
+\end{lemma}
+\begin{proof}
+	 The semantics of a Turing machine involves comparing at most three tiles at the same time, as in the following picture:
+	 \mypic{84}
+	 The assumption of the lemma could even be weakened to triples of tiles that are adjacent in the grid as in the above picture, but we will not need this stronger variant of the lemma.
+\end{proof}
+
+We use the above lemma to show that a rejecting computation of the Turing machine that has polynomial size can be converted into another rejecting computation, whose input word is linearly dependent, and therefore should be accepted. The resulting contradiction will show that the language cannot be recognised by a deterministic polynomial time Turing machine.
+
+By Claim~\ref{claim:surjective-from-tuples}, there is a  surjective equivariant function
+\begin{align*}
+f : \atoms^d \to \Gamma + \Gamma \times Q.
+\end{align*}
+	Consider an input string $w \in \atoms^*$ that is linearly independent, and let 
+	\begin{align*}
+		\rho : \set{1,\ldots,t} \times \set{1,\ldots,s} \to \Gamma + \Gamma \times Q
+	\end{align*}
+	be   the corresponding computation of the Turing machine. This is a rejecting computation, because the input string is linearly independent. Define a \emph{support list} of this computation to be any 
+	\begin{align*}
+		\bar \rho : \set{1,\ldots,t} \times \set{1,\ldots,s} \to \atoms^d
+	\end{align*}
+	which is yields $\rho$ after extending with $f$. The support list  can be viewed as a list of atoms of length $std$. This length of this list is polynomial in the input length, since the time and space of the Turing machine is polynomial, and the dimension $d$ is fixed. We claim that if the input length $n$ is large enough, then there is some atom $a \in \atoms$ which 		\begin{enumerate}
+		\item is spanned by the $n$ independent atoms in the input string  $w$;
+		\item is not spanned by any subset of $3d$ atoms in the support list  $\bar \rho$.
+	\end{enumerate}
+	This is because  the number of atoms spanned by $\bar a$ is exponential in $n$, while the number of subsets from the second item is polynomial.  
+
+	Choose a linear map $\varphi : \atoms \to \atoms$ whose kernel is $\set{0,a}$. (This is done by choosing a basis of $\atoms$ which contains $a$, and then sending the basis vector $a$ to zero, and the remaining basis vectors to themselves). This linear map is not an atom automorphism, since it is not invertible. Nevertheless, we can still apply it to atoms and lists of atoms (however, it will not be guaranteed to preserve orbits). Apply it to the support list $\bar \rho$, yielding a new support list 
+\begin{align*}
+	\bar \sigma : \set{1,\ldots,t} \times \set{1,\ldots,s} \to \atoms^d.
+\end{align*}
+Finally, let 
+\begin{align*}
+	\sigma : \set{1,\ldots,t} \times \set{1,\ldots,s} \to \Gamma + \Gamma \times Q
+\end{align*}
+be the result of extending $\bar \sigma$ with $f$. We will now show that $\sigma$ is in fact a computation of the Turing machine, and that it is also rejecting. This will yield a contradiction, since the input string becomes linearly dependent after applying $\varphi$, and therefore we get a rejecting computation on a string that should be accepted.
+\begin{lemma}
+	The function 
+	$\sigma$ is a rejecting computation of the Turing machine.	
+\end{lemma}
+\begin{proof}
+	The essential idea is that while the linear map $\varphi$ is not an atom automorphism, it still preserves the orbit of short lists of atoms, and this will be enough to preserve computations of the Turing machine. 
+
+	Thanks to Lemma~\ref{lem:turing-three-consistency}, it suffices to show that for every three tiles $x,y,z$, the triples orbits of these three tiles are the same in $\rho$ and $\sigma$. To prove this, we use the following straightforward characterisation of the same orbit relation.
+
+	\begin{claim}
+		Two tuples $\bar a, \bar b \in \atoms^k$ are in the same orbit if and only if
+		\begin{align*}
+		\sum_{i \in I} a_i = 0 \quad \text{iff} \quad \sum_{i \in I} b_i = 0  \qquad \text{for every $I \subseteq \set{1,\ldots,k}$}.
+		\end{align*}
+	\end{claim}
+	\begin{proof}
+		The left-to-right implication is immediate. For the right-to-left implication, we observe that if the same subsets of coordinates have zero sum, then the two tuples satisfy the same quantifier-free formulas under the vocabulary that uses the dependence relations. Under this vocabulary, the structure $\atoms$ is homogeneous, see the discussion in Example~\ref{ex:bit-vector-addition-relation}. Therefore, if the two tuples satisfy the same quantifier-free formulas, then they are in the same orbit, by Theorem~\ref{thm:fs-qf}. 	\end{proof}
+		Using the claim, we complete the proof of the lemma. By definition, the support list $\bar \sigma$ was obtained from $\bar \rho$ by applying the linear map $\varphi$, which preserved non-zeroness of linear combinations of size at most $3d$. Since a tile uses at most $d$ atoms, it follows from the above claim that  for every three tiles, the corresponding triples of labels in $\bar \sigma$ and $\bar \rho$ are in the same orbit. This relation continues to hold after applying the equivariant map $f$, and therefore every triple of tiles in $\rho$ has a triple of labels that is in the same orbit as the corresponding triple of labels in $\sigma$. This shows that $\sigma$ is also a rejecting computation of the Turing machine.
+\end{proof}
+The above lemma shows that the Turing machine must also reject some linearly dependent tuple, which is a contradiction. Therefore, the language cannot be recognised by a deterministic polynomial time Turing machine.	
+\end{proof}
+
+
+	
+\exercisepart
+
+\mikexercise{
+	Assume the bit vector atoms. Show that if the input alphabet is $\atoms$, then nondeterministic orbit-finite Turing machines have the same expressive power as deterministic orbit-finite Turing machines (although with possibly exponential slowdown).
+}
+{
+	One can compute a representation of the input without atoms, by checking which linear combinations of the input atoms are zero. 
+}
+	
+\section{For equality atoms, determinisation fails}
+\label{sec:triangles}
+
+This section describes another thing that deterministic Turing machines with atoms cannot do. This time, the atoms are the equality atoms. 
+
+
+
+ 
+\begin{theorem}\label{thm:determinisation-fails}
+ Assume the equality atoms. There is a language which:
+ \begin{enumerate}
+ \item is recognised by a nondeterministic orbit-finite Turing machine;
+ \item is not recognised by any deterministic orbit-finite Turing machine.
+ \end{enumerate}
+\end{theorem}
+
+In other words, deterministic orbit-finite Turing machines are not computationally complete\footnote{The results in this section are based on~\cite{DBLP:conf/lics/BojanczykKLT13}.}, which witnesses the tightness of Theorem~\ref{thm:nondeterministic-turing-completeness}.
+
+The rest of Section~\ref{sec:triangles} is devoted to proving Theorem~\ref{thm:determinisation-fails}. 
+
+Recall from Theorem~\ref{thm:pof-turing} that, when the input alphabet is a pof set, then deterministic orbit-finite Turing machines are computationally complete. Therefore, the language in the theorem needs to use an input alphabet that is not a pof set. 
+
+The language in Theorem~\ref{thm:determinisation-fails} will be recognised by a polynomial time nondeterministic machine. Therefore, the theorem gives another example of {\sc np}$\neq${\sc p}. Again, as mentioned at the beginning of this chapter, the theorem is unlikely to shed new light on the {\sc np}$\neq${\sc p} question without atoms, since the proof is based on the limited way that a Turing machine can access the atoms in its tape.
+
+%\newcommand{\atoms}{\mathbb A}
+\newcommand{\sixtup}{T}
+\newcommand{\approxclass}[1]{[#1]_{\approx}}
+\newcommand{\quot}{\sixtup\!/_{\sim}}
+\newcommand{\dquot}{\sixtup\!/_{\approx}}
+\newcommand{\ldquot}{L_{\approx}}
+\newcommand{\flip}{\mathrm{flip}}
+\newcommand{\eighttup}{\atoms^{(8)}}
+\newcommand{\simtiles}{\eighttup_{/\approx}}
+
+
+
+
+
+%\subsection{Algebras as a model of local deterministic computation}\label{sec:algebras}
+%A weakness of definable deterministic Turing machines, which will be used in the proof of Theorem~\ref{thm:determinisation-fails}, is a combination of two factors: having a local view of the computation (this is true for any Turing machine, not necessarily deterministic), and determinism. By having a local view we mean that the decision for the next step is taken based on the state of the machine, and one cell of the tape. In particular, the decision depends only on the small set of atoms that is found in the state and one cell; the size of this set is fixed by the machine, and does not depend on the input. In this section, we describe an alternative characterisation of deterministic Turing machines, which uses the terminology of algebras and terms. Terms in an algebra are evaluated in a local fashion: the result of a bigger term depends only on a single operation applied to its subterms. By using terms and algebra, our proof of the lower bound in Theorem~\ref{thm:determinisation-fails} (i.e.~that the language $L$ is not recognised by a deterministic Turing machine) will not need to depend on the technical details of Turing machines such as end-of-tape markers, the position of the head, etc.
+%
+%
+%\begin{definition}[Definable algebra]
+%A \emph{definable algebra} $\mathbf A$ is a pair consisting of a definable \emph{universe} $A$ and a finite set of definable {\em operations} of finite arity:
+%	\begin{align*}
+%		f_1 : A^{n_1} \to A \qquad , \ldots, \qquad f_k : A^{n_k} \to A.
+%	\end{align*}	
+%\end{definition}
+%%One could consider a more general definition, with a definable set of operations. For our proof of Theorem~\ref{thm:determinisation-fails}, algebras with a finite set of operations are going to be enough.
+%
+%A term in an algebra is defined as usual: it is a finite tree where internal nodes are operations, and the leaves are variables or constant operations (operations of arity zero). Given a term $t$ with $n$ variables, and elements $a_1,\ldots,a_n$ of the universe of the algebra, we write $t(a_1,\ldots,a_n)$ for the element in the universe of the algebra which is obtained by evaluating the term, using $a_i$ instead of the $i$-th variable.
+%The following lemma shows that algebras can simulate deterministic Turing machines. When saying that a Turing machine recognises a language, we mean that it accepts words from the language, but is allowed to not terminate on inputs from outside the language, i.e.~this is the notion corresponding to semi-decidability.
+%
+%\begin{lemma}\label{lem:det-to-algebra} For a language $L \subseteq \Sigma^*$ over a definable alphabet $\Sigma$, the following conditions are equivalent:
+%\begin{itemize}
+%	\item Some deterministic Turing machine recognises $L$;
+%	\item Some definable algebra $\mathbf A$ recognises $L$ in the following sense. The universe of the algebra contains $\Sigma$, and there is a definable subset $F$ of the universe such that:
+% \begin{align*}
+%L = \set{a_1 \cdots a_n \in \Sigma^* : \mbox{ some term $t$ over $\mathbf A$ satisfies }t(a_1,\ldots,a_n) \in F}. 
+%\end{align*}
+%
+%\end{itemize}
+%\end{lemma}
+%\begin{proof} Let us begin with the bottom-up implication. Since algebras have finitely many operations, one can easily write a deterministic Turing machine which on input $a_1 \cdots a_n$ enumerates all terms with $n$ variables, and then evaluates each term on arguments $a_1,\ldots,a_n$. If in the definition of a definable algebra, we would allow a definable (and not just finite) set of operations in an algebra, then a nondeterministic Turing machine would be needed to simulate the algebra.
+%
+%Let us now do the top-down implication, which is the only one we use for the proof of Theorem~\ref{thm:determinisation-fails}. To prove this implication, one shows that for every deterministic Turing machine there exists a definable algebra, whose universe contains the work alphabet and the state space of the Turing machine, with the following property. For every $n,k,i \in \Nat$ there exists a terms $s_{n,k}$ and $t_{n,k,i}$ in the algebra, each one with $k$ arguments, such that for every input word $a_1 \cdots a_k$, the value 
+%\begin{align*}
+% s_{n,k}(a_1,\ldots,a_k)
+%\end{align*}
+% is the state of the machine after $n$ computation steps, and the value 
+%\begin{align*}
+% t_{n,k,i}(a_1,\ldots,a_k)
+%\end{align*}
+% is the symbol of the work alphabet that is stored in the $i$-th cell of the tape after $n$ computation steps. These terms are produced by unfolding the definition of the computation of a deterministic Turing machine.
+%\end{proof}
+%
+
+
+
+% \paragraph*{Tilings.}
+% In our proof we a type of tiling problem, and therefore we begin with terminology for tilings. 
+% If $C$ is a set of colours, then a \emph{tile over colours $C$} is an element of $C^4$, which is visualised as a square with each side coloured by a colour from $C$: \mypic{51} 
+% We arrange tiles in square grids with a torus topology, i.e.~the last row is adjacent to the first row, and likewise for columns. For $n \in \Nat$, let us define
+% \begin{align*}
+% n \times n \eqdef \underbrace{\set{0,1,\ldots,n-1}}_{\text{columns}} \times \underbrace{\set{0,1,\ldots,n-1}}_{\text{rows}}.
+% \end{align*}
+% The adjacency relation is defined using arithmetic modulo $n$, i.e.~the left neighbour of a grid position is obtained by decrementing the first coordinate modulo $n$, likewise for right, upper and lower neighbours.
+% If $C$ is a set of colours, then an $n \times n$ \emph{tiling over colours $C$} is defined to be any function from $n \times n$ to tiles over colours $C$.
+% A tiling is called \emph{consistent} if adjacent pairs of tiles have the same colour on the shared side, as explained in the following picture for $3 \times 3$: \mypic{52}
+
+
+
+
+
+\newcommand{\pairtiles}{$\atoms^{\!(2)}$}
+\paragraph*{The separating language.} 
+Define a \emph{tile} to be a tuple of 8 distinct atoms, i.e.~an element of $\atoms^{(8)}$. We draw tiles like this:
+\mypic{85}
+We will arrange tiles on a square grid with torus topology. 
+For $n \in \set{1,2,\ldots}$, define an $n \times n$ tiling to be a function
+\begin{align*}
+ \Tt : n \times n \to \atoms^{(8)} \qquad \text{where } n \times n \eqdef \set{0,1,\ldots,n-1} \times \set{0,1,\ldots,n-1}.
+\end{align*}
+A tiling is called \emph{consistent} if it satisfies the following constraints:
+\mypic{86}
+We begin with an informal description of the language that is difficult for deterministic Turing machines. One is given partial information about a tiling, namely each tile is known up to an even number of flips (see below). The question is: can the partial information be instantiated to a tiling that is consistent? This question will turn out to be doable using a nondeterministic machine -- by guessing the instantiation -- but will be impossible for a deterministic machine.
+
+We now describe the partial information in more detail.
+A \emph{flip} on a tile is defined to be a transposition of atoms that appear on one side, as shown in the following picture:
+\mypic{88}
+Define $\approx$ to be the equivalence relation on tiles, which identifies two tiles if one can be obtained from the other by doing an even number of flips. Each equivalence class of $\approx$ has eight tiles, as shown in the following picture: 
+\mypic{87}
+ 
+\newcommand{\cfi}{{\sc cfi}\xspace}
+ 
+Define $\simtiles$ to be the set of equivalence classes of tiles. This is an orbit-finite set. We are now ready to define the separating language. 
+
+\begin{definition}[\cfi property]\label{def:cfi}
+Define an $n\times n$ $\approx$-tiling to be a function
+\begin{align*}
+ \Tt : n \times n \to \simtiles.
+\end{align*}
+We say that $\Tt$ satisfies the \cfi property\footnote{The name stands for Cai, F\"urer and Immerman, who first studied this property in~\cite{DBLP:journals/combinatorica/CaiFI92}.} if there exists a consistent tiling
+\begin{align*}
+ \Ss : n \times n \to \eighttup
+\end{align*}
+which projects to $\Tt$ when tiles are replaced by their equivalence classes.
+% via $x \mapsto [\Ss(x)]_\approx$.
+\end{definition}
+
+Formally speaking, the separating language required for Theorem~\ref{thm:determinisation-fails} should be a set of words, and not $\approx$-tilings, because Turing machines input words. Therefore, we assume some convention on linearly ordering the tiles in a $\approx$-tiling, e.g.~the tiles are ordered first by columns then by rows. Under such a convention, an $n\times n$ $\approx$-tiling can be encoded uniquely as a word of length $n^2$ over the alphabet $\simtiles$. 
+
+To prove Theorem~\ref{thm:determinisation-fails}, we will show that a nondeterministic orbit-finite Turing machine can check if a $\approx$-tiling satisfies the \cfi property, but a deterministic one cannot.
+
+The positive part about nondeterministic machines is immediate. The work alphabet of the machine is $\simtiles \cup \eighttup$ plus additional symbols that are used as markers. Given an input word representing some $\approx$-tiling $\Tt$, the machine uses nondeterminism to guess the consistent tiling $\Ss$ which witnesses the \cfi property. Then, it deterministically checks if the adjacency constraints of a consistent tiling are satisfied by $\Ss$. This computation can be done in a polynomial number of steps.
+
+The interesting part is that deterministic machines cannot check the \cfi property. 
+\paragraph*{The CFI property is not recognised by any deterministic Turing machine.}
+ We begin by discussing a doubt the reader might have at this point. Given an input representing a $\approx$-tiling $\Tt$, there are only finitely many (if exponentially many) possibilities for choosing the witness $\Ss$ as in Definition~\ref{def:cfi}. Why not use a deterministic algorithm that exhaustively enumerates all the possibilities? The problem is that such an algorithm cannot be implemented as a deterministic Turing machine. The intuitive reason is that even if a $\approx$-equivalence class has only 8 tiles, one cannot choose deterministically any single one among them (i.e.~there is no notion of the ``first'' or ``second'' element of the equivalence class) to write it down on the tape. 
+
+We now proceed to give a formal proof of why the \cfi property is not recognised by any deterministic Turing machine. This will be a consequence of Lemma~\ref{prop:doesnotobserve} below, which says that a deterministic Turing machine, unlike the \cfi property, is insensitive to certain well-chosen flips in a $\approx$-tiling.
+
+We lift the notion of flips from tiles to their $\approx$-equivalence classes as follows. If $\tau$ is a tile, then the \emph{flip} of its $\approx$-equivalence class is defined to the $\approx$-equivalence class which contains some (equivalently, any) flip of $\tau$. It is easy to see that this notion does not depend on the choice of $\tau$ in its $\approx$-equivalence class, nor does it depend on the choice of which side was flipped. Flipping is an involution on $\approx$-equivalence classes, i.e.~doing a flip twice leads back to the same $\approx$-equivalence class. 
+
+The following lemma shows that flips violate the \cfi property.
+
+
+% An equivalence class of $\sim$ can be viewed as a tile, where each side is labelled by a set of two distinct atoms (we call these the \emph{side sets}), as depicted in the following picture:
+% \mypic{61}
+
+
+% For tile $\sigma \in \eighttup$, define $[\sigma]$ to be the tile over colours $\atoms \choose 2$ which is obtained from $\sigma$ by forgetting the order information about the pair on each side. It is not difficult to see that $\sigma \approx \sigma'$ implies $[\sigma]=[\sigma']$, and hence it is meaningful to define $[\tau]$ for a $\approx$-tile $\tau$ by
+% \begin{align*}
+% [\tau] \eqdef [\sigma] \quad \mbox{for some, equivalently every, $\sigma$ in the equivalence class $\tau$}
+% \end{align*}
+% We call a $\approx$-tiling $\Tt$ \emph{weakly consistent} if the tiling 
+% \begin{align*}
+% [\Tt] : n \times n \to \text{tiles over colours $\atoms \choose 2$} \quad \mbox{defined by } x \mapsto [\Tt(x)]
+% \end{align*}
+% is a consistent tiling over colours $\atoms \choose 2$, and furthermore each atom appears in at most two tiles. If $\Tt$ is weakly consistent then every atom either does not appear in $\Tt$, or appears exactly twice, in adjoining side sets corresponding to some edge. 
+
+%Therefore, in a weakly consistent $\approx$-tiling we can assign to each edge an unordered pair of atoms, such that different edges give disjoint sets.
+
+
+
+
+% Define the \emph{flip} of a $\approx$-tile $\tau \in \simtiles$ to be the set
+% \begin{align*}
+% \bar \tau \eqdef \set{\sigma \in \Sigma: \mbox{doing an odd number of flips on $\sigma$ yields a tile in $\tau$ }} .
+% \end{align*}
+% It is not difficult to see that the above set is also a $\approx$-tile, i.e.~flipping can be viewed as an operation on $\approx$-tiles. 
+ \begin{lemma}\label{lem:cfi-parity}
+ Let $\Tt$ be an $n \times n$ $\approx$-tiling which satisfies the \cfi property. Then for every $x \in n \times n$, the following $\approx$-tiling violates the \cfi property:
+ \begin{align*}
+ \Tt_x(y) \quad \eqdef \quad \begin{cases}
+ 	\text{flip of }\Tt(y) & \mbox{if $y=x$;} \\
+ 	\Tt(y) & \mbox{otherwise.}
+ \end{cases}
+\end{align*}
+\end{lemma}
+\begin{proof} A parity argument. We view an $n \times n$ grid as a graph, where vertices are grid positions, and grid positions are connected by an edge if they are adjacent in the (torus) grid topology. For
+$ \Ss : n \times n \to \eighttup$ 
+ define the \emph{conflict set} to be the set of edges $e$ in the graph corresponding to $n \times n$ such that the colours of the two sides adjoining on $e$ are different. Here is a picture:
+ \mypic{127}
+ Using this terminology, a $\approx$-tiling $\Tt$ satisfies the \cfi property only if there exists some $\Ss$ which has an empty conflict set and such that $\Tt$ is the $\approx$-equivalence class of $\Ss$. The key observation is that $\Ss \approx \Ss'$ implies that the conflict sets have the same parity (i.e.~size modulo two); and furthermore making one flip makes this parity change.
+\end{proof}
+
+
+We are now ready to prove the main lemma which witnesses that the \cfi property is not recognised by any deterministic orbit-finite Turing machine. Fix a deterministic orbit-finite Turing machine. We use the formalisation of computations from Section~\ref{sec:pnp-bitvector}, i.e.~a computation is a function $\rho : \Nat^2 \to \Delta$, where the $\Delta$ is the work alphabet plus pairs (letter of the work alphabet, state of the machine). If $\Tt$ is a $\approx$-tiling, we write $\rho_\Tt$ for the unique computation of the fixed Turing machine on the word representing $\Tt$. 
+
+
+
+
+
+\begin{lemma} \label{prop:doesnotobserve}
+There exists $k \in \set{0,1,\ldots}$ with the following property. Let $n \in \set{0,1,\ldots}$ be sufficiently large, and let $\Tt$ be an $n \times n$ $\approx$-tiling which satisfies the \cfi property. Assuming the notation $\Tt_x$ defined in Lemma~\ref{lem:cfi-parity}, the following holds for every $i,j \in \Nat$:
+\begin{align}\tag{*}\label{eq:cfi-conclusion}
+ \rho_\Tt(i,j) = \rho_{\Tt_x}(i,j) \qquad \mbox{for all $x \in n \times n$ with at most $k^2$ exceptions.}
+\end{align}
+
+\end{lemma}
+
+Before proving the lemma, we use it to finish the proof of Theorem~\ref{thm:determinisation-fails}. Take $k$ as in the lemma, and let $n$ be sufficiently large. Let $\Tt$ be some $n \times n$ $\approx$-tiling which satisfies the \cfi property. Consider the computation $\rho_\Tt$, and let $(i,j)$ be the place in the computation which contains the head at the moment when it accepts. If $n > k^2$, then (*) in the lemma implies that there is some $x \in n \times n$ such that $\rho_{\Tt_x}$ has the same contents. In particular, the machine also accepts ${\Tt_x}$. This contradicts Lemma~\ref{lem:cfi-parity}.
+
+\begin{proof}[Proof of Lemma~\ref{prop:doesnotobserve}.]
+ Choose $k$ so that 
+\begin{align*}
+k/2 >  \underbrace{\text{support size for cell contents}}_{\substack{\text{smallest $l$ such that $\rho_{\Tt}(i,j)$ has a}\\ \text{support of size $l$ for every $i,j \in \Nat$}}}.
+\end{align*}
+We prove~\eqref{eq:cfi-conclusion} by induction on $i$, i.e.~the number of computation steps of the Turing machine.
+For the induction base of $i=0$, we observe that the contents of a cell in time $i=0$ depend only on the value of the input in at most one grid position, and hence~\eqref{eq:cfi-conclusion} holds with at most one exception.
+
+For the induction step, suppose that~\eqref{eq:cfi-conclusion} is true for $i-1$ and consider the case of $i$. In the computation of a Turing machine, the contents of a cell in time $i$ are uniquely determined by the contents of at most two cells in time $i-1$: the cell in the same column (offset from the beginning of the tape), plus possibly the contents of the unique cell in time $i-1$ which contains the head of the machine. Hence, using the induction assumption we can conclude the following weaker version of~\eqref{eq:cfi-conclusion}, which uses $2k^2$ exceptions instead of $k^2$: \begin{align}\tag{**}\label{eq:cfi-conclusion-double}
+ \rho_\Tt(i,j) = \rho_{\Tt_x}(i,j) \qquad \mbox{for all $x \in n \times n$ with at most $2k^2$ exceptions.}
+\end{align}
+
+In the rest of this proof, we bring back the number of exceptions down to $k^2$. To do this, we talk about connected components in $\Tt$ after removing some grid positions from the input $\Tt$. For a subset $X \subseteq n \times n$ of grid positions, define its \emph{connected components} to be the connected components in the subgraph of the graph of $n \times n$ (as defined in the proof of Lemma~\ref{lem:cfi-parity}) that is induced by $X$. Here is a picture of a set $X$ together with its partition into connected components: \mypic{59} 
+%The $k^2$ exceptions in the statement of the lemma comes from the following claim (the bound $k^2$ is not optimal).
+%\begin{claim}\label{claim:grid-cut}
+%If $k < n$ and $Z \subseteq n \times n$ has size at most $k$, then there is a set $Z \subseteq X \subseteq n \times n$ of size at most $k^2$, such that the graph corresponding to $n \times n - X$ is connected.
+%\end{claim}
+%\begin{proof}
+%The vertices from $Z$ can surround some area of size at most $k^2$ (actually, less), but they cannot cut the entire grid because they cannot fill an entire row or column. \end{proof}
+%
+%
+%
+%Fix $k$ as in the above claim. The proof of the lemma is by induction on $i$.
+%For the induction base if $i=0$, the configuration depends only on the contents of the first cell tape, and hence at most one exception is needed.
+
+We now resume the proof of the implication from~\eqref{eq:cfi-conclusion-double} to~\eqref{eq:cfi-conclusion}. Choose a tuple of atoms $\bar a$ which supports  the cell contents $\rho_\Tt(i,j)$. By choice of $k$, we can assume that $\bar a$ has at most $k/2$ atoms. 
+Define 
+\begin{align*}
+ Z = \setbuild{ x \in n \times n }{some atom from $\bar a$ appears in $\Tt(x)$ } 
+ %\set{z \in n \times n : \mbox{some atom from $\bar a$ appears in $\Tt(z)$}}.
+\end{align*}
+to be the grid positions where the input instance uses at least one atom from $\bar a$. 
+The set $Z$ has at most $k$ grid positions, since every atom appears in two grid positions and $k$ is at least twice as large as  $\bar a$. By a straightforward analysis of connectivity in an $n \times n$ grid, one can conclude that if $n$ is big enough, then the graph corresponding to $n \times n - Z$ has a connected component, call it $X$, which contains all grid positions from $n \times n$ with at most $k^2$ exceptions. 
+If $n$ is big enough, then
+\begin{align*}
+ \underbrace{2k^2}_{\text{number of exceptions in~\eqref{eq:cfi-conclusion-double}}} < \qquad \underbrace{n^2-k^2}_{\text{size of $X$}},
+\end{align*}
+and therefore there is some $x_0 \in X$ which is not an exception, i.e.~it satisfies
+\begin{align}
+\tag{$\diamond$}\label{eq:same-configurations}\rho_\Tt(i,j) = \rho_{\Tt_x}(i,j).
+\end{align}
+Using this $x_0$, we will show that every grid position $x \in X$ also satisfies~\eqref{eq:same-configurations}, thus proving~\eqref{eq:cfi-conclusion}. Let $x \in X$. Since $X$ is connected and disjoint from $Z$, in the graph corresponding to $n \times n$ there is a path which goes from $x$ to $x_0$ and avoids grid positions from $Z$. Here is a picture: \mypic{60}
+Every edge $e$ of the grid $n \times n$ corresponds to two distinct atoms. The edges on the path from $x$ to $x_0$ avoid atoms from support $\bar a$, because they avoid grid positions from $Z$. Define $\pi$ to be the atom automorphism which swaps, for every $e$ on the path from $x$ to $x_0$, the two atoms that correspond to the edge $e$. This atom automorphism fixes all atoms from $\bar a$. For each tile except those corresponding to $x$ and $x_0$, the automorphism flips an even number of sides, and hence we have:
+\begin{align}\label{eq:xy-flip}
+ \Tt_{x} = \pi(\Tt_{x_0}).
+\end{align}
+We are now ready to prove that $x$ satisfies~\eqref{eq:same-configurations}:
+\newcommand{\justify}[1]{\text{\small(#1)}}
+\begin{eqnarray*}
+	\rho_{\Tt_{x}}(i,j) &=&\justify{by \eqref{eq:xy-flip}} \\ 
+	\rho_{\pi(\Tt_{x_0})}(i,j) &=&\justify{because the Turing machine is equivariant} \\ \pi((\rho_{\Tt_{x_0}})(i,j)) &=&\justify{because $x_0$ satisfies~\eqref{eq:same-configurations}}\\ \pi((\rho_\Tt)(i,j)) &=&\justify{because $\pi$ fixes the support of $\rho_\Tt(i,j)$}\\ \rho_{\Tt}(i,j).
+\end{eqnarray*}
+This completes the proof of the lemma, and therefore also of Theorem~\ref{thm:determinisation-fails}.
+\end{proof}
+
+\exercisepart
+
+\mikexercise{\label{ex:standard-alpahbets} Assume the equality atoms. Show that if $k \le 3$ and the input alphabet $\Sigma$ is $k$-tuples of atoms modulo some equivariant equivalence relation, then every nondeterministic Turing machine over input alphabet $\Sigma$ can be determinised. }{By looking at the finitely many possible equivariant relations, and then doing a deatomisation procedure in each case. }
+
+
+
+\mikexercise{In the proof of Theorem~\ref{thm:determinisation-fails}, we used an input alphabet which consisted of 8-tuples of atoms modulo some equivalence relation. Improve the proof to use 6-tuples modulo some equivalence relation\footnote{This exercise is based on~\cite{DBLP:conf/csl/KlinLOT14}; in particular Section 5.1 of that paper shows that 5 is the smallest dimension where Theorem~\ref{thm:determinisation-fails} holds.}.
+}{\mypic{55}}
+
+
+\mikexercise{Assume the equality atoms and consider the alphabet
+\begin{align*}
+ \set{\set{\set{a,b,c},\set{d,e,f}} : a,b,c,d,e,f \mbox{ are distinct atoms}}.
+\end{align*}
+Show that Turing machines over this input alphabet cannot be determinised.
+}{See~\cite[Example 2.5 and discussion at the end of Section 5]{DBLP:conf/csl/KlinLOT14}.}
+
+%%% Local Variables: 
+%%% TeX-master: "main"
+%%% End: 
+
+

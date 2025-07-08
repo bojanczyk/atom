@@ -1,0 +1,288 @@
+
+	\section{Orbit-finite graphs and automata}
+	\label{sec:orbit-finite-automata} 
+Having discussed representations of orbit-finite sets and their elements, we now start to present algorithms that operate on them. The first group of results, presented in this section, is about orbit-finite automata. These results are  mainly based on the graph reachability result from  Theorem~\ref{thm:olig-graph-reachability}, which showed that graph reachability is decidable for effectively oligomorphic atoms (in fact, the proof did not use the full power of the assumption, since it did not require that we can compute the number of orbits in $\atoms^d$).  submotients do not affect the algorithm, and so it extends to orbit-finite graphs, as stated in the following theorem.  
+
+	\begin{theorem}\label{thm:oligo-spof-graph-reachability}
+		Assume that the atoms are effectively oligomorphic.
+		Then the reachability problem for orbit-finite graphs (represented as in Section~\ref{sec:generating-sets-oligo}) is decidable. 
+		\end{theorem}
+		\begin{proof}
+			Same as  for Theorem~\ref{thm:olig-graph-reachability}.
+		\end{proof}
+
+The emptiness problem for automata is the same as the reachability problem for graphs, and therefore we can use the above theorem to decide emptiness for orbit-finite automata. Let us begin by formally defining the model.
+Similarly to graphs, the definition of an orbit-finite automaton is the same as in the finite case, except that the word ``finite'' is replaced by ``orbit-finite'', and all subsets must be equivariant.
+ 
+\begin{definition}[Nondeterministic orbit-finite automaton]\label{def:orbit-finite-automata}
+	Let $\atoms$ be an oligomorphic structure. 
+	A \emph{nondeterministic orbit-finite automaton} over $\atoms$ is a tuple
+	\begin{align*}
+ \Aa = \big(\underbrace{Q,}_{\text{states}} \quad \underbrace{\Sigma,}_{\text{input alphabet}} \quad \underbrace{I \subseteq Q,}_{\text{initial states}} \quad \underbrace{F \subseteq Q,}_{\text{accepting states}} \quad \underbrace{\delta \subseteq Q \times \Sigma \times Q}_{\text{transitions}} \big),
+\end{align*}
+where $Q$ and $\Sigma$  are orbit-finite sets, and the subsets $I, F, \delta$ are equivariant.
+\end{definition}
+
+The semantics of the automaton are defined as for nondeterministic finite automata. The language recognised by such an automaton is equivariant, since the set of accepting runs is equivariant.
+An automaton is called \emph{deterministic} if it has one initial state, and $\delta$ is a function from $Q \times \Sigma$ to $Q$. 
+
+
+\begin{theorem}\label{thm:olig-nfa-nonemptiness}
+	Assume that the atoms are effectively oligomorphic.
+	Then the emptiness problem for nondeterministic orbit-finite automata (represented as in Section~\ref{sec:generating-sets-oligo}) is decidable.  
+	\end{theorem}
+\begin{proof}
+	An immediate corollary of Theorem~\ref{thm:oligo-spof-graph-reachability}. 
+\end{proof}
+
+Other positive results that generalise easily to orbit-finite automata include:
+\begin{itemize}
+	\item  $\epsilon$-transitions do not add to the power of nondeterministic automata (Exercise~\ref{ex:epsilon});
+	\item one can minimize deterministic automata (Theorem~\ref{thm:myhill-nerode-oligo});
+	\item one can decide if a nondeterministic automaton is unambiguous (Exercise~\ref{ex:check-det-unamb}).
+\end{itemize}
+Negative results for the equality atoms generalise to other oligomorphic atoms, when the atoms are infinite: 
+\begin{itemize}
+	\item nondeterministic  automata are not closed under complement;
+	\item the universality problem is undecidable;
+	\item deterministic automata are strictly weaker than nondeterministic ones.
+\end{itemize}
+
+
+
+To illustrate the scope of the above results,  we  give several examples of deterministic or nondeterministic orbit-finite automata, in various oligomorphic atoms. 
+\begin{myexample}\label{ex:graph-atoms-automaton} Assume that the atoms are the random graph from Section~\ref{sec:random-graph}. This structure is effectively oligomorphic, because it is the \fraisse limit of a \fraisse class that can be enumerated as in the assumptions of Theorem~\ref{thm:computable-fraisse}. The set of paths in the random graph can be viewed as a language 
+	\begin{align*}
+	\set{ a_1 \cdots a_n \in \atoms : \text{for every $i <n $ there is an edge from $a_i$ to $a_{i+1}$}} \subseteq \atoms^*.
+	\end{align*}
+	This language is recognised by a deterministic orbit-finite automaton, which uses its state to stores the last seen vertex. The set of cycles is also recognised by a deterministic automaton, this automaton also needs to remember the first vertex to check if it is connected to the last one. 
+   \end{myexample}
+
+   \begin{myexample}
+	\label{ex:graph-atoms-connected} Assume that the atoms are the random graph, and consider the language 
+	\begin{align*}
+	\setbuild{ w \in \atoms^*}{the subgraph of $\atoms$ induced by atoms from $w$ is a clique}
+	\end{align*}
+	This language cannot not be recognised by an orbit-finite automaton, even nondeterministic, as we show in the Exercise~\ref{ex:graph-cliques}.
+   \end{myexample}
+   
+   
+   \begin{myexample}
+	Assume that the atoms are the random graph.  The graph atoms are a natural setting to talk about path and tree decompositions of graphs, as used in the graph minor project of Robertson and Seymour. To make notation lighter, we only discuss path decompositions. 
+	 A \emph{width $k$ path decomposition} for a finite subset $V \subseteq \atoms$ is defined to be a list of (not necessarily disjoint) subsets $V_1,\ldots,V_n \subseteq V$ such that: (a) every vertex from $V$ appears in at least one bag; and (b) if two vertices from $V$ are connected by an edge, then they appear together in  at least one bag; and (c) if a vertex appears in some two bags, then it also appears in all other bags between them.
+
+	 If $k$ is fixed, then  such a path decomposition can be seen as a word over an orbit-finite alphabet, namely the sets of at most $k$ atoms. (The number of orbits in this alphabet is the number of isomorphism types of graphs with at most $k$ vertices.)  Therefore, a path decomposition  can be used as the input to an orbit-finite automaton. 
+	 We now show that interesting properties of the underlying graph can be recognised by such automata. 
+	
+	 \begin{claim}\label{claim:connected}
+	 There is a deterministic orbit-finite automaton $\Aa$ such that
+	 \begin{align*}
+	 \Aa \text{ accepts }V_1 \cdots V_n \quad \text{iff} \quad \text{the  graph $V_1 \cup \cdots \cup V_n$ is connected}
+	 \end{align*}
+	 holds for input which is a width $k$ path decomposition\footnote{The automaton does not check if the input is a path decomposition, in fact this cannot be done, see Exercise~\ref{ex:cannot-check-path-decompositions}.}.
+	 \end{claim}
+	 \begin{proof}
+	 After reading a path decomposition $V_1,\ldots,V_n$ the automaton stores in its state the last bag $V_n$ together with the equivalence relation $\sim_n$ on it which identifies vertices from the last bag if they are in the same connected component of the underlying graph $V_1 \cup \cdots \cup V_n$.  
+	 The states of the automaton are pairs (set of at most $k$ atoms, an equivalence relation on this set); this state space is orbit-finite. The initial state is the empty set equipped with an empty equivalence relation, and the accepting states are those where the equivalence relation has one equivalence class. 
+	 The definition of the transition function is left to the reader. 
+	%  The transition function is defined as follows. Suppose that the current state is $(V_n,\sim_n)$ and the input letter is $V_{n+1}$. Let $\sim$ be the smallest equivalence relation on $V_n \cup V_{n+1}$ which contains both $\sim_n$ and the edges on $V_{n+1}$ (as defined by the graph structure of the atoms). If there is an equivalence class of $\sim$ which is disjoint with $V_{n+1}$, then this equivalence class will remain forever disconnected, and therefore the automaton rejects immediately. Otherwise, the new state is set to $V_{n+1}$ with the equivalence relation $\sim_{n+1}$ being $\sim$ restricted to $V_{n+1} $.
+	 \end{proof}
+	
+	 Similar constructions as in the above claim can be done for any property of graphs of bounded pathwidth that is recognisable in the sense of Courcelle, which covers all graph properties that can be defined in monadic second-order logic\footnote{For more on recognisability, pathwidth, and monadic second-order logic, see~\cite[Chapter 5.3]{courcelleGraphStructureMonadic2012}.}. Using tree automata instead of word automata, one can also cover tree decompositions. 
+   \end{myexample}
+   
+
+
+\begin{myexample}\label{ex:linearly-dependent-automaton}
+	Consider the bit-vector atoms and the language 
+	\begin{align*}
+	\setbuild{ w \in \atoms^*}{$w$ is linearly dependent}.
+	\end{align*}
+	The linear dependence in the above language is the same as the one discussed when defining the bit-vector atoms, i.e.~$w$ is viewed as a list and not as a set. This means that any repetition in the list will immediately be a dependence. This language is recognised by a nondeterministic orbit-finite automaton. The state space is $\atoms$, the initial subset is the singleton of the zero vector $\set{0}$, and the accepting subset is the set of  non-zero vectors. The transition relation is 
+	\begin{align*}
+	\setbuild{ p \stackrel a \to q}{$p+a=q$ or $p=q$}.
+	\end{align*}
+	One can show that the nondeterminism in the above automaton is unavoidable -- the  language is not recognised by a deterministic orbit-finite automaton. In fact, we will show an even stronger result later in this book, namely that the language is not recognised by any deterministic Turing machine running in polynomial time.
+\end{myexample}
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\paragraph*{Minimization of deterministic automata.} In Chapter~\ref{ch:beyond-equality}, one of our motivations for introducing orbit-finite sets as a generalization of pof sets was to minimize deterministic automata. In Theorem~\ref{thm:myhill-nerode-submotiented-pof}, we showed a version of the Myhill-Nerode Theorem for the equality atoms, which gave a machine independent characterization of deterministic orbit-finite automata, in terms of an orbit-finite syntactic congruence. The same result carries over to general oligomorphic atoms.
+
+\begin{theorem}\label{thm:myhill-nerode-oligo}
+	Assume that the atoms are oligomorphic. 
+    The following conditions are equivalent for an equivariant language $L \subseteq \Sigma^*$ over an orbit-finite alphabet $\Sigma$:
+    \begin{enumerate}
+        \item\label{item:myhill-nerode-recognised-oligo} $L$ is recognised by a deterministic orbit-finite automaton;
+        \item\label{item:myhill-nerode-orbit-finite-oligo} the submotient of $\Sigma^*$ under the syntactic congruence of $L$ is orbit-finite.
+    \end{enumerate}
+\end{theorem}
+\begin{proof}
+	The same proof as for Theorem~\ref{thm:myhill-nerode-submotiented-pof}, and in fact, for the original Myhill-Nerode Theorem for finite sets. We simply construct a deterministic automaton on the equivalence classes of syntactic congruence. The assumption that the language is equivariant guarantees that the structure of the automaton -- the transition function and the accepting states -- is also equivariant. 
+\end{proof}
+
+If the atoms are not only oligomorphic, but they are effectively oligomorphic, then the syntactic automaton (i.e.~the automaton that arises from the above theorem, also known as the minimal automaton) can be computed based on any other deterministic automaton.
+
+\begin{theorem}\label{thm:compute-minimal}
+	If the atoms are effectively oligomorphic, then the syntactic automaton can be computed based on any deterministic orbit-finite automaton.
+\end{theorem}
+\begin{proof}
+	We use what is called the \emph{Moore algorithm}, i.e.~a fixpoint procedure that computes equivalence on states\footnote{The computational complexity of automata minimisation is studied in~\cite{DBLP:conf/lics/MurawskiRT15}, using the equality atoms and a more concrete model with registers and control states. }. Suppose that we are given a deterministic orbit-finite automaton, whose  states  are $Q$. We first use the graph reachability algorithm from Theorem~\ref{thm:oligo-spof-graph-reachability} to restrict the state space to reachable ones. Next, we submotient the state space with respect to syntactic equivalence, i.e.~recognizing the same language, as described below.
+
+	For $n \in \set{0,1,\ldots}$, define $\sim_n$ to be the equivalence relation  on states, which identifies two states if they accept the same words of length at most $n$. It is easy to see that this equivalence relation is equivariant, and each $\sim_n$ can be computed using the formula representation of equivariant subsets. The chain 
+	\begin{align*}
+	\sim_1 \quad \sim_2 \quad \sim_3 \quad \cdots
+	\end{align*}
+	is a decreasing sequence of equivariant subsets of $Q \times Q$, and therefore it must stabilize after finitely many steps. The stable value of this sequence is the syntactic equivalence relation, and the minimal automaton is obtained by submotienting its state space under this relation.
+\end{proof}
+
+
+
+
+\newcommand{\afin}{A_{\mathrm{fin}}}
+\newcommand{\qfin}{Q_{\mathrm{fin}}}
+
+
+
+
+\exercisepart
+
+\mikexercise{\label{ex:epsilon} Show that adding $\epsilon$-transitions does not change the expressive power of nondeterministic orbit-finite automata.}{The usual proof works. It is important that transitive closure preserves orbit-finiteness. }
+
+	\mikexercise{\label{ex:check-det-unamb} Show that, under the assumptions of Theorem~\ref{thm:oligo-spof-graph-reachability},  one can check if a nondeterministic orbit-finite automaton is deterministic. Likewise for unambiguous (each input admits at most one accepting run). }{Determinism can be formalised in first-order logic and then checked using the Symbol Pushing Lemmas. To check if an automaton is unambiguous we construct the product of the automaton with itself, and check if there is a pair $(p,q)$ of state $p \neq q$ that is both reachable and co-reachable. }
+
+
+
+\mikexercise{\label{ex:graph-cliques} Consider the graph atoms. Show that the language of cliques, i.e.~words in $\atoms^*$ where every two letters are connected by an edge, is not recognised by a nondeterministic orbit-finite automaton.}{
+Consider $2n$ distinct atoms $a_1,\ldots, a_{2n}$ with $n$ sufficiently large. If these atoms form a clique, then the corresponding word should be accepted.  Let $q$ be the state after reading the first $n$ letters, and let $\bar b$ be some tuple that supports this state. If $n$ is large enough, then the support $\bar b$ avoids  some atom $a_i \in \set{a_1,\ldots,a_n}$ from the first half, and also some  atom $a_j \in \set{a_{n+1},\ldots,a_{2n}}$ from the second half.  We will show that:
+\begin{enumerate}
+	\item[(*)] can choose an atom automorphism $\pi$ that fixes $\bar b$ and which maps $a_i$ to an atom that is not connected to $a_j$ by an edge. 
+\end{enumerate}
+Having shown (*), the exercise follows: we can apply the automorphism $\pi$ to the first $n$ letters in the run, which will give a new accepting run where the $i$-th input letter is not connected by an edge with the $j$-th input letter. It remains to prove (*). Consider the edge connections between atom $a_i$ and the tuple $\bar b$. In the random graph there is a vertex, call it $a'_i$, that has the same connections to $\bar b$, and which is not connected by an edge to $a_j$. The automorphism $\pi$ is the one that maps $a_i$ to $a'_i$, and which is the identity on $\bar b$. 
+}
+
+
+
+
+
+
+%Is there a Kleene Theorem on equivalence between automata and regular expressions? The challenge is choosing the appropriate notion of Kleene star. One solution is to consider the following slightly artificial description of the Kleene star: it is an automaton with one state and one transition, but with the transition being labelled by a language. This artificial way generalised to oligomorphic atoms as shown in the following exercise.
+%
+%\mikexercise{Assume that the atoms are oligomorphic. Show that a language is recognised by a nondeterministic orbit-finite automata if and only if it belongs to the least class $\mathscr L$ of languages satisfying:
+%\begin{itemize}
+%	\item $\mathscr L$ is closed under binary concatenation and binary union;
+%	\item $\mathscr L$ contains the empty language and every singleton language;
+%	\item Consider an orbit-finite directed graph where every edge is labelled by a language from $\mathscr L$. Assume that there is a tuple of atoms $\bar a$ which supports the graph together with its edge labelling so that the edge set is one $\bar a$-orbit. Then for every vertices $s,t$ in the graph, the following language is in $\mathscr L$:
+%	 \begin{align*}
+% \bigcup_{e_1 \cdots e_n} \lambda(e_1) \cdots \lambda(e_n)
+%\end{align*}
+%where the above union ranges over paths $e_1 \cdots e_n$ in the graph which start in $s$ and finish in $t$.
+%
+%\end{itemize}
+%}{Copying the proof of the Kleene Theorem on equivalence of nondeterministic automata and regular expressions.
+%The bottom-up implication is straightforward, since one can check that languages recognised by orbit-finite nondeterministic automata have the closure properties in the definition of the class $\mathscr L$. To prove the top-down implication, it suffices to show the following claim.
+%\begin{claim}
+%	Let $\bar a$ be some tuple of atoms. Let $\Aa$ be a nondeterministic orbit-finite automaton such that $\bar a$ supports $\Aa$, i.e.~it supports its states, transitions, input alphabet, etc. Then the language recognised by $\Aa$ belongs to the class $\mathscr L$.
+%\end{claim}
+%\begin{proof}
+%	The proof is by induction on the number of $\bar a$-orbits in the transition relation of the automaton $\Aa$. The induction base is when there are no transitions; this is immediate since the language of the automaton is then either empty or $\set{\varepsilon}$. For the induction step, choose some $\bar a$-orbit $\delta_0 \subseteq \delta$ of the transitions in the automaton. For a transition $(p,a,q) \in \delta_0$, define $L_{q,p}$ to be the set of words $w \in \Sigma^*$ such that in the automaton $\Aa$ there is a run over $w$ that starts in $q$, ends in $p$, and uses only transitions from $\delta - \delta_0$. By induction assumption, the language $L_{q,p}$ belongs to the class $\mathscr L$. Define $Q_0$ to be the states that appear in transitions from $\delta_0$. 
+%	Consider a graph whose vertices are $Q_0$, and such that for every $(p,a,q) \in \delta_0$ there is an edge which is labelled by 
+%
+%\end{proof}
+%
+%
+%}
+
+
+	
+	
+
+% 
+% 
+% \begin{openquestion}
+% 	Assume the atoms are homogeneous over a finite vocabulary.
+% 	When the input alphabet is the atoms, 	is every deterministic orbit-finite automaton equivalent to a deterministic register automaton?
+% \end{openquestion}
+% 
+% We know that the answer to the above question is positive for some atoms (actually, all examples of atoms in this paper) but we do not know the answer in general.
+% Recall that, by Example~\ref{ex:do-not-minimise}, straight automata are not closed under minimization.
+
+\mikexercise{\label{ex:syntactic-monoid} Consider the equality atoms. For a language $L \subseteq \Sigma^*$, consider the two-sided Myhill-Nerode equivalence relation which identifies words $w,w' \in \Sigma^*$ if 
+\begin{align*}
+	uwv \in L \quad \text{iff} \quad uw'v \in L \qquad \text{for every }u,v \in \Sigma^*.
+\end{align*}
+The submotient of $\Sigma^*$ under this equivalence relation is called the \emph{syntactic monoid} of $L$. Show that if the syntactic monoid is orbit-finite, then the syntactic automaton is orbit-finite, but the converse implication fails. }
+{ 
+Let $M$ be the syntactic monoid of a language. There is a deterministic automaton with states $M$ which recognises the same language; the transition function is simply defined by $(q,a) \mapsto qa$ where $qa$ is the product operation in the syntactic monoid. 
+
+The failure of the converse implication is witnessed by the language
+\begin{align*}
+	\set{w \in \atoms^* : \text{the first letter appears also later in the word}}.
+\end{align*}
+The language is recognised by a deterministic automaton which keeps the first letter in its state, and is hence orbit-finite. To see that the syntactic monoid is not orbit-finite, we observe that if two words $w,v$ have different sets of atoms that appear in them, then they are not equivalent with respect to the two-sided Myhill Nerode equivalence relation. Indeed, if $a$ is an atom that appears in $w$ but not in $v$, then $aw$ is in the language, but $av$ is not. Therefore, the syntactic monoid must store the set of distinct atoms in a given word, which cannot be done in an orbit-finite way. 
+}
+
+\mikexercise{\label{ex:myhill-one-way-two-way} Let $L \subseteq \Sigma^*$ be a language, and let $Q$ be the states of its syntactic automaton. Show that the syntactic monoid defined in the previous exercise is isomorphic to the sub-monoid of functions $Q \to Q$ which is generated by the state transition functions $\set{q \mapsto qa}_{a \in \Sigma}$ of the syntactic automaton.}
+{
+
+}
+
+\mikexercise{Let $L \subseteq \Sigma^*$ and let $h : \Sigma^* \to M$ be its syntactic homomorphism, i.e.~the function which maps a word to its equivalence class under two-sided Myhill-Nerode equivalence. Show that $M$ is orbit-finite if and only if the syntactic automaton of $L$ is orbit-finite and there is some $k \in \set{0,1,\ldots}$ such that all elements of $M$ have support of size at most $k$.}
+{
+
+}
+
+\mikexercise{
+We say that a monoid $M$ is aperiodic if for every $m \in M$ there is some $k \in \set{0,1,\ldots}$ such that $m^k = m^{k+1}$. Let $L$ be a language with an orbit-finite syntactic automaton. Show that the syntactic monoid of $L$ is aperiodic if and only if for every state $q$ of the syntactic automaton and every $w \in \Sigma^*$ there is some $k \in \set{0,1,\ldots}$ such that $qw^k = qw^{k+1}$.
+} 
+{
+	Assume that the set of states $Q$ in the syntactic automaton is orbit-finite. 
+	By Exercise~\ref{ex:myhill-one-way-two-way}, the syntactic monoid consists of state transformations of states in the syntactic automaton. Therefore, saying that the syntactic monoid is aperiodic amounts to showing that every input word $w$ satisfies
+	\begin{align}\label{eq:aperiodic-exists-forall}
+		 \exists k \in \set{0,1,\ldots}\ \forall q \in Q \qquad qw^k = qw^{k+1}.
+	\end{align}
+	The exercise asks if the last two quantifiers can be swapped in the above, i.e.~if the above condition is equivalent to
+	\begin{align}\label{eq:aperiodic-forall-exists}
+		 \forall q \in Q \ \exists k \in \set{0,1,\ldots} \qquad qw^k = qw^{k+1}.
+	\end{align}
+	Clearly~\eqref{eq:aperiodic-exists-forall} implies~\eqref{eq:aperiodic-forall-exists}, so we only show the converse implication. Choose $m$ so that for every state $q$, there is a tuple of at most $m$ atoms which supports $w,q$ and the transition function of the syntactic automaton. The value of $m$ depends on $w$. The function
+	\begin{align*}
+		\bar a \in \atoms^m \quad \mapsto \quad \text{number of $\bar a$-orbits in $Q$}
+	\end{align*}
+	is a finitely supported function from tuples of atoms to natural numbers, and therefore it has finitely many possible values. It follows that there is some $k \in \set{0,1,\ldots}$ such that for every tuple $\bar a$ of at most $k$ atoms, there are at most $k$ $\bar a$-orbits in $Q$. 	Let $q \in Q$, and choose some tuple $\bar a$ which supports $w,q$ and the syntactic automaton; this tuple has at most $m$ atoms. All elements in the set 
+	\begin{align*}
+		\set{q, qw, qw^2,\ldots}
+	\end{align*}
+	are supported by $\bar a$, and therefore each of the elements of the above set is a singleton $\bar a$-orbit in $Q$. It follows that the above set has size at most $k$, which proves~\eqref{eq:aperiodic-exists-forall}.
+}
+
+\mikexercise{Suppose that $M$ is an orbit-finite monoid. Can one find an infinite sequence
+\begin{align*}
+	M \supsetneq M_1 \supsetneq M_2 \supsetneq M_3 \supsetneq \cdots
+\end{align*}
+such that each $M_i$ is a submonoid?
+}
+{
+	Yes. Consider the monoid 
+\begin{align*}
+ M = 	1 + \atoms^2 
+\end{align*}
+where $1$ is the identity and product for non-identity elements is defined by $ab = b$. Removing any finite set of non-identity elements still yields a monoid, and hence one can obtain an infinite chain as in the statement of the exercise.
+}
+
+\mikexercise{Consider an orbit-finite monoid $M$. We define the prefix relation on this monoid as follows: $a$ is an infix of $b$ if $b=ax$ for some $x \in M$. 
+Show that under the equality atoms, the prefix relation is well-founded, but this is no longer true under the order atoms.
+}{}
+

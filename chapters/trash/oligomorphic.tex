@@ -1,0 +1,177 @@
+\section{Oligomorphic atoms} 
+ A logical structure is called \emph{oligomorphic} if for every natural number $n$, the $n$-th power of the universe has finitely many elements up to automorphisms. Stated in the language from the previous section, the atoms are oligomorphic if for every $n$, the set of $n$-tuples of atoms is an orbit-finite set. The notion of oligomorphism structures is important in model theory. For instance, a theorem of Ryll-Nardzewski says that a structure is oligomorphic if and only if it is a model of an $\omega$-categorical theory.
+ 
+ \begin{ourexample}[The equality and ordered atoms are oligomorphic.] In the equality atoms, the equivariant orbit of a tuple of atoms $(a_1,\ldots,a_n)$ is uniquely determined by its equality type, i.e.~the information about which pairs of coordinates carry equal atoms. There are finitely many equality types for a given dimension~$n$. For the total ordered atoms, one needs a bit more information, but still of finite size: which says which coordinates are bigger than which other coordinates.
+ \end{ourexample}
+
+ \begin{ourexample}
+ 	The integers are not oligomorphic, because pairs of atoms have infinitely many orbits, as shown in Example~\ref{ex:square-of-integers}.
+ \end{ourexample}
+ 
+ 
+ 
+ In this section, we show that when the atoms are oligomorphic, then sets with atoms are well behaved:
+ \begin{itemize}
+ 	\item all three notions of orbit-finiteness are equivalent (Theorem~\ref{thm:of-char});
+	\item orbit-finite sets are closed under finite products (Theorem~\ref{thm:of-char});
+		\item orbit-finite sets are closed under finitely supported subsets (Exercise~\ref{ex:of-char-subsets});
+	\item a set of $n$-tuples of atoms is finitely supported if and only if it is definable by a first-order logic formula with $n$ free variables and constants from the atoms (Theorem~\ref{thm:ryll});	
+ \end{itemize}
+ Actually, not only are the properties above implied by oligomorphism, but also each of the four properties alone implies oligomorphism. In other words, oligomorphism of the atoms can be seen as exactly the property required for good behaviour of orbit-finite sets.
+ 
+Furthermore, assuming the first-order theory of the atoms is decidable, hereditarily orbit-finite sets can be represented in a finite way (without atoms) and natural operations (e.g. union or equality test) are decidable in terms of these representations (Theorem~\ref{thm:atom-toolkit}).
+ 
+\subsection{Consequences of oligomorphism}
+In this section, we show the following theorem.
+
+
+\begin{theorem}\label{thm:of-char}
+	Assume that the atoms are multi-support orbit-finite.
+The following conditions are equivalent.
+\begin{enumerate}
+	\item \label{it:of-char-ss-tuples} For every $n$, the set of $n$-tuples of atoms is multi-support orbit-finite;
+		\item \label{it:of-char-oligomorphic} The atoms are an oligomorphic structure;
+	\item \label{it:of-char-strong-atoms} The set of atoms is all-support orbit-finite;
+	\item \label{it:of-char-strong-tuples} For every $n$, the set of $n$-tuples of atoms is all-support orbit-finite;
+	\item \label{it:of-char-ms-closed-under products} Single-support orbit-finite sets are closed under finite products.
+\end{enumerate}
+When the conditions above are satisfied, then the notions of single-support orbit-finite, multi-support orbit-finite, and strongly orbit-finite are all equivalent.
+	% \begin{enumerate}
+	% 	\item The three notions of orbit-finiteness (single-support orbit-finite, multi-support orbit-finite, and strongly orbit-finite) are equivalent;
+	% 	\item For every $n$, the set of $n$-tuples of atoms is strongly orbit-finite.
+	% 			\item For every $n$, the set of $n$-tuples of atoms is single-support orbit-finite.
+	% 	\item Orbit-finite sets are closed under finite products;
+	% 	\item Orbit-finite sets are closed under finitely supported subsets;
+	% 
+	% \end{enumerate}
+\end{theorem}
+
+Thanks to the above theorem, when the atoms are oligomorphic, then we can simply call a set \emph{orbit-finite}, without specifying which variant of orbit-finiteness is meant.
+
+%\paragraph*{\ref{it:of-char-ss-tuples} implies~\ref{it:of-char-oligomorphic}.}
+%As we have observed before, for an equivariant set, being multi-support orbit-finite is the same thing as consisting of finitely many equivariant orbits. The set of $n$-tuples of atoms is an equivariant set.
+%\paragraph*{\ref{it:of-char-oligomorphic} implies~\ref{it:of-char-strong-atoms}.} 
+% To prove condition~\ref{it:of-char-strong-atoms}, we need to show that for every tuple of atoms $(a_1,\ldots,a_n)$, there is a finite set $A$ of atoms such that every atom is in the same $(a_1,\ldots,a_n)$-orbit as some atom in $A$. By condition~\ref{it:of-char-oligomorphic}, 
+%the set 
+%\begin{align*}
+%	X = \set { (a_1,\ldots,a_n,a) : a \in \atoms} \subseteq \atoms^{n+1}
+%\end{align*}
+%interesects finitely many orbits of $\atoms^{n+1}$ under the action of all automorphisms. In other words, there is a finite set $Y \subseteq X$ such that every
+%element of $X$ can be obtained from some element of $Y$ by applying an atom automorphism. Let $A$ be the projection of $Y$ onto the last coordintate.
+%By assumption on $Y$, for every atom $b$, there is some $a \in A$ such that $(a_1,\ldots,a_n,a)$ and $(a_1,\ldots,a_n,b) $ are related by an atom automorphism, call it $\pi$, which is necessarily a $(a_1,\ldots,a_n)$-automorphism. 
+%\paragraph*{\ref{it:of-char-strong-atoms} implies~\ref{it:of-char-strong-tuples}.} Condition~\ref{it:of-char-strong-tuples} says that for every $n \in \Nat$ and every tuple of atoms $\bar a$, the set of $n$-tuples of atoms has finitely many $\bar a$-orbits. 
+%We show this by induction on $n$. The induction base of $n=1$ is our assumption, namely condition~\ref{it:of-char-strong-atoms}. For the induction step, let $A$ be a finite set of atoms representing each $\bar a$-orbit of atoms. Choose a tuple $\bar b$ which contains $\bar a$ and all atoms in $A$. By induction assumption, the set of $(n-1)$-tuples of atoms splits into finitely may orbits. Let $X$ be a finite set of $(n-1)$-tuples representing each of these $\bar b$-orbits. We claim that every $n$-tuple of atoms is in the same $\bar a$-orbit as some tuple in the finite set $A \times X$.
+%Let then $(a_1,\ldots,a_n)$ be an $n$-tuple of atoms. 
+%By assumption on $A$, there is some $\bar a$-automorphism $\pi$ which maps $a_1$ to an element of $A$. By assumption on $X$, there is some $\bar b$-automorphism $\sigma$ which maps $\pi(a_2,\ldots,a_n)$ to an element of $X$. Since all elements of $A$ appear in the tuple $\bar b$, it follows that applying first $\pi$ and then $\sigma$ maps $(a_1,\ldots,a_n)$ to a tuple in $A \times X$. Since both $\pi$ and $\sigma$ are $\bar a$-automorphisms (actually, $\sigma$ is even a $\bar b$-automorphism), we obtain the desired result.
+%
+%\paragraph*{\ref{it:of-char-strong-tuples} implies~\ref{it:of-char-ms-closed-under products}} 
+%We want to show that the product of two multi-support orbit-finite sets is also multi-support orbit-finite. 
+%
+%
+%\begin{lemma}\label{lem:multi-support-of-char}
+%Let $\bar a$ be a tuple of atoms. A set with atoms is a single $\bar a$-orbit if and only if it is equal to
+%\begin{align*}
+%	f( \set{\pi(\bar b) : \mbox{$\pi$ is an $\bar a$-automorphism}})
+%\end{align*}
+%for some tuple of atoms $\bar b$ and some equivariant function $f$ from tuples of atoms to sets with atoms.
+%\end{lemma}
+%	% A set is multi-support orbit-finite if and only if it can be presented as
+%	% \begin{align*}
+%	% 	\bigcup_{i \in I} f_i( \set{\pi(\bar b_i) : \mbox{$\pi$ is a $\bar a_i$-automorphism}})
+%	% \end{align*}
+%	% where $I$ is finite, and for every $i$, $\bar a_i, \bar b_i$ are tuples of atoms, and $f_i$ is an equivariant function. Likewise for single-support orbit-finite sets, only all of the tuples $\bar a_i$ must be equal.
+%\begin{proof}
+%	Because equivariant functions commute with automorphisms, see Fact~\ref{fact:commutes-function}, it follows that the image of an $\bar a$-orbit of $x$ under an equivariant function $f$ is the same as the $\bar a$-orbit of $f(x)$. This gives the right-to-left implication.
+%	
+%In light of the above reasoning, 	to prove the converse implication, it suffices to show every set with atoms is equal to the value of some tuple of atoms under some equivariant function. To prove the observation, consider a set with atoms $x$, and choose some support $\bar b$. Consider the equivariant orbit of the pair $(\bar b ,x)$, i.e.~the set 
+%	\begin{align*}
+%		f = \set{\pi(\bar b, x) : \pi \mbox{ is an atom automorphism}}.
+%	\end{align*}
+%	By definition the above set is equivariant. We claim that also $f$ is a function, i.e.~
+%	\begin{align*}
+%		\pi(\bar b)=\sigma(\bar b) \qquad \mbox{implies}\qquad \pi(x)=\sigma(x).
+%	\end{align*}
+%By applying $\pi^{-1}$ to all terms in the above implication, we see that it is just another way of saying that $\bar b$ supports $x$.
+%\end{proof}
+%
+%Using the above lemma, we prove that a product of two multi-support orbit-finite sets is also
+% multi-support orbit-finite. Because multi-support orbit-finite sets are closed under finite unions, it suffices to show that a product of two sets as in the statement of Lemma~\ref{lem:multi-support-of-char} is multi-support orbit-finite. Because multi-support orbit-finite are closed under images of equivariant functions, it suffices to show that for every tuples of atoms $\bar a,\bar b,\bar c,\bar d$, the product
+%	\begin{align*}
+%	\set{ \pi(\bar b) : \mbox{$\pi$ is a $\bar a$-automorphism}} \times \set{ \pi(\bar d) : \mbox{$\pi$ is a $\bar c$-automorphism}}
+%	\end{align*}
+%	is multi-support orbit-finite. But the above is a set of atom tuples (whose dimension is the sum of dimensions of $\bar b$ and $\bar d$) which is supported by the atoms in $\bar a$ and $\bar c$. Therefore, by condition~\ref{it:of-char-strong-tuples}, it is single-support orbit-finite. 
+%
+%\paragraph*{\ref{it:of-char-ms-closed-under products} implies~\ref{it:of-char-ss-tuples}} Immediate.
+%
+%
+%\begin{corollary}\label{cor:finitely-many-elements-with-a-given-support}
+%	When the atoms are oligomorphic, then for every tuple of atoms $\bar a$, every orbit-finite set $X$ contains finitely many $\bar a$-supported elements.
+%\end{corollary}
+%\begin{proof}
+%An element $x \in X$ is supported by $\bar a$ if and only if $\set{x}$ is an $\bar a$-orbit. By Theorem~\ref{thm:of-char}, there are finitely many $\bar a$-orbits in $X$.	
+%\end{proof}
+%
+%\begin{ourexample} Here is an example of a set with atoms that is not orbit-finite, but where every tuple of atoms supports finitely many elements, and which therefore violates the converse implication in Corollary~\ref{cor:finitely-many-elements-with-a-given-support}. Consider the equality atoms. Under these atoms, consider the set of all non-repeating tuples of atoms. Since tuples can have arbitrarily large dimensions, and atom automorphisms preserve dimensions of tuples, the set is not orbit-finite. Nevertheless, a given tuple of atoms can only support finitely many tuples, namely those tuples that are contained in it (and possibly reordered).
+%\end{ourexample}
+%
+%
+
+
+
+
+\paragraph*{Equivalence of variants of orbit-finiteness.} To finish the proof of Theorem~\ref{thm:of-char}, we show that if the conditions in the theorem are satisfied, then every multi-support orbit-finite (the weakest variant of orbit-finiteness) set is strongly orbit-finite (the strongest variant of orbit-finiteness). (The converse implication is also true: if all-support orbit-finiteness is the same as multi-support orbit-finiteness, then the assumption that the atoms are multi-support orbit-finite implies condition~\ref{it:of-char-strong-atoms} of the theorem.) All-support orbit-finite sets are closed under finite unions and images of equivariant functions. The former is easy to see, for the latter we use that fact that for any support $\bar a$, sets which have finitely many $\bar a$-orbits are closed under images of equivariant functions. By Lemma~\ref{lem:multi-support-of-char}, every every multi-support orbit-finite set is a finite union of equivariant images of finitely supported sets of tuples of fixed dimension, and by condition~\ref{it:of-char-strong-tuples} of the theorem, finitely supported sets of tuples of fixed dimension are strongly orbit-finite.
+
+\mikexercise{\label{ex:of-char-subsets}Show that the conditions in Theorem~\ref{thm:of-char} are equivalent to ``single-support orbit-finite sets are closed under finitely-supported subsets''.}
+{For the right-to-left implication, we show that if condition~\ref{it:of-char-strong-atoms} in the theorem fails, then by a cardinality argument there is a finitely supported subset of the atoms which is not single-support orbit-finite. If condition~\ref{it:of-char-strong-atoms} fails, then there is a support $\bar a$ such that the atoms have infinitely many $\bar a$-orbits. Any union of these orbits is an $\bar a$-supported subset of the atoms, and therefore the atoms have uncountably many finitely-supported subsets. On the other hand, there are only countably many single-support orbit-finite subsets of the atoms because such a subset can be described in a finite way by giving the supporting atoms and a finite set of atoms, one per each orbit. The same argument shows a stronger statement: if condition~\ref{it:of-char-strong-atoms} fails, then there is a single-support orbit-finite set (the atoms) which has a finitely supported subset that is not even multi-support orbit-finite.
+
+For the left-to-right implication, suppose that conditions the theorem hold, and consider a single-support orbit-finite set $X$, which admits a representation 
+	\begin{align*}
+	X=	\bigcup_{i \in I} f_i(X_i) \qquad \mbox{where }X_i= \set{\pi(\bar b_i) : \mbox{$\pi$ is a $\bar a_i$-automorphism}}
+	\end{align*}
+	by Lemma~\ref{lem:equivariance-preserves-orbit-size}. Consider a subset $Y \subseteq X$, which is supported by atoms $\bar c$. Then 
+	\begin{align*}
+		Y = \bigcup_{i \in I} f_i(X_i \cap f_i^{-1}(Y_i)).
+	\end{align*}
+	Since $\bar c$-supported sets are closed under preimages of equivariant functions, for every $i$ the set 
+	\begin{align*}
+		X_i \cap f_i^{-1}(Y_i)
+	\end{align*}
+	is a $\bar c$-supported set of tuples of atoms. By condition~\ref{it:of-char-strong-tuples}, it has finitely many $\bar c$-orbits, and therefore the whole set $Y$ is a single-support orbit-finite.}
+
+\begin{ourexample}[Examples of one-orbit sets in the equality atoms] Consider the equality atoms. For $n \in \Nat$, a permutation of $\set{1,\ldots,n}$ can be applied to an $n$-tuple of atoms, by permuting its coordinates. For a group $H$ of permuations of $\set{1,\ldots,n}$, not necessarily containing all permutations, consider two $n$-tuples of atoms $H$-equivalent if there is some permutation in $H$ which maps one tuple to the other. Define
+	\begin{align*}
+		\atoms^{(n)} / H
+	\end{align*}to be	the set of non-repeating $n$-tuples of atoms, modulo $H$-equivalence. For various choices of $H$ we get various one-orbit equivariant sets. For instance, when $H$ contains only the identity permutation, we get the non-repeating $n$-tuples, and when $H$ contains all permutations we get the sets of size $n$. Interesting one-orbit sets are obtained for intermediate choices of $H$, e.g.~when $H$ is a cyclic group. One can show a representation theorem which says that every equivariant orbit is of the form discussed above, modulo an equivariant bijection. Such a representation theorem dates back, essentially, to the \emph{named sets} studied by Ferrari, Montanari and Pistore in~\cite{DBLP:conf/fossacs/FerrariMP02}.
+\end{ourexample}
+
+% \mikexercise{\label{ex:uncountable-illegal}Consider the total ordered atoms. Show that there are uncountably many one-orbit sets, which are different even up to finitely supported bijections.}{ 	Let $X$ be any subset of the atoms, not necessary legal. The equivariant orbit $\aut \cdot X$ is a one-orbit set, although it might be illegal. Although different choices of $X$ might lead to the same orbit $\aut \cdot X$, there are still uncountably many possibilities for $\aut \cdot X$. (This is not true in the equality atoms, where $\aut \cdot X$ is uniquely determined by the sizes of $X$ and its complement. That is why the construction needs to be more complicated.) For instance, given a set $A$ of natural numbers, consider the set
+% 	\begin{align*}
+% 		X_A = \bigcup_{i \in \Nat} I_i \qquad \mbox{where $I_i=$}\begin{cases}
+% 			\set{2i+\frac 1 n : \mbox{ for }n \in \Nat_{>0}}\mbox{ when $i \in A$}\\
+% 			\set{2i-\frac 1 n : \mbox{ for }n \in \Nat_{>0}}\mbox{ when $i \in A$}.
+% 		\end{cases}
+% 	\end{align*}
+% 	This set is illegal regardless of $A$, because it is not a finite union of intervals.
+% 	When $A$ contains $1$ but none of $\set{0,2,3}$, then the beginning of the set $X_A$ looks like this:
+% 	\begin{center}
+% 	\includegraphics[scale=0.6]{pics/scattered}
+% 	\end{center}
+%
+% 	When $A$ and $B$ are different sets of natural numbers, then the orbits $\aut \cdot X_A$ and $\aut \cdot X_B$ are different, even disjoint. This is because applying an order automorphism $\pi$ of the rational numbers will preserve the notion of left and right limit points. What is more,
+% 	there is no
+% 	finitely supported bijection
+% \begin{equation}
+% 	\label{eq:uncountable-bijection}
+% 	f : \aut \cdot X_A \to \aut \cdot X_B.
+% \end{equation}
+% Suppose that $f$ is a finitely supported function as in~\eqref{eq:uncountable-bijection}, and that it maps a set $Y$ to a set $Z$. Let $S$ be a finite support of $f$. It is not difficult to see that the sets $Y$ and $Z$ must disagree on infinitely many rational numbers. Therefore, there must be a rational number $x \not \in S$ which belongs to exactly one of $Y$ or $Z$. Since all points in the set $S \cup Y \cup Z$ are isolated, there must be a small enough open interval $I$ which contains $x$, but no other elements of $S \cup Y \cup Z$. Let $\pi$ be an automorphism of the rational numbers which moves $x$ but is the identity outside $I$. Because $S$ supports $f$, the graph of $f$ is invariant under $\pi$. Because $I$ contains only $x$ from the set $Y \cup Z$, it follows that $\pi$ modifies the set among $Y,Z$ which contains $x$, but does not do anything to the set which does not. It follows that $f$ is not a bijection, which contradicts our assumption.}
+%
+%
+% 	\mikexercise{Do the previous exercise, but for equality atoms.}{A similar construction.}
+
+\mikexercise{Show that when the atoms are oligomorphic, orbit-finite sets are closed under images of finitely supported functions.}{Suppose that $X$ is an orbit-finite set, and $f$ is a finitely supported function. Let $\bar a$ be a support of both $X$ and $f$. Because $X$ is all-support orbit-finite, it has finitely many $\bar a$-orbits. The image of a $\bar a$-orbit under a $\bar a$-supported function is also a $\bar a$-orbit:
+\begin{align*}
+	f( \set{ \pi(x) : \mbox{$\pi$ is a $\bar a$-automorphism}}) =	\set{ \pi(f(x)) : \mbox{$\pi$ is a $\bar a$-automorphism}}.
+\end{align*}
+Therefore, the image $f(X)$ is a finite union of $\bar a$-orbits.}
+

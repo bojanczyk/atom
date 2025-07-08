@@ -1,0 +1,340 @@
+\chapter{Automata for polynomial orbit-finite sets}
+\label{sec:pof-algorithms}
+This chapter is devoted to automata for polynomial orbit-finite sets, which we call pof automata. 
+ We show that, despite being formally infinite, these automata can be treated algorithmically, and some of their decision problems can be decided. However, this comes at a certain cost -- not all constructions are allowed, and the model is less robust than for finite sets. For example, determinisation fails, because the powerset construction does not work. 
+
+
+\section{Automata and their emptiness problem}
+\label{sec:pof-automata}
+We begin by formally defining the models, namely deterministic and nondeterministic automata. 
+\begin{definition}[Pof automaton]
+    A nondeterministic ""pof automaton"" consists of: 
+    \begin{enumerate}
+        \item an input alphabet $\Sigma$, which is a pof set;
+        \item a state space $Q$, which is a pof set;
+        \item initial and accepting subsets $I,F \subseteq Q$, which are equivariant;
+        \item a transition relation $\Delta \subseteq Q \times \Sigma \times Q$, which is equivariant.
+    \end{enumerate}
+    A deterministic pof automaton is the special case where there is exactly one initial state, and where the transition relation is a function.
+\end{definition}
+As was the case for graphs, the  above definition is simply the usual definition, except that finite sets are replaced by pof sets, and all subsets, relations and functions are required to be equivariant. Using the same principle, one can consider pof variants of other models, such as  pushdown automata, context-free grammars,  Turing machines, etc. This will be the content of Chapter~\ref{cha:more-models}.
+
+
+
+
+
+Using the result about graph reachability, we obtain decidability of emptiness for pof automata, deterministic or not.
+\begin{theorem}\label{thm:pof-emptiness-decidable}
+    The emptiness problem is decidable for nondeterministic pof automata. The complexity is the same as for the reachability problem in pof graphs.
+\end{theorem}
+\begin{proof}
+    The lower bounds for graph reachability transfer directly to the emptiness problem, by considering automata over a one-letter alphabet, which are the same as instances of graph reachability. For the upper bound under the  formula representation, we can use the same straightforward nondeterministic algorithm as in graph reachability. For the upper bound under the  generating set representation, we simply delete the input letters from the generators of the transitions, and then we solve the corresponding instance of graph reachability.
+\end{proof}
+
+
+
+A corollary of the above theorem is decidability of language equivalence for deterministic pof automata.
+\begin{corollary}\label{cor:decidable-equivalence-for-pof-det}
+    The following problem is decidable: 
+    \begin{itemize}
+        \item \textbf{Input:} Two deterministic pof automata.
+        \item \textbf{Question:} Do they recognise the same language?
+    \end{itemize}
+    The complexity is the same as for the emptiness problem.
+\end{corollary}
+\begin{proof}
+    We can use the product construction. A product $Q_1 \times Q_2$ of two pof sets is also a pof sets, and the corresponding operations on subsets and transitions preserve equivariance. We then check if the product automaton  can reach states that are accepting in one automaton, but rejecting in the other. 
+\end{proof}
+
+In the equivalence algorithm from the above corollary, we use determinism. This is because we complement an automaton by complementing its accepting states, and this only works for deterministic automata. As we will see in the next section,  the equivalence problem becomes undecidable for nondeterministic automata. Let us first show that we cannot solve this problem by determinising. The natural idea would be to use the powerset construction. Unfortunately, this fails. Already for the simplest "pof set" that is not finite, namely $\atoms$, the powerset $\powerset \atoms$ is not a pof set. In fact, not only this construction fails, but there is no successful construction at all, as shown in the following theorem. 
+
+\begin{theorem}\label{thm:complementation-fails-pof}
+    Languages recognised by nondeterministic pof automata are not closed under complementation. Also, deterministic pof automata are strictly less expressive than nondeterministic ones.
+\end{theorem}
+\begin{proof}
+    The first part of the theorem directly implies the second part, since deterministic automata are closed under complementation. To prove the first part, we use the language
+    \begin{align*}
+        L = \setbuild{w \in \atoms^*}{some letter appears at least twice}.
+        \end{align*}
+    In Example~\ref{ex:pof-nfa}, we showed that this language is recognised by a nondeterministic pof automaton. It remains to show that its complement  is not recognised by any nondeterministic pof automaton. 
+    
+    The complement of $L$ consists of words where all letters are pairwise different. Suppose, toward a contradiction,  that this complement  is recognised by a nondeterministic pof automaton. Let $d$ be the "dimension" of the state space, i.e.~the maximal number of atoms that can be stored in a state. Choose $n$ so that it is strictly larger than this dimension, and consider a word $w$ with $2n$ pairwise distinct atoms.
+    This belongs to the complement of $L$, and thus it must have an accepting run in the hypothetical automaton for the complement.  Consider the states at the beginning, middle and end of the accepting run, i.e.~the states
+    \begin{align*}
+   I \ni p \stackrel {w_1} \to q \stackrel {w_2} \to r \in F,
+    \end{align*}
+    where $w_1$ and $w_2$ are the two halves of $w$ that have length $n$.
+   Because $n$ was chosen to be strictly bigger than the dimension of the state space, there must be some atom $a$ that appears in the first half $w_1$ but not in the state $q$. Similarly, there must be some atom $b$ that appears in the second half $w_2$ but not in the state $q$. Let $\pi$ be the atom permutation that swaps $a$ and $b$. By equivariance, we have 
+   \begin{align*}
+    \pi(q) \stackrel {\pi(w_2)} \to \pi(r) \in F.
+   \end{align*}
+   Since neither $a$ nor $b$ appear in the state $q$, the permutation $\pi$ does not move this state, i.e.~$\pi(q) = q$, and therefore we can stitch the two runs above to get an accepting run over the concatenation of $w_1$ and $\pi(w_2)$. This concatenation has an atom repetition, and therefore should be rejected, thus leading to a contradiction.
+\end{proof}
+
+\exercisepart
+\input{problems/pof-automata-emptiness}
+\input{problems/pof-automata-determinisation}
+
+\section{Undecidable universality}
+\label{sec:undecidable-universality}
+In Corollary~\ref{cor:decidable-equivalence-for-pof-det}, we showed that language equivalence is decidable for deterministic pof automata. For finite automata, this result extends to nondeterministic automata using determinisation, but determinisation fails for  pof automata, as shown in Theorem~\ref{thm:complementation-fails-pof}. 
+We will now show that  equivalence is in fact undecidable for nondeterministic automata. Already a special case of the language equivalence problem will be undecidable, namely universality: given one nondeterministic pof automaton, we want to decide if it accepts all words, i.e.~it is equivalent to the automaton that accepts all words.  
+
+\begin{theorem}\label{thm:universality-undecidable-pof}
+    The following problem is undecidable: 
+    \begin{itemize}
+        \item \textbf{Input:} A nondeterministic pof automaton.
+        \item \textbf{Question:} Does it accept all words?
+    \end{itemize} 
+\end{theorem}
+\begin{proof}
+    We  reduce from the halting problem for counter machines. 
+    
+    Let us begin by describing counter machines, which are also known as Minsky machines. This is a  computational model that uses  counters as its data structure. Each counter  stores a natural number, and counters are updated via increments, decrements and zero tests. The syntax of the machine is given by a finite set of states $Q$, a finite set $C$ of counters, and a finite set of transitions
+\begin{align*}
+\Delta \subseteq 
+\myunderbrace{Q}{source \\ state } \times \myunderbrace{\set{\text{inc},\text{dec},\text{zero}}}{counter operations}  \times 
+\myunderbrace{C}{which \\ counter is \\ affected} \times  
+\myunderbrace{Q}{target \\ state }.
+\end{align*}
+The increment operation adds 1 to the affected counter and leaves the other counters unchanged, the decrement operation subtracts 1, and the zero test transition does not change the counters but is only enabled if the corresponding counter is equal to zero. A decrement is not enabled if the corresponding counter is zero, since we require counters to be natural numbers. The semantics of the machine is its \emph{configuration graph}, which is a directed graph where  the vertices are pairs of the form
+\begin{align*}
+\myunderbrace{Q}{state} \quad \times \quad \myunderbrace{\Nat^C}{counter\\ valuation}
+\end{align*}
+and where the edges are given by the transitions in the expected way. The following problem, which we call the \emph{halting problem for counter machines}, is a classic undecidable problem:
+\begin{itemize}
+    \item \textbf{Input:} a counter machine, and two states $p$ and $q$.
+    \item \textbf{Question:} is there a path from $(p,\bar 0)$ to $(q,\bar 0)$ in the configuration graph?
+\end{itemize}
+We will show that the above problem reduces to universality of nondeterministic pof automata, and therefore the latter problem is also undecidable.  
+(The halting problem for counter machines is known to be undecidable even for two counters. However, we do not need this in our reduction, since it will also work with more than two counters.)
+
+In the reduction,
+we define a language $L$, whose input alphabet is  $\atoms \times \Delta$, i.e.~an input letter consists of an atom and a transition of the counter machine.  The intuition is that this language represents accepting computations of the counter machine, and the atoms are used to describe matching pairs of increments and decrements. Our goal  will be to give a nondeterministic pof automaton that recognises the complement of this language. (Therefore, if the pof automaton is universal, then the language is empty, i.e.~there is no accepting computation of the counter machine.) Formally, the language $L$ is defined to be the words that satisfy the following two conditions:
+\begin{enumerate}
+    \item\label{list:undecidable-universality-states} The first letter uses a transition whose source state is  the initial state $p$, the last letter uses a transition whose target state is  $q$, and  transitions in consecutive letters agree on the  states that connect them (i.e.~the target state of the previous transition is equal to the source state of the next transition).
+    \item\label{list:undecidable-universality-counters} An atom can appear at most twice. Also: 
+    \begin{enumerate}[(i)]
+        \item if an atom appears once, then its only appearance labels a zero test;
+        \item if an atom appears twice, then the first appearance labels an increment, the second appearance labels a decrement on the same counter, and there are no zero tests on this counter between them. 
+    \end{enumerate}
+\end{enumerate}
+
+It is not hard  to see that $L$ is nonempty if and only if there is an accepting computation of the counter machine. This is because the conditions in the language ensure that increments and decrements match, and zero tests cannot be properly enclosed by a matching pair of increments and decrements.
+Therefore, if we could decide emptiness of $L$, then we could decide the halting problem. 
+Emptiness of $L$ is the same as universality for its complement. The following lemma shows that the complement is recognised by a pof automaton, thus completing the reduction.
+\begin{lemma}\label{lem:automaton-for-wrong-runs}
+    The complement of $L$ is recognised by a nondeterministic pof automaton.
+\end{lemma}
+\begin{proof}
+   A word belongs to the complement of $L$ if and only if it violates one of the two conditions~\ref{list:undecidable-universality-states} or~\ref{list:undecidable-universality-counters} in the definition of $L$. Since nondeterministic pof automata are closed under unions, it is enough to give separate automata for the two conditions. Condition~\ref{list:undecidable-universality-states} does not refer to atoms, and therefore its  complement can be recognised by a finite automaton, because regular languages on finite (i.e.~atom-less) alphabets are closed under complementation. The interesting part is violations of condition~\ref{list:undecidable-universality-counters}. This condition is violated if and only if at least one of the following holds: 
+   \begin{enumerate}[(a)]
+    \item \label{list:undecidability-error-a} some atom appears at least three times; or
+    \item \label{list:undecidability-error-b} some atom appears at least twice, but in a way that violates condition~\ref{list:undecidable-universality-counters}(ii), i.e.~either the two appearances are not matching increment/decrement pairs, or there is a zero test between them; or 
+    \item \label{list:undecidability-error-c} some atom appears exactly once, but its label is not a zero test.
+   \end{enumerate}
+   It is enough to give a separate automaton for each of the three kinds of violations. 
+   \begin{enumerate}[(a)]
+    \item Violations of this kind, i.e.~words where some atom appears at least three times, can be recognised by an automaton which stores the repeated atom in its state, using  state space 
+   \begin{align*}
+        \myunderbrace{\atoms^{0}}{initial} \quad + \quad 
+        \myunderbrace{\atoms^{1}}{after first} \quad + \quad
+        \myunderbrace{\atoms^{1}}{after second} \quad + \quad
+        \myunderbrace{\atoms^{0}}{after third, \\ thus accepting}.
+   \end{align*}
+   \item  In this kind of violation, some atom appears at least twice and either: (1) the labels are not matching increment/decrement pairs; or (2) the labels are matching increment/decrement pairs, but they are separated by a zero test on the corresponding counter.  We explain the second case (2),  and leave (1) to the reader. For case (2), we have a union of finitely many automata, each of which checks case (2) for one of the finitely many counters.  Once we fix the counter $c$, the state space is:
+   \begin{align*}
+    \myunderbrace{\atoms^{0}}{initial} \quad + \quad 
+    \myunderbrace{\atoms^{1}}{after increment} \quad + \quad
+    \myunderbrace{\atoms^{1}}{after zero test} \quad + \quad
+    \myunderbrace{\atoms^{0}}{accepting}.
+\end{align*}
+    The automaton starts reading the word in the first component, which does not store any atoms.   When it sees an increment on counter $c$, the automaton can nondeterministically choose to move to the second component ``after increment'', and store the corresponding atom $a$ in its state.  Then, the automaton waits until it sees a zero test on counter $c$, with any atom used as a label, upon which it moves to the third  component ``after zero test'', while keeping in its state the atom $a$ that it loaded upon seeing an increment.  Finally, when the automaton sees a decrement on counter $c$ with the atom $a$ from the original increment, it moves to the last component, which is an accepting sink state. 
+\item     The most interesting violations are of this kind, where some atom appears exactly one time but not in a zero test.  The challenge is that the automaton needs to check that the atom appears exactly once. For this reason, it must guess the atom at the beginning of the input word, before having seen it, to check that it does not appear earlier in the word. This is done by an automaton  with a  state space 
+    \begin{align*}
+        \myunderbrace{\atoms^{1}}{initial} \quad + \quad 
+        \myunderbrace{\atoms^{1}}{after first} \quad + \quad
+        \myunderbrace{\atoms^{0}}{accepting},
+    \end{align*}
+    where each initial state stores an atom that is nondeterministically guessed. The only nondeterminism in this automaton is the choice of initial state, but this is an infinite kind of nondeterminism, since there are infinitely many possible atoms to start with. In the next section, we will discuss this kind of nondeterminism in more detail.
+   \end{enumerate}
+
+\end{proof}
+
+Observe that the automaton in the proof of the lemma above had dimension one, and therefore the universality problem is undecidable already in dimension one.
+\end{proof}
+
+\exercisepart
+\input{problems/pof-automata-undecidable}
+
+\section{A decidable case of universality}
+\label{sec:decidable-universality}
+In this section, we show that under extra assumptions, we can recover decidability of  universality for nondeterministic pof automata. There is not much space here, since the undecidability argument used automata with atom dimension one, i.e.~a state would store at most one register. Of course atom dimension zero would be sufficient for decidability, since such automata determinise (even if the input alphabet is infinite), but we are looking for something more exciting. It turns out that the  crucial distinction is the  nondeterministic guessing of atoms that was used in the reduction in the previous section. We formalize this in the following definition. 
+
+\begin{definition}[Guessing automaton]
+    A nondeterministic pof automaton is called \emph{guessing} if there is some initial state that contains an atom, or some transition 
+    \begin{align*}
+    p \stackrel a \to q,
+    \end{align*}
+    where $q$ contains an atom that appears neither in $p$ nor $a$. 
+\end{definition}
+
+The idea behind a guessing automaton is that a state of the automaton can store an atom that was not seen in the input word. The contrapositive is that  if an automaton is non-guessing, then every atom in the state must have been seen in the input word. 
+
+The automaton for condition~\ref{list:undecidability-error-c} in the proof of Lemma~\ref{lem:automaton-for-wrong-runs} used guessing, since its initial states contained atoms. 
+We will  show that if the automaton is non-guessing, and its state space has dimension at most one, then the universality problem is decidable. Although this result covers a very restricted model, we include it in the book because it uses an interesting technique, namely well-quasi-orders. 
+The bound is tight -- if we allow guessing then we can use the undecidability proof from Theorem~\ref{thm:universality-undecidable-pof}, and if we allow dimension two even without guessing, then we also get undecidability, which is left as an exercise for the reader. 
+
+\begin{theorem}\label{thm:universality-decidable-pof}
+    The following problem is decidable: 
+    \begin{itemize}
+        \item \textbf{Input:} A nondeterministic pof automaton, which is non-guessing and has a state space of dimension at most one.
+        \item \textbf{Question:} Does it  accept all  words?
+    \end{itemize} 
+\end{theorem}
+
+We do not give any complexity bounds. The algorithm that we provide is highly inefficient, and is based on a brute-force procedure that searches through all possible witnesses of some kind, with no explicit bound on the size of these witnesses. This is not far from optimal, since one can give non-elementary lower bounds for the complexity of the problem.
+
+The rest of Section~\ref{sec:decidable-universality} is devoted to proving the above theorem. 
+As mentioned in Theorem~\ref{thm:pof-emptiness-decidable}, automata cannot be determinised, and therefore the powerset construction does not work for pof sets. However, as we will see in this proof,  the two extra assumptions -- dimension at most one and non-guessing -- will enable us to exhaustively search the state space in the powerset automaton.
+
+For the rest of this proof, fix  a nondeterministic pof automaton 
+\begin{align*}
+\Aa = (Q, \Sigma, \Delta, I, F)
+\end{align*}
+that we want to check for universality. 
+We will discuss the usual powerset automaton, which we denote by $\powerset \Aa$, despite this automaton not being a pof automaton. Let us recall the construction of the powerset automaton. The input alphabet is the same.  States in the powerset automaton are sets of states in the original automaton, with the  initial state being $I$, and  the final states being  those that intersect $F$. The point of the powerset automaton is that it is deterministic: when it is  in a  state $P \subseteq Q$,  and it reads an input letter $a$, then it deterministically goes to the state 
+\begin{align*}
+\setbuild{ q \in Q}{$ p \stackrel a \to q $ for some $p \in P$}.
+\end{align*}
+The non-guessing assumption  ensures that only finite sets of states appear in the powerset automaton. 
+\begin{lemma}
+    If the automaton $\Aa$ is non-guessing, then every reachable state in the powerset automaton is a finite subset of $Q$.
+\end{lemma}
+\begin{proof}
+Since the automaton $\Aa$ is non-guessing, every atom in a reachable state must have appeared previously in the input word.  If we fix the input word, then there are finitely many  possible states which use atoms from it,   since a pof set can only have finitely many elements that use a given finite set of atoms. Therefore, reachable states of the powerset automaton will be finite subsets of $Q$. 
+\end{proof}
+
+
+Thanks to the above lemma, from now on, we will be working in the \emph{finite powerset automaton}, which is obtained from the powerset automaton by restricting its state space to finite sets. The general idea behind our universality algorithm is that it will exhaustively search for two kinds of witnesses:
+\begin{itemize}
+    \item a finite witness that the automaton rejects some word; or 
+    \item a finite witness that the automaton accepts all words.
+\end{itemize}
+The witnesses of the first kind are straightforward: they are rejected words. The witnesses of the second kind are described in the following lemma (we will later explain why these witnesses can be viewed as finite).
+
+
+
+\begin{lemma}\label{lem:universality-invariant}
+    The automaton $\Aa$ accepts all words if and only if there is a set 
+    \begin{align*}
+    \Rr \subseteq \text{states of the finite powerset automaton} = \pfin Q
+    \end{align*}
+    with the following properties:
+    \begin{enumerate}
+        \item \label{list:universality-contains-initial} $\Rr \ni I$, i.e.~$\Rr$ contains the initial state of the finite powerset automaton;
+        \item \label{list:universality-transitions} $\Rr$ is closed under applying transitions of the finite powerset automaton;
+        \item \label{list:universality-intersects-accepting} $\Rr$ contains only sets that intersect $F$;
+        \item \label{list:universality-permutations} $\Rr$ is equivariant, i.e.~closed under applying atom permutations;
+        \item \label{list:universality-upward-closed} $\Rr$ is upward closed with respect to inclusion, when restricted to finite sets: if a finite set $P \subseteq Q$ contains some set from $\Rr$, then also $P \in \Rr$.
+    \end{enumerate}
+\end{lemma}
+\begin{proof}
+    The  implication $\Leftarrow$ is immediate; in fact it holds already if we only keep the first three conditions~\ref{list:universality-contains-initial}--\ref{list:universality-intersects-accepting}. Conditions~\ref{list:universality-contains-initial}--\ref{list:universality-transitions} ensure that $\Rr$ contains all reachable states of the finite powerset automaton, and condition~\ref{list:universality-intersects-accepting} ensures that these reachable states witness acceptance of $\Aa$. 
+
+    Let us now prove the  implication $\Rightarrow$. Define $\Rr$ to be the upward closure of the reachable states of the powerset automaton, i.e.~$\Rr$ is the  finite sets that contain some reachable state of the powerset automaton. Conditions~\ref{list:universality-contains-initial}, \ref{list:universality-intersects-accepting} and \ref{list:universality-upward-closed} follow from the definition of $\Rr$. By equivariance of the original automaton, the set of reachable states in the powerset automaton is also equivariant, and therefore so is its upward closure, thus proving condition~\ref{list:universality-permutations}. Finally, condition~\ref{list:universality-transitions} follows from monotonicity of the transition function of the powerset automaton: if we increase the source state, then we also increase the target state. 
+\end{proof}
+
+As mentioned in the proof, the equivalence in the above lemma would continue to hold without the  last two conditions~\ref{list:universality-permutations} and~\ref{list:universality-upward-closed} about equivariance and upward closure. The purpose of these conditions,  and of the assumption that $Q$ has dimension at most one, is  to ensure that $\Rr$ can be represented in a finite way.  This representation will be based on the following order on finite subsets of $Q$:
+\begin{align}
+\label{eq:atom-dickson}
+R_1 \sqsubseteq R_2 \qquad \text{iff} \qquad \pi(R_1) \subseteq R_2  \text{ for some atom permutation $\pi$}.
+\end{align}
+It is not hard to see that two subsets are equivalent under the above order, i.e.~they are compared in both directions,  if and only if they are in the same orbit (of the finite powerset) under atom permutations.
+It is also not hard to see that a subset $\Rr$ is upward closed with respect to this order if and only if it satisfies conditions~\ref{list:universality-permutations} and~\ref{list:universality-upward-closed}. The following lemma shows that every upward closed set -- and therefore also the set $\Rr$ from Lemma~\ref{lem:universality-invariant} --  is the upward closure of a finite set, and thus it can be represented in a finite way. The lemma crucially uses the assumption on dimension one, and it would fail for atom dimension two or more. 
+
+
+\begin{lemma}\label{lem:finitely-generated-upward-closed}
+    Let $Q$ be a pof set of dimension one. If  $\Rr \subseteq \pfin Q$ is upward closed with respect to the order $\sqsubseteq$, then there is a finite set $\Rr_0 \subseteq \Rr$ such that
+    \begin{align*}
+    R \in \Rr
+    \qquad \text{iff} \qquad 
+    R_0  \sqsubseteq R \text{ for some $R_0 \in \Rr_0$}.
+    \end{align*}
+\end{lemma}
+\begin{proof}
+    To prove the lemma, we will use a similar observation about vectors of natural numbers, equipped with the  coordinate-wise ordering
+    \begin{align*}
+    (x_1,\ldots,x_d) \leq (y_1,\ldots,y_d) 
+    \quad \eqdef \quad x_1 \leq y_1 \land \cdots \land x_d \leq y_d.
+    \end{align*}
+    This observation is called Dickson's Lemma, and is stated below.
+
+    \begin{description}
+        \item[Dickson's Lemma]  \emph{        Let $X \subseteq \Nat^d$ be a set that is upward closed with respect to the coordinate-wise ordering. Then there is some finite set $X_0 \subseteq X$ such that 
+        \begin{align*}
+        x \in X \qquad \text{iff} \qquad x_0 \le x \text{ for some $x_0 \in X_0$}.
+        \end{align*}}
+    \end{description}
+
+ We will reduce the present lemma to Dickson's Lemma, using the assumption that $Q$ has atom dimension at most one. Let us decompose $Q$ into components of dimension zero and one:
+    \begin{align*}
+    Q \quad  = \quad 
+     \myunderbrace{\atoms^0 + \cdots + \atoms^0}{$k$ components of \\  dimension zero} 
+        \quad + \quad 
+        \myunderbrace{\atoms^1 + \cdots + \atoms^1}{$\ell$ components of \\  dimension zero} 
+    \end{align*}
+    For a finite set $R \subseteq Q$, define its \emph{profile} to be the following information:
+    \begin{enumerate}[i.]
+        \item which elements  from components of dimension zero belong to $R$;
+        \item  for each  nonempty subset $I \subseteq \set{1,\ldots,\ell}$, how many atoms  $a$ satisfy 
+        \begin{align*}
+            i \in I \qquad \text{iff} \qquad 
+            \text{the $i$-th copy of $a$ belongs to $R$}.
+        \end{align*}
+    \end{enumerate}
+    The point of profiles is that they are essentially vectors of natural numbers. More precisely, we  can view the profile as a function 
+    \begin{align*}
+    \pfin Q \to     \myunderbrace{\set{0,1}^{\set{1,\ldots,k}}}{answers to\\ question (i)} \times  \myunderbrace{\Nat^{\text{nonempty subsets of } \set{1,\ldots,\ell}}}{answers to\\ question (ii)}
+    \end{align*}
+    This allows us to view finite sets of states as vectors of natural numbers of fixed dimension, which will enable us to use Dickson's Lemma. (Observe that this technique would no longer work for dimension two, since we would need to describe how pairs of atoms interact).
+
+    
+A finite set is identified by its profile up to atom permutations: two finite subsets of $Q$ have the same profile if and only if they are in the same orbit.  Together with equivariance of $\Rr$, this implies that membership in $\Rr$ can be seen as a question about profiles, i.e.~we have 
+\begin{align}
+    \label{eq:profile-only-profiles-count}
+R \in \Rr \qquad \Leftrightarrow \qquad \text{profile}(R) \in \Pp,\end{align}
+where $\Pp$ is defined to be the image of $\Rr$ under the profile map. Furthermore,  the profile map has the following monotonicity property, where profiles are ordered coordinate-wise: 
+    \begin{align}
+        \label{eq:profile-monotonicity}
+    R_1 \sqsubseteq R_2 \qquad \Leftarrow \qquad \text{profile}(R_1) \le \text{profile}(R_2).
+    \end{align}
+    This is because increasing the profile corresponds to adding states to the set. (The converse implication is not true. If we add  a new state to $R_1$, and the atom of this state is already present in $R_1$, then the effect on the profile will not be a coordinate-wise increase, since one coordinate will be  incremented, and another coordinate will be decremented. If we changed the coordinate-wise ordering to a slightly more subtle ordering, then we could recover the converse implication.)
+    Thanks to the monotonicity property~\eqref{eq:profile-monotonicity} and upward closure of $\Rr$,   the set of profiles $\Pp$  is upward closed under $\le$. Therefore, we can apply Dickson's Lemma to conclude that  the set of profiles $\Pp$ is generated by some finite set of profiles $\Pp_0$. Together with~\eqref{eq:profile-only-profiles-count}, this gives us
+    \begin{align}
+        \label{eq:profile-finitely-many-profiles}
+    R \in \Rr \quad \Leftrightarrow \quad P_0 \le \text{profile}(R) \text{ for some $P_0 \in \Pp$}.
+    \end{align}
+    Choose $\Rr_0$ so that its profiles are exactly those from $\Pp_0$.  The conclusion of the lemma is proved in the following diagram: 
+    \[
+    \begin{tikzcd}
+   &  R \in \Rr 
+     \arrow[dr, Leftarrow,"\text{upward closure of $\Rr$ }"]
+    \arrow[dl, Leftrightarrow,"\text{\eqref{eq:profile-finitely-many-profiles}}"']
+    \\
+ \txt{$P_0 \leq \text{profile}(R)$\\ for some $P_0 \in \Pp_0$}
+    \arrow[rr, Rightarrow,"\text{\eqref{eq:profile-monotonicity}}"']
+    && 
+    \txt{
+    $R_0 \sqsubseteq R$\\ for some $R_0 \in \Rr$}
+    \end{tikzcd}
+    \]
+\end{proof}
+
+We are now ready to complete the proof of the theorem. Define a witness for universality to be a set $\Rr$ as in Lemma~\ref{lem:universality-invariant}, which is represented by a finite set $\Rr_0$ as in Lemma~\ref{lem:finitely-generated-upward-closed}. Define a witness for non-universality to be a rejected word. The algorithm exhaustively searches for witnesses of both kinds. It is  guaranteed to find one in finite time, since both kinds of witnesses are complete characterisations. (As mentioned before, we have no explicit bounds on the running time of the algorithm, beyond saying that it runs in finite time.) It remains to show that one can verify a witness for universality: given a finite set $\Rr_0$, one can check if its upward closure $\Rr$ satisfies the conditions of Lemma~\ref{lem:universality-invariant}. The only interesting condition here is~\ref{list:universality-transitions}, which says that $\Rr$ is closed under applying transitions. By monotonicity of the transition function in the powerset automaton, this reduces to checking if for every $R$ in the finite set $\Rr_0$ and every input letter $a \in \Sigma$, the resulting state is in $\Rr$. Although there are infinitely many possible letters $a$, we only need to check this for finitely many choices, since we only need to use at most $d$ fresh atoms, where $d$ is the atom dimension of the input alphabet and fresh atoms are those that do not appear in $R$. This completes the proof of Theorem~\ref{thm:universality-decidable-pof}.
+
+
+\exercisepart
+\input{problems/pof-automata-universality-decidable}
+
+

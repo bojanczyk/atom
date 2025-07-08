@@ -1,0 +1,578 @@
+\chapter{While programs with atoms}
+\label{cha:while-programs}
+So far, when we presented algorithms for problems on orbit-finite sets, such as graph reachability or automaton nonemptiness, we needed to be sensitive to the representation.  Representations that we have discussed so far include: pof sets, subquotiented pof sets, and set builder expressions.  
+In this chapter, we present a programming language, called \emph{while programs with atoms}, which works directly with representable sets, and not with their representations. Using the programming language, we can write programs without going into the details of the representation. 
+
+
+The basic idea behind the language is that its variables store  atoms or representable sets,  and it can loop over elements of  sets. 
+ To illustrate the programming language, we use our favourite example, which is   graph reachability. 
+ 
+ 
+ \begin{myexample}
+\label{ex:graph-reachability-source-code}
+The  algorithm for graph reachability that was discussed in  Theorems~\ref{thm:reachability-decidable-pof} and~\ref{thm:olig-graph-reachability} can be implemented using the following code.
+
+
+ \begin{lstlisting}
+def reach(V, E, S):
+  # the input is a graph with a designated set of source vertices
+  # the output will be the reachable vertices
+  Reach = S
+  New = $\emptyset$
+  while New $\neq$ Reach:
+      Reach = New
+      for v in Reach:
+          for w in V:
+              if (v, w) $\in$ E:
+                  New = New $\cup\ \{$w$\}$
+  return Reach
+  \end{lstlisting}
+ \end{myexample}
+
+This program in the above example is simply a naive implementation of breadth-first search. For inputs that are finite, it is easy to see how the program works; the only difficulty is finding an appropriate order of execution for the for loops. We will show that a proper resolution to this difficulty, namely running the for loops in parallel, will allow us to execute the program also for inputs that are representable, but not necessarily finite.
+
+The language simplifies a lot of the bookkeeping work involved with sets represented by set builder expressions, but it does not magically solve all problems. The programmer still has work to do. For example, in the graph reachability program described above, the programmer needs to justify that the {\tt while} loop will do a finite number of iterations for every input, which will be a consequence of oligomorphism.
+
+In Section~\ref{sec:definition-of-while-programs}, we define the programming language and explain its semantics. In Section~\ref{sec:church-turing}, we show that the outputs of programs can be computed in finite time, despite the ostensibly infinite {\tt for} loops. 
+We also show that the programming language is complete, in the sense that it implements all operations on representable sets that can be implemented using Turing machines which use representations.
+
+ 
+
+
+
+
+
+\section{While programs with atoms}
+\label{sec:definition-of-while-programs}
+
+
+
+
+
+In this section, we introduce the programming language\footnote{The programming language  is based on the language from~\cite{DBLP:conf/fsttcs/BojanczykT12}, which is an imperative version of the functional programming language~\cite{DBLP:conf/popl/BojanczykBKL12}. The functional language was further developed in~\cite{DBLP:conf/popl/MoermanS0KS17}, and an implementation can be found at \url{https://www.mimuw.edu.pl/~szynwelski/nlambda/}. The imperative language further developed in~\cite{DBLP:conf/cade/KopczynskiT16} and~\cite{DBLP:conf/popl/KopczynskiT17}, including a generalisation to atom structures which are not necessarily oligomorphic (this generalisation is used in this section), and an implementation \url{https://www.mimuw.edu.pl/~erykk/lois}. }, explain its semantics,  and give example programs. We assume that the atoms are effectively oligomorphic, although some definitions and results would make sense without assuming effectivity, or even oligomorphism.
+
+
+
+
+
+
+\paragraph*{Syntax.}   Fix some  countably infinite set of variable names.  The programming language is untyped:  every variable   stores a  set with atoms (as in Definition~\ref{def:sets-with-atoms}) or an atom\footnote{In this sense, we build on set based programming languages such as {\sc setl}.}. When actually running the programs, we will only care about sets with atoms that can be represented using set builder expressions, see Theorem~\ref{thm:hof-is-set-builder}. As we will show, if  a program starts execution in a state where all  variables store such representable sets, then it  will be unable to create sets that are not representable. 
+
+The programming language does not have types for Booleans, or integers, or lists.  As discussed in Chapter~\ref{cha:sets-of-sets-of-sets},  such  data structures can be encoded using sets.  The following example shows how to encode Booleans.
+
+\begin{myexample}
+	\label{ex:Booleans} We can encode the Boolean values as 
+	\begin{align*}
+	\text{false} = \emptyset \qquad \text{true} = \set{\emptyset}.
+	\end{align*}
+	These values can be loaded into variables,  
+	and the Boolean operations can be implemented by using case distinction. Therefore, we can assume that the programming language has Boolean variables. 
+\end{myexample}
+
+\begin{myexample}\label{ex:von-neumann} We represent natural numbers using Von Neumann encoding,  where $0$ is the empty set and $n+1$ is the set $\set{0,\ldots,n}$. Using this encoding, 
+	operations on natural numbers such as addition or multiplication can be programmed in the language.  For example, addition \texttt{x+y} is implemented as follows:
+	\begin{lstlisting}
+	def add(x,y):
+	  z = x
+	  i = $\emptyset$
+	  while i $\neq$ y:
+		z = $\{$z$\}$ $\cup$ z # increment z
+		i = $\{$i$\}$ $\cup$ i  # increment i
+	  return z
+	\end{lstlisting}		
+\end{myexample}
+
+A usable variant of the programming language would have more features, such as Booleans, integers, and recursive functions. We present the language using a minimal syntax, concentrating on the aspects  that deal with atoms.
+
+
+\begin{definition}
+	[Syntax of while programs with atoms] Fix a structure $\atoms$. A \emph{while program with atoms over $\atoms$} is  constructed using the following syntax:
+	\begin{itemize}
+		\item \emph{Assignment.}   The following assignments are programs:
+		\begin{align*}
+			\myunderbrace{\mathtt{x\ = \ \emptyset}}{load the \\ empty set} \qquad 
+			\underbrace{\mathtt{x\ =\ }\atoms}_{\substack{\text{load the set}\\ \text{of atoms into \texttt{x}}}} \qquad \underbrace{\mathtt{x\ =\ }R}_{\substack{\text{load a relation $R$}\\ \text{from the atom} \\ \text{structure into \texttt{x}}}} \qquad \underbrace{\mathtt{x\ =\ y\ \cup\ z}}_{\substack{\text{set union}}} \qquad \underbrace{\mathtt{x\ =\ \set y}.}_{\substack{\text{singleton}}}
+		\end{align*}
+		The relation $R$ is taken from the vocabulary of the atoms\footnote{The above presentation is suited for atoms with a finite vocabulary. If the vocabulary is countably infinite, one should add an operation ``set \texttt{x} to the $n$-th relation/function in the vocabulary, where $n$ is the Von Neumann numeral stored in variable \texttt{y}''. The expressive power of the language depends on the  enumeration of the vocabulary.}. In set union, the instruction has no effect if  one of the variables \texttt{y} or \texttt{z} stores an atom.
+			\item \emph{Sequential composition.} If \texttt{I} and \texttt{J} are already defined programs, then the sequential composition \texttt{I;J} is also a program, which first executes \texttt{I} and then~\texttt{J}. In the code snippets we use Python syntax, so we omit semicolons.
+		\item \emph{Control flow.}  Suppose that  $\mathtt x$ and $\mathtt y$ are variables,  \texttt{I} is an already defined program, and $\delta$ is one of $\in, \subseteq, \subsetneq$  or $==$. (We use the double equality sign, since   single equality describes an assignment.) Then 
+	\begin{center}
+		\texttt{if x $\delta$ y: I} \qquad \texttt{while x $\delta$ y: I} \qquad \texttt{for x in y: I}
+	\end{center}
+	are programs. The semantics for \texttt{if} and \texttt{while} are as expected. In case of \texttt{for},  the  idea is that the instruction \texttt{I} is executed, in parallel, with one thread for every element \texttt{x} of the set \texttt{y}, and the results of the threads are aggregated using set union, see below for a more detailed description.
+	%  The semantics are described in more detail below, in particular we explain how the results of the parallel threads are combined in a \texttt{for} loop.
+	\end{itemize}
+\end{definition}
+
+
+\paragraph*{Semantics.}
+	We  now define an operational semantics  for the language.  A  \emph{program state} over a finite set of variables $X$ is defined to be a function which maps each variable to either an atom or a representable set. 
+	The semantics of a while program   \texttt{I} is a partial function, denoted by $\gamma \mapsto  \gamma \mathtt I$, which maps one program state to another, with the variables of the program states being those that appear in \texttt{I}.   The function is partial because its output  is  defined if and only if  the program terminates.  In  the discussion below, we also talk about  the running time of a program, which intuitively stands for the maximal number of sequentially executed instructions, with running times for parallel threads being aggregated using maximum.
+
+
+We only explain the semantics of programs of the form
+\begin{center}
+	\texttt{for x in y: I},
+\end{center} the other constructions being handled in the standard way. 
+Suppose that
+we execute the  loop above, starting  in some program state $\gamma$. If the variable \texttt{y} stores an atom or the empty set, then the  loop does nothing and the starting and ending  program states are the same. Assume otherwise, that \texttt{y} stores a nonempty  representable set. We first explain when the loop terminates, and then we explain how it affects the program state.
+
+\begin{itemize}
+	\item \emph{When the loop terminates.} For an element $x$ of the set  stored in variable \texttt{y},  define $\gamma[\mathtt{x}:=x]$ to be the program state obtained from $\gamma$ by setting variable $\mathtt x$ to $x$.  Depending on the choice of $x$, the program \texttt{I} might  not terminate from the program state $\gamma[\mathtt{x}:=x]$, or it might terminate in a finite number of steps~$n_x \in \set{1,2,\ldots}$ which depends on $x$. If \texttt{I} does not terminate for some $x$, or the numbers $n_x$ are  unbounded, then the \texttt{for} loop does not terminate. Otherwise, if \texttt{I} terminates for all $x$ in bounded time, then the \texttt{for} loop itself also terminates, and its running time is one plus the maximal number $n_x$. 
+	\item \emph{What is the program state after the loop.}   The idea is  to  aggregate the resulting program  states into a single one, using set union.  More formally, for a set   $\Gamma$ of program states over the same set of variables, define its \emph{aggregation} to be the program state where, for every variable \texttt{x}, the stored value is:
+	\begin{enumerate}
+		\item \label{it:aggregate-agree-variables}  $x$  if all program states in $\Gamma$ have the same value $x$ in \texttt{x}; or otherwise
+		\item the union of all sets stored in variable \texttt{x} by program states from $\Gamma$.
+	\end{enumerate}
+	Note that in the second case, where union is used,  some program state from $\Gamma$ might store an atom in \texttt{x}. If that happens, the atom will be lost in the aggregation because an atom has no elements, and therefore it  is ignored when taking a union (this is also why we have the special case in item~\ref{it:aggregate-agree-variables}, since otherwise variables storing atoms would be lost). Using  this aggregation,  define the result of evaluating the for loop to be the aggregation of the set
+	\begin{align*}
+		\set{ (\gamma[\mathtt{x}:=x]) \mathtt I : x \mbox{ is an element of the set stored in variable \texttt{y}}}.
+	\end{align*}
+	\end{itemize}
+	This completes the definition of the semantics of the for loop.
+
+
+The aggregation function that we use might seem arbitrary. Why not use intersection instead of union, or some other commutative operation on sets? As we will explain in Section~\ref{sec:church-turing}, the semantics described above lead to a language that is computationally complete, and therefore other (computable) choices of aggregation will necessarily give the same (or less) computational power.
+
+\subsection*{Example programs}
+
+The rest of Section~\ref{sec:definition-of-while-programs} is devoted to examples of while programs with atoms. In these examples, we will frequently describe programs with inputs and outputs, which define functions. Such functions are not formally part of our language, but they can be modelled by a program that has some designated input variables and a designated output variable for the return value. Therefore, calling the function can be simulated by inlining the appropriate code. Recursive functions (whose implementation would require a bit more than simple inlining of code) could also be implemented, but we do not use them in our examples.
+
+ 
+ 
+ \begin{myexample}[Pairing and unpairing]\label{ex:pairing}
+	As we have mentioned at the beginning of this section, the programming language does not have specialised types for Booleans or  integers, but these can be (inefficiently) implemented  using sets. Similarly, pairing can be implemented using sets, via the Kuratowski paring construction from Example~\ref{ex:kuratowski-pairing}:
+	\begin{lstlisting}
+def pair(x,y):
+  return  $\{$x,$\{$x,y$\}\}$
+	\end{lstlisting}
+	 Formally speaking, the  in line 2 of the above program needs to  be constructed in several steps, using the basic operations of our programming language:
+	\begin{lstlisting}
+q = $\{$x$\}$
+p = $\{$y$\}$	
+p = p $\cup$ q	
+p = $\{$p$\}$
+p = p $\cup$ q
+	\end{lstlisting}
+	In the programs below, omit such details, and assume that the reader knows how to construct sets using the basic operations of the programming language. Also, we write \texttt{(x,y)} instead of explicitly calling the pairing function defined above. 
+
+	A pairing function is only useful if it is accompanied by an unpairing function. 
+	 Here is a program which projects a  pair  \texttt{p} into the singleton of its first coordinate, and returns $\emptyset$ if its argument is not a Kuratowski pair of sets. 
+	\begin{lstlisting}
+def first(p):
+  ret = $\emptyset$
+  for a in p: 
+    for x in a:
+      for y in p:
+        if p == (x,y):	|\label{code:pairing-test}|
+            ret = $\{$x$\}$
+  return ret
+	\end{lstlisting}
+	In Example~\ref{ex:desingleton} we show how to get rid of the singleton. The test in line~\ref{code:pairing-test} is actually syntactic sugar for loading {\tt(x,y)} into an auxiliary variable and then checking if \texttt{p} is equal to that auxiliary variable. We use such syntactic sugar freely in the programs below.
+ \end{myexample}
+ 
+ The following example shows how  to implement the semantics of set builder expressions using  while programs with atoms.
+
+ \begin{myexample}\label{ex:while-constructes-hdef}
+	The atoms are  $\qatom$.  Consider the set  of bounded open intervals:
+	\begin{align*}
+	X = \setexpr{\setexpr z z {x < z < y}} {x,y} {x<y}
+	\end{align*}
+	  Here is a program which loads this set into variable \texttt{X}.  
+	  \begin{lstlisting}
+X = $\emptyset$
+for x in $\atoms$:
+  for y in $\atoms$:
+    if x < y:
+      Z := $\emptyset$
+      for z in $\atoms$:
+        if x < z < y:
+          Z := Z $\cup$ $\{$z$\}$
+      X = X $\cup$ $\{$Z$\}$
+			   \end{lstlisting}
+	  In the program above, the test  \texttt{x < y} is syntactic sugar for first loading the order relation $<$ into some auxiliary variable, and then checking if that relation contains the pair  {\tt(x,y)}.	  Using the same idea, any set builder expression can be loaded into a variable. 
+\end{myexample}
+
+
+\begin{myexample}\label{ex:uniform-fo-formulas}
+ The following program inputs a nonzero natural number in variable \texttt{d} and outputs the set $\atoms^d$ in variable \texttt{Y}. The number \texttt{d} and operations on it are implemented using Von Neumann encoding from Example~\ref{ex:von-neumann}.
+	\begin{lstlisting}
+def tuples(d):
+  Y := $\atoms$
+  while d > 1:
+    d = d - 1
+    X = Y
+    Y = $\emptyset$
+    for a in $\atoms$:
+      for x in X:
+        Y = Y $\cup$ |\tset{(a,x)}|
+  return Y
+ \end{lstlisting}
+ % If variable \texttt{a} would range over \texttt{X} instead of $\atoms$, then the program would compute $\atoms^{2^n}$. 
+ Using similar ideas, one can write a program which inputs a representation of a first-order formula $\varphi(x_1,\ldots,x_n)$ and outputs the set of atom tuples $(a_1,\ldots,a_n)$ which satisfies the formula.
+\end{myexample}
+
+
+\begin{myexample}[Desingleton]\label{ex:desingleton}
+The following program  implements the mapping $\set x \mapsto x$. More precisely, if the variable \texttt{x} stores a singleton $\set x$, then the function will return $x$, otherwise it  will return  the empty set.
+\begin{lstlisting}
+def desingleton(x):
+  result = $\emptyset$
+  for y in x:
+    result = y
+  return result
+\end{lstlisting}
+Using this function, we can improve the projection function from Example~\ref{ex:pairing} so that it returns the actual value of the first coordinate. 
+\end{myexample}
+
+
+
+
+
+
+
+
+
+
+
+% \begin{myexample}[Programs that use order on atoms]
+% 		Consider the atoms $\qatom$. The relation $\le$ on atoms is a definable set of pairs, and is therefore a constant in the language. Therefore, we can write \texttt{x $\le$ \tt y} in our programs to compare atoms for order, which is technically speaking syntactic sugar for testing membership of  {(\tt x,y)} in $\le$.
+% For instance, the following program (which uses boolean operations in conditionals, which can be easily simulated in  the language) generates the set of growing triples of atoms.
+% 		\begin{lstlisting}
+% 		X := \ensuremath{\qatom}
+% 		T := \ensuremath{\emptyset}
+% 			for x in X do 
+% 			 for y in X do 
+% 			  for z in X do 
+% 			    if (x \tleq y) and (y \tleq z) then T := \tset{(x,y,z)}
+% 		\end{lstlisting}	
+% 	Since the set of growing triples of atoms is a definable set, we could also just directly load it to \texttt{T} with one instruction.
+% \end{myexample}
+
+
+% \begin{myexample} Suppose that the atoms are Presburger arithmetic, i.e.~$(\Int,+,0,1)$. This atom structure is not oligomorphic, which violates the assumptions made on the programming language. Nevertheless, the programming language makes some sense also for non-oligomorphic atoms. In this example, we show that multiplication can be implemented, by using a while loop to implement  multiplication in terms of iterated addition. One can also write a primality test.  The  following program looks like it computes the set of all primes in finite time:
+% 	\begin{lstlisting}
+% P := \ensuremath{\emptyset}
+% for x in \ensuremath{\Nat} do
+%   if prime(x) then 
+%     P := P \ensuremath{\cup} \tset{x}
+% 	\end{lstlisting}
+% 	Actually, the program does not terminate, because the body of the for loop has unbounded running time (because primality tests take more time for bigger numbers), and the semantics says that such loops do not terminate.\end{myexample}
+
+
+
+\begin{myexample}[Reachability]\label{ex:graph-reachability-source-code2}
+	Consider the program for graph reachability  from Example~\ref{ex:graph-reachability-source-code} at the beginning of this chapter. As argued in Section~\ref{sec:orbit-finite-automata}, if the atoms are oligomorphic, and the input is orbit-finite, then the while loop  does finitely many iterations for every input, and therefore the program always terminates. 
+\end{myexample}
+
+\begin{myexample}[Automaton emptiness] Using pairs and  projections, we can extend the language with a pattern-matching construction
+	\begin{verbatim}
+		for (x,y) in X: I
+	\end{verbatim}
+	which ranges over all pairs in  \texttt{X}. We use a similar convention for tuples of length greater than two. Pattern-matching is convenient if we want to compute the one-step reachability relation in a nondeterministic automaton:
+		\begin{lstlisting}			
+E = $\emptyset$
+for (p,a,q) in delta:
+  E = E $\cup$ |\tset{(p,q)}|
+		\end{lstlisting}
+	After computing this relation, we can use the program for graph reachability from Example~\ref{ex:reachability} to check if an automaton is nonempty.
+\end{myexample}
+
+
+\begin{myexample}[Automaton minimisation] \label{ex:moore-algorithm}The following program minimises a deterministic orbit-finite automaton. The program is a  standard implementation of Moore's minimisation algorithm. We first compute the reachable states, and then we compute the pairs of states which can be distinguished by some input string. Next, the states of the minimal automaton are defined to be equivalence classes of indistinguishability. (It is useful here that the programming language uses sets, and thus equivalence classes are legitimate values of variables.) 
+	 The main point of writing the program down  is so that the reader can 
+	follow the code and see that it also works with hereditarily orbit-finite sets. The reason is that -- similarly to the program for  graph reachability -- each saturation process (reachable states, or distinguishable pairs) terminates in finite time, because it adds whole orbits in each step. 
+
+\begin{lstlisting}
+def minimize($\Sigma$,Q,q0,delta,F):
+
+  # keep only reachable states
+  old = $\emptyset$
+  Q = |\tset{q0}|
+  while old $\neq$ Q: 
+   old = Q
+   for (p,a,q) in delta:
+	 if p $\in$ Q: 
+	   Q = Q $\cup$ |\tset{q}|
+	 
+  # compute distinguishable pairs of states
+  old = $\emptyset$
+  dist = (F $\times$ (Q-F)) $\cup$ ((Q-F) $\times$ F)
+  while old $\neq$ dist: 
+	old = dist
+    for (p1,a1,q1) in delta:
+	  for (p2,a2,q2) in delta:
+	    if a1==a2 and (q1,q2) $\in$ dist:
+		  dist = dist $\cup$ |\tset{(p1,p2)}|
+
+  # new states are equivalence classes of non-distinguishability
+  newQ = $\emptyset$
+  for q in Q:
+	# the new state will be the equivalence class of q
+    newq = $\emptyset$
+	for p in Q: 
+	  if (p,q) $\not \in$ dist:
+	  	newq = newq $\cup$ |\tset{p}|
+	# add the new state to the set of new states
+	newQ = newQ $\cup$ |\tset{newq}|
+    # note that the same state could be added several times
+	# but sets do ignore duplicates, so this is ok
+
+  # compute new initial state
+  newq0 = $\emptyset$
+  for q in Q:
+    if (q0,q) $\not \in$ dist:
+	  newq0 = newq0 $\cup$ |\tset{q}|
+
+  # compute new transition relation (which is a function)
+  newdelta = $\emptyset$
+  for newp in newQ:
+	for newq in newQ:
+	  for (p,a,q) in delta 
+		if p $\in$ newp and q $\in$ newq:
+		  newdelta = newdelta $\cup$ |\tset{(newp,a,newq)}|
+
+  # compute new final states
+  newF = $\emptyset$
+  for newq in newQ:
+	for q in newq:
+	  if q $\in$ F:
+		newF = newF $\cup$ |\tset{newq}|
+
+  return (A,newQ,newq0,newdelta,newF)
+\end{lstlisting}
+\end{myexample}
+
+We finish the section with an  example of a program where a termination proof requires a bit of effort, beyond the mere observation that each iteration of a while loop adds a whole orbit. 
+\begin{myexample}
+	Call a semigroup $S$ aperiodic if 
+	\begin{align*}
+		\exists n \in \set{1,2,\ldots} \ \forall s \in S \ \overbrace{s \cdots s}^{\text{$n$ times}}= \overbrace{s \cdots s}^{\text{$n+1$ times}}.
+	\end{align*} 
+Assume that the atoms are oligomorphic.  The following program inputs a semigroup, given as a set \texttt{S} together with  a multiplication operation, and checks if it is aperiodic. 
+	\begin{lstlisting}
+def aperiodic(S, mult):
+  counterexamples := $\emptyset$
+  for s in S:
+	X = $\emptyset$
+	power = s
+	while power $\notin$ X:
+	  X := X $\cup$ |\tset{power}|
+	  power = mult(power,s)  |\label{code:power-semigroup}|
+	if mult(power,s) $\neq$ power: |\label{code:power-semigroup2}|
+	  counterexamples = counterexamples $\cup$ $\tset{s}$
+  \end{lstlisting}
+  Formally speaking, the multiplication operation is given as a set of triples of the form (first input, second input, output). Therefore, when we apply  the multiplication operation in lines~\ref{code:power-semigroup} and~\ref{code:power-semigroup2}, we are really executing a subroutine which searches all triples in the multiplication operation, and finds the one that has the appropriate output.
+	
+	In the program, the set \texttt{X} is used to collect consecutive powers $\mathtt{s}, \mathtt{s}^2, \mathtt s^3,\ldots$. To prove termination, one needs to show that this set is always finite, even if the semigroup in question is not aperiodic. Furthermore, there is a fixed upper bound on the size of such sets. Let us argue that this is indeed the case.   Every power of \texttt{s}  is supported by whatever supports both the element  \texttt{s} and the product operation in the semigroup. Like all sets in the programming language,  the underlying set of the semigroup is orbit-finite. In an orbit-finite set,  there are finitely many elements with a given support, as shown in Exercise~\ref{ex:finitely-many-supported-by-one-tuple}. It follows that for every \texttt{s}, the set of its powers is finite. Furthermore, there is a common upper bound on the size of these sets, because if two elements are in the same orbit, then the number of their powers is the same.
+\end{myexample}
+
+
+
+
+
+
+
+\section{Computational completeness of while programs}
+\label{sec:church-turing} 
+What is a computable function $f$ that inputs and outputs  representable sets?  Similarly to the situation in Theorem~\ref{thm:nondeterministic-turing-completeness}, there are two possible definitions. We can use a while program with atoms, which has a designated interface variable, and which has the property that if the designated interface variable is set to a representable set $X$, then the program terminates and stores $f(X)$ in the interface variable. (This is the formalisation of functions that we have already used in the previous examples.) Alternatively, we can compute the function on representations, using the standard notion of atom-less computation (one formalisation is an always terminating Turing machine that has a write-only output tape). The following result shows that the two definitions are equivalent.  In particular, the second definition does not depend on the choice of representation, since the representation is not used in the first definition. 
+
+\begin{theorem}[Computational completeness of while programs\footnote{The theorem is based on~\cite[Theorem 3.9
+]{bojanczyk_computability_2018}, which in turn is based on~\cite[Theorems IV.1 and IV.2]{DBLP:conf/lics/BojanczykKLT13}.}] \label{thm:computational-completeness} Fix an oligomorphic atom structure, together with an atom representation. For every equivariant function 
+\begin{align*}
+f : \text{representable sets} \to \text{representable sets} 
+\end{align*}
+the following conditions are equivalent:
+\begin{enumerate}
+	\item given a representation of $X$, one can  compute a representation of $f(X)$;
+	\item there is a while program with atoms that inputs $X$ and outputs $f(X)$.
+\end{enumerate}
+\end{theorem}
+
+The above theorem is formulated for total functions, but it would also work for partial functions, where the programs are do not terminate when the output is undefined. This extension is left as an exercise for the reader.
+
+
+
+
+\paragraph*{From representations to while programs.} We begin by proving that if a function is computable  under representations, then it can be computed by a while program with atoms.  The main observation is that a while program with atoms can reverse the representation, as stated in the following lemma. In the lemma, the representations are seen as strings over a two letter alphabet. Such strings can be inputs or outputs of while programs, since a string can be seen as a representable set, using the Booleans from Example~\ref{ex:Booleans} as the alphabet, and the  pairing construction from Example~\ref{ex:pairing} to implement lists.	
+
+\begin{lemma}
+	There is a while program with atoms which inputs a representable set $X$, and outputs a  string in  $ 2^*$ that represents some  set in the same orbit as $X$.
+\end{lemma}
+\begin{proof}
+	We begin by observing that a while program with atoms can simulate any Turing machine without atoms.  This is because representable sets can be used to store lists over a finite alphabet, and therefore also configurations of the Turing machine. The  while loop can be used to simulate the computation of the  Turing machine. 
+
+	Next, we observe  that the semantics of set builder expressions can be implemented by a while program with atoms. This means that there is a while program which inputs a set-builder expression $\alpha$  and a valuation $\bar a$ of its free variables, and returns the representable set $\alpha(\bar a)$. The set-builder expression is given by an atom-less string in $2^*$, while the atoms are given directly (not as representations). This program uses the same principle as was illustrated in Example~\ref{ex:while-constructes-hdef}, except that instead of constructing the set represented by a fixed expression, the expression is given on input. 
+
+	Let us use the above observations to prove the lemma. Suppose that the input is  a representable set $X$. The program enumerates through all set builder expressions, and for each such expression $\alpha$, it does the following:
+	\begin{itemize}
+		\item Let $d$ be the number of free variables in $\alpha$.  The program computes the set $\atoms^d$, using the construction from Example~\ref{ex:uniform-fo-formulas}. Next, using Claim~\ref{claim:compute-orbit-formulas}, the program computes a list of  first-order formulas $\varphi_1,\ldots,\varphi_n$ that define the partition of $\atoms^d$ into  equivariant orbits.  For each of these orbits, the program  uses a for loop over $\atoms^d$ to  check if there is some tuple $\bar a$ in this orbit  such that $\alpha(\bar a) = x$. If so, the program computes a representation of some tuple in this orbit, and terminates, with the return value being   the set builder expression $\alpha$ together with the representation of the atom tuple.  Otherwise, the set builder expression  $\alpha$ is discarded, and the program continues  with the next set builder expression  in the enumeration.
+	\end{itemize}
+	By definition of representable sets, this program must eventually find a representation, and so  this procedure is bound to terminate. 
+\end{proof}
+
+Suppose that we are given on input a representable set $X$. Thanks to the above lemma, we can compute a representation $\alpha(\bar a)$ of some in the same orbit as $X$. Since $f$ is computable under representations, we can compute a representation $\beta(\bar b)$ of $f(\alpha(\bar a))$. The while program now computes the set 
+\begin{align*}
+Y = \setbuild{\bar c \bar d}{$X = \alpha(\bar c)$ and $\bar a \bar b$ is in the same orbit as $\bar c \bar d$}.
+\end{align*}
+
+\begin{claim}
+	Every $\bar c \bar d \in Y$ satisfies $f(X)=\beta(\bar d)$.
+\end{claim}
+\begin{proof}
+	By definition of the set $Y$,  there is some atom automorphism $\pi$ that maps $\bar a \bar b$ to $\bar c \bar d$. This automorphism maps $\alpha(\bar a)$ to $X$. Therefore, by equivariance, it maps 
+	\begin{align*}
+		f(\alpha(\bar a)) = \beta(\bar b)
+	\end{align*}
+	to $f(X)$. Since we know that $\pi$ maps $\bar b$ to $\bar d$, the claim follows.
+\end{proof}
+
+Thanks to the above claim, if we apply the function 
+\begin{align*}
+\bar c \bar d \quad \mapsto \quad  \beta(\bar d)
+\end{align*}
+to the above set, then we get the singleton $\set{f(X)}$. This application can be computed using a for loop. Finally, we can apply the desingleton function from Example~\ref{ex:desingleton} to get the desired result.
+
+ \paragraph*{From while programs to representations.} We will now show that given the source code of a while program with atoms and a representation of the initial program state, we can compute a representation of the final program state (assuming that the program terminates). This will give the remaining implication in Theorem~\ref{thm:computational-completeness}.
+
+
+In the semantics of while programs, infinitely many threads are executed in parallel, and therefore it will be easier to work with sets of program states instead of individual program states. A program state can be viewed as a finite tuple of atoms or representable sets.  Since representable sets are closed under taking tuples, follows that a program state itself can be seen as a representable set. This is the view taken in the following lemma.  
+By applying the  lemma to a singleton set of program states, we get the remaining implication in Theorem~\ref{thm:computational-completeness}.
+
+
+
+\begin{lemma}\label{thm:execute-while-programs}
+	There is an atom-less Turing machine  which inputs:
+	\begin{itemize} 
+		\item the source code of a while program  with atoms {\tt I};
+		\item a representation of  set $\Gamma$ of program states over the variables of {\tt I};
+	\end{itemize}
+	and does the following: 
+	\begin{itemize}
+		\item if there is some $n \in \Nat$ such that {\tt I} terminates in at most $n$ steps for all program states in $\Gamma$, then the Turing machine halts and outputs a set builder expression representing all possible input/output pairs $
+		 	\set{ (\gamma, \gamma \pv I) : \gamma \in \Gamma}$;
+ \item otherwise, the Turing machine does not terminate.
+	\end{itemize}
+\end{lemma}
+\begin{proof}
+ Structural induction on the source code of the program {\tt I}. The assignments are immediate, so we only do the proof for the other constructions.
+
+\begin{itemize}
+ \item \emph{Sequential composition.} Given a representation of a set $\Gamma$ of program states, we want to compute the set of input/output pairs for a sequential composition of two programs $\mathtt{I}_1$ and $\mathtt{I}_2$:
+ \begin{align}\label{eq:graph-of-compositions}
+ \setbuild{(\gamma, \gamma (\mathtt{I}_1\mathtt{;I}_2))}{$\gamma \in \Gamma$}.
+ \end{align}
+ By induction, compute a representation of the set
+ \begin{align*}
+ R_1 = \setbuild{(\gamma, \gamma (\mathtt{I}_1))}{$\gamma \in \Gamma$}.
+ \end{align*}
+ As we have shown in Example~\ref{ex:set-structure-projection}, we can define the projection onto the second coordinate in the set structure. Therefore, thanks to the Set Structure Lemma, we can compute a representation of the set
+	\begin{align*}
+		\Delta = \setbuild{ \gamma \mathtt{I}_1}{$\gamma \in \Gamma$}
+		\end{align*}
+Using  the  induction assumption, we can compute a representation of 
+ \begin{align*}
+ R_2 = \setbuild{(\delta, \delta (\mathtt{I}_2))} {$\delta \in \Delta$}.
+ \end{align*}
+ The relational composition  $R_1 \circ R_2$ can be defined in the set structure of $(R_1,R_2)$, and by another application of the Set Structure Lemma we get a representation of the desired set from~\eqref{eq:graph-of-compositions}.
+\item \emph{If.} We want to compute a representation of the set 
+\begin{align}\label{eq:if-then-graph}
+ \setbuild{
+(\gamma, \gamma (\mathtt{if\ x}\ \delta\ \mathtt{ y\ then\ I})}{$ \gamma \in \Gamma$}
+\end{align}
+	 where $\delta$ is one of $=,\subseteq,\subsetneq, \in$. Consider the set of input program states which satisfy the conditional
+	 \begin{align*}
+		 \Gamma_{\text{true}} \quad \eqdef \quad \setbuild{ \gamma \in \Gamma}{$\gamma(\mathtt{x})\ \delta\ \gamma(\mathtt y)$}.
+ \end{align*}
+This set can be defined using the set structure of $\Gamma$, and therefore a representation of it can be computed thanks to the Set Structure Lemma. The set in~\eqref{eq:if-then-graph} is equal to
+	 \begin{align*}
+		\setbuild{ (\gamma, \gamma \mathtt{I})}{$\gamma \in \Gamma_{\text{true}}$} \qquad \cup \qquad \setbuild{ (\gamma, \gamma)}{ $\gamma \in \Gamma \setminus \Gamma_{\text{true}}$}.
+ \end{align*} 
+ By the Symbol Pushing Lemma, the constraints 
+ \begin{align*}
+ \gamma \in \Gamma_{\text{true}} \qquad \text{and} \qquad \gamma \in \Gamma \setminus \Gamma_{\text{true}}
+ \end{align*}
+ can be defined by first-order formulas which talk about the free variables of the set builder expressions $\gamma$, $\Gamma$ and $\Gamma_{\text{true}}$. Using these formulas as guards, we get a set builder expression for the desired set~\eqref{eq:if-then-graph}.
+\item \emph{ While loop}. Consider a definable program of the form
+\begin{center}
+{\tt while x = y do J}.
+\end{center}
+Let $\Gamma$ be a set of program states on which we want to execute the above program. For $n \in \set{0,1,\ldots}$, 
+ let $\Gamma_n \subseteq \Gamma$ be those program states which take at most $n$ iterations to finish the while loop. Using the same approach as in the previous item, for each $n$ we  compute a representation of  $\Gamma_n$ and the semantics of the while loop with domain restricted to $\Gamma_n$. We try all $n$ until $\Gamma_n = \Gamma$. This equality can be checked using Theorem~\ref{thm:decide-set-builder}. (This is also the only place where we use the decidability of the atom structure). If no such $n$ exists, then the interpreter does not terminate. Otherwise, if such $n$ exists, then we can eliminate the external while loop and replace it by sequential composition of $n$ copies of the program {\tt J}, which can be treated using the previous items.
+	\item \emph{For loop}. 
+ Our goal is to compute a set builder expression representing 
+ \begin{align}\label{eq:graph-of-for}
+ \setbuild{(\gamma, \gamma(\underbrace{{\tt for\ x\ in\ X\ do\ J}}_{\mathtt I}))}{for $\gamma \in \Gamma$}.
+ \end{align}
+ It is enough to show that for every program variable {\tt y}, we can compute a set builder expression representing 
+ \begin{align}\label{eq:slice-of-for}
+ \setbuild{(\gamma,\text{value of variable $y$ in $\gamma \mathtt I$})}{$\gamma \in \Gamma$},
+ \end{align}
+ since the resulting sets of pairs can be rearranged using symbol pushing to get relation on program states from~\eqref{eq:graph-of-for}.
+
+ Fix a variable {\tt y}. Using the Set Structure Lemma, compute a representation of
+	\begin{align*}
+		\Delta = \setbuild{\gamma[\mathtt x := x]}{ $\gamma \in \Gamma$ and $x \in \gamma(\mathtt y)$}.
+ \end{align*}
+Using the induction assumption, compute a representation of
+ \begin{align*}
+R  = \setbuild{(\delta, \text{ value of variable {\tt y} in } \delta{\mathtt J})}{ $\delta \in \Delta$}.
+ \end{align*}
+Applying the  Set Structure Lemma to $(\Delta, R)$,  compute a representation of 
+ \begin{align*}
+S = \setbuild {(\gamma, \text{value of variable {\tt y} in }(\gamma[\mathtt x :=x]) \mathtt J)}{ $\gamma \in \Gamma$ and  $x \in \gamma(\mathtt x)$}.
+ \end{align*}
+We now need to aggregate, for each program state $\gamma \in \Gamma$, all  the values $y$ with $(\gamma,y) \in S$. Recall that aggregation uses two cases: identity for program states $\gamma$ which have a unique $y$, and set union for the remaining program states.
+ Define $\Gamma_\cup \subseteq \Gamma$ to the program states where set union is used for aggregation:
+\begin{align*} 
+ \Gamma_\cup = \setbuild{\gamma \in \Gamma}{there are at least two $y$ with $(\gamma,y) \in S$}.
+\end{align*}
+A representation this  set can be computed using the Set Structure Lemma. By definition, the set~\eqref{eq:slice-of-for} is
+ \begin{align*}
+ \setbuild{(\gamma,y)}{$\gamma \in \Gamma \setminus \Gamma_\cup$ and $(\gamma,y) \in S$} \quad \cup \quad \setbuild{(\gamma, \setbuild{y}{$(\gamma,y) \in S$\!\!\!})}{$\gamma \in \Gamma_\cup$}
+ \end{align*}
+ As in the case of the if statements, the guards in the above sets can be seen as first-order formulas, by using the Symbol Pushing Lemma. This means that an expression for the first summand can be computed from an expression for $S$. For the second summand, we need to show that set builder expressions admit a form of Currying, where a representation of a binary relation $S \subseteq A \times B$ is converted into a representation of the  corresponding function $A \to \powerset B$. This construction is presented in Exercise~\ref{ex:currying}.
+\end{itemize}	
+\end{proof}
+
+
+
+
+
+\exercisepart
+
+\mikexercise{\label{ex:currying}
+Show that given a set builder expression without parameters representing a set $R \subseteq X \times Y$, one can compute a set builder expression without parameters representing the set 
+ \begin{align*}
+ S = \set{ (x, \set {y : (x,y) \in R}) : x \in X}.
+ \end{align*}
+\ }{Essentially rearranging parentheses in a set builder expression. 
+ Using the Definable Relation Lemma, compute set builder expressions which represent the projections of $R$ onto the first and second coordinates, respectively:
+ \begin{align*}
+ \bigcup_{i \in I} \setexprtup{\alpha_i(\bar x_i)}{\bar x_i} {n_i} {\varphi_i(\bar x_i)}\\
+ \bigcup_{j \in J} \setexprtup{\beta_j(\bar y_j)}{\bar y_j}{k_j}{\psi_i(\bar y_j)}.
+ \end{align*}
+ Using the Symbol Pushing Lemma, compute for each $i \in I$ and $j \in J$ a formula of first-order logic $\theta_{ij}$ such that 
+ \begin{align*}
+ \theta_{ij}(\bar x_i \bar y_j) \qquad \text{iff} \qquad (\alpha_i(\bar x_i), \beta_j(\bar y_i)) \in R.
+ \end{align*}
+ The expression for $S$ is now
+ \begin{align*}
+ \bigcup_{i \in I} \setexprtup { (\alpha_i(\bar x_i), \hat \beta_i(\bar x_i) } {n_i} {\bar x_i} {\varphi_i(\bar x_i)}
+ \end{align*}
+ where 
+ \begin{align*}
+ \hat \beta_i(\bar x_i) = \bigcup_{j \in J} \setexprtup{\beta_j(\bar y_j)}{\bar y_j}{k_j}{\theta_{ij}(\bar x_i \bar y_j)}.
+ \end{align*}
+}
+
+\mikexercise{\label{ex:same-orbit-programs}
+Consider while programs over the order atoms $(\mathbb Q, <)$. Suppose that we remove the order relation $x < y$, but we add a test for  ``$x$ and $y$ are sets are in the same orbit''. Is the new programming language equivalent to the previous one? }{}
+
+\mikexercise{  Suppose that we extend while programs with the ability to refer to some atom constants, i.e.~these can appear in the source code of the program.  Show that if such a program computes a function
+    \begin{align*}
+    f : \text{representable sets} \to \text{representable sets},
+    \end{align*}
+    and this function is equivariant, then the same function can be computed by a while program that does not refer to atom constants.}{}
+
+

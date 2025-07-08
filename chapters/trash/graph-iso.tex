@@ -1,0 +1,127 @@
+\section{Systems of equations}
+\label{sec:equations-over-the two-element-field}
+In the previous section, we discussed automata problems, which were based on graph reachability. Using a similar approach, the results on context-free grammars from Section~\ref{sec:cfl} can be extended from the equality atoms to effectively oligomorphic atoms. Let us now give a new algorithm, which is based on a different approach\footnote{This section is based on~\cite{klin2015locally}}. In this algorithm, we use only two kinds of atoms, namely the equality atoms and the ordered atoms, but curiously enough, the ordered atoms are needed to analyse the equality atoms. 
+
+ Consider a system of equations in the two element field $\Int_2$, like this one:
+\begin{eqnarray*}
+ x + y & = & 1 \\
+ x + z & = & 1 \\
+ y + z & = & 1 
+\end{eqnarray*}
+The system above does not have a solution, because some two variables  need to get the same value, violating the equations. The system has finitely many equations. In this section, we consider systems where the set of equations is orbit-finite, but each individual equation is finite. 
+
+\begin{myexample}
+ Consider the equality atoms. The variables are pairs of distinct atoms, and the set of equations is 
+ \begin{align*}
+ \underbrace{(a,b)}_{\text{one variable}} + \underbrace{(b,a)}_{\text{one variable}} \quad = 1 \qquad \text{for all } a \neq b \in \atoms.
+ \end{align*}
+ A solution in $\Int_2$ to this system amounts to a choice function, which chooses for every two atoms $a \neq b \in \atoms$ exactly one of the pairs $(a,b)$ or $(b,a)$. It follows  that the above system has a solution, but no equivariant supported solution. 
+\end{myexample}
+
+The above example shows that, under the equality atoms, an equivariant system of equations might have a solution, but it might not have an equivariant solution. If we use the ordered atoms, then the problem goes away, as shown in the following theorem.
+
+\begin{theorem}\label{thm:equivariant-solutions-to-systems-of-equations}
+ Assume the atoms $\qatom$. 
+ Let $\Ee$ be an equivariant orbit-finite set of equations. If $\Ee$ has any solution in $\Int_2$, then it has a solution in $\Int_2$ that is equivariant. 
+\end{theorem}
+\begin{proof}\ 
+ \begin{enumerate}
+ \item In the first step, we show that without loss of generality we can assume that the variables are tuples of atoms. Let $X$ be the orbit-finite set of variables that appear in the equations $\Ee$. By the representation result from Theorem~\ref{thm:spof=orbit-finite}, see also Exercise~\ref{ex:surjection-from-atomsk}, there is some $k \in \set{0,1,2\ldots}$ and an equivariant surjective function 
+ \begin{align*}
+ f : \atoms^k \to X.
+ \end{align*}
+ Define $\Ff$ to be the following set of equations over variables $\atoms^k$:
+ \begin{align*}
+ \underbrace{x=y}_{\text{when $f(x)=f(y)$}} \qquad \underbrace{ y_1 + \cdots + y_n = i.}_{\substack{\text{when $\Ee$ contains an equation}\\ x_1 + \cdots + x_n = i \\ \text{where $f(y_1)=x_1,\ldots,f(y_n)=x_n$}}}
+ \end{align*}
+ It is easy to see that if $\Ee$ has a solution if and only if $\Ff$ has a solution. Likewise for equivariant solutions. 
+ \item Let $\Ff$ be the system of equations produced in the previous item. To prove the theorem, it remains to show that if $\Ff$ has a solution
+ \begin{align*}
+ s : \atoms^k \to \Int_2
+ \end{align*}
+ then it also has an equivariant one. We prove this using the Ramsey Theorem. By the Ramsey Theorem, there is an infinite set $A \subseteq \mathbb \atoms$ such that 
+\begin{align*}
+ s(a_1,\ldots,a_n) = s(b_1,\ldots,b_n) 
+\end{align*}
+holds for all $\bar a$ and $\bar b$ which are strictly growing tuples from $A$. 
+Again by the Ramsey Theorem, there is an infinite set $B \subseteq A$ such that \begin{align*}
+ s(a_1,\ldots,a_n) = s(b_1,\ldots,b_n) 
+\end{align*}
+holds for all $\bar a$ and $\bar b$ which are strictly decreasing tuples from $B$. 
+Repeating this argument for all finitely many order types, i.e.~for all orbits in $\atoms^k$, we get an infinite set $Z \subseteq \atoms$ such that 
+\begin{align*}
+ s(a_1,\ldots,a_n) = s(b_1,\ldots,b_n) 
+\end{align*}
+holds whenever $\bar a$ and $\bar b$ are tuples from $Z^k$ with the same order type (in other words, in the same equivariant orbit of $\atoms^k$). Define 
+\begin{align*}
+ s' : \atoms^k \to \Int_2
+\end{align*}
+to be the function that maps $\bar a$ to $s(\bar b)$ where $\bar b$ is some tuple from $Z^k$ in the same equivariant orbit as $\bar a$. Such a tuple $\bar b$ exists, and furthermore $s(\bar b)$ does not depend on the choice of $\bar b$ by construction. Because $s'(\bar a)$ depends only on the equivariant orbit of $\bar a$, the function $s'$ is equivariant. It is also a solution to $\Ff$. This is because every equation from $\Ff$ can be mapped to some equation in $\Ff$ which uses only variables from $Z$, and $s'$ satisfies those equations. 
+ \end{enumerate}
+ 
+\end{proof}
+
+
+\begin{corollary}
+ Assume that the atoms are $\qatom$. Given an equivariant orbit-finite system of equations, one can decide if the system has a solution in $\Int_2$. Likewise for the equality atoms. 
+\end{corollary}
+\begin{proof}
+ Assume the atoms are $\qatom$. 
+ By Theorem~\ref{thm:equivariant-solutions-to-systems-of-equations}, it is enough to check if the system has an equivariant solution. We can compute all equivariant orbits of the variables, and therefore we can check all equivariant functions from the variables to $\Int_2$, to see if there is any solution.
+
+ Consider now the equality atoms. We reduce to $\qatom$. Every equivariant orbit-finite set over the equality atoms can be viewed as an equivariant orbit-finite set over $\qatom$, by using the same set builder expressions. This transformation does not affect the existence of solutions, and for systems of equations over atoms $\qatom$ we already know how to answer the question. 
+\end{proof}
+
+
+% \begin{myexample}
+% Assume the atoms are $\qatom$. For every atom $a \in \atoms$ we have two variables $x_a$ and $y_a$. Also, for every pair of atoms $a < b$, we have a variable $z_{ab}$. Consider the following set of equalities and inequalities:
+% \begin{eqnarray*}
+% z_{ab} &=& x_a + y_b\\
+% z_{ab} = 
+% \end{eqnarray*}
+
+ 
+% \end{myexample}
+
+\exercisepart
+\mikexercise{\label{ex:presburger-equations}
+ Assume that the atoms are Presburger arithmetic $(\Nat, +)$. Consider sets of equations over the field $\Int_2$, where both the variables and the set of equations are represented by set builder expressions. Show that having a solution is undecidable.
+}
+{
+ A reduction from the tiling problem.
+}
+
+\mikexercise{What is the effect on the decidability of the problem in Exercise~\ref{ex:presburger-equations} if we assume that the set of variables is $\atoms$, i.e.~the natural numbers? What if the variables are atoms and every equation has at most two variables? }
+{Still undecidable.
+We can view a configuration of a Minsky machine as a natural number
+\begin{align*}2^a 3^b 5^c
+\end{align*}
+where $a,b$ are the values of the counters and $c$ is the number of the control state. One can write a Presburger formula $\varphi(x,y)$ which holds if and only if $y$ represents the successor of the configuration represented by $x$. The system of equations says that: (a) the variables that represent the source and target states have different values; (b) variables that represent consecutive configurations have the same value. This system has a solution if and only if the source configuration cannot reach the target configuration. 
+}
+
+\mikexercise{Consider the following atoms\footnote{Suggested by Szymon Toru\'nczyk.}. The universe is the set of bit strings $\set{0,1}^\omega$ which have finitely many $1$'s. The structure on the atoms is given by the following relation of arity four:
+\begin{align*}
+ a+b = c+d,
+\end{align*}
+where addition is coordinate-wise.
+This structure is oligomorphic. Show two sets that are equivariant and orbit-finite, such that there is a finitely supported bijection between them, but there is no equivariant bijection.
+} 
+{The first set is the atoms. The second set is pairs of atoms, modulo the equivalence relation defined by 
+\begin{align*}
+ (a_1,a_2) \sim (b_1,b_2) \qquad \text{if} \qquad \underbrace{a_2 - a_1 = b_2 - b_1}_{b_1+a_2 = a_1 + b_2}.
+\end{align*}
+Let $c$ be some atom. It is not hard to see that the function
+\begin{align*}
+ a \in \atoms \qquad \mapsto \qquad \text{equivalence class of $(a,c)$}
+\end{align*}
+is a $c$-supported bijection between the two sets. We now establish that there is no equivariant bijection. Toward a contradiction, suppose that $f$ is an equivariant bijection. For an atom $a \in \atoms$, let $(b,c)$ be an element of the equivalence class $f(a)$. It is not hard to see that for every atom $d$, the function
+\begin{align*}
+ a \quad \mapsto \quad a+d
+\end{align*}
+is an automorphism of the atoms. Since equivariant functions commute with automorphisms, it would follow that 
+$(b+d,c+d)$ belongs to the equivalence class $f(a+d)$. However,
+ \begin{align*}
+ (b,d) \sim (b+d,c+d),
+ \end{align*}
+ contradicting injectivity of $f$. 
+}

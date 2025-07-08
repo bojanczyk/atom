@@ -1,0 +1,226 @@
+
+
+
+\mikexercise{\label{pof-example-dfa-first-last}Find a deterministic pof automaton for the following language:
+\begin{eqnarray*}
+\setbuild{w \in \atoms^*}{the first and last letters are different}.
+\end{eqnarray*}
+\vspace{-0.6cm}
+}
+{
+The state space of the automaton is 
+    \begin{align*}
+    \underbrace{\atoms^0}_{\text{initial}} + \underbrace{\atoms}_{\text{yes}} + \underbrace{\atoms}_{\text{no}}
+    \end{align*}
+    The unique state in the first component is the  initial state. The states in the second and third components store the first letter, with the second component  corresponding to words in the language, and the third component corresponding to words not in the language. The accepting set consists of the states in the second component $\gamma$. The transition function is:
+    \begin{align*}
+    \text{initial}()  & \stackrel a \to \text{no}(a) \\
+    \text{yes}(a) & \stackrel b \to 
+    \begin{cases}
+    \text{yes}(a) & \text{if $a = b$} \\
+    \text{no}(a) & \text{if $a \neq b$}
+    \end{cases} \\
+    \text{no}(a) & \stackrel b \to 
+    \begin{cases}
+    \text{yes}(a) & \text{if $a = b$} \\
+    \text{no}(a) & \text{if $a \neq b$}.
+    \end{cases} 
+    \end{align*}
+
+}
+
+\mikexercise{\label{pof-example-dfa-two-consecutive}Find a deterministic pof automaton for the following language:
+\begin{eqnarray*}
+    \setbuildoneline{w \in \atoms^*}{no two consecutive letters are the same}. 
+\end{eqnarray*}
+\vspace{-0.6cm}
+}
+{
+    The state space of the automaton is 
+    \begin{align*}
+    \underbrace{\atoms^0}_{\text{initial}} + \underbrace{\atoms}_{\text{noninitial}} + \underbrace{\atoms^0}_{\text{error}}.
+    \end{align*}
+    The unique state in the first is the initial state, and the last component  represents a rejecting sink state. The accepting states are those from the first two  components. The atom in the component $\beta$ stores the most recently seen atom. Here is the transition function: 
+    \begin{align*}
+    \text{initial}()  & \stackrel a \to \text{non-initial}(a) \\
+    \text{non-initial}(a) & \stackrel b \to
+    \begin{cases}
+        \text{non-initial}(b) & \text{if $a \neq b$} \\
+        \text{error}() & \text{if $a = b$}
+    \end{cases}\\
+    \text{error}() & \stackrel b \to \text{error}().
+    \end{align*}
+}
+
+\mikexercise{\label{ex:at-least-three-different}Find a deterministic pof automaton for the language 
+\begin{eqnarray*}
+    \setbuildoneline{w \in \atoms^*}{there are at least three different letters}.
+\end{eqnarray*}
+\vspace{-0.6cm}
+}
+{
+    The automaton stores the atoms that have been seen so far, up to three atoms; otherwise it uses a rejecting sink state. The state space of the automaton is 
+    \begin{align*}
+    \underbrace{\atoms^0}_{\text{seen}_0} + \underbrace{\atoms^1}_{\text{seen}_1} + \underbrace{\atoms^2}_{\text{seen}_2} + \underbrace{\atoms^3}_{\text{seen}_3} + \underbrace{\atoms^0}_{\text{error}}.
+    \end{align*}
+    After reading an input word that has $i \leq 3$ distinct atoms, the state is $\text{seen}_i(a_1,\ldots,a_i)$, where $a_1,\ldots,a_i$ are the atoms seen in the input word in their order of appearance. In particular, the initial state is $\text{seen}_0()$. The last component is a rejecting sink state; all other states are accepting. The transition function is:
+    \begin{align*}
+    \text{seen}_0()  & \stackrel a \to \text{seen}_1(a) \\
+    \text{seen}_1(a) & \stackrel b \to 
+    \begin{cases}
+    \text{seen}_2(a,b) & \text{if $b \not\in \set a$} \\
+    \text{seen}_1(a) & \text{otherwise}
+    \end{cases}\\
+    \text{seen}_2(a,b) & \stackrel c \to
+    \begin{cases}
+    \text{seen}_3(a,b,c) & \text{if $c \not\in \set{a,b}$} \\
+    \text{seen}_2(a,b) & \text{otherwise}
+    \end{cases}\\
+    \text{seen}_3(a,b,c) & \stackrel d \to 
+    \begin{cases}
+    \text{seen}_3(a,b,c) & \text{if $d \not\in \set{a,b,c}$} \\
+    \text{error}() & \text{otherwise}
+    \end{cases}
+\end{align*}
+}
+
+\mikexercise{\label{pof-only-letters-used}
+    Consider a deterministic pof automaton. Show that after reading an input string $w$, all atoms that appear in the state must also appear in $w$.}
+    {This is a corollary of a more general fact: if we have an equivariant function $f : X \to Y$, for two pof sets $X$ and $Y$, then all atoms that appear in $f(x)$ must also appear in $x$. Let us prove this fact. Equivariance means that if $x \mapsto y$ is an input/output pair for the function $f$, then the same is true for $\pi(x) \mapsto \pi(y)$. Suppose now, toward a contradiction, that there would be some input/output pair $x \mapsto y$ such that some atom $a$ appears in $y$ but not in $x$. Choose some atom permutation $\pi$ that moves the atom $a$ to some other atom, but keeps all atoms from $x$ unchanged. Then $\pi(x) \mapsto \pi(y)$ would also need to be an input/output pair, but since $x=\pi(x)$ and $y \neq \pi(y)$, this would mean that $f$ is not a function. } 
+
+    \mikexercise{\label{pof-dfa-finite-alphabet}Show that if the input alphabet is finite (i.e.~a pof set of dimension zero), then  deterministic pof automata recognise exactly the regular languages.}
+    {
+        By Problem~\ref{pof-only-letters-used}, the reachable states cannot have any atoms. There are finitely many such states in a given pof set, and hence the automaton can be made finite-state.  
+    }
+
+    \mikexercise{\label{pof-reach-path-few-atoms}
+    Consider a nondeterministic pof automaton, and let $k$ be the maximal number of atoms that  can appear in a single transition. Let $A$ be a finite set of $k$ atoms.
+    Show that if the automaton is nonempty, then it accepts some word that uses only atoms from $A$.
+}{ 
+    We will show that for every path 
+    \begin{align*}
+    \rho = q_0 \stackrel{a_1} \to q_1 \stackrel{a_2} \to \cdots \stackrel{a_n} \to q_n
+    \end{align*}
+    of this automaton, there is another run 
+    \begin{align*}
+        \rho' = q'_0 \stackrel{a'_1} \to q'_1 \stackrel{a'_2} \to \cdots \stackrel{a'_n} \to q'_n
+        \end{align*}
+    that  uses only atoms from $A$, and such that the starting states $q_0$ and $q'_0$ are in the same orbit, and the last states $q_n$ and $q'_n$ are also in the same orbit. If we apply this to a run that witnesses nonemptiness, we will get the desired result. 
+    
+    The proof if by induction on the length $n$ of the run. In the induction base of $n=1$, we simply replace each atom from $q_0$ with some distinct atom from $A$, and there are enough such atoms (here, it would be enough that $A$ has as many atoms as the dimension of $Q$). 
+
+    Consider now the induction step, and suppose that we have already defined the new run  for $n-1$, and we want to extend it to $n$. Consider the last transition 
+    \begin{align*}
+    q_{n-1} \stackrel{a_n} \to q_n
+    \end{align*}
+    in the original run $\rho$. The number of atoms used by this transition is at most the size of $A$. Therefore,  we replace these atoms with ones from $A$, in a way that maps $q_{n-1}$ to $q'_{n-1}$ from the induction. This proves the induction step. 
+}
+    
+
+
+\mikexercise{\label{pof-derivative}
+    Define a left derivative of a language $L \subseteq \Sigma^*$ to be a language of the form 
+    \begin{align*}
+     v^{-1}w \eqdef   \setbuild{ w \in \Sigma^*}{$vw \in L$}
+    \end{align*}
+    for some word $v \in \Sigma^*$. Are languages recognised by deterministic pof automata closed under left derivatives?
+}{
+    This is a bit of a silly trick question. The answer is no, because a left derivative will no longer be equivariant, since the atoms used by $v$ might need to be included  as constants into the automaton recognizing $v^{-1}w$, and atom constants are not allowed in our model. If we allowed atom constants, then the answer would be yes.
+}
+
+\mikexercise{\label{pof-myhill}
+    We say that two states $p$ and $q$ in a deterministic pof automaton are \emph{behaviourally equivalent} if for every input string $w$, the states $pw$ and $qw$ are both accepting or both rejecting. Show that behavioural equivalence is equivariant.
+}
+{
+    Follows directly from the definitions. 
+}
+\mikexercise{\label{pof-minimal}
+    A deterministic pof automaton is called minimal if one cannot find reachable states $p\neq q$ that are behaviourally equivalent.  Show a language that is recognised by some deterministic pof automaton but not by any minimal deterministic pof automaton.
+}{
+    Consider the language 
+    \begin{align*}
+    \setbuild{abc \in \atoms^*}{$a,b,c$ are three distinct atoms}.
+    \end{align*}
+    This language contains only words of length three. Consider some hypothetical deterministic pof automaton. The states after reading words $ab$ and $ba$ are behaviourally equivalent. However, they will not be the same state, since one is obtained from the other by swapping $a$ with $b$, and such a swap must change the state (unless it does not store the atoms $a$ and $b$, which cannot happen in an automaton that recognises the language).
+}
+
+\mikexercise{\label{pof-epsilon-nondet}
+    Show that the expressive power of nondeterministic pof automata does not change if we allow $\varepsilon$-transitions.
+}{
+    The usual construction works. The relation 
+    \begin{align*}
+    \setbuild{(p,a,q)}{$p$ and $q$ are states, and $a$ is an input letter such that there is a run \\ 
+      from $p$ to $q$ that uses letter $a$ and possibly $\epsilon$-transitions before and after}
+    \end{align*}
+    is equivariant, and therefore it can be used as a new transition relation. If the automaton accepts the empty word via a run that uses a nonzero number of $\varepsilon$-transitions, then we also add a special state that is initial and final, and separate from the automaton.
+}
+
+\mikexercise{\label{pof-ult-periodic}
+    Show that for every nondeterministic pof automaton, the set 
+    \begin{align*}
+    \setbuild{ n \in \set{0,1,\ldots} }{the automaton accepts some word of length $n$}
+    \end{align*}
+    is ultimately periodic.
+}{
+For $n \in \set{0,1,\ldots}$ define $Q_n$ to be the set of states that can be reached by word of length exactly $n$. This is an equivariant subset of the state space, and therefore it can be chosen in finitely many possibly ways. This means that there must be a repetition, i.e.~there  exists some $n \in \set{0,1,\ldots}$ and some $k > 0$ such that $Q_n = Q_{n+k}$.  Furthermore, once the automaton is fixed, then  the set $Q_{n+1}$ depends only on the set $Q_n$. This means that also $Q_m = Q_{m+k}$ holds for every $m \ge n$, and hence the sequence $Q_n$ is ultimately periodic. The set of indices from the problem arises from this sequence, by looking at indices $n$ where $Q_n$ contains an accepting state, and therefore it is ultimately periodic.
+
+}
+
+
+
+
+
+\mikexercise{\label{pof-shortest-word}
+    Show a family of deterministic pof automata, such that in the $n$-th automaton the input alphabet is $\atoms$, the state space is $\atoms^0 + \atoms^n$, but the shortest accepted word is exponential in $n$.
+} {
+    Same kind of construction as in Problem~\ref{pof-graph-reachability}; the idea is that an element of a pof set can represent an exponentially large set. 
+    The automaton begins in the unique state from $\atoms^0$. Once it gets the first atom $a$, it enters a state of the form 
+    \begin{align*}
+    (a,\ldots,a).
+    \end{align*}
+    Then it waits for a second new atom $b \neq a$, upon finding which it enters a state of the form 
+    \begin{align*}
+    (a,b,\ldots,b).
+    \end{align*}
+    Once it has reached this state, it ignores the input, and starts going through all possible states that use only atoms $a$ and $b$, in some prescribed order on such states. There are exponentially many such states. 
+}
+
+
+\mikexercise{\label{pof-behavioural-distinguish}
+    Show that for every deterministic pof automaton one can compute some bound $k$ such that if two states $p$ and $q$ are not behaviourally equivalent, then they can be distinguished by some word of length at most $k$. Show that this $k$ can be exponential in the dimension of the state space.
+}
+{
+    Consider the product of the automaton with itself, where the states are $Q \times Q$. In this product automaton, consider the reachability relation. By the previous problem, this relation stabilizes in a finite and computable number of steps, i.e.~if reachability is possible, then it is possible in this number of steps. Behavioural non-equivalence $p \not \sim q$ is the same as the possibility of reaching
+    \begin{align*}
+    (p,q) \to  (p',q'),
+    \end{align*}
+    in the product automaton, some pair $(p',q')$ such that exactly one of the states $p'$ and $q'$ is accepting.
+}
+
+
+
+\mikexercise{\label{pof-det-commutative}Show that the following problem is decidable: given a deteriminstic pof automaton, decide if its language is commutative. }{
+    In a deterministic pof, we can compute the set of reachable states, and the behavioural equivalence relation on states (as in Problem~\ref{pof-minimal}.) 
+    A deterministic pof is commutative if and only if for every reachable state $q$ and every input letters $a$ and $b$, the states $qab$ and $qba$ are behaviourally equivalent. This can be decided.
+}
+
+\mikexercise{\label{pof-det-more-than-permutations}
+    A language is called \emph{positively equivariant} if for every function $\pi : \atoms \to \atoms$ which is not necessarily a bijection, we have 
+    \begin{align*}
+    w \in L \quad \Rightarrow \quad \pi(w) \in L.
+    \end{align*}
+    Show that the following problem is decidable: given a determinstic pof automaton, decide if its language is positively.
+}
+{
+    For atoms $a \neq b$ define $[a \to b]$ to be the function that maps $a$ to $b$ and is otherwise the identity.  A language is positively equivariant if and only if 
+    \begin{align}\label{eq:strongly-equivariant-two-atoms}
+    w \in L  \quad \Rightarrow \quad [a \to b](w) \in L
+    \end{align}
+    holds for every $a \neq b$. We will decide this property. 
+
+    The idea is to describe the counterexamples to~\eqref{eq:strongly-equivariant-two-atoms} using a deterministic pof automaton. Suppose that $\Sigma$ is the input alphabet of the automaton. The conterexamples to~\eqref{eq:strongly-equivariant-two-atoms} can be seen as the following  language over the alphabet $\atoms + \Sigma$: 
+    \begin{align*}
+    \setbuild{ab w}{$w \in L$ and $[a \to b](w) \not\in L$}.
+    \end{align*}
+    It is not hard to see that if $L$ is recognised by a deterministic pof automaton, then the same is true for the language of counterexamples, and the corresponding automaton can be constructed effectively. By testing the latter automaton for nonemptiness, we can decide the problem. 
+}

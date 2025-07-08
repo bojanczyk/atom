@@ -1,0 +1,280 @@
+
+
+
+\subsection{Hereditarily orbit-finite sets and algorithms on them}
+\label{sec:hof-expressions}
+In the previous section, we have shown that when the are oligomorphic then, like finite sets, they are closed under finite products, images of functions and subsets. In this section, we show that, when the atoms are oligomorphic and have a decidable first-order theory, then sets which are hereditarily orbit-fintie (they are orbit-finite, their elements are orbit-finite and so on until an atom or the empty set is reached) can be represented in a finite way and manipulated by algorithms.
+
+ The point is to be able to state and prove results such as: ``it is decidable if an automaton with atoms is nonempty'' or ``one can effectively transform a deterministic automaton with atoms into an equivalent minimal one''. If the automaton is defined to be a special case of a hereditarily orbit-finite set, as it will be in Section~\ref{sec:finite-automata}, and if hereditarily orbit-finite set can be represented by a data structures without atoms, as they will be in Theorem~\ref{thm:atom-toolkit}, then the standard notion of decidability can be applied to decide properties of automata with atoms. 
+
+% \mikexercise{\label{exercise:hof-preserved-under-prod-sub-quot}Assume that the atoms are oligomorphic. Show that hereditarily orbit-finite sets are closed under products, subsets, and submotients under equivalence relations.
+% }{
+% Suppose that $X,Y$ are hereditarily orbit-finite sets.
+% \begin{itemize}
+% 	\item The product $X \times Y$ is orbit-finite by Exercise~\ref{exercise:orbit-finite-sets-closed-under-products-and-subsets}. It remains to show that every element of the product is hereditarily orbit-finite. An element of the product is a pair, and a pair is hereditarily orbit-finite, because after removing a finite number of set brackets we get to elements of $X$ and $Y$.
+% 	\item Every subset of $X$ is orbit-finite by Exercise~\ref{exercise:orbit-finite-sets-closed-under-products-and-subsets}. The hereditary part is inherited from $X$, because elements of the subset are elements of $X$.
+% 	\item Suppose that $\sim$ is a (finitely supported) equivalence relation on $X$. The submotient is the family of equivalence classes. The family itself is orbit-finite by Exercise~\ref{exercise:orbit-finite-sets-closed-under-products-and-subsets}. Each equivalence class is a subsets of $X$, and therefore is hereditarily orbit-finite by the previous item. 
+% \end{itemize}
+% }
+
+
+
+Hereditarily orbit-finite sets are essentially the only orbit-finite sets, up to equivariant bijections. 
+
+\mikexercise{Show that when the atoms are oligomorphic, then every orbit-finite set is the image of a hereditarily orbit-finite set under an equivariant bijection.
+}{Follows from Lemma~\ref{lem:multi-support-of-char} and the fact that the set of $n$-tuples of atoms is a hereditarily orbit-finite set (recall how tuples are coded as sets).
+}
+% 
+% 
+% Recall the notion of rank for a set, which comes from the cumulative hierarchy. The rank is basically the nesting depth of set brackets, which is in general an ordinal number. Hereditarily orbit-finite set have finite rank, because finite rank sets are closed under finite union and taking orbits. The converse implication in fails: the family of all (finitely supported) subsets of the atoms has rank 2, but is not orbit-finite.
+% 
+% 
+
+
+
+\newcommand{\freevar}{\mathrm{freevar}}
+
+
+
+
+
+ % 
+ % it has a decidable first-order theory and for every $n$, one can compute the number of equivariant orbits of $n$-tuples of elements in the universe. The assumption on computing the number of orbits is not redundant, because there exists an oligomorphic structure with a decidable first-order theory, such that the number of orbits of $n$-tuples cannot be computed, as was shown by independently by~\cite{}
+ % 
+
+\mikexercise{Consider an oligomorphic structure with a decidable first-order theory. Show that the following conditions are equivalent:
+\begin{enumerate}
+	\item given $n$, one can compute the number of equivariant orbits of $n$-tuples;
+	\item given $n$, one can compute a first-order formula in $2n$ variables which defines the relation ``two $n$-tuples of atoms are in the same orbit''.
+\end{enumerate}
+}
+{
+Implication from 1 to 2. By assumption on effectiveness, for $n$ we can compute the number of orbits of $n$-tuples, say $k$. We start enumerating all finite sets of formulas in $n$ free variables, until we find a set $\Gamma$ of $k$ formulas which define nonempty but disjoint sets of $n$ tuples of atoms. Such a set must exist, and its correctness can be determined using the first-order theory of the atoms. Two $n$-tuples are in the same orbit if and only if they satisfy the same (unique) formula from $\Gamma$.
+
+Implication from 2 to 1. Using the formula for having the same orbit of $n$-tuples, for every $k$ one can write a first-order sentence which says that there exist $k$ representative $n$-tuples which are in pairwise different orbits, and every other $n$-tuple is in the same orbit as one of these representatives. The unique $k$ for which this formula is true is the number of orbits of $n$-tuples.
+}
+
+
+
+
+\paragraph*{The toolkit for hereditarily orbit-finite sets.} We now show what operations can be implemented on finite representations of hereditarily orbit-finite sets.
+
+
+\mikexercise{\label{ex:function-toolkit}Show that the following operations can be implemented using the representations from Theorem~\ref{thm:atom-toolkit}.
+\begin{enumerate}
+	\item Given a function $f$ and an argument $x$, compute $f(x)$;
+	\item Given a function $f$ and a set of arguments $X$, compute the image $f(X)$.
+\end{enumerate}}
+{\begin{enumerate}
+	\item Using item~\ref{atom-toolikt-support}, we find a tuple of atoms $\bar a$ that supports both $f$ and $x$. Using item~\ref{atom-toolikt-intersecting orbits}, we decompose $f$, seen as a binary relation, into $\bar a$-orbits
+	\begin{align*}
+		f = \bigcup_{i \in I} f_i.
+	\end{align*}
+	We can look through all the orbits $f_i$, and for each one use item~\ref{atom-toolikt-element} to find an element, call it $y_i$. 	One of the orbits $f_i$ contains the pair $(x,f(x))$, and since the $\bar a$-orbit of this pair is a singleton, it follows that some $y_i$ is equal to $(x,f(x))$. Therefore, the second coordinate of this $y_i$ stores the desired result.
+	\item Using item~\ref{atom-toolikt-support}, we find a tuple of atoms $\bar a$ that supports $X$. Using items~\ref{atom-toolikt-intersecting orbits} and~\ref{atom-toolikt-element}, we compute representations of elements $x_1,\ldots,x_n \in X$ which cover all $\bar a$-orbits. Using the previous item, we compute the values $f$ iin these elements. Using item~\ref{atom-toolikt-intersecting orbits}, we compute all $\bar a$-orbits that intersect
+\begin{align*}
+	\set{f(x_1),\ldots,f(x_n)},
+\end{align*}
+and we return the union of these orbits.
+	\end{enumerate}}
+
+The rest of this section is devoted to showing Theorem~\ref{thm:atom-toolkit}.
+
+\paragraph*{The data structure for the atoms.}
+The following exercise shows that the atoms can be represented so that the truth value of first-order formulas with constants from the atoms can be decided. The representation in the solution to the exercise is very inefficient, so a more efficient implementation of the toolkit in Theorem~\ref{thm:atom-toolkit} would need also to input, as an additional parameter, a more efficient implementation of the atoms and their first-order decision procedure.
+
+
+\mikexercise{\label{ex:atoms-can-be-represented}Consider an effectively oligomorphic structure. Then one can represent every element of the universe by a finite data structure, say a string of bits, such that one can also decide which first-order formulas with free variables are true, given a representation of the valuation of the variables.}{
+\begin{claim}
+	One can compute a sequence of first-order formulas $\varphi_1,\varphi_2,\ldots$ defining orbits
+of nonrepeating tuples such that the following property holds. Let $\bar a$ be a tuple in the orbit $\varphi_i$. Then this tuple can be extended to a tuple $\bar a \bar b$ in the orbit $\varphi_{i+1}$ such that for every $a$ in $\structa$ but not in $\bar a$, there is some $b$ that appears in the tuple $b$ such that $a$ and $b$ are in the same $\bar a$-orbit.
+\end{claim}
+
+
+From the claim above it follows that there is an infinite sequence $b_1,b_2,\ldots$ of elements in $\structa$, such for every $i$, some finite prefix of this sequence is in the orbit $\varphi_i$. Let $\structb$ be the structure $\structa$ with the universe restricted to elements appearing in the infinite sequence. (We assume without loss of generality that the vocabulary contains no functions.) From the claim above it follows that 
+Duplicator can win the infinite round Ehrenfeucht-\fraisse game between $\structa$ and $\structb$, and therefore the two structures are isomorphic.
+
+Clearly the universe of $\structb$ can be represented: the element $b_i$ is represented by the number $i$. We claim that under this representation, one can decide the truth value of formulas with free variables, assuming the valuation of the free variables is represented by the numbering. By renaming variables, we can assume that formula and valuation on the input of the problem are such that the free variables of the formula are included in $x_1,x_2,\ldots$ and the valuation is such that variable $x_i$ is mapped to $b_i$. In this case, if the formula uses $n$ variables, then its truth value is uniquely determined by the orbit of the tuple $(b_1,\ldots,b_n)$, and this orbit is known from the sequence of formulas $\set{\varphi_i}_i$ in the claim. }
+
+\mikexercise{\label{ex:no-finitely-supported-representation-function} Assume that the atoms are oligomorphic and infinite. Let $f$ be a representation as in the previous exercise, seen as a function from bit strings to atoms. Show that $f$ is not finitely supported.} {Suppose that $f$ is supported by atoms $\bar a$. Every input to $f$, being a bit string, has empty support. It follows that every output of $f$ is supported by $\bar a$, and therefore every atom is supported by $\bar a$. By Corollary~\ref{cor:finitely-many-elements-with-a-given-support}, there are finitely many $\bar a$-supported atoms.}
+
+
+\paragraph*{The data structure for the sets.}
+We now define the data structure for representing hereditarily orbit-finite sets. Essentially, a set is represented by an expression in set builder notation, which uses formulas of first-order logic over the atoms, possibly with some constants from the atoms.
+
+
+% If $\alpha$ is an expression with free variables $\bar x$, and $\bar a$ is a tuple of atoms of the same length as $\alpha$, then $\alpha(\bar a)$ is a set with atoms defined in the natural way. An object of the form $\alpha(\bar a)$ said to be \emph{definable by expressions}. The object might be an atom when $\alpha$ is an atom expression, otherwise it is a hereditarily orbit-finite set with atoms. 
+
+
+
+
+
+\begin{ourexample}\label{example:expressions-singleton} We can treat $\set{\alpha}$ as syntactic sugar for
+	\begin{align*}
+		\set{ \alpha : \mbox{for $\epsilon$ such that true}}
+	\end{align*}
+	where $\epsilon$ is the empty tuple. 
+	Using union and singleton, one can encode any hereditarily finite (not just orbit-finite) set. In particular, ordered pairs under the Kuratowski definition can be encoded, and therefore every finitely supported set of atom tuples can be encoded by an expression.
+\end{ourexample}
+
+
+
+
+
+
+
+\mikexercise{\label{ex:expressions-give-exactly-hof-sets}Show that expressions together with valuations define exactly the atoms and hereditarily orbit-finite sets.}
+{Consider the left-to-right inclusion. The proof is by induction on the expression. The only interesting step is a set expression
+\begin{align*}
+	\set{\alpha(\bar x \bar y) : \mbox{ for $\bar y$ such that }\tau(\bar x \bar y) }.
+\end{align*}
+The value of this expression (for some given $\bar x$-valuation) is a subset of the image of $\tau$ under the equivariant function, which maps a $\bar x\bar y$-valuation $\eta$ to $\sem \alpha \eta$. Orbit-finite sets are preserved under images and subsets.
+
+Consider the right-to-left inclusion. The proof is by induction on the rank of a hereditarily orbit-finite set. The atom expressions define all atoms. Expressions are closed under finite unions. The only step is showing that if a set is defined by a set expression, then so is its $\atomsets$-orbit. This follows from items~\ref{atom-toolikt-singleton} and ~\ref{atom-toolikt-intersecting orbits} in Theorem~\ref{thm:atom-toolkit} because the $S$-orbit of a set $x$ is the same as the union of $S$-orbits that intersect the set $\set x$.
+}
+
+
+\paragraph*{Manipulating expressions.} We implement the operations in Theorem~\ref{thm:atom-toolkit}.
+\begin{itemize}
+%	\item {\bf Predicates.} By assumption on the atom structure being effective.
+	\item {\bf Support.} Clearly $\alpha(\bar a)$ is supported by $\bar a$, although this might not be the least support (even if such a thing exists). Therefore, a correct implementation of the support operation is the function that inputs an expression together with a valuation, and returns the valuation.
+	\item {\bf Binary union.} Included in the syntax of expressions.
+	
+	\item {\bf Singleton.} See Example~\ref{example:expressions-singleton}.	
+	\item {\bf Intersecting orbits.} Suppose that we want all $\bar c$-orbits that intersect a set represented by $\alpha(\bar a)$. % This is the same as the union
+% \begin{equation}
+% 	\label{eq:rephrased-union-intersecting-orbits}
+% 		\bigcup_{\eta'} \sem \alpha {\eta'}
+% \end{equation}
+% 	with $\eta'$ ranging over $\bar x$-valuations in the same $\bar a$-orbit as $\eta$.
+	 The interesting case is when $\alpha$ is a set expression
+	\begin{align*}
+		\set{\beta(\bar x \bar y) : \mbox{ for $\bar y$ such that }\varphi(\bar x\bar y) }.
+	\end{align*}	
+	The union of $\bar c$-orbits intersection $\alpha(\bar a)$ is the set
+	\begin{align*}
+		\set{\pi(\beta(\bar a \bar b)) : \mbox{ for $\bar b$ and $\pi$ such that $\varphi(\bar a\bar b)$ and $\pi$ is a $\bar c$-automorphism} }.
+	\end{align*}
+Because the function $\bar a \bar b \mapsto \beta(\bar a\bar b)$ is equivariant, the set above is equal to 
+	\begin{align*}
+		\set{\beta(\pi(\bar a \bar b)) : \mbox{ for $\bar b$ and $\pi$ such that $\varphi(\bar a\bar b)$ and $\pi$ is a $\bar c$-automorphism} }.
+	\end{align*}
+The set above can be restated as
+	\begin{align*}
+		\set{\beta(\bar a' \bar b') : \mbox{ for $\bar a' \bar b' \bar b$ such that $\varphi(\bar a\bar b)$ and $\bar a \bar b$ is in the same $\bar c$-orbit as $\bar a' \bar b'$} }.
+	\end{align*}
+	By the assumption that the atoms are effectively oligomorphic, the condition that two tuples $\bar a \bar b$ and $\bar a' \bar b'$ are in the same $\bar c$-orbit is definable in first-order logic, call this formula $\psi$. Therefore, the above is equal the following set, which is clearly represented by an expression, with the free variables valued to $\bar a \bar c$.
+	\begin{align*}
+		\set{\beta(\bar a' \bar b') : \mbox{ for $\bar a' \bar b' \bar b$ such that $\varphi(\bar a\bar b) \land \psi(\bar c \bar a \bar b \bar a' \bar b')$}}
+	\end{align*}
+\item 	{\bf Inclusion.} The following fact reduces inclusion and membership to deciding the truth value of first-order formulas over the atom structure, which is decidable by the effectivity assumption.
+\begin{fact}\label{fact:expressions-to-fo}
+	Let $\alpha,\beta$ be expressions whose free variables are included in $\bar x$. One can compute a formula of first-order logic over the atoms $\varphi(\bar x)$ which selects exactly those valuations $\bar a$ which make the inclusion $\alpha(\bar a) \subseteq \beta(\bar a)$ hold. Likewise for membership $\in$.
+\end{fact}
+\begin{proof}
+	The proof is done in parallel for the operations $\in$ and $\subseteq$, by induction on the combined size of the expressions. Consider the following cases, depending on the operation.
+
+	\begin{itemize}
+		\item[$\subseteq$] If the left side is an atom, then the inclusion formula is false, since an atom is not a subset of anything. If the left side is a finite union, then all of its components must be a subset of the right side, and therefore a finite conjunction of inductively obtained formulas is used. The remaining case is when the left side is a set expression
+		\begin{align*}
+			\set{\alpha(\bar x \bar y) : \mbox{ for $\bar y$ such that }\tau(\bar x\bar y) }.
+		\end{align*}
+ In this case inclusion boils down to membership for smaller expressions: for every $\bar y$ satisfying $\tau(\bar x \bar y)$, the expression $\alpha(\bar x,\bar y)$ must be a member of the right side.
+	
+		\item[$\in$] If the right side is an atom, then the formula is simply false, because an atom has no elements.
+		If the right side is a union, then we need to check if the left side is a member of some set on the right side, and therefore we use a finite disjunction of inductively obtained formulas. The remaining case is when the right side 
+	is a set expression 
+	\begin{align*}
+			\set{\beta(\bar x \bar y) : \mbox{ for $\bar y$ such that }\tau(\bar x\bar y) }.
+	\end{align*}
+	To test if the left side is a member of the above, we need to test if there is some valuation of $ \bar y$ which satisfies $\tau$, such that the left side is equal to $\beta(\bar x,\bar y)$. When the left side is an atom, then equality is built into first-order logic, otherwise equality is inclusion both ways, which can be described using the induction assumption.
+	\end{itemize}
+	
+\end{proof}
+
+\end{itemize}
+
+
+This completes the proof of Theorem~\ref{thm:atom-toolkit}. Note that for all operations, apart from intersecting orbits, we only used the weaker assumption that the atoms can be represented so that truth value of first-order formulas can be decided. Only in the intersecting orbits operation we used the fact that there is a first-order formula defining the relation ``tuples are in the same orbit''. The weaker assumption holds for a wide variety of structures that are not effectively oligomorphic, e.g.~Presburger arithmetic $(\Nat,+)$ or integers with multiplication $(\Nat,\cdot)$.
+
+
+\paragraph*{Uniqueness of representations.} Suppose that $\rho$ is a surjective function from bit strings to hereditarily orbit-finite sets and atoms. Such a function is called a \emph{representation function} if it supports all the operations in Theorem~\ref{thm:atom-toolkit}, i.e.~one can decide if two bit strings represent the same set, one can compute a bit string representing the union of two sets represented by bit strings, etc. 
+
+\begin{theorem}\label{thm:uniqueness-of-representations}
+	If $\rho_1,\rho_2$ are representation functions, then there is a computable function $f$ from bit strings to bit strings and an automorphism $\pi$ of the atoms such that the following diagram commutes:
+	\begin{equation*}
+	\vcenter{\xymatrix @R=1pc {
+	\mbox{bit strings}\ar[d]^{\rho_1} \ar[r]^{f} & \mbox{bit strings}\ar[d]^{\rho_2} \\
+	\mbox{hof sets and atoms} \ar[r]^{\pi} & \mbox{hof sets and atoms} 
+	}}
+	\end{equation*}
+\end{theorem}
+
+The proof of the theorem is in the following exercises.
+\mikexercise{\label{ex:evaluate-fo-on-representations}If $\rho$ is a representation function, then given a first-order formula and a valuation represented by $\rho$, one can test if the formula is true under the valuation.}{}
+
+
+\mikexercise{\label{ex:define-f-on-atom-representations}One can define $f$ on the $\rho_1$-representations of atoms such that for some atom automorphism $\pi$, the diagram in Theorem~\ref{thm:uniqueness-of-representations} commutes for $f$ restricted to $\rho_1$-representations of atoms.
+} 
+{	 One can decide if a bit-string is a $\rho_1$-representation of an atom, by testing if it has no elements, and that it is not equal to the empty set. Consider some computable enumeration 
+	$w_1,w_2,\ldots$ of $\rho_1$-representations of atoms, e.g. bit-strings are sorted first by length and then lexicographically. Likewise, consider an enumeration
+$v_1,v_2,\ldots$ of $\rho_2$-representations of atoms.
+	By induction on $n$ we compute finite sets of bit-strings
+	\begin{align*}
+		\emptyset = Y_0 \subseteq X_1 \subseteq Y_1 \subseteq X_2 \subseteq Y_2 \subseteq \cdots 
+	\end{align*}
+	and values of $f$ on bit strings from these sets such that for every $n \ge 1$:
+	\begin{itemize}
+		\item The set $X_n$ contains $w_1,\ldots,w_n$;
+				\item The image $f(Y_n)$ contains $v_1,\ldots,v_n$;
+				\item There is an atom automorphism $\pi$ which makes this diagram commute
+				\begin{equation*}
+				\vcenter{\xymatrix @R=1pc {
+				X_n \ar[d]^{\rho_1} \ar[r]^{f} & f(X_n)\ar[d]^{\rho_2} \\
+				\mbox{atoms} \ar[r]^{\pi} & \mbox{atoms} 
+				}}
+				\end{equation*}
+	\end{itemize}
+	Since both $\rho_1$ and $\rho_2$ are surjective, it follows that in the limit we get the desired result. We show how to compute $X_{n}$ based on $Y_{n-1}$; the step from $X_n$ to $Y_n$ is done analogously. 
+	Let 
+	\begin{align*}
+		Y_{n-1} = \set{y_1,\ldots,y_k}.
+	\end{align*}
+	If $w_n$ is already in $Y_{n-1}$, we do nothing. Otherwise, we add $w_{n}$ to $Y_{n-1}$. We need to define $f$ on $w_{n}$. If $\rho_1(w_{n})$ is equal to $f(y_i)$ for some $i \in \set{1,\ldots,k}$, which can be determined using the equality test, then we define $f(w_{n})$ to be $f(y_i)$. In the remaining case, we start enumerating all formulas of first-order logic in $k+1$ variables, until we find a formula $\varphi$ which defines the orbit of the tuple
+	\begin{align}\label{eq:a-tuple-with-lots-of-rhos}
+		(\rho_1(y_1),\ldots,\rho_1(y_k),\rho_1(w_n)).
+	\end{align}
+	This formula can be found using Exercise~\ref{ex:evaluate-fo-on-representations}.
+	Then we start enumerating all bit strings, until we find a string $v$ such that the tuple
+	\begin{align*}
+		(\rho_2(f(y_1)),\ldots,\rho_2(f(y_k)),\rho_2(v)).
+	\end{align*}
+	also satisfies the formula $\varphi$, and is therefore in the same orbit as~\eqref{eq:a-tuple-with-lots-of-rhos}. We define $f(w_n)$ to be $v$.}
+
+
+
+\mikexercise{Let the partially defined $f$ and the automorphism $\pi$ be as in the previous exercise. Then $f$ can be extended to $\rho_1$-representations of hereditarily orbit-finite sets, so that the diagram in Theorem~\ref{thm:uniqueness-of-representations} commutes for $\pi$.}
+{Given a bit-string $w$ which $\rho_1$-represents a set $X$, we proceed as follows, by induction on the nesting of set brackets in $X$. We compute a $\rho_1$-representation of a support $\bar a$ of $X$. By the previous exercise, we can compute a $\rho_2$-representation of $\pi(\bar a)$.
+
+We know that $X$ is a finite union of its $\bar a$-orbits, let this decomposition be
+\begin{align*}
+	X = \bigcup_{i \in I} X_i.
+\end{align*}
+ We compute $\rho_1$-representations of the $\bar a$-orbits $X_i$. For each orbit $X_i$, we compute a $\rho_1$-representation of an element $x_i \in X_i$. By applying the induction assumption, we compute a $\rho_2$-representation of $\pi(x_i)$. We compute a $\rho_2$-representation of $\pi(\set{x_i})$. We then compute a $\rho_2$-representation of the $\pi(\bar a)$-orbit intersecting $\pi(\set{x_i})$, which is the same as the $\pi(\bar a)$-orbit of $\pi(x_i)$, which is equal to the image under $\pi$ of the $\bar a$-orbit of $x_i$. Summing up, we have computed a $\rho_2$-representation of $\pi(X_i)$ for each $i$, which leads to a $\rho_2$-representation of $\pi(X)$.}
+% 
+% \paragraph*{Connection to graph isomorphism.} 
+% The 
+% set equality problem under the equality atoms is at least as difficult as the graph isomorphism problem for directed graphs. Consider an instance of the graph isomorphism problem, i.e.~two directed graphs.
+% 	Without loss of generality, we may assume that the vertices in both graphs are atoms. Therefore, the edge sets in both graphs, call them $E_1$ and $E_2$, are two finite sets of pairs of atoms. The graph isomorphism problem asks if there is a automorphism of atoms, which sends the set $E_1$ to the set $E_2$. This is the same as the question on equality of two equivariant orbits,
+% 	\begin{equation}\label{eq:compare-two-orbits}
+% 		\aut\cdot E_1 = \aut\cdot E_2,
+% 	\end{equation}
+% 	which is an instance of the set equality problem. It is important that we used here the
+% 	equality atoms. This construction would fail for the total ordered atoms. Indeed, suppose that the vertices of the first graph and second graph are
+% 	\begin{align*}
+% 		\atoma_1,\ldots,\atoma_n \qquad\mbox{and}\qquad \atomb_1,\ldots,\atomb_n,
+% 	\end{align*}
+% 	respectively, listed in the order inherited from the rational numbers. In this case, the question~\eqref{eq:compare-two-orbits} can be easily answered without calling the graph isomorphism problem: one only needs to test if $E_1$ is mapped to $E_2$ by the automorphism $\atoma_1 \mapsto \atomb_1,\ldots,\atoma_n \mapsto \atomb_n$.
+% 
+% 
+% 

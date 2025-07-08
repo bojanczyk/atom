@@ -1,0 +1,99 @@
+\NeedsTeXFormat{LaTeX2e}[1996/06/01]
+ \documentclass{cambridge7A}
+ \usepackage{natbib}
+ \usepackage[figuresright]{rotating}
+ \usepackage{floatpag}
+ \rotfloatpagestyle{empty}
+ \usepackage{mathrsfs}
+ \usepackage{xspace}
+ \usepackage{amsthm,amsmath}
+ \usepackage{graphicx} 
+ \usepackage{mathtools}
+ \usepackage{txfonts}
+ \usepackage{multind}\ProvidesPackage{multind}
+ \usepackage{hyperref}
+ \usepackage{color}
+ \usepackage[lastexercise,answerdelayed]{exercise}
+ \usepackage[all]{xy}
+ \usepackage{alltt}
+ \usepackage[shortlabels]{enumitem}
+ \usepackage{mik-makro}
+    \usepackage{tikz-cd}
+ \makeindex{authors}
+ \makeindex{subject} 
+ \makeglossary
+ \theoremstyle{plain}% default
+ \newtheorem{theorem}{Theorem}[chapter]
+ \newtheorem{lemma}[theorem]{Lemma}
+ \newtheorem{claim}[theorem]{Claim} 
+ \newtheorem{proposition}[theorem]{Proposition}
+ \newtheorem{corollary}[theorem]{Corollary}
+ \newtheorem{conjecture}[theorem]{Conjecture}
+ \newtheorem*{theorem*}{Theorem}
+ \newtheorem*{lemma*}{Lemma} 
+ \newtheorem*{proposition*}{Proposition}
+ \newtheorem*{corollary*}{Corollary}
+ \newtheorem*{conjecture*}{Conjecture}
+ \theoremstyle{definition}
+ \newtheorem{definition}[theorem]{Definition}
+%  \newtheorem{myexample}[theorem]{myexample}
+ \newtheorem{prob}[theorem]{Problem}
+ \newtheorem{remark}[theorem]{Remark}
+ \newtheorem{notation}[theorem]{Notation}
+ \newtheorem{exer}[theorem]{Exercise}
+ \newtheorem*{definition*}{Definition}
+ \newtheorem*{example*}{myexample}
+ \newtheorem*{prob*}{Problem}
+ \newtheorem*{remark*}{Remark}
+ \newtheorem*{notation*}{Notation}
+ \newtheorem*{exer*}{Exercise}
+ \setcounter{tocdepth}{2}
+ \newcommand\cambridge{cambridge7A}
+ \def\makeRRlabeldot#1{\hss\llap{#1}}
+ \renewcommand\theenumii{{\rm (\roman{enumii})}}
+ \renewcommand\theenumi{{\rm (\arabic{enumi})}}
+ \renewcommand\theenumiii{{\rm (\alph{enumiii})}}
+ \renewcommand\theenumiv{{\rm (\Alph{enumiv})}}
+
+
+ \newcommand{\mikexercise}[2]{
+\begin{mexercise} 
+	#1 
+	% #2
+\end{mexercise}
+
+\smallskip
+\noindent{\bf Solution.} #2
+
+\vfill
+\pagebreak
+    }
+
+
+
+ \begin{document}
+ \input{macros} 
+
+% chapter 1: pof sets
+\input{problems/pof-set-intro}
+\input{problems/pof-set}
+
+% chapter 2: pof automata
+\input{problems/pof-automata-graph}
+\input{problems/pof-automata-emptiness}
+\input{problems/pof-automata-determinisation}
+\input{problems/pof-automata-undecidable}
+\input{problems/pof-automata-universality-decidable}
+
+% chapter 3: other models of pof
+\input{problems/pof-models-alternating}
+\input{problems/pof-models-two-way}
+\input{problems/pof-models-circuits}
+\input{problems/pof-models-cfg}
+\input{problems/pof-models-turing}
+
+% chapter 4: subsubmotients and group actions
+\input{problems/spof-intro}
+\input{problems/spof-spof}
+\input{problems/spof-least}
+\end{document}

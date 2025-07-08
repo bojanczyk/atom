@@ -1,0 +1,539 @@
+\chapter{Algorithms on orbit-finite sets}
+\label{cha:case-studies}
+
+In this chapter, we give examples that illustrate how algorithms can be generalized from  finite sets to orbit-finite sets.  For all algorithms in this chapter, we make the following assumptions about the atom structure.
+
+\begin{definition}\label{def:effectively-oligomorphic}
+	A structure $\atoms$ is called \emph{effectively oligomorphic} if: 
+	\begin{enumerate}
+		\item it is oligomorphic and countable;
+		\item it has a decidable first-order theory;
+		\item given $d \in \set{0,1,\ldots}$, the number of orbits in $\atoms^d$ can be computed.
+	\end{enumerate}
+\end{definition}
+
+These assumptions are satisfied by all atom structures that have been discussed so far, such as the equality atoms, the order atoms, the graph atoms, or the bit vector atoms. 
+
+\section{Representing orbit-finite sets}
+\label{sec:generating-sets-oligo}
+To discuss algorithms, we need a finite representation of orbit-finite sets and their equivariant subsets. In the special case of polynomial orbit-finite sets, we already discussed such a representation in Section~\ref{sec:representation-of-equivariant-subsets}, when deciding  graph reachability. This representation was defined for polynomial orbit-finite sets, but it extends naturally to (not necessarily polynomial) orbit-finite sets, as described below.
+
+\begin{itemize}
+	\item \emph{How do we represent an orbit-finite set?} By Theorem~\ref{thm:spof=orbit-finite}, every orbit-finite set admits an equivariant bijection with a spof set, and so we  will use spof sets as our representation of orbit-finite sets. A spof set is of the form 
+	\begin{align*}
+	\atoms^{d_1}_{/\sim_1} + \cdots + \atoms^{d_k}_{/\sim_k},
+	\end{align*}
+	where each $\sim_{i}$ is an equivariant partial equivalence relation on $\atoms^{d_i}$. By Theorem~\ref{thm:ryll}, each of the equivalence relations $\sim_i$ is necessarily first-order definable, and therefore it  can  be represented by a first-order formula. This formula  has $2d_i$ variables, because it is a binary relation on $\atoms^{d_i}$. Summing up, an orbit-finite set is represented by a list of dimensions $d_1,\ldots,d_k \in \set{0,1,\ldots}$, one for each component, together with a list of first-order formulas $\varphi_1,\ldots,\varphi_k$ that describe partial equivalence relations on these components. We would like the syntax to be decidable, which in this case means checking if the first-order formulas do indeed define partial equivalence relations.  This can be formalized by writing a first-order sentence: 
+	\begin{align*}
+	\bigwedge_{i \in \set{1,\ldots,k}} \forall \bar x, \bar y, \bar z  \in \atoms^{d_i} \quad 
+	\myunderbrace{\varphi_i(\bar x, \bar y) \Leftrightarrow  \varphi_i(\bar y, \bar x)}{symmetry}\quad \land \quad
+	\myunderbrace{\varphi_i(\bar x, \bar y) \land \varphi_i(\bar y, \bar z) \Rightarrow  \varphi_i(\bar x, \bar z)}{transitivity}.
+	\end{align*}
+	Since the first-order theory is decidable for an effectively oligomorphic structure, we can check if the above formula is true, and so the syntax is decidable. 
+	\item \emph{How do we represent an equivariant subset of an orbit-finite set?} Apart from orbit-finite sets, we also need to represent their equivariant subsets (which themselves can be seen as new orbit-finite sets.) Suppose that we have an orbit-finite set as in the previous item. To describe an equivariant subset, we need to specify for each component $\atoms^{d_i}$ an equivariant subset, which is required to be stable under the equivalence relation $\sim_i$. This subset can be described by a first-order formula $\psi_i$,  and stability can be formalized by a first-order sentence 
+	\begin{align*}
+	\bigwedge_{i \in \set{1,\ldots,k}}  \forall \bar x \in \atoms^{d_i} \quad  \psi_i(\bar x)\quad \Rightarrow \quad 
+	\myunderbrace{\varphi_i(\bar x, \bar x)}{each element \\ is in some \\ equivalence class} 
+	\quad \land \quad 
+	\myunderbrace{\forall \bar y \in \atoms^{d_i} 
+\ \varphi_i(\bar x, \bar y) \Rightarrow \psi_i(\bar y)}{subset is closed under replacing\\ elements with equivalent ones}.
+	\end{align*}	
+\end{itemize}
+
+In the rest of this chapter, we will present algorithms that operate on orbit-finite sets and their equivariant subsets, using the representation described above. For the moment, we need to care about the representation, and we will need to justify how various operations, such as Boolean operations or certain kinds of loops, can be implemented on this representation. Later on in this book, we will present a more principled approach, namely a programming language that takes care of all of these operations.
+
+
+
+\section{Representing elements of orbit-finite sets}
+\label{sec:generating-elements-oligo} 
+In the previous section, we explained how we can represent orbit-finite sets and their subsets. It would also be desirable to represent individual atoms; for example this would be needed to use a representation of sets in terms of generators, as we did in Section~\ref{sec:generating-sets} for the equality atoms. 
+Before moving on to the algorithms, we discuss how individual elements can be represented. Of course such a representation should support certain basic operations, such as testing equality. This is formalized in the following definition, which uses the same three conditions as in item~\ref{item:fraisse-lim-represenation} of Theorem~\ref{thm:computable-fraisse}.
+
+\begin{definition}[Atom representation]
+	\label{def:atom-representation}
+	An \emph{atom representation} of a structure $\atoms$ is a function $r  : 2^* \to \atoms$ which has the following properties (when atoms are used in algorithms, they are represented as strings using the representation):
+	\begin{enumerate}[(a)]
+		\item \label{item:atom-representation-every-atom-represented}  every atom is represented by at least one string;
+		\item  \label{item:atom-representation-fo-theory-decidable} given a first-order formula $\varphi(x_1,\ldots,x_d)$ and $a_1,\ldots,a_d \in \atoms$, one can decide if 
+		\begin{align*}
+		\atoms \models \varphi(a_1,\ldots,a_d);
+		\end{align*}
+		\item  \label{item:atom-representation-decide-same-orbit} given two tuples in $\atoms^d$,  decide if they are in the same orbit.
+	\end{enumerate}
+\end{definition}
+
+In Exercise~\ref{exercise:atom-representations-are-the-same} we show that if an atom representation exists, then it is essentially unique, since there are computable translations between any two atom representations. The following theorem shows that atom representations exist, under our usual effectivity assumption. 
+\begin{theorem}\label{thm:atom-represenation-must-exist}
+Every  effectively oligomorphic structure has an atom representation.
+\end{theorem}
+\begin{proof}
+	We will use Theorem~\ref{thm:computable-fraisse}, whose conclusion says that there is an atom representation.  
+		An oligomorphic structure $\structa$  can be seen as a homogeneous structure $\structh$, which has the same elements, but its  vocabulary is extended so that it has one relation for every first order formula. 
+	(The vocabulary is infinite.)  Let $\structclassh$ be the age of $\structh$. By the assumption that $\structa$ is effectively oligomorphic, there is an algorithm that inputs $d$ and returns 
+all structures in $\structclassh$ up to isomorphism\footnote{It is worth explaining how one ``returns'' a structure over an infinite vocabulary. This means that we return a list of its elements, together with an algorithm which inputs a relation name, and tells us which tuples are selected by the relation.}. In other words, $\structclass$ satisfies  assumption (*) of Theorem~\ref{thm:computable-fraisse}. Therefore, we can apply that theorem, which yields an atom representation of the \fraisse limit $\structh$, because item~\ref{item:fraisse-lim-represenation} of Theorem~\ref{thm:computable-fraisse} is the same as the definition of an atom representation. This in  turn yields a representation of $\structa$. 
+\end{proof}
+
+The atom representation which arises from the above theorem will be very inefficient.  In cases of interest, such as the equality atoms or the order atoms, it will be better to manually prepare more efficient atom representations.
+
+One  application of atom representations will be discussed in Chapter~\ref{cha:turing}, where we will study what it means for a language $L \subseteq \atoms^*$ to be decidable. In the presence of atom representations, we can simply require that this language is decidable in the usual sense, assuming that atoms are given as strings that represent them. This requirement will be a baseline to which we will compare other notions, such as orbit-finite Turing machines. 
+
+Another application is to represent equivariant subsets of $\atoms^d$ by finite generating sets.  
+This is the same method as in Section~\ref{sec:generating-sets}: a \emph{generating set} for a subset $X \subseteq \atoms^d$ is any set that contains at least one tuple per orbit. The assumptions on an atom representation will enable us to perform basic operations on subsets represented this way, such as Boolean combinations. For union, we can simply combine the two sets of generators (which might result in some orbits being represented by more than one generator). For intersection, we can use the ``same orbit'' test to check which orbits are represented in both sets. The most interesting operation is complementation, where  we need to be able to describe orbits that are \emph{not} represented. For this, we use the following lemma. 
+
+\begin{lemma}\label{lem:enumerate-all-orbits}
+	For an atom representation of an effectively oligomorphic structure, there is an algorithm which does the following:
+	\begin{enumerate}
+		\item[(d)] given $d$, compute a list of tuples that represents every orbit in $\atoms^d$. 
+	\end{enumerate}
+\end{lemma}
+\begin{proof}
+	By assumption on being effectively oligomorphic, we can compute the number of orbits. We can then start enumerating all of $\atoms^d$, until we have represented all orbits, which can be checked using the ``same orbit'' test from item (c).
+\end{proof}
+
+Of course, in cases of interest we will want to use more efficient algorithms than the one described in the proof of the above lemma. For example, the equality atoms the number of orbits in $\atoms^d$ is the corresponding Bell number, and a  similar formula can also be computed for the ordered atoms. 
+
+\exercisepart
+\mikexercise{\label{exercise:atom-representations-are-the-same} Consider an effectively oligomorphic structure and two atom representations $r_1,r_2$. Show that there is some computable function $f : 2^* \to 2^*$ which  inputs a representation of some atom under $r_1$, and returns a representation of the same atom under $r_2$.  
+}{}
+
+
+
+
+
+\mikexercise{\label{ex:equivalent-orbit-count} Consider the three conditions in Definition~\ref{def:atom-representation}. Show that in the presence of  the first  two conditions~\ref{item:atom-representation-every-atom-represented} and~\ref{item:atom-representation-fo-theory-decidable}, the third condition~\ref{item:atom-representation-decide-same-orbit} is equivalent to any of the following conditions: 
+\begin{enumerate}
+\item[(c1)] the following function, called the \emph{Ryll-Nardzewski function}, is computable: 
+	\begin{align*}
+	d \in \set{0,1,\ldots} \qquad \mapsto \qquad \text{number of orbits in $\atoms^d$;}
+	\end{align*}
+		\item[(c2)] there is an algorithm that inputs $d \in \set{0,1,\ldots}$ and  returns a list of tuples that generate  $\atoms^d$, with one tuple for each orbit (i.e.~no orbit is represented twice);
+		\item[(c3)]   there is an algorithm that inputs $d \in \set{0,1,\ldots}$ and  returns a formula with $2d$ free variables that defines the ``same orbit'' relation on $\atoms^d$.
+\end{enumerate}
+}{}
+
+
+
+	\section{Orbit-finite graphs and automata}
+	\label{sec:orbit-finite-automata} 
+Having discussed representations of orbit-finite sets and their elements, we now start to present algorithms that operate on them. The first group of results, presented in this section, is about orbit-finite automata. These results are  mainly a consequence of   Theorem~\ref{thm:olig-graph-reachability}, which showed that  reachability in pof graphs is decidable for effectively oligomorphic atoms (in fact, the proof did not use the full power of the assumption, since it did not require that we can compute the number of orbits in $\atoms^d$).  Taking subquotients does not affect the algorithm, and so it extends to orbit-finite graphs, as stated in the following theorem.  
+
+	\begin{theorem}\label{thm:oligo-spof-graph-reachability}
+		Assume that the atoms are effectively oligomorphic.
+		Then the reachability problem for orbit-finite graphs (represented as in Section~\ref{sec:generating-sets-oligo}) is decidable. 
+		\end{theorem}
+		\begin{proof}
+			Same as  for Theorem~\ref{thm:olig-graph-reachability}.
+		\end{proof}
+
+The emptiness problem for automata is the same as the reachability problem for graphs, and therefore we can use the above theorem to decide emptiness for orbit-finite automata. Let us begin by formally defining the model.
+Similarly to graphs, the definition of an orbit-finite automaton is the same as in the finite case, except that the word ``finite'' is replaced by ``orbit-finite'', and all subsets must be equivariant.
+ 
+\begin{definition}[Nondeterministic orbit-finite automaton]\label{def:orbit-finite-automata}
+	Let $\atoms$ be an oligomorphic structure. 
+	A \emph{nondeterministic orbit-finite automaton} over $\atoms$ is a tuple
+	\begin{align*}
+ \Aa = \big(\underbrace{Q,}_{\text{states}} \quad \underbrace{\Sigma,}_{\text{input alphabet}} \quad \underbrace{I \subseteq Q,}_{\text{initial states}} \quad \underbrace{F \subseteq Q,}_{\text{accepting states}} \quad \underbrace{\delta \subseteq Q \times \Sigma \times Q}_{\text{transitions}} \big),
+\end{align*}
+where $Q$ and $\Sigma$  are orbit-finite sets, and the subsets $I, F, \delta$ are equivariant.
+\end{definition}
+
+The semantics of the automaton are defined as for nondeterministic finite automata. The language recognised by such an automaton is equivariant, since the set of accepting runs is equivariant.
+An automaton is called \emph{deterministic} if it has one initial state, and $\delta$ is a function from $Q \times \Sigma$ to $Q$. 
+
+
+\begin{theorem}\label{thm:olig-nfa-nonemptiness}
+	Assume that the atoms are effectively oligomorphic.
+	Then the emptiness problem for nondeterministic orbit-finite automata (represented as in Section~\ref{sec:generating-sets-oligo}) is decidable.  
+	\end{theorem}
+\begin{proof}
+	An immediate corollary of Theorem~\ref{thm:oligo-spof-graph-reachability}. 
+\end{proof}
+
+Other positive results that generalise easily to orbit-finite automata include:
+\begin{itemize}
+	\item  $\epsilon$-transitions do not add to the power of nondeterministic automata (Exercise~\ref{ex:epsilon});
+	\item one can minimize deterministic automata (Theorem~\ref{thm:myhill-nerode-oligo});
+	\item one can decide if a nondeterministic automaton is unambiguous (Exercise~\ref{ex:check-det-unamb}).
+\end{itemize}
+Negative results for the equality atoms generalise to other oligomorphic atoms, when the atoms are infinite: 
+\begin{itemize}
+	\item nondeterministic  automata are not closed under complement;
+	\item the universality problem is undecidable;
+	\item deterministic automata are strictly weaker than nondeterministic ones.
+\end{itemize}
+
+
+
+To illustrate the scope of the above results,  we  give several examples of deterministic or nondeterministic orbit-finite automata in various oligomorphic atoms. 
+\begin{myexample}\label{ex:graph-atoms-automaton} Assume that the atoms are the random graph from Section~\ref{sec:random-graph}. This structure is effectively oligomorphic, because it is the \fraisse limit of a \fraisse class that can be enumerated as in the assumptions of Theorem~\ref{thm:computable-fraisse}. The set of paths in the random graph can be viewed as a language 
+	\begin{align*}
+	\set{ a_1 \cdots a_n \in \atoms : \text{for every $i <n $ there is an edge from $a_i$ to $a_{i+1}$}} \subseteq \atoms^*.
+	\end{align*}
+	This language is recognised by a deterministic orbit-finite automaton, which uses its state to store the last vertex that has been seen so far. The set of cycles is also recognised by a deterministic automaton, this automaton also needs to remember the first vertex to check if it is connected to the last one. 
+   \end{myexample}
+
+   \begin{myexample}
+	\label{ex:graph-atoms-connected} Assume that the atoms are the random graph, and consider the language 
+	\begin{align*}
+	\setbuild{ w \in \atoms^*}{the subgraph of $\atoms$ induced by atoms from $w$ is a clique}
+	\end{align*}
+	This language cannot be recognised by an orbit-finite automaton, even nondeterministic, as we show in Exercise~\ref{ex:graph-cliques}.
+   \end{myexample}
+   
+   
+   \begin{myexample}
+	Assume that the atoms are the random graph.  The graph atoms are a natural setting to talk about path and tree decompositions of graphs, as used in the graph minor project of Robertson and Seymour. To make notation lighter, we only discuss path decompositions. 
+	 A \emph{path decomposition} for a finite subset $V \subseteq \atoms$ is defined to be a list of (not necessarily disjoint) subsets $V_1,\ldots,V_n \subseteq V$ such that: (a) every vertex from $V$ appears in at least one bag; and (b) if two vertices from $V$ are connected by an edge, then they appear together in  at least one bag; and (c) if a vertex appears in some two bags, then it also appears in all other bags between them. The \emph{width} of such a path decomposition is the maximal size of its bags, minus one (the minus one is used to ensure that paths have path decompositions of width one). 
+
+	 If $k$ is fixed, then  such a path decomposition can be seen as a word over an orbit-finite alphabet, namely the sets of at most $k+1$ atoms. (The number of orbits in this alphabet is the number of isomorphism types of graphs with at most $k+1$ vertices.)  Therefore, a path decomposition  can be used as the input to an orbit-finite automaton. 
+	 We now show that interesting properties of the underlying graph can be recognised by such automata. 
+	
+	 \begin{claim}\label{claim:connected}
+	 There is a deterministic orbit-finite automaton $\Aa$ such that
+	 \begin{align*}
+	 \Aa \text{ accepts }V_1 \cdots V_n \quad \text{iff} \quad \text{the  graph $V_1 \cup \cdots \cup V_n$ is connected}
+	 \end{align*}
+	 holds for input which is a width $k$ path decomposition\footnote{The automaton does not check if the input is a path decomposition. In fact, this cannot be done, see Exercise~\ref{ex:cannot-check-path-decompositions}.}.
+	 \end{claim}
+	 \begin{proof}
+	 After reading a path decomposition $V_1,\ldots,V_n$, the automaton stores in its state the last bag $V_n$, together with the equivalence relation $\sim_n$ on it. The equivalence relation identifies vertices from the last bag if they are in the same connected component of the underlying graph $V_1 \cup \cdots \cup V_n$.  
+	 The states of the automaton are pairs (set of at most $k$ atoms, an equivalence relation on this set); this state space is orbit-finite. The initial state is the empty set equipped with an empty equivalence relation, and the accepting states are those where the equivalence relation has one equivalence class. 
+	 The definition of the transition function is left to the reader. 
+	%  The transition function is defined as follows. Suppose that the current state is $(V_n,\sim_n)$ and the input letter is $V_{n+1}$. Let $\sim$ be the smallest equivalence relation on $V_n \cup V_{n+1}$ which contains both $\sim_n$ and the edges on $V_{n+1}$ (as defined by the graph structure of the atoms). If there is an equivalence class of $\sim$ which is disjoint with $V_{n+1}$, then this equivalence class will remain forever disconnected, and therefore the automaton rejects immediately. Otherwise, the new state is set to $V_{n+1}$ with the equivalence relation $\sim_{n+1}$ being $\sim$ restricted to $V_{n+1} $.
+	 \end{proof}
+	
+	 Constructions similar to the above claim can be done for any property of graphs of bounded pathwidth that is recognisable in the sense of Courcelle, which covers all graph properties that can be defined in monadic second-order logic\footnote{For more on recognisability, pathwidth, and monadic second-order logic, see~\cite[Chapter 5.3]{courcelleGraphStructureMonadic2012}.}. Using tree automata instead of word automata, one can also cover tree decompositions. 
+   \end{myexample}
+   
+
+
+\begin{myexample}\label{ex:linearly-dependent-automaton}
+	Consider the bit-vector atoms and the language 
+	\begin{align*}
+	\setbuild{ w \in \atoms^*}{$w$ is linearly dependent}.
+	\end{align*}
+	The linear dependence in the above language is the same as the one discussed when defining the bit-vector atoms, i.e.~$w$ is viewed as a list and not as a set. This means that any repetition in the list will immediately be a dependence. This language is recognised by a nondeterministic orbit-finite automaton. The state space is $\atoms$, the initial subset is the singleton of the zero vector $\set{0}$, and the accepting subset is the set of  non-zero vectors. The transition relation is 
+	\begin{align*}
+	\setbuild{ p \stackrel a \to q}{$p+a=q$ or $p=q$}.
+	\end{align*}
+	One can show that the nondeterminism in the above automaton is unavoidable -- the  language is not recognised by a deterministic orbit-finite automaton. In fact, we will show an even stronger result later in this book, namely that the language is not recognised by any deterministic Turing machine running in polynomial time.
+\end{myexample}
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\paragraph*{Minimization of deterministic automata.} In Chapter~\ref{ch:beyond-equality}, one of our motivations for introducing orbit-finite sets as a generalization of pof sets was to minimize deterministic automata. In Theorem~\ref{thm:myhill-nerode-subquotiented-pof}, we showed a version of the Myhill-Nerode Theorem for the equality atoms, which gave a machine independent characterization of deterministic orbit-finite automata, in terms of an orbit-finite syntactic congruence. The same result carries over to general oligomorphic atoms.
+
+\begin{theorem}\label{thm:myhill-nerode-oligo}
+	Assume that the atoms are oligomorphic. 
+    The following conditions are equivalent for an equivariant language $L \subseteq \Sigma^*$ over an orbit-finite alphabet $\Sigma$:
+    \begin{enumerate}
+        \item\label{item:myhill-nerode-recognised-oligo} $L$ is recognised by a deterministic orbit-finite automaton;
+        \item\label{item:myhill-nerode-orbit-finite-oligo} the quotient of $\Sigma^*$ under the syntactic congruence of $L$ is orbit-finite.
+    \end{enumerate}
+\end{theorem}
+\begin{proof}
+	The same proof as for Theorem~\ref{thm:myhill-nerode-subquotiented-pof}, and also the original Myhill-Nerode Theorem for finite sets. We simply construct a deterministic automaton on the equivalence classes of syntactic congruence. The assumption that the language is equivariant guarantees that the structure of the automaton -- the transition function and the accepting states -- is also equivariant. 
+\end{proof}
+
+If the atoms are not only oligomorphic, but they are also effectively oligomorphic, then the syntactic automaton (i.e.~the automaton that arises from the above theorem, also known as the minimal automaton) can be computed based on any other deterministic automaton.
+
+\begin{theorem}\label{thm:compute-minimal}
+	If the atoms are effectively oligomorphic, then the syntactic automaton can be computed based on any deterministic orbit-finite automaton.
+\end{theorem}
+\begin{proof}
+	We use what is called the \emph{Moore algorithm}, i.e.~a fixpoint procedure that computes equivalence on states\footnote{The computational complexity of automata minimisation is studied in~\cite{DBLP:conf/lics/MurawskiRT15}, using the equality atoms and a more concrete model with registers and control states. }. Suppose that we are given a deterministic orbit-finite automaton, whose  states  are $Q$. We first use the graph reachability algorithm from Theorem~\ref{thm:oligo-spof-graph-reachability} to restrict the state space to reachable ones. Next, we quotient the state space with respect to syntactic equivalence, i.e.~recognizing the same language, as described below.
+
+	For $n \in \set{0,1,\ldots}$, define $\sim_n$ to be the equivalence relation  on states that identifies two states if they accept the same words of length at most $n$. It is easy to see that this equivalence relation is equivariant, and each $\sim_n$ can be computed using the formula representation of equivariant subsets. The chain 
+	\begin{align*}
+	\sim_1 \quad \sim_2 \quad \sim_3 \quad \cdots
+	\end{align*}
+	is a decreasing sequence of equivariant subsets of $Q \times Q$, and therefore it must stabilize after finitely many steps. The stable value of this sequence is the syntactic equivalence relation, and the minimal automaton is obtained by quotienting its state space under this relation.
+\end{proof}
+
+
+
+
+\newcommand{\afin}{A_{\mathrm{fin}}}
+\newcommand{\qfin}{Q_{\mathrm{fin}}}
+
+
+
+
+\exercisepart
+
+\mikexercise{\label{ex:epsilon} Show that adding $\epsilon$-transitions does not change the expressive power of nondeterministic orbit-finite automata.}{The usual proof works. It is important that transitive closure preserves orbit-finiteness. }
+
+	\mikexercise{\label{ex:check-det-unamb} Show that, under the assumptions of Theorem~\ref{thm:oligo-spof-graph-reachability},  one can check if a nondeterministic orbit-finite automaton is deterministic. Likewise for unambiguous (each input admits at most one accepting run). }{Determinism can be formalised in first-order logic and then checked using the Symbol Pushing Lemmas. To check if an automaton is unambiguous we construct the product of the automaton with itself, and check if there is a pair $(p,q)$ of state $p \neq q$ that is both reachable and co-reachable. }
+
+
+
+\mikexercise{\label{ex:graph-cliques} Consider the graph atoms. Show that the language of cliques, i.e.~words in $\atoms^*$ where every two letters are connected by an edge, is not recognised by a nondeterministic orbit-finite automaton.}{
+Consider $2n$ distinct atoms $a_1,\ldots, a_{2n}$ with $n$ sufficiently large. If these atoms form a clique, then the corresponding word should be accepted.  Let $q$ be the state after reading the first $n$ letters, and let $\bar b$ be some tuple that supports this state. If $n$ is large enough, then the support $\bar b$ avoids  some atom $a_i \in \set{a_1,\ldots,a_n}$ from the first half, and also some  atom $a_j \in \set{a_{n+1},\ldots,a_{2n}}$ from the second half.  We will show that:
+\begin{enumerate}
+	\item[(*)] can choose an atom automorphism $\pi$ that fixes $\bar b$ and which maps $a_i$ to an atom that is not connected to $a_j$ by an edge. 
+\end{enumerate}
+Having shown (*), the exercise follows: we can apply the automorphism $\pi$ to the first $n$ letters in the run, which will give a new accepting run where the $i$-th input letter is not connected by an edge with the $j$-th input letter. It remains to prove (*). Consider the edge connections between atom $a_i$ and the tuple $\bar b$. In the random graph there is a vertex, call it $a'_i$, that has the same connections to $\bar b$, and which is not connected by an edge to $a_j$. The automorphism $\pi$ is the one that maps $a_i$ to $a'_i$, and which is the identity on $\bar b$. 
+}
+
+
+
+
+
+
+%Is there a Kleene Theorem on equivalence between automata and regular expressions? The challenge is choosing the appropriate notion of Kleene star. One solution is to consider the following slightly artificial description of the Kleene star: it is an automaton with one state and one transition, but with the transition being labelled by a language. This artificial way generalised to oligomorphic atoms as shown in the following exercise.
+%
+%\mikexercise{Assume that the atoms are oligomorphic. Show that a language is recognised by a nondeterministic orbit-finite automata if and only if it belongs to the least class $\mathscr L$ of languages satisfying:
+%\begin{itemize}
+%	\item $\mathscr L$ is closed under binary concatenation and binary union;
+%	\item $\mathscr L$ contains the empty language and every singleton language;
+%	\item Consider an orbit-finite directed graph where every edge is labelled by a language from $\mathscr L$. Assume that there is a tuple of atoms $\bar a$ which supports the graph together with its edge labelling so that the edge set is one $\bar a$-orbit. Then for every vertices $s,t$ in the graph, the following language is in $\mathscr L$:
+%	 \begin{align*}
+% \bigcup_{e_1 \cdots e_n} \lambda(e_1) \cdots \lambda(e_n)
+%\end{align*}
+%where the above union ranges over paths $e_1 \cdots e_n$ in the graph which start in $s$ and finish in $t$.
+%
+%\end{itemize}
+%}{Copying the proof of the Kleene Theorem on equivalence of nondeterministic automata and regular expressions.
+%The bottom-up implication is straightforward, since one can check that languages recognised by orbit-finite nondeterministic automata have the closure properties in the definition of the class $\mathscr L$. To prove the top-down implication, it suffices to show the following claim.
+%\begin{claim}
+%	Let $\bar a$ be some tuple of atoms. Let $\Aa$ be a nondeterministic orbit-finite automaton such that $\bar a$ supports $\Aa$, i.e.~it supports its states, transitions, input alphabet, etc. Then the language recognised by $\Aa$ belongs to the class $\mathscr L$.
+%\end{claim}
+%\begin{proof}
+%	The proof is by induction on the number of $\bar a$-orbits in the transition relation of the automaton $\Aa$. The induction base is when there are no transitions; this is immediate since the language of the automaton is then either empty or $\set{\varepsilon}$. For the induction step, choose some $\bar a$-orbit $\delta_0 \subseteq \delta$ of the transitions in the automaton. For a transition $(p,a,q) \in \delta_0$, define $L_{q,p}$ to be the set of words $w \in \Sigma^*$ such that in the automaton $\Aa$ there is a run over $w$ that starts in $q$, ends in $p$, and uses only transitions from $\delta - \delta_0$. By induction assumption, the language $L_{q,p}$ belongs to the class $\mathscr L$. Define $Q_0$ to be the states that appear in transitions from $\delta_0$. 
+%	Consider a graph whose vertices are $Q_0$, and such that for every $(p,a,q) \in \delta_0$ there is an edge which is labelled by 
+%
+%\end{proof}
+%
+%
+%}
+
+
+	
+	
+
+% 
+% 
+% \begin{openquestion}
+% 	Assume the atoms are homogeneous over a finite vocabulary.
+% 	When the input alphabet is the atoms, 	is every deterministic orbit-finite automaton equivalent to a deterministic register automaton?
+% \end{openquestion}
+% 
+% We know that the answer to the above question is positive for some atoms (actually, all examples of atoms in this paper) but we do not know the answer in general.
+% Recall that, by Example~\ref{ex:do-not-minimise}, straight automata are not closed under minimization.
+
+\mikexercise{\label{ex:syntactic-monoid} Consider the equality atoms. For a language $L \subseteq \Sigma^*$, consider the two-sided Myhill-Nerode equivalence relation which identifies words $w,w' \in \Sigma^*$ if 
+\begin{align*}
+	uwv \in L \quad \text{iff} \quad uw'v \in L \qquad \text{for every }u,v \in \Sigma^*.
+\end{align*}
+The quotient of $\Sigma^*$ under this equivalence relation is called the \emph{syntactic monoid} of $L$. Show that if the syntactic monoid is orbit-finite, then the syntactic automaton is orbit-finite, but the converse implication fails. }
+{ 
+Let $M$ be the syntactic monoid of a language. There is a deterministic automaton with states $M$ which recognises the same language; the transition function is simply defined by $(q,a) \mapsto qa$ where $qa$ is the product operation in the syntactic monoid. 
+
+The failure of the converse implication is witnessed by the language
+\begin{align*}
+	\set{w \in \atoms^* : \text{the first letter appears also later in the word}}.
+\end{align*}
+The language is recognised by a deterministic automaton which keeps the first letter in its state, and is hence orbit-finite. To see that the syntactic monoid is not orbit-finite, we observe that if two words $w,v$ have different sets of atoms that appear in them, then they are not equivalent with respect to the two-sided Myhill Nerode equivalence relation. Indeed, if $a$ is an atom that appears in $w$ but not in $v$, then $aw$ is in the language, but $av$ is not. Therefore, the syntactic monoid must store the set of distinct atoms in a given word, which cannot be done in an orbit-finite way. 
+}
+
+\mikexercise{\label{ex:myhill-one-way-two-way} Let $L \subseteq \Sigma^*$ be a language, and let $Q$ be the states of its syntactic automaton. Show that the syntactic monoid defined in the previous exercise is isomorphic to the sub-monoid of functions $Q \to Q$ which is generated by the state transition functions $\set{q \mapsto qa}_{a \in \Sigma}$ of the syntactic automaton.}
+{
+
+}
+
+\mikexercise{Let $L \subseteq \Sigma^*$, and let $h : \Sigma^* \to M$ be its syntactic homomorphism, i.e.~the function which maps a word to its equivalence class under two-sided Myhill-Nerode equivalence. Show that $M$ is orbit-finite if and only if the syntactic automaton of $L$ is orbit-finite and there is some $k \in \set{0,1,\ldots}$ such that all elements of $M$ have support of size at most $k$.}
+{
+
+}
+
+\mikexercise{
+We say that a monoid $M$ is aperiodic if for every $m \in M$ there is some $k \in \set{0,1,\ldots}$ such that $m^k = m^{k+1}$. Let $L$ be a language with an orbit-finite syntactic automaton. Show that the syntactic monoid of $L$ is aperiodic if and only if for every state $q$ of the syntactic automaton and every $w \in \Sigma^*$ there is some $k \in \set{0,1,\ldots}$ such that $qw^k = qw^{k+1}$.
+} 
+{
+	Assume that the set of states $Q$ in the syntactic automaton is orbit-finite. 
+	By Exercise~\ref{ex:myhill-one-way-two-way}, the syntactic monoid consists of state transformations of states in the syntactic automaton. Therefore, saying that the syntactic monoid is aperiodic amounts to showing that every input word $w$ satisfies
+	\begin{align}\label{eq:aperiodic-exists-forall}
+		 \exists k \in \set{0,1,\ldots}\ \forall q \in Q \qquad qw^k = qw^{k+1}.
+	\end{align}
+	The exercise asks if the last two quantifiers can be swapped in the above, i.e.~if the above condition is equivalent to
+	\begin{align}\label{eq:aperiodic-forall-exists}
+		 \forall q \in Q \ \exists k \in \set{0,1,\ldots} \qquad qw^k = qw^{k+1}.
+	\end{align}
+	Clearly~\eqref{eq:aperiodic-exists-forall} implies~\eqref{eq:aperiodic-forall-exists}, so we only show the converse implication. Choose $m$ so that for every state $q$, there is a tuple of at most $m$ atoms which supports $w,q$ and the transition function of the syntactic automaton. The value of $m$ depends on $w$. The function
+	\begin{align*}
+		\bar a \in \atoms^m \quad \mapsto \quad \text{number of $\bar a$-orbits in $Q$}
+	\end{align*}
+	is a finitely supported function from tuples of atoms to natural numbers, and therefore it has finitely many possible values. It follows that there is some $k \in \set{0,1,\ldots}$ such that for every tuple $\bar a$ of at most $k$ atoms, there are at most $k$ $\bar a$-orbits in $Q$. 	Let $q \in Q$, and choose some tuple $\bar a$ which supports $w,q$ and the syntactic automaton; this tuple has at most $m$ atoms. All elements in the set 
+	\begin{align*}
+		\set{q, qw, qw^2,\ldots}
+	\end{align*}
+	are supported by $\bar a$, and therefore each of the elements of the above set is a singleton $\bar a$-orbit in $Q$. It follows that the above set has size at most $k$, which proves~\eqref{eq:aperiodic-exists-forall}.
+}
+
+\mikexercise{Suppose that $M$ is an orbit-finite monoid. Can one find an infinite sequence
+\begin{align*}
+	M \supsetneq M_1 \supsetneq M_2 \supsetneq M_3 \supsetneq \cdots
+\end{align*}
+such that each $M_i$ is a submonoid?
+}
+{
+	Yes. Consider the monoid 
+\begin{align*}
+ M = 	1 + \atoms^2 
+\end{align*}
+where $1$ is the identity and product for non-identity elements is defined by $ab = b$. Removing any finite set of non-identity elements still yields a monoid, and hence one can obtain an infinite chain as in the statement of the exercise.
+}
+
+\mikexercise{Consider an orbit-finite monoid $M$. We define the prefix relation on this monoid as follows: $a$ is a prefix of $b$ if $b=ax$ for some $x \in M$. 
+Show that under the equality atoms, the prefix relation is well-founded, but this is no longer true under the order atoms.
+}{}
+
+\section{Systems of equations}
+\label{sec:equations-over-the two-element-field}
+In the previous section, we discussed automata problems, which were based on graph reachability. Using a similar approach, the results on context-free grammars from Section~\ref{sec:cfl} can be extended from the equality atoms to effectively oligomorphic atoms. Let us now give a new algorithm, which is based on a different approach\footnote{This section is based on~\cite{klin2015locally}}. In this algorithm, we use only two kinds of atoms, namely the equality atoms and the ordered atoms, but curiously enough, the ordered atoms are needed to analyse the equality atoms. 
+
+ Consider a system of equations in the two element field $\Int_2$, like this one:
+\begin{eqnarray*}
+ x + y & = & 1 \\
+ x + z & = & 1 \\
+ y + z & = & 1 
+\end{eqnarray*}
+The system above does not have a solution, because some two variables  need to get the same value, violating the equations. The system has finitely many equations. In this section, we consider systems where the set of equations is orbit-finite, but each individual equation is finite. 
+
+\begin{myexample}
+ Consider the equality atoms. The variables are pairs of distinct atoms, and the set of equations is 
+ \begin{align*}
+ \underbrace{(a,b)}_{\text{one variable}} + \underbrace{(b,a)}_{\text{one variable}} \quad = 1 \qquad \text{for all } a \neq b \in \atoms.
+ \end{align*}
+ A solution in $\Int_2$ to this system amounts to a choice function, which chooses for every two atoms $a \neq b \in \atoms$ exactly one of the pairs $(a,b)$ or $(b,a)$. It follows  that the above system has a solution, but no equivariant supported solution. 
+\end{myexample}
+
+The above example shows that, under the equality atoms, an equivariant system of equations might have a solution, but it might not have an equivariant solution. If we use the ordered atoms, then the problem goes away, as shown in the following theorem.
+
+\begin{theorem}\label{thm:equivariant-solutions-to-systems-of-equations}
+ Assume the atoms $\qatom$. 
+ Let $\Ee$ be an equivariant orbit-finite set of equations. If $\Ee$ has any solution in $\Int_2$, then it has a solution in $\Int_2$ that is equivariant. 
+\end{theorem}
+\begin{proof}\ 
+ \begin{enumerate}
+ \item In the first step, we show that without loss of generality we can assume that the variables are tuples of atoms. Let $X$ be the orbit-finite set of variables that appear in the equations $\Ee$. By the representation result from Theorem~\ref{thm:spof=orbit-finite}, see also Exercise~\ref{ex:surjection-from-atomsk}, there is some $k \in \set{0,1,2\ldots}$ and an equivariant surjective function 
+ \begin{align*}
+ f : \atoms^k \to X.
+ \end{align*}
+ Define $\Ff$ to be the following set of equations over variables $\atoms^k$:
+ \begin{align*}
+ \underbrace{x=y}_{\text{when $f(x)=f(y)$}} \qquad \underbrace{ y_1 + \cdots + y_n = i.}_{\substack{\text{when $\Ee$ contains an equation}\\ x_1 + \cdots + x_n = i \\ \text{where $f(y_1)=x_1,\ldots,f(y_n)=x_n$}}}
+ \end{align*}
+ It is easy to see that $\Ee$ has a solution if and only if $\Ff$ has a solution. Likewise for equivariant solutions. 
+ \item Let $\Ff$ be the system of equations produced in the previous item. To prove the theorem, it remains to show that if $\Ff$ has a solution
+ \begin{align*}
+ s : \atoms^k \to \Int_2
+ \end{align*}
+ then it also has an equivariant one. We prove this using the Ramsey Theorem. By the Ramsey Theorem, there is an infinite set $A \subseteq \mathbb \atoms$ such that 
+\begin{align*}
+ s(a_1,\ldots,a_n) = s(b_1,\ldots,b_n) 
+\end{align*}
+holds for all $\bar a$ and $\bar b$ which are strictly growing tuples from $A$. 
+Again by the Ramsey Theorem, there is an infinite set $B \subseteq A$ such that \begin{align*}
+ s(a_1,\ldots,a_n) = s(b_1,\ldots,b_n) 
+\end{align*}
+holds for all $\bar a$ and $\bar b$ which are strictly decreasing tuples from $B$. 
+Repeating this argument for all finitely many order types, i.e.~for all orbits in $\atoms^k$, we get an infinite set $Z \subseteq \atoms$ such that 
+\begin{align*}
+ s(a_1,\ldots,a_n) = s(b_1,\ldots,b_n) 
+\end{align*}
+holds whenever $\bar a$ and $\bar b$ are tuples from $Z^k$ with the same order type (in other words, in the same equivariant orbit of $\atoms^k$). Define 
+\begin{align*}
+ s' : \atoms^k \to \Int_2
+\end{align*}
+to be the function that maps $\bar a$ to $s(\bar b)$ where $\bar b$ is some tuple from $Z^k$ in the same equivariant orbit as $\bar a$. Such a tuple $\bar b$ exists, and furthermore $s(\bar b)$ does not depend on the choice of $\bar b$ by construction. Because $s'(\bar a)$ depends only on the equivariant orbit of $\bar a$, the function $s'$ is equivariant. It is also a solution to $\Ff$. This is because every equation from $\Ff$ can be mapped to some equation in $\Ff$ which uses only variables from $Z$, and $s'$ satisfies those equations. 
+ \end{enumerate}
+ 
+\end{proof}
+
+
+\begin{corollary}
+ Assume that the atoms are $\qatom$. Given an equivariant orbit-finite system of equations, one can decide if the system has a solution in $\Int_2$. Likewise for the equality atoms. 
+\end{corollary}
+\begin{proof}
+ Assume the atoms are $\qatom$. 
+ By Theorem~\ref{thm:equivariant-solutions-to-systems-of-equations}, it is enough to check if the system has an equivariant solution. We can compute all equivariant orbits of the variables, and therefore we can check all equivariant functions from the variables to $\Int_2$, to see if there is any solution.
+
+ Consider now the equality atoms. We reduce to $\qatom$. Every equivariant orbit-finite set over the equality atoms can be viewed as an equivariant orbit-finite set over $\qatom$, by using the same set builder expressions. This transformation does not affect the existence of solutions, and for systems of equations over atoms $\qatom$ we already know how to answer the question. 
+\end{proof}
+
+
+% \begin{myexample}
+% Assume the atoms are $\qatom$. For every atom $a \in \atoms$ we have two variables $x_a$ and $y_a$. Also, for every pair of atoms $a < b$, we have a variable $z_{ab}$. Consider the following set of equalities and inequalities:
+% \begin{eqnarray*}
+% z_{ab} &=& x_a + y_b\\
+% z_{ab} = 
+% \end{eqnarray*}
+
+ 
+% \end{myexample}
+
+\exercisepart
+\mikexercise{\label{ex:presburger-equations}
+ Assume that the atoms are Presburger arithmetic $(\Nat, +)$. Consider sets of equations over the field $\Int_2$, where both the variables and the set of equations are represented by set builder expressions. Show that having a solution is undecidable.
+}
+{
+ A reduction from the tiling problem.
+}
+
+\mikexercise{What is the effect on the decidability of the problem in Exercise~\ref{ex:presburger-equations} if we assume that the set of variables is $\atoms$, i.e.~the natural numbers? What if the variables are atoms and every equation has at most two variables? }
+{Still undecidable.
+We can view a configuration of a Minsky machine as a natural number
+\begin{align*}2^a 3^b 5^c
+\end{align*}
+where $a,b$ are the values of the counters and $c$ is the number of the control state. One can write a Presburger formula $\varphi(x,y)$ which holds if and only if $y$ represents the successor of the configuration represented by $x$. The system of equations says that: (a) the variables that represent the source and target states have different values; (b) variables that represent consecutive configurations have the same value. This system has a solution if and only if the source configuration cannot reach the target configuration. 
+}
+
+\mikexercise{Consider the following atoms\footnote{Suggested by Szymon Toru\'nczyk.}. The universe is the set of bit strings $\set{0,1}^\omega$ which have finitely many $1$'s. The structure on the atoms is given by the following relation of arity four:
+\begin{align*}
+ a+b = c+d,
+\end{align*}
+where addition is coordinate-wise.
+This structure is oligomorphic. Show two sets that are equivariant and orbit-finite, such that there is a finitely supported bijection between them, but there is no equivariant bijection.
+} 
+{The first set is the atoms. The second set is pairs of atoms, modulo the equivalence relation defined by 
+\begin{align*}
+ (a_1,a_2) \sim (b_1,b_2) \qquad \text{if} \qquad \underbrace{a_2 - a_1 = b_2 - b_1}_{b_1+a_2 = a_1 + b_2}.
+\end{align*}
+Let $c$ be some atom. It is not hard to see that the function
+\begin{align*}
+ a \in \atoms \qquad \mapsto \qquad \text{equivalence class of $(a,c)$}
+\end{align*}
+is a $c$-supported bijection between the two sets. We now establish that there is no equivariant bijection. Toward a contradiction, suppose that $f$ is an equivariant bijection. For an atom $a \in \atoms$, let $(b,c)$ be an element of the equivalence class $f(a)$. It is not hard to see that for every atom $d$, the function
+\begin{align*}
+ a \quad \mapsto \quad a+d
+\end{align*}
+is an automorphism of the atoms. Since equivariant functions commute with automorphisms, it would follow that 
+$(b+d,c+d)$ belongs to the equivalence class $f(a+d)$. However,
+ \begin{align*}
+ (b,d) \sim (b+d,c+d),
+ \end{align*}
+ contradicting injectivity of $f$. 
+}
+
+
+
+ 
+
+ 
+
+
+
+

@@ -1,0 +1,495 @@
+\chapter{Sets of sets of sets of sets}
+\label{cha:sets-of-sets-of-sets}
+
+In this chapter, we discuss an approach to  atoms that is based in set theory. In the usual set theory, the element of a set are simpler sets, and the elements of those simpler sets are even simpler sets, and so on until one reaches the empty set. The underlying principle is extensionality, which states that  two sets are equal if they have the same elements. An alternative approach is to postulate the existence of atoms, which do not have any elements, and to allow sets to contain such atoms. This approach is called sets with atoms, or sets with urelements, and it was present in Zermelo's set theory from 1907. Atoms became less popular in set theory, but an important exception is the permutation models of Fraenkel and Mostowski in the 1920s and 1930s, which were used to show various independence results. The permutation models are important for this book, because they introduced the finite support condition, which is a key concept here.
+
+There is another reason to discuss sets, apart from its connections to set theory and mathematical logic. The other reason is computational -- sets are a good data structure. To understand this, recall the orbit-finite Turing machines that were discussed in the previous chapter. A limitation of this model is its list-based data structure: all information has to be stored on a linearly ordered tape, where each cell stores a constant number of atoms. This limitation is behind the failure of determinisation that was proved in Theorem~\ref{thm:determinisation-fails}; a deterministic Turing machine was unable to store the set of possible ways to order the atoms in \cfi instance. Apart from their usefulness in computation, sets can also be a more natural representation. For example, if we want a graph to be the input of an algorithm, it is very natural to assume that the graph is given as two sets (vertices and edges), with the algorithm having access to these sets (such as looping over vertices or edges, or testing if an edge is incident with a vertex). This is arguably superior to the  alternative that we have used so far, which is to choose some linear representation of these sets. Such representations can be not only cumbersome, but more importantly, they can be problematic, as  it is not always  clear how the choice of representation affects the computational power. 
+
+For the reasons described above, in the next few chapters we will discuss a set based approach to atoms. 
+
+
+\section{Sets with atoms}
+\label{sec:sets-with-atoms}
+
+In this section, we define what a set with atoms is. The definition is given below, and it is parameterised by an ordinal number $n$, which is called the rank of a set. Ordinal numbers are like natural numbers, but they can be infinite. All natural numbers are ordinals, but there are also infinite ordinals, such as $\omega$, which is the first infinite ordinal, or $\omega+1$, which is the next ordinal after $\omega$. For readers unfamiliar with ordinal numbers, it is useful to simply think of them as natural numbers. This intuition will be sufficient for most cases, in particular the hereditarily orbit-finite sets that will be introduced later in this chapter will only use natural numbers as their ranks. 
+
+
+
+\begin{definition}[Set with atoms]
+\label{def:sets-with-atoms}
+For an  oligomorphic structure $\atoms$, sets with atoms over $\atoms$ are defined as follows by induction on a  parameter, which is an ordinal number $n \ge 1$ that is called the \emph{rank}.  A set with atoms of rank $n$ is defined to be a set $X$, such that: 
+\begin{enumerate}
+	\item \label{item:set-with-atoms-recursive} elements of $X$ are either atoms $a \in \atoms$, or  sets with atoms of rank $<n$; and 
+	\item \label{item:set-with-atoms-finite-support} there is a finite support, which means that there is some $\bar a \in \atoms^*$ such that
+	 \begin{align*}
+		\bar a = \pi(\bar a)
+		\quad \Rightarrow \quad 
+		X = \myunderbrace{\setbuild{ \pi(x)}{$x \in X$}}{we call this set $\pi(X)$} \qquad \text{for every atom automorphism $\pi$.}
+		\end{align*}
+\end{enumerate}
+\end{definition}
+
+
+\begin{myexample} \label{ex:sets-with-atoms-of-rank-one}
+	We begin by illustrating sets of minimal rank, namely one. For such a set, all of its elements must be atoms, since there are no sets of smaller rank. Therefore, a set of rank one must be a subset of the atoms. This subset must be finitely supported. For example, the full set $\atoms$ is finitely supported, namely it has empty support, and this is true for any oligomorphic atom structure. Also, every finite subset of $\atoms$ is finitely supported, since as the support one can take any list that contains all atoms used in the set. Here is an example of an infinite but finitely supported subset, which is specific to the order atoms:
+	\begin{align*}
+		 \setbuild{ a } { $a \in \atoms$ is such that $1 < a < 3$}.
+	\end{align*}
+	This set is supported by its endpoints  $1$ and $3$, since any atom automorphism that preserves the endpoints will also map the set to itself. If the atoms are the random graph, and we take some $a \in \atoms$, then its neighbours 
+	\begin{align*}
+	\setbuild{ b}{ $b \in \atoms$ has an edge to $a$}
+	\end{align*}
+	will be a set supported by $a$, and therefore also a legitimate set with atoms of rank one.
+\end{myexample}
+
+\begin{myexample}\label{ex:sets-with-atoms-of-rank-two}
+	Let us now consider sets with atoms of rank two. These are sets whose elements are atoms, or sets of rank one. One example is the   finite powerset 
+\begin{align*}
+\pfin \atoms = \setbuild{ X}{$X \subseteq \atoms$ is finite},
+\end{align*}
+Another  example that also works for any atoms is the finitely supported powerset of the atoms:
+\begin{align*}
+\setbuild{ X}{$X \subseteq \atoms$ is finitely supported}.
+\end{align*}
+In the equality atoms, the finitely supported powerset will contain finite and cofinite sets. For the ordered atoms, the finitely supported powerset will contain finite Boolean combinations of intervals. Another example, which also works for any atoms,  is the family of sets of size three:
+\begin{align*}
+{\atoms \choose 3} 
+\quad = \quad 
+ \setbuild{ \set{a,b,c}}{$a,b,c \in \atoms$ are pairwise different}.
+\end{align*}
+In all the above examples, the set itself is equivariant (has empty support), but its elements are sets that are not necessarily equivariant. Here is an example, which uses the equality atoms, that is not equivariant itself: 
+\begin{align*}
+	{{\atoms \setminus \set{\mary} \choose 3}} 
+	\quad = \quad  
+\setbuild{ \set{a,b,c}}{$a,b,c \in \atoms$ are pariwise different and  not  Mary}.
+\end{align*}
+Similarly, for the ordered atoms, we could consider the family of intervals that avoid 0. 
+\end{myexample}
+
+\begin{myexample}\label{ex:atomless-sets}
+	In all the above examples, the sets would contain atoms, or their elements would contain atoms, and so on. This is of course not necessary, and we can consider sets that are built without using atoms, such as: 
+	\begin{align*}
+	\myunderbrace{ \emptyset }{rank one}
+	\qquad 
+	\myunderbrace{ \set{ \emptyset }}{rank two}
+	\qquad
+	\myunderbrace{ \set{ \set{\emptyset}}}{rank three} 
+	\qquad \cdots
+	\end{align*}
+	Since these sets do not use any atoms, atom permutations act on them trivially, i.e.~do not move them. In particular, they have empty supports. Also, we can consider the set which contains all  the sets described above; this set will have rank $\omega$, since it has elements of arbitrarily large finite ranks. This new set can be thought of as representing the natural numbers. 
+\end{myexample}
+
+One of the advantages of sets with atoms as defined in Definition~\ref{def:sets-with-atoms} is that they come automatically equipped with an action of atom automorphisms. If we have a set with atoms $X$ and an atom automorphism $\pi$, then $\pi(X)$ is defined by applying $\pi$ to all atoms that are elements of  $X$, the sets that are elements of $X$, and so on.  This is in contrast with the previous approach in  Definition~\ref{def:supports-general}, where each set needed to come  equipped with a group action of atom automorphism. We usually used some implicit group action; for example when the set was $\atoms^d$, we implicitly assumed that atom automorphisms would act on this set coordinate-wise. Now, if we use sets with atoms as in Definition~\ref{def:sets-with-atoms}, we no longer need to specify the action each time -- explicitly or implicitly -- since it is already given by the definition of sets with atoms. 
+
+Sets with atoms are defined using only one constructor, namely sets. However, this constructor is powerful enough to define other constructors, such as  pairing.
+
+
+\begin{myexample}
+	[Pairing]\label{ex:kuratowski-pairing}
+	Let $x$ and $y$ be two atoms, or sets with atoms. Their Kuratowski pair is defined to be the following set with atoms 
+	\begin{align*}
+	(x,y)  \quad \eqdef \quad  \set{ \set{x}, \set{x,y}}.
+	\end{align*}
+	The point of the construction above is that we can extract the first and second coordinates of a pair. Indeed, if the Kuratowski pair contains one element only, then we know that this element is a singleton $\set{x}$, and the original pair had to be $(x,x)$. Otherwise, if the Kuratowski pair contains two sets, then one of them must be a singleton $\set{x}$, which gives us the first coordinate, and the  other one must be a set with two elements, which gives us the second coordinate by removing $x$ from the set. 
+\end{myexample}
+
+\begin{myexample}
+	[Lists]\label{ex:lists} We can use repeated pairing to define lists: 
+	\begin{align*}
+		[x_1,\ldots,x_n] 
+		\quad \eqdef \quad
+		\begin{cases}
+			\emptyset & \text{ if } n = 0, \\
+			(x_1,[x_2,\ldots,x_n]) & \text{ if } n > 0.
+		\end{cases}
+	\end{align*}
+	 In particular, we can think of $\atoms^d$ or $\atoms^*$ as  sets with atoms. 
+\end{myexample}
+
+
+An informal idea behind an equivariant set is that it can be ``defined'' without referring to any individual atoms. Using sets with atoms, this informal idea can be given a precise meaning.
+
+\begin{definition}
+	[Superstructure]
+		For an oligomorphic atom structure $\atoms$, define its \emph{superstructure}  to be the structure that is obtained as follows. The universe is 
+	\begin{align*}
+		\atoms \cup \text{sets with atoms},
+	\end{align*}
+	i.e.~every element in the universe is either an atom, or a set with atoms. It is equipped with the following relations: (a)  a  binary relation for membership; (b)  all equivariant relations $R \subseteq \atoms^d$ on the atoms.  The relations in item (b) select only tuples of atoms. 
+\end{definition}
+
+
+	Consider a formula $\varphi(x_1,\ldots,x_n)$ over the vocabulary of the superstructure. This formula defines an $n$-ary relation over the superstructure. Such a relation is said to be \emph{definable in the superstructure}. The superstructure is very rich, since quantification in it ranges over sets, or sets of sets, etc. Therefore, any concept definable in the language of set theory will be definable here. 
+	
+\begin{myexample}
+One can define the relation ``$y$ is the singleton of $x$'' using the following formula in the superstructure: 
+\begin{align*}
+	x \in y \land \forall z (z \in y \Rightarrow z = x).
+\end{align*}	
+Similarly, one can define the relation ``$y$ is the Kuratowski pair of $x_1$ and $x_2$''. Let us now define the set of all lists, i.e.~relation ``$y$ is equal to $x^*$''.  By inspecting the definition of lists from Example~\ref{ex:lists}, we see that $x^*$ is the unique set which is  contained in every set $z$ that contains the empty set, and is closed under prepending elements from $x$: 
+\begin{align*}
+\emptyset \in z  \quad \land \quad
+\forall u \forall v \ u \in x \land v \in z \Rightarrow (u,v) \in z.
+\end{align*}
+Our definition of the set of lists $x^*$ describes a general principle, namely that we can use first-order logic in the downset to formalise inductive definitions. 
+This way, we can define list concatenation, i.e.~the relation ``$y$ is the concatenation of lists $x_1$ and $x_2$''. 
+\end{myexample}
+	
+As we have seen in the above example, essentially any mathematical construction -- and certainly all notions that have been used in this book -- can be defined in the superstructure. The following theorem shows that such constructions will be necessarily equivariant.
+
+	
+\begin{theorem}[Equivariance principle]
+	\label{thm:equivariance-principle}
+	Let $\atoms$ be an oligomorphic atom structure, and let $\varphi(x_1,\ldots,x_n)$ be a first-order formula over the vocabulary of the superstructure. Then 
+	\begin{align*}
+	\text{superstructure} \models \varphi(x_1,\ldots,x_n)
+	\quad \Leftrightarrow \quad 
+	\text{superstructure} \models \varphi(\pi(x_1),\ldots,\pi(x_n))
+	\end{align*}
+	for every automorphism $\pi$ of the atoms.
+\end{theorem}
+\begin{proof}
+	An immediate corollary of the definitions. 
+	An automorphism $\pi$ of the atoms does not affect the relations of the superstructure, i.e.~membership and equivariant relations over the atoms.
+\end{proof}
+
+The above principle can be used to prove equivariance of essentially all constructions that do not refer to individual atoms. For example, the construction of a minimal automaton can be defined in the superstructure, and therefore it will be equivariant.
+
+
+
+\section{Sets builder expressions}
+\label{sec:set-builder-expressions}
+In this section, we  present a syntax for describing  some simple orbit-finite sets, which is called  set builder expressions\footnote{The idea to use set builder notation as a way of representing hereditarily orbit-finite sets originates from a programming language introduced in~\cite{DBLP:conf/fsttcs/BojanczykT12}, which later developed into the language {\sc lois} (\emph{Looping over Infinite Sets}) of~\cite{DBLP:conf/cade/KopczynskiT16,DBLP:conf/popl/KopczynskiT17}.  
+}. 
+We have already seen such expressions in Examples~\ref{ex:sets-with-atoms-of-rank-one} and~\ref{ex:sets-with-atoms-of-rank-two}. In case the reader has forgotten those examples, here are two more. The following expression describes  the family of all subsets of the equality atoms that miss at most one atom:
+\begin{align*}
+\set{\setexprtrue x x} \cup \setexprtrue{ \setexpr y y {y\neq x}} x.
+\end{align*}
+Another example, this time in the atoms $\qatom$, is the set of all nonempty bounded open intervals that contain only negative numbers:
+\begin{align*}
+	 \setexpr {\setexpr z z {x < z < y}} {x,y} {x < y \land y < 0 }.
+\end{align*} 
+
+
+% We now present the formal definition of set builder expressions. 
+% If $X$ is a subset of the variables, we \emph{$\bar x$-valuation} is a function that maps each variable in the tuple to an element of the universe in $\atoms$. 
+
+
+% with parameters from the atoms\footnote{A formula with parameters is one that can use atoms as constants. For example, $x = \atomone \lor x = \atomtwo$ is a formula which uses parameters $\atomone, \atomtwo$ and has free variable $x$. }
+\begin{definition}[Set builder expressions] Fix an atom  structure $\atoms$ and  an infinite set of variables, which range over atoms. We write $x,y,z$ for these variables. There are two constructors for set builder expressions, namely set comprehension and union:
+	\begin{enumerate}
+		\item {\bf Set comprehension.} Let $\alpha$ be a variable or an already defined set builder expression, and let $\varphi$ be a first-order formula over the vocabulary of $\atoms$, which is called the \emph{guard}. Then 
+		\begin{align*}
+			\setexpr {\alpha} { x_1,\ldots,x_d} { \varphi} 
+		\end{align*}
+		is a set builder expression.  The free variables of this expression are the variables that are free in $\alpha$ or the guard $\varphi$, minus $x_1,\ldots,x_d$. 
+		
+		\item {\bf Union.} If $\alpha_1,\ldots, \alpha_n$ are already defined set builder expressions, then $\alpha_1 \cup \cdots \cup \alpha_n$ is a set builder expression. A variable is free in this expression if it is free in some $\alpha_i$. 
+	\end{enumerate}
+\end{definition}
+
+The semantics of set builder expressions are defined in the expected way: if a set builder expression $\alpha$ has $d$ free variables, then its semantics is a function 
+\begin{align}
+	\label{eq:set-builder-semantics}
+\sem \alpha : \atoms^d \to  \text{set with atoms}
+\end{align}
+which inputs the values of the variables, and outputs the corresponding set with atoms. This function is defined by induction on the structure of the expression in the obvious way. The  function is easily seen to be equivariant. By abuse of notation, we sometimes skip the brackets and write $\alpha(\bar a)$ instead of the formally correct $\sem \alpha(\bar a)$.	
+
+\begin{definition}[Representable] \label{def:representable-set-with-atoms}
+	A set with atoms is called \emph{representable} if it is equal to $\alpha(\bar a)$ for some set builder expression $\alpha$ and some tuple of atoms $\bar a$ that instantiates its free variables.
+\end{definition}
+
+To write down a representable set, we need to write down the set builder expression, and the values of the atoms. For the latter, we assume an atom representation, as in Definition~\ref{def:atom-representation}. Therefore, whenever we talk about algorithms that input representable sets, we implicitly assume some atom representation, at least as long as we want to talk about sets that are represented by set builder expressions that have free variables.
+
+Not all sets with atoms  are representable. For example, every representable set will have finite rank, while some sets with atoms will have ranks that are infinite ordinal numbers, such as $\omega$. Another, related,  reason is that there are countably many representable sets, but uncountably many sets with atoms. Consider the sets 
+	\begin{align*}
+	\myunderbrace{ \emptyset }{rank one}
+	\qquad 
+	\myunderbrace{ \set{ \emptyset }}{rank two}
+	\qquad
+	\myunderbrace{ \set{ \set{\emptyset}}}{rank three} 
+	\qquad \cdots
+	\end{align*}
+that were discussed in Example~\ref{ex:atomless-sets}.  Individually, each of these sets is representable, but this will no longer be the case when we combine infinitely many of them into a single set. Let $X$ be any set which contains only some (but not necessarily all) such sets. Such a set $X$ can be chosen in uncountably many ways. As explained in Example~\ref{ex:atomless-sets}, this $X$ will necessarily be  a set with atoms -- although a degenerate one that does not use any atoms. If $X$ has infinitely many elements, then it will have infinite rank (namely $\omega$) and as such it will not be represented by any set builder expression.  
+
+We will now give a more semantic characterisation of the representable sets with atoms.   The general idea is these sets are orbit-finite in a hereditary way: they are orbit-finite,  their elements are orbit-finite,  the elements of the elements are orbit-finite, and so on. This is, however, not technically accurate, since we are dealing with sets that are not necessarily equivariant, and the definition of orbit-finiteness in Definition~\ref{def:supports-general} requires the set to be equivariant (because it is closed under applying all atom automorphisms). To overcome this difficulty, we use a generalisation of orbit-finiteness that is appropriate to non-equivariant sets. 
+
+\begin{definition}[Intersecting finitely many orbits]\label{def:intersects-finitely-many-orbits}
+	A set with atoms $X$ \emph{intersects finitely many orbits} if  there are finitely many elements $x_1,\ldots,x_n \in X$ such that every element of $X$ is of the form $\pi(x_i)$ for some $i$ and some atom automorphism $\pi$.
+\end{definition}
+
+\begin{myexample}\label{ex:intersects-finitely-many-orbits}
+	Consider the equality atoms. Any finite set, such as $\set{\mary, \john}$ intersects finitely many orbits. More generally, any finitely supported subset of $\atoms$ will intersect finitely orbits, namely one orbit, since $\atoms$ is a set with one orbit. Similarly, any finitely supported subset of $\atoms^d$ will intersect finitely many orbits.
+\end{myexample}
+
+
+
+
+
+\begin{theorem}\label{thm:hof-is-set-builder}
+	Consider an oligomorphic atom structure $\atoms$. A set with atoms $X$ is representable  if and only if
+	\begin{enumerate}
+		\item[(*)] $Y$ intersects finitely many orbits for every set $Y$ that is equal to $X$, an element of $X$, an element of an element of $X$, and so on.
+	\end{enumerate}
+\end{theorem}
+\begin{proof}
+The  implication $\Rightarrow$ is proved by a straightforward induction on the size of the set builder expression. We spell this induction out in more detail below, to accustom the reader to the semantics of set builder expressions. The union constructor is immediate, since sets satisfying condition (*) are clearly closed  under taking finite unions. Consider now the set comprehension constructor  
+	\begin{align*}
+		\beta = \setexpr {\alpha} { x_1,\ldots,x_d} { \varphi}.
+	\end{align*}	We want to show that for every choice of values for the free variables, the corresponding set intersects finitely many orbits.  Let $k$ be the  number of free variables of the inner expression $\alpha$. Any set of represented by the outer expression $\beta$ will be obtained by choosing some finitely supported $X \subseteq \atoms^d$, and returning the set of all values of $\alpha$ for tuples $\bar a \in X$. As we have explained in Example~\ref{ex:intersects-finitely-many-orbits}, the set $X$ intersects finitely many orbits. Also, if we apply an equivariant function (such as the semantics of the inner expression $\alpha$) to a set that intersects finitely many orbits, then the resulting image will also intersect finitely many orbits. Therefore, any set represented by the outer expression $\beta$ will intersect finitely many orbits.
+
+	We now prove the converse implication $\Leftarrow$, which says that every set with atoms that satisfies (*) is representable.  The proof is by induction on the rank of the set. The induction basis of rank zero applies to only one set, the empty set, which is clearly represented by a set builder expression. (For example, we can use an unsatisfiable guard in a set expression, or an empty union in a union expression.)  In the induction step, we will use Lemma~\ref{lem:intersecting-nonequivariant} below, which says that the notion of intersecting finitely many orbits is robust under restricting the orbits to respect a certain support, as explained in the following definition. 
+	
+	\begin{definition}
+	\label{def:bar-a-orbit}
+	    Let $x$ be an atom, a set with atoms, or more generally, an element of a set that is equipped with an action of atom automorphisms. 
+		For a tuple of atoms $\bar a$, define the \emph{$\bar a$-orbit} of  $x$ to be the set 
+	\begin{align*}
+	\setbuildoneline{ \pi(x)}{$\myunderbrace{\text{$\pi$ is an atom automorphism that fixes $\bar a$}}{such an automorphism is called a $\bar a$-automorphism}$}.
+	\end{align*}
+	\end{definition}
+
+We already saw $\bar a$-orbits in Lemma~\ref{lem:rectangular-set} in the chapter about vector spaces. 
+ The notion of intersecting finitely many $\bar a$-orbits is defined in the same way as in Definition~\ref{def:intersects-finitely-many-orbits}, but with  $\bar a$-orbits instead of the usual orbits. The lemma below shows that the notion does not depend on the choice of $\bar a$. (A weaker form of this lemma was implicit in the proof of Lemma~\ref{lem:rectangular-set}.)
+	\begin{lemma} \label{lem:intersecting-nonequivariant} Let $X$ be a set with atoms, and let $\bar a$ and $\bar b$ be tuples of atoms. Then $X$ intersects finitely many $\bar a$-orbits if and only if it intersects finitely may $\bar b$-orbits. 
+	\end{lemma}
+	\begin{proof} 
+	  It is enough to prove the lemma in the special case $\bar b$ is the empty tuple. 	As the support $\bar a$ grows, the $\bar a$-orbit gets smaller, because the constraint on $\pi$ gets tighter. Therefore, we need to show that if $X$ intersects finitely many orbits (in the usual sense, for the empty tuple of atoms) then it intersects finitely many $\bar a$-orbits, for every $\bar a$. In other words, we need to show that every orbit splits into finitely many $\bar a$-orbits. Consider then the orbit (with empty support) of some element $x$. This orbit  is an  orbit-finite set in the sense of Definition~\ref{def:supports-general}, and so we can apply Claim~\ref{claim:surjective-from-tuples} to it, yielding an equivariant surjective function
+\begin{align*}
+f : \atoms^d \to \setbuild{ \pi(x)} {$\pi$ is an atom automorphism}.
+\end{align*}
+We need to show that the range of this function splits into finitely many $\bar a$-orbits.  
+	By equivariance, we know that if two inputs of $f$ are in the same $\bar a$-orbit, then the corresponding outputs are also in the same $\bar a$-orbit. Therefore, it is enough to show that the domain of the function splits into finitely many $\bar a$-orbits.  Two tuples from $\atoms^-d$  are in the same $\bar a$-orbit of $\atoms^d$ if and only if appending $\bar a$ to both tuples gives two tuples that are in the same equivariant orbit of $\atoms^{d+k}$, where $k$ is the length of $\bar a$. Since the $\atoms^{d+k}$ has finitely many equivariant orbits by oligomorphism, it follows $\atoms^d$ has finitely many $\bar a$-orbits.
+	\end{proof}
+
+	Using the above lemma, we prove  the induction step in the theorem.  Consider  a set with atoms $X$ that satisfies (*). Like any set of atoms, this set $\bar X$ is supported by some tuple of atoms $\bar a$.  This  means $X$ that is invariant under applying automorphisms that fix $\bar a$, which in turn means  that $X$ is equal to a union of $\bar a$-orbits. By the above lemma, this union is finite. 
+	Since sets represented by set builder expressions are closed under taking finite unions, it remains to show that every component of the union, which is of the form 
+		\begin{align}
+		\label{eq:one-bar-a-orbit}
+		 \setbuild { \pi(x)}{$\pi$ is an atom automorphism that fixes $\bar a$}
+		\end{align}
+		for some $x \in X$, is represented by some set builder expression.  The element $x$ can either be an atom, or a set that satisfies (*).  We only consider the case when $x$ is a set; the case when $x$ is an atom is proved in the same way. By induction hypothesis, we know that $x =\beta(\bar  b)$ for some set builder expression $\beta$ and some valuation $\bar b$ of its free variables. By equivariance of the semantics of set builder expressions, we know that the set in~\eqref{eq:one-bar-a-orbit} is equal to 
+		\begin{align*}
+		\setbuild { \beta(\pi(\bar b)) }{$\pi$ is an atom automorphism that fixes $\bar a$} = \\
+		\setbuild { \beta(\bar c) }{$\bar c$ is in the $\bar a$-orbit of $\bar b$}.
+		\end{align*}
+		The conditions on $\bar c$ in the above set is the same as saying that $\bar a \bar b$ and $\bar a \bar c$ are in the equivariant orbit.  By Theorem~\ref{thm:ryll}, the equivariant orbit of $\bar a \bar b$ can be defined by a first-order formula $\varphi$. Therefore, the above set consists of possible values of $\beta(\bar c)$, with $\bar c$ ranging over tuples such that $\bar a \bar c$ satisfies the formula $\varphi$. This is an instance of set comprehension.
+		
+		Observe that in the proof of the implication $\Rightarrow$, we constructed an instance of a  set comprehension expression where the guard referred only to the support $\bar a$ and the bound variables $\bar c$.   Therefore, we have shown a slightly stronger result: if a set with atoms satisfies (*) and  is  supported by $\bar a$, then it is of the form $\alpha(\bar a)$ for some set builder expression $\alpha$. In particular, if the set is equivariant, then the expression has on free variables.
+\end{proof}
+
+Among all representable sets, we have those which are represented by a set builder expression without free variables. By the remarks at the end of the above proof, these are exactly the representable sets that are equivariant. The following observation shows that these sets cover all orbit-finite sets, as defined in Definition~\ref{def:supports-general},  up to equivariant bijections.
+
+
+\begin{corollary}\label{cor:orbit-finite-is-set-builder}
+		Consider an oligomorphic atom structure $\atoms$. A set is orbit-finite if and only if it admits an equivariant bijection with a set represented by a set builder expression that has no free variables.
+\end{corollary}
+\begin{proof}
+	We begin with the implication  $\Leftarrow$. Suppose that  $X$ is represented by a set builder expression that has no free variables. By Theorem~\ref{thm:hof-is-set-builder},  $X$ intersects finitely many orbits. Since the expression has no free variables, the set that it represents is  "equivariant" (this is because the semantics of set builder expressions are equivariant). Therefore, $X$ not only intersects finitely many orbits, but it is equal to finitely many orbits.
+	
+	Let us now prove the implication $\Rightarrow$. Theorem~\ref{thm:spof=orbit-finite} says that every orbit-finite set admits an equivariant bijection with a subquotiented pof set. It is not hard to see that every subquotiented pof set satisfies condition (*) from  Theorem~\ref{thm:hof-is-set-builder},  and therefore it is represented by some set builder expression. By the remarks at the end of the proof of Theorem~\ref{thm:hof-is-set-builder},  this set builder expression has no free variables.  
+\end{proof}
+
+Thanks to the above theorem, we get another representation of orbit-finite sets, apart from the representation in terms of subquotiented pof sets from Theorem~\ref{thm:spof=orbit-finite}. As we will see in the next chapter, this representation can be used as a basis for a programming language that operates on sets. 
+% \begin{corollary}
+% 	A set is orbit-finite,  in the sense of Definition~\ref{def:supports-general}, if and only if it admits an equivariant bijection with a set that is defined by a set builder expression with no free variables.
+% \end{corollary}
+
+
+
+\paragraph*{Algorithms on representable sets.}
+\label{sec:algorithms-set-builder}
+We finish this chapter with some basic algorithms that operate on representable sets. As an input to an algorithm, such sets are given by a set builder expression, together with atoms that instantiate its free variables. As mentioned before, this representation implicitly depends on the representation of the atoms, at least as long as we want to talk about sets that not equivariant, and therefore need free variables in their set builder expressions. 
+We begin with the following theorem, which shows that one can decide membership, equality and inclusion, and also compute Boolean operations.
+
+
+\begin{theorem}\label{thm:decide-set-builder}
+	Consider an  oligomorphic structure $\atoms$, together with some atom representation. Given representations of  sets with atoms $X$ and $Y$, one can compute:
+	\begin{enumerate}
+		\item the answers to the following questions: $X = Y$, $X \in Y$ and $X \subseteq Y$;
+		\item representations of the sets $X \cup Y$, $X \cap Y$ and $X \setminus Y$.
+	\end{enumerate}
+\end{theorem}
+\begin{proof}
+	The main observation in the proof, which will be stated in the Symbol Pushing Lemma below, is that the problems in the statement of the theorem can be reduced to the first-order theory of the atoms, using straightforward syntactic transformations. These transformations are even polynomial, if we define the \emph{size} of a first-order formula to be the number of distinct subformulas (even if a subformula is used multiple times, it is counted only once in the size\footnote{This corresponds to viewing formulas as directed acyclic graphs (circuits), rather than trees. For first-order formulas, this distinction is not very important, because repeated uses of the same subformula can be eliminated by using quantifiers, see Exercise~\ref{ex:circuit-formula}. }). Similarly, we define the size of a set builder expression to be the number of distinct subexpressions and subformulas of formulas used in the guards. 
+
+
+\begin{lemma}[Symbol Pushing Lemma]\label{lem:symbol-pushing}  There is polynomial time algorithm which does the following.
+	\begin{itemize}
+		\item {\bf Input.} Set builder expressions $\alpha, \beta$, with free variables $\bar x$ and $\bar y$, respectively.
+		\item {\bf Output.} A first-order formula $\varphi(\bar x \bar y)$ over the vocabulary of the atoms such that:
+		\begin{align*}
+			\atoms \models \varphi(\bar a \bar b) \quad \text{iff} \quad \alpha (\bar a) \subseteq \beta (\bar b) \qquad \text{for every atom tuples $\bar a, \bar b$.}
+		\end{align*}
+	\end{itemize}
+		 
+		Likewise for $\in$ or $=$ instead of $\subseteq$.
+	\end{lemma}
+	\begin{proof} See Figure~\ref{fig:symbol-pushing}. Each of the formulas in Figure~\ref{fig:symbol-pushing} consists of a fixed part and inductively defined subformulas corresponding to subexpressions of $\alpha$ and $\beta$. It follows that the size of the first-order formula produced in Figure~\ref{fig:symbol-pushing} is approximately the number of subexpressions in $\alpha$ times the number of subexpressions in $\beta$. Observe that the proof of this lemma does not need any assumptions on the atom structure, such as oligomorphism or decidability of the first-order theory, since it simply rewrites one formula into another formula. \end{proof}
+
+
+\begin{figure}
+	\begin{eqnarray*}
+		\symbolpush { \alpha \in \beta} &\quad\eqdef\quad& \false 
+\quad \text{\small if $\beta$ represents an atom}		\\
+		\symbolpush { \alpha \in (\beta_1 \cup \cdots \cup \beta_n)} &\quad\eqdef\quad& \bigvee_{i} \symbolpush {\alpha \in \beta_i}\\
+		\symbolpush { \alpha \in \setexpr{\beta} {x_1,\ldots,x_n} \varphi} &\quad\eqdef\quad& \exists x_1 \ldots \exists x_n \ \varphi \land \symbolpush {\alpha = \beta} \\ \ \\
+		\symbolpush { \alpha \subseteq \beta} &\quad\eqdef\quad& \false 
+\quad \text{\small if $\alpha$ represents an atom}		\\
+		\symbolpush { (\alpha_1 \cup \cdots \cup \alpha_n) \subseteq \beta} &\quad\eqdef\quad& \bigwedge_{i} \symbolpush {\alpha_i \subseteq \beta}\\
+		\symbolpush { \setexpr{\alpha} {x_1,\ldots,x_n} \varphi \subseteq \beta} &\quad\eqdef\quad& \forall x_1 \ldots \forall x_n \ \varphi \Rightarrow \symbolpush {\alpha \in \beta} \\ \ \\
+		\symbolpush { \alpha = \beta} &\quad\eqdef\quad& \alpha = \beta 
+\quad \text{\small if $\alpha,\beta$ represent atoms}		\\
+\symbolpush {\alpha = \beta} &\quad\eqdef\quad& \symbolpush {\alpha \subseteq \beta} \land \symbolpush {\beta \subseteq \alpha}\quad \text{\small if $\alpha,\beta$ represent sets} \\
+\symbolpush {\alpha = \beta} &\quad\eqdef\quad& \false \quad \text{\small otherwise}	
+	\end{eqnarray*}
+	\caption{\label{fig:symbol-pushing}In the figure, $\alpha$ and $\beta$ are either set builder expressions (in which case they represent sets), or variables and atoms constants (in which case they represent atoms). For each relationship, e.g.~membership $\alpha \in \beta$, the figure shows a corresponding first-order formula, which is denoted using underlines, e.g.~$\symbolpush {\alpha \in \beta}$. }
+\end{figure}
+
+Using the Symbol Pushing Lemma, we can answer the questions in the first item of the theorem. For example, if we want to check if $X = Y$, then we compute the corresponding first-order formula from the Symbol Pushing Lemma, and then we use the assumption on decidability of the first-order theory to  check if this formula is true. The same applies to checking membership and inclusion.
+
+A similar approach applies to the Boolean operations from the second item of the theorem. For union $X \cup Y$,  there is nothing to do, since it is built into the syntax of set builder expressions.
+Consider the case of intersection $X \cap Y$. By distributing intersection across union, we can assume that  the outermost constructors in the expressions for $X$ and $Y$ are set comprehension:
+	\begin{align*}
+		\underbrace{\setexpr \alpha {x_1,\ldots,x_n} \varphi,}_X \quad \underbrace{\setexpr \beta {y_1,\ldots,y_m} \psi.}_Y
+	\end{align*}
+Apply the Symbol Pushing Lemma, yielding a polynomial size formula $\symbolpush {\alpha = \beta}$ which characterises those valuations of the free variables of the set builder expressions $\alpha$ and $\beta$ which make them equal. The expression for intersection is then
+\begin{align*}
+	\setexpr \alpha {x_1,\ldots,x_n} {\varphi \land \exists y_1\ldots \exists y_m \ \psi \land \symbolpush {\alpha = \beta} }.
+\end{align*}
+The same kind of argument applies to the set difference $X \setminus Y$. 
+This completes the proof of the theorem.
+\end{proof}
+
+
+
+
+% In the proof of the above theorem, we used the  Symbol Pushing Lemma to reduce the problems in the statement of the theorem to the first-order theory of the atoms. This reduction discussed  is also reversible, since first-order logic is built into the syntax of set builder expressions. For example, checking
+% \begin{align*}
+% 	\emptyset = \setexprtup {\bar x} {\bar x} n {\varphi(\bar x)}
+% \end{align*}
+% is the same as checking if the first-order guard $\varphi(\bar x)$ is true for at least one atom tuple. Every if restricted the guards to be quantifier-free, the problem would not become any simpler, since  the quantifiers in the  guards can be simulated using the nesting of set brackets, see Exercise~\ref{ex:pspace-hard-setexpr}. 
+
+
+In the above theorem, we covered operations such as union or intersection. What if we want  to compose binary relations, or project a set of pairs onto the first coordinate?  Instead of treating  such operations on a case by case basis, we give a generic result, which deals with every operation that can be defined in the language of set theory. This approach is similar to the Equivariance Principle from Theorem~\ref{thm:equivariance-principle}. There we showed that any relation definable in the language of set theory is equivariant, here we use a similar approach to show that such relations can be computed. The difference is that here, unlike in the Equivariance Principle, we start with some set $X$, and we are only allowed to talk about elements that are below this set, which limits the expressiveness, but makes it possible to compute things
+
+\newcommand{\downset}[1]{#1\!\!\downarrow\xspace}
+\begin{definition}[Downset]\label{def:set-structure}
+	Let $\in^*$ be the reflexive transitive closure of the membership relation, i.e.~$x \in^* X$ if and only if $x$ is equal to $X$, or an element of $X$, or an element of an element of $X$, and so on.  
+	Define the \emph{downset} of a set of $X$ to be the logical structure which has universe
+	\begin{align*}
+	\downset X \ 
+	\eqdef \setbuild{x}{$x \in^* X$}
+	\end{align*}
+	and which is equipped with one binary relation $\in$.
+\end{definition}
+
+Many  constructions can be described using first-order logic on the downset.
+ The following example discusses projection from pairs. Other examples, such as composition of binary relations, can be found in the exercises.
+
+ \begin{myexample}[Projection in the downset]\label{ex:set-structure-projection} The projection function 
+	\begin{align*}
+		X \times Y \to X
+	\end{align*}
+	can be defined by a first-order formula interpreted in the downset of $X \times Y$. Recall that pairs 
+	are defined using Kuratowski pairing
+	\begin{align*}
+		(x,y) = \set{ \set x, \set{x,y}}.
+	\end{align*}
+	Note that if $x \in X$ and $y \in Y$, then 
+	\begin{align*}
+		x \quad y \quad \set x \quad \set {x,y}
+	\end{align*}
+	are all in the  downset of $X \times Y$. 
+	The point of Kuratowski pairing is that pairing and projections can be done in the language of set theory. The following formula expresses that $p$ is the (set representing the) ordered pair $(x,y)$:
+	\begin{align}\label{eq:pairing-formula}
+		\forall z \ z \in p \ \Rightarrow \ (\overbrace{z = \set x}^{\substack{\text{$x$ is the unique}\\\text{element of $z$}}} \lor \overbrace{z = \set x \cup \set y}^{\substack{\text{$z$ is the smallest set that}\\\text{contains $\set x$ and $\set y$}}}).
+	\end{align}
+	The projection of $X \times Y$ to the first coordinate is the set of elements $x$ in the downset of $X \times Y$ that satisfy the following formula $\varphi(x)$:
+	\begin{align}\label{eq:projection-formula}
+		\exists y \quad \ \overbrace{y \in X \times Y}^{\substack{\text{$X \times Y$ is the only}\\ \text{element of the} \\ \text{downset that} \\ \text{does not belong to} \\ \text{any other element}}}\quad \land \overbrace{p = (x,y)}^{\text{expressed in~\eqref{eq:pairing-formula}}}.
+	\end{align}
+	\end{myexample}
+	
+
+The following lemma shows that   one can compute in polynomial time all operations which can be formalised using first-order logic over the downset, such as the projection operation given in the above example. 
+
+\begin{lemma}[Downset Lemma]\label{lem:downset-lemma} 
+	Consider an oligomorphic structure $\atoms$, together with some atom representation. There is an algorithm which does the following.
+	\decisionproblem{  A  representation of a  set with atoms $X$, together with a first-order  formula $\varphi(x_1,\ldots,x_k)$  using a binary relation $\in$.}{ A representation of the set 
+	\begin{align*}
+		\setbuild{(x_1,\ldots,x_k)}{$\downset X\ \models \varphi(x_1,\ldots,x_k)$}.
+	\end{align*}
+	}	
+	If the number of variables used by $\varphi$ and its subformulas of arguments is  fixed, the running time of the algorithm is polynomial.
+\end{lemma}
+\begin{proof}
+	The approach is very similar to the one used in the proof of Theorem~\ref{thm:decide-set-builder}, i.e.~we show that the problem can be reduced to the first-order theory of the atoms. The appropriate version of the Symbol Pushing Lemma is the following claim.
+		\begin{claim} \label{claim:third-symbol-pushing} Let $\varphi(x_1,\ldots,x_k)$ be a first-order formula which uses membership $\in$ only, and  let $\alpha_0,\ldots\alpha_k$ be set builder expressions. One can compute in polynomial time a first-order formula $\psi$, over the vocabulary of the atoms,  such that 
+		\begin{align*}
+			\atoms \models \psi(\bar a_0 \cdots \bar a_k) 
+			\quad \text{iff} \quad
+	\downset{\underbrace{\alpha_0(\bar a)}_X}\ \models \varphi(\underbrace{\alpha_1(\bar a_1)}_{x_1},\ldots,\underbrace{\alpha_k(\bar a_k)}_{x_k}).
+\end{align*}
+	\end{claim}
+	\begin{proof} Induction on the  structure of $\varphi$.
+	    In the induction basis  $\varphi$ is an atomic predicate, i.e.~a membership predicate of the form  $x_i \in x_j$ or $x_i = x_j$. For this case, we use the Symbol Pushing Lemma. 
+		
+		In the induction step, the case of Boolean combinations $\land, \lor$ and $\neg$ is immediate. 
+		The only interesting case is  quantification. By DeMorgan's laws, we only need to treat the existential quantifier.  Suppose that $\varphi$ is a formula with $n+1$ free variables for which we have already proved the claim, and we now want to prove the claim for the formula obtained from $\varphi$ by existentially quantifying the last variable. This means that, given set build expressions $\alpha_0,\ldots, \alpha_k$, we want to compute a formula $\psi$ such that
+		 		\begin{align*}
+			\atoms \models \psi(\bar a_0 \cdots \bar a_k) 
+			\quad \text{iff} \quad
+	\downset{\alpha_0(\bar a)} \models \exists x_{n+1}\ \varphi(\alpha(\bar a_1),\ldots,\alpha(\bar a_k),x_{n+1}).
+\end{align*}
+The only difficulty is that we do not know the set builder expression $\alpha_{n+1}$ used in the representation of $x_{n+1}$. The solution to this difficulty is that this expression must be a sub-expression of $\alpha$, since every element of the downset of $\alpha_0$ is obtained by taking some sub-expression of $\alpha_0$ and some values of its free variables. (Here a sub-expression is defined in the natural way, it is an expression from which $\alpha_0$ is constructed.) Therefore, we can use a finite disjunction over all possible sub-expressions of $\alpha_0$ and an existential quantification over the free variables of this sub-expression to quantify over the set $x_{n+1}$.
+	\end{proof}
+
+	Using the claim, we complete the proof of the lemma. Assuming that the set $X$ is represented by $\alpha_0(\bar a_0)$, the expression defining the output set in the statement of the lemma is 
+	\begin{align*}
+	\bigcup_{\alpha_1,\ldots,\alpha_k} 
+	\setbuildoneline{ (\alpha_1,\ldots,\alpha_k)}{for $\bar x_1 \cdots \bar x_k$ such that $\myunderbrace{\psi_{\bar \alpha}(\bar x_0 \cdots \bar x_k)}{formula from the above claim \\ applied to $\alpha_0,\ldots,\alpha_k$}$},
+	\end{align*}
+	where the union ranges over all choices of $n$ sub-expressions of $\alpha$. Once we have fixed the number $k$ of free variables, this construction is polynomial.
+\end{proof}
+
+
+
+
+\exercisepart
+
+
+\mikexercise{\label{ex:finitely-supported-orbits} Assume that the atoms are oligomorphism. Let $X$ be a set with atoms and let $\bar a$ be a tuple of atoms. For an element $x \in X$, define its $\bar a$-orbit  to be the set 
+\begin{align*}
+\setbuild{ \pi(x)}{$\pi$ is an atom automorphism that fixes $\bar a$}.
+\end{align*}
+In the case of the empty tuple of atoms, we get the usual notion of orbit. Show that if a set $X$ is orbit-finite, i.e.~it has finitely many orbits for the empty tuple $\bar a$, then it has finitely many  $\bar a$-orbits for every tuple of atoms $\bar a$. }{}
+
+
+
+\mikexercise{\label{ex:pspace-hard-setexpr}Show that if the atoms have at least two elements, then the following problem is \pspace~hard: given two set builder expressions where all guards are quantifier-free, decide if they represent the same set.
+}
+{
+	
+}
+
+\mikexercise{\label{ex:circuit-formula} Let $\atoms$ be a structure with at least two elements. Consider two measures of size for first-order formulas: 
+\begin{enumerate}
+	\item circuit size (number of distinct subformulas);
+	\item tree size (number of nodes in the syntax tree).
+\end{enumerate}
+Circuit size is the notion of size we use in this book. 
+ Show that for every formula of first-order logic $\varphi$ one can compute an equivalent formula whose tree size is polynomial in the circuit size of $\varphi$.} { }
+
+
+ \mikexercise{Use the Third Symbol Pushing Lemma to show that composition of binary relations (given by set builder expressions) can be computed in polynomial time. }
+ {\ }
+
+\mikexercise{Assume the atoms are Presburger arithmetic $(\Nat,+)$. For which $k \in \set{0,1,\ldots}$ is the following problem decidable:
+\decisionproblem{
+	A set builder expression representing $R \subseteq \atoms^{2k}$ and $x,y \in \atoms^k$.
+}
+{Is $(x,y)$ in the transitive closure of $R$, where $R$ is viewed as a binary relation on $k$-tuples?}
+} { }
+
+

@@ -1,0 +1,74 @@
+
+
+
+\mikexercise{\label{ex:alternating-atomless} Show that in the atom-less case, i.e.~when the states and input alphabet have dimension zero, alternating automata recognise exactly the regular languages.}{
+    We use a nondeterministic version of the powerset automaton. (Without atoms, powersets are allowed.) The states of the powerset automaton are subsets of the states space of the alternating automaton. A transition between two subsets  
+    \begin{align*}
+        R \stackrel a \to S
+    \end{align*}
+    is enabled if the following conditions hold (where successor is a state reachable via a transition over the input letter $a$):
+    \begin{enumerate}
+        \item for every existential state in $R$, some successor is in $S$;
+        \item for every universal state in $R$, all successors are in $S$.
+    \end{enumerate}
+
+ }
+
+\mikexercise{\label{pof-alternating-automata-emptiness}
+Show that emptiness is undecidable for alternating pof automata.
+}
+{
+    By closure under complementation, the emptiness problem is at least as hard as the universality problem for nondeterministic pof automata, which is undecidable, see Problem~\ref{pof-nondet-universality}.
+
+}
+
+\mikexercise{\label{pof-alternating-dim-one-undecidable}
+    Show that emptiness continues to be undecidable for alternating pof automata even if we require the state space to have  dimension one, i.e.~each state stores at most one atom.
+}{
+    
+}
+
+
+\mikexercise{\label{pof-alternating-dim-one-decidable}
+    Show that emptiness becomes decidable for alternating pof automata if we require the state space to have dimension one, and the automaton must be non-guessing. 
+}{
+    We use the same powerset construction as in the nondeterministic case, see Section~\ref{sec:decidable-universality}. 
+}
+
+
+
+\mikexercise{\label{pof-alternating-must-guess}
+    Show that the non-guessing alternating pof automata are strictly weaker than the general model. 
+}
+{
+    This solution is based on~\cite[Section 2.3]{wysocki}.
+    As a counterexample, consider the language following language over alphabet 
+    \begin{align*}
+    \myunderbrace{\atoms}{
+        1
+    }
+    \quad + \quad
+    \myunderbrace{\atoms}{
+        2
+    }
+    \end{align*}
+    The language consists of words even length $2n$, where the first $n$ letters are from the first component and use the same atom, and the last $n$ letters are from the second coponent and use fresh atoms. Here is an example: 
+    \begin{align*}
+\myunderbrace{    1(\text{John})\ 1(\text{John})\ 1(\text{John})}{first half uses the same atom}
+   \myunderbrace{
+    2(\text{Tom})\ 2(\text{Eve})\ 2(\text{Mark})
+   }{second half uses fresh atoms}.
+    \end{align*}
+This language cannot be recognised by a non-guessing automaton. The reason is that while the automaton is in the first half, it can only use states that use the same atom, and therefore there are finitely many possibilities. This means that a pumping argument can be used to show that the length of the first half can be changed without affecting acceptance. 
+
+Let us now show a guessing automaton that recognised the language. Suppose that the input has length $2n$. The automaton first checks that all letters from the first component are before all letters from the second component, that the letters in the first component are all the same, and that the letters in the second component are all distinct. This can be easily done. It also does the following (alternating automata are closed under intersection). When the automaton reads the $i$-th letter from the first half $i \in \set{1,\ldots,n}$, it guesses the corresponding atom $n+i$ that will be used in the second-half. For every two consecutive atoms that it guesses in this way, it launches a subcomputation that checks that they appear consecutively later in the word. 
+
+
+
+}
+
+
+% \mikexercise{\label{pof-alternating-epsilon} Does adding $\varepsilon$-transitions to the model of alternating pof automata  increase its expressive power?}
+% {
+%     I do not know the answer.
+% }

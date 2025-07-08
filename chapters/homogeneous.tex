@@ -82,7 +82,7 @@ In principle, oligomorphism and homogeneity are incomparable notions, as explain
 Consider an infinite structure which has one unary relation for every possible singleton. This structure has no automorphism, and therefore it has infinitely many orbits. However, it is homogeneous for the trivial reason that the only isomorphism between finite "substructures" are between identical subsets.
 \end{myexample}
 
-However, the differences exhibited in the above examples are rather superficial. Every oligomorphic structure can be trivially made into a  homogeneous one by adding (infinitely many) relations: we can simply add a $d$-ary relation for every orbit in $\atoms^d$. An infinite vocabulary may indeed be needed, as witnessed by the bit-vector structure that will be discussed in Section~\ref{sec:bit-vectors}.
+However, the differences exhibited in the above examples are rather superficial. Every oligomorphic structure can be trivially made into a  homogeneous one by adding (infinitely many) relations: we can simply add a $d$-ary relation for every orbit in $\atoms^d$. An infinite vocabulary may indeed be needed, see Example~\ref{ex:bit-vector-addition-relation}.
 For the converse implication, the  following theorem shows that most reasonable homogeneous structures are in fact oligomorphic.
 
 \begin{theorem}\label{thm:hom-oligo}
@@ -211,9 +211,9 @@ Before proving Theorem~\ref{thm:fraisse}, we give some examples and non-examples
 \begin{myexample}
 	\label{example:planar-no-amalgamation}
 	 Consider the class of finite planar graphs. To simplify this example, we assume that a graph is represented (unlike in Example~\ref{example:directed-graphs-amalgamation}) as a structure where the universe is the  vertices and edges of the graph, and there is a binary relation for incidence between edges and vertices. (This representation of graphs means that an embedding can add edges without adding vertices, i.e.~embedding corresponds to subgraphs, and not induced subgraphs.) Under this representation, the class of planer graphs is  not closed under amalgamation. Here is an instance without a solution:
-	\mypic{78}
+	\mypicb{10}
 	Any hypothetical solution to the above instance would have the 5-clique as a minor, and would therefore not be planar. 
-	A similar but more elaborate example would show failure of amalgamation for planar graphs under the modelling of graphs used by Example~\ref{example:directed-graphs-amalgamation}, where the universe of the structure is the vertices and there is a binary relation for the edges. 
+	A similar but more elaborate example would show failure of amalgamation for planar graphs under the represenation of graphs used by Example~\ref{example:directed-graphs-amalgamation}, where the universe of the structure is the vertices and there is a binary relation for the edges. 
  \end{myexample}
 		\begin{myexample}\label{example:successor-no-amalgamation} Consider directed graphs
 			where the edge relation is a partial successor, i.e.~vertices have out-degree and in-degree at most one, and no loops. The class is not closed under amalgamation, here is an instance without a solution:
@@ -339,7 +339,7 @@ To finish the proof of \fraisse Theorem, we need to show item~\ref{it:age-surjec
 
 		 
 		 To complete the proof, we justify that the age of $\structh$ is exactly $\structclass$. 
-		 Every finite structure that embeds into the limit $\structh$ must embed into some $\structh_n$, and is therefore in $\structclass$, because $\structh_n \in \structclass$ and the class is closed under substructures. Therefore, the age of $\structh$ is contained in $\structclass$. Let us prove the converse inclusion. Suppose that $\structa \in \structclass$. At some point $n$ in the enumeration, we have seen both $\structa$ and the empty structure. Therefore, $\structh_{n+1}$ will contain a solution to an instance of amalgamation where the empty structure is embedded into both $\structa$ and $\structh_{n+1}$. This means that $\structh_{n+1}$ contains an isomorphic copy of $\structa$.
+		 Every finite structure that embeds into the limit $\structh$ must embed into some $\structh_n$, and is therefore in $\structclass$, because $\structh_n \in \structclass$ and the class is closed under substructures. Therefore, the age of $\structh$ is contained in $\structclass$. Let us prove the converse inclusion. Suppose that $\structa \in \structclass$. At some point $n$ in the enumeration, we have seen both $\structa$ and the empty structure. Therefore, $\structh_{n+1}$ will contain a solution to an instance of amalgamation where the empty structure is embedded into both $\structa$ and $\structh_{n}$. This means that $\structh_{n+1}$ contains an isomorphic copy of $\structa$.
 	\end{proof}
 
 This completes the proof of \fraisse Theorem. 
@@ -563,7 +563,7 @@ Another example of a basis is
 We are now ready to state the Least Support Theorem for bit vector atoms. 
 
 
-\begin{theorem}[Least Support Theorem]\label{thm:least-support-bit} Assume the bit vector atoms. Let $X$ be a set equipped with an action of atom automorphisms. If $x \in X$ has finite support, then there exists a tuple $\bar a$ of atoms which supports $x$, and which is least in the sense that if $\bar b$ supports $x$, then $\bar a$ supports $\bar b$. 
+\begin{theorem}[Least Support Theorem]\label{thm:least-support-bit} Assume the bit vector atoms. Let $X$ be a set equipped with an action of atom automorphisms. If $x \in X$ has finite support, then there exists a tuple $\bar a$ of atoms which supports $x$, and which is least in the following sense: if $\bar b$ supports $x$, then $\bar a$ supports $\bar b$. 
 \end{theorem}
 
 \begin{proof}
@@ -598,7 +598,7 @@ is linearly independent. Since the vector space $\atoms$ has infinite dimension,
 \quad \stackrel \pi \mapsto \quad 
 (a'_1,\ldots,a'_i)
 \end{align*}
-holds for some atom automorphism $\pi$ that fixes $\bar b$. Because $\bar b$ supports $f(\bar b)$, which is the same as $f(\bar b)$, we have 
+holds for some atom automorphism $\pi$ that fixes $\bar b$. Because $\bar b$ supports $f(\bar a)$, which is the same as $f(\bar b)$, we have 
 \begin{align*}
 	f(\bar a) = f(\pi(\bar a)).
 	\end{align*}
@@ -606,7 +606,7 @@ Since we have assumed that the  last $d-i$ coordinates of $\bar a$ are  supporte
 By equivariance of $f$, this means that the first $i$ coordinates in a tuple from $\indvec {d}$ can be replaced by fresh independent atoms without affecting the value of $f$. It follows that $f$ does not depend on the first $i$ coordinates, and hence we can lower the dimension $d$.
 \end{proof}
 
-Take the function $f$ from the above lemma. This function is surjective, since an input orbit is mapped to an output orbit, and $X$ is assumed to be a one-orbit set. We will show that if $\bar a$ is the least support, in the sense of the theorem, for $f(\bar a)$. Indeed, suppose that $f(\bar a)$ would be supported by some tuple $\bar b$ which does not span $\bar a$. Then there would be an atom automorphism $\pi$ that would fix $\bar b$ -- and therefore also the output of the function -- but would map $\bar a$ to some tuple not spanned by $\bar a$. In this case, the inputs $\bar a$ and $\pi(\bar a)$ would be a violation of the above lemma.
+Take the function $f$ from the above lemma. This function is surjective, since an input orbit is mapped to an output orbit, and $X$ is assumed to be a one-orbit set. We will show that  $\bar a$ is the least support, in the sense of the theorem, for $f(\bar a)$. Indeed, suppose that $f(\bar a)$ would be supported by some tuple $\bar b$ which does not span $\bar a$. Then there would be an atom automorphism $\pi$ that would fix $\bar b$ -- and therefore also the output of the function -- but would map $\bar a$ to some tuple not spanned by $\bar a$. In this case, the inputs $\bar a$ and $\pi(\bar a)$ would be a violation of the above lemma.
 	\end{proof}
 
 	

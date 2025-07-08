@@ -65,7 +65,7 @@ The Turing machine executes the following program:
 		\item if $A,B$ are two distinct intersecting sets that appear in the second copy, then remove them and add the three  sets $A \setminus B, B \setminus A, A \cap B$. 
 	\end{enumerate}
 	This stage ends when all sets in the second copy are pairwise disjoint.
-	\item At this point, the second contains equivalence classes of the relation ``appears in the same sets from $A_1,\ldots,A_n$''. Check if some equivalence class (i.e.~some set from the second copy) is contained in an even number of sets from the first copy.
+	\item At this point, the second copy contains equivalence classes of the relation ``appears in the same sets from $A_1,\ldots,A_n$''. Check if some equivalence class (i.e.~some set from the second copy) is contained in an even number of sets from the first copy.
 \end{enumerate}
 	
 All the above steps can be performed by a deterministic orbit-finite Turing machine. To process sets, the machine can use state space which stores a set of at most 10 atoms.
@@ -88,11 +88,11 @@ The additional assumption is that the vocabulary is finite, and every first-orde
 Most atom structures that we have used so far -- such as the equality atoms, the ordered atoms, or the graph atoms -- have an even stronger property, namely every formula is equivalent to a quantifier-free formula. This is because they are homogeneous structures over a finite vocabulary, and for homogeneous structures, every first-order formula is equivalent to a quantifier-free formula, see Theorem~\ref{thm:fs-qf}. The only exception is the bit-vector atoms, which are homogeneous, but over an infinite vocabulary. However, also these atoms can be made compliant, if we change the vocabulary, as explained in the following example. 
 
 \begin{myexample}\label{ex:bit-vector-addition-relation}
-	Consider the bit-vector atoms. As we have defined them in Section~\ref{sec:bit-vectors}, this is a homogeneous structure over an infinite vocabulary, which has a dependence relation for every dimension $d$. We can, however, use a different vocabulary, namely one ternary relation  
+	Consider the bit-vector atoms. As we have defined them in Section~\ref{sec:bit-vectors}, this is a homogeneous structure over an infinite vocabulary, which has an  independence relation for every dimension $d$. We can, however, describe the same structure use a different vocabulary, namely one ternary relation  
 	\begin{align*}
 	x + y  = z
 	\end{align*}
-	for addition of vectors. This relation is equivariant, since automorphisms of the atoms are linear maps, and therefore it can be defined using a quantifier-free formula by Theorem~\ref{thm:fs-qf}, see Exercise~\ref{ex:bit-vector-addition} for an explicit formula. Conversely, each of the dependence relations can be expressed using  only the addition relation. Therefore, we can think of the bit-vector atoms as having only on relation, namely addition. (For this new vocabulary, the structure is no longer homogeneous, see Exercise~\ref{exercise:bit-vector-not-homogeneous-with-addition}.) In the new vocabulary, every first-order formula is equivalent to an existential one, since: (a) every first-order formula is equivalent to a  quantifier-free formula using dependence only, and (b) both dependence and independence can be defined using existential formulas that use addition only. 
+	for addition of vectors. This relation is equivariant (with respect to the original vocabulary, using independence relations), since automorphisms of the atoms are linear maps. Therefore, the addition relation  can be defined using a quantifier-free formula by Theorem~\ref{thm:fs-qf}, see Exercise~\ref{ex:bit-vector-addition} for an explicit formula. (To apply the theorem, we need to check the there are finitely many substructures of given size, up to isomorphism. This is indeed true, since the independence relations will be empty for all arities exceeding the size of the finite substructure.) Conversely, each of the independence relations can be expressed using  only the addition relation. Therefore, we can think of the bit-vector atoms as having only one relation, namely addition. (For this new vocabulary, the structure is no longer homogeneous, see Exercise~\ref{exercise:bit-vector-not-homogeneous-with-addition}.) In the new vocabulary, every first-order formula is equivalent to an existential one (not necessarily quantifier-free), since: (a) every first-order formula is equivalent to a  quantifier-free formula using independence only, and (b) independence can be defined using existential formulas that use addition only. 
 \end{myexample}
 
 
@@ -166,7 +166,7 @@ The reduction is based on the following observation.
 		\begin{align*}
 			K = \setbuild{ v \in (\atoms^d)^* }{$f^*(v) \in L$}.
 			\end{align*}
-		We can think of the new language as being a language over alphabet $\atoms$, which contains only words with length divisible by $k$.  Therefore, we can apply the implication \ref{item:turing-of-some-rep} $\Rightarrow$ \ref{item:turing-of-nondeterministic-pof} to the pulled back language $K$, thanks to the assumption of the lemma. To complete the proof of the lemma, we will prove the implication~\ref{item:turing-of-some-rep} $\Rightarrow$ \ref{item:turing-of-nondeterministic-pof} for  $L$, by first transferring the assumption from $L$ to the pulled back language, then using the implication for the pulled back language, and then transferring the conclusion back to the original language, as explained in the following diagram:
+		We can think of the new language as being a language over alphabet $\atoms$, which contains only words with length divisible by $d$.  Therefore, we can apply the implication \ref{item:turing-of-some-rep} $\Rightarrow$ \ref{item:turing-of-nondeterministic-pof} to the pulled back language $K$, thanks to the assumption of the lemma. To complete the proof of the lemma, we will prove the implication~\ref{item:turing-of-some-rep} $\Rightarrow$ \ref{item:turing-of-nondeterministic-pof} for  $L$, by first transferring the assumption from $L$ to the pulled back language, then using the implication for the pulled back language, and then transferring the conclusion back to the original language, as explained in the following diagram:
 		\[
 		\begin{tikzcd}
 		\text{\ref{item:turing-of-some-rep}  holds for $L$} 
@@ -516,7 +516,7 @@ Fix some deterministic orbit-finite Turing machine.  We will show that if the ma
 	are in the same orbit. Then $\rho$ is a computation if and only if $\sigma$ is a computation, and $\rho$ is rejecting if and only if $\sigma$ is rejecting. 
 \end{lemma}
 \begin{proof}
-	 The semantics of a Turing machine involves comparing at most three tiles at the same time, as in the following picture:
+	 The semantics of a Turing machine involves comparing at most three tiles at the same time, as in the following picture, where time flows downwards:
 	 \mypic{84}
 	 The assumption of the lemma could even be weakened to triples of tiles that are adjacent in the grid as in the above picture, but we will not need this stronger variant of the lemma.
 \end{proof}
@@ -535,7 +535,7 @@ f : \atoms^d \to \Gamma + \Gamma \times Q.
 	\begin{align*}
 		\bar \rho : \set{1,\ldots,t} \times \set{1,\ldots,s} \to \atoms^d
 	\end{align*}
-	which is yields $\rho$ after extending with $f$. The support list  can be viewed as a list of atoms of length $std$. This length of this list is polynomial in the input length, since the time and space of the Turing machine is polynomial, and the dimension $d$ is fixed. We claim that if the input length $n$ is large enough, then there is some atom $a \in \atoms$ which 		\begin{enumerate}
+	which yields $\rho$ after extending with $f$. The support list  can be viewed as a list of atoms of length $s\cdot t \cdot d$. This length of this list is polynomial in the input length, since the time and space of the Turing machine is polynomial, and the dimension $d$ is fixed. We claim that if the input length $n$ is large enough, then there is some atom $a \in \atoms$ which 		\begin{enumerate}
 		\item is spanned by the $n$ independent atoms in the input string  $w$;
 		\item is not spanned by any subset of $3d$ atoms in the support list  $\bar \rho$.
 	\end{enumerate}

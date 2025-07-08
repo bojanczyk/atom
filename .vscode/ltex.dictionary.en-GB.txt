@@ -122,3 +122,4 @@ spof
 disequality
 injectively
 spof
+arities

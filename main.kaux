@@ -1,0 +1,1097 @@
+
+\KAuxCommand \KAuxEOF {m}{Does nothing, useless empty argument, and is searched for knowing if the kaux file was written till the end.}
+\KAuxCommand \KAuxUndeclaredScopeTag {m}{Package scope: States that a labelname is used in a knowledge definition.}
+\KAuxCommand \KAuxDeclaredScopeTag {m}{Package scope: States that a labelname has been declared.}
+\KAuxCommand \KAuxNewLinkScopetagInstance {mm}{Package scope: Declares that a label is declared in an instance of a scope.}
+\KAuxCommand \KAuxScopeNewInstance {mmm}{Package scope: Declares a new instance of a scope.}
+\KAuxCommand \KAuxScopeTag {mm}{Package scope: Links a scopetag to an instance of a scope.}
+\KAuxCommand \KAuxKnowledge {mmmm}{Package knowledge: Declares a knowledge. Takes the {namespace}{instance}{knowledge}{directives}.}
+\KAuxCommand \KAuxErrorKnowledgeRecursive {mmmm}{Package 'knowledge: A knowledge has recursive definition. {namespace}{scope}{undefined knowledge}{base knowledge}}
+\KAuxCommand \KAuxErrorKnowledgeUnknown {mmmmm}{Package 'knowledge: A knowledge is not defined. {namespace}{scope/empty}{undefined knowledge}{base knowledge}{command}}
+\KAuxCommand \KAuxErrorLabelUnknown {m}{Package 'knowledge: A label is not defined. {label}}
+\KAuxCommand \KAuxAutoref {mmm}{Package knowledge: Declares an autoref knowledge. Arguments {namespace}{instance}{knowledge}.}
+\KAuxCommand \KAuxAutorefTarget {mmm}{Package knowledge: Declares the use of a target to an autoref knowledge. Arguments {namespace}{instance}{knowledge}.}
+\KAuxCommand \KAuxUseKnowledge {mmm}{Package knowledge: Identifies the use of some knowledge. Arguments {namespace}{instance}{knowledge}.}
+
+
+\KAuxFileAt {default.kl}{1}
+
+\KAuxFileAt {default.kl}{2}
+\KAuxAutoref {default}{base}{homogeneous}
+
+\KAuxFileAt {default.kl}{3}
+
+\KAuxFileAt {default.kl}{4}
+
+\KAuxFileAt {default.kl}{6}
+
+\KAuxFileAt {default.kl}{7}
+\KAuxAutoref {default}{base}{substructure}
+
+\KAuxFileAt {default.kl}{8}
+
+\KAuxFileAt {default.kl}{11}
+
+\KAuxFileAt {default.kl}{12}
+\KAuxAutoref {default}{base}{polynomial orbit-finite set}
+
+\KAuxFileAt {default.kl}{13}
+
+\KAuxFileAt {default.kl}{14}
+
+\KAuxFileAt {default.kl}{15}
+
+\KAuxFileAt {default.kl}{16}
+
+\KAuxFileAt {default.kl}{18}
+
+\KAuxFileAt {default.kl}{19}
+\KAuxAutoref {default}{base}{component}
+
+\KAuxFileAt {default.kl}{20}
+
+\KAuxFileAt {default.kl}{22}
+
+\KAuxFileAt {default.kl}{23}
+\KAuxAutoref {default}{base}{dimension}
+
+\KAuxFileAt {default.kl}{24}
+
+\KAuxFileAt {default.kl}{27}
+
+\KAuxFileAt {default.kl}{28}
+\KAuxAutoref {default}{base}{atom permutations}
+
+\KAuxFileAt {default.kl}{29}
+
+\KAuxFileAt {default.kl}{32}
+
+\KAuxFileAt {default.kl}{33}
+\KAuxUndeclaredScopeTag {equality}
+\KAuxAutoref {default}{explicit-scope:equality}{equivariant}
+
+\KAuxFileAt {default.kl}{34}
+
+\KAuxFileAt {default.kl}{35}
+
+\KAuxFileAt {default.kl}{38}
+
+\KAuxFileAt {default.kl}{39}
+\KAuxAutoref {default}{base}{equivariant}
+
+\KAuxFileAt {default.kl}{40}
+
+\KAuxFileAt {default.kl}{41}
+
+\KAuxFileAt {default.kl}{43}
+
+\KAuxFileAt {default.kl}{44}
+\KAuxAutoref {default}{base}{orbit}
+
+\KAuxFileAt {default.kl}{45}
+
+\KAuxFileAt {default.kl}{47}
+
+\KAuxFileAt {default.kl}{48}
+\KAuxAutoref {default}{base}{orbit-finite}
+
+\KAuxFileAt {default.kl}{49}
+
+\KAuxFileAt {default.kl}{50}
+
+\KAuxFileAt {default.kl}{52}
+
+\KAuxFileAt {default.kl}{53}
+\KAuxAutoref {default}{base}{atomless}
+
+\KAuxFileAt {default.kl}{55}
+
+\KAuxFileAt {default.kl}{56}
+\KAuxAutoref {default}{base}{pof automaton}
+
+\KAuxFileAt {default.kl}{57}
+
+\KAuxFileAt {default.kl}{59}
+
+\KAuxFileAt {default.kl}{60}
+\KAuxAutoref {default}{base}{pof graph}
+
+\KAuxFileAt {default.kl}{61}
+
+\KAuxFileAt {default.kl}{63}
+
+\KAuxFileAt {default.kl}{64}
+\KAuxAutoref {default}{base}{pof context-free grammar}
+
+\KAuxFileAt {default.kl}{65}
+
+\KAuxFileAt {default.kl}{67}
+
+\KAuxFileAt {default.kl}{68}
+\KAuxAutoref {default}{base}{spof set}
+
+\KAuxFileAt {default.kl}{69}
+
+\KAuxFileAt {default.kl}{71}
+
+\KAuxFileAt {default.kl}{72}
+\KAuxAutoref {default}{base}{oligomorphic}
+
+\KAuxFileAt {default.kl}{73}
+
+\KAuxFileAt {default.kl}{75}
+
+\KAuxFileAt {default.kl}{76}
+\KAuxAutoref {default}{base}{automorphism}
+
+\KAuxFileAt {default.kl}{77}
+
+\KAuxFileAt {main.tex}{109}
+\KAuxScopeNewInstance {base}{base}{}
+\KAuxScopeNewInstance {document}{document}{base}
+
+\KAuxFileAt {main.tex}{131}
+\KAuxScopeNewInstance {scope}{scope-1}{document}
+\KAuxDeclaredScopeTag {sec:pof-sets}
+\KAuxNewLinkScopetagInstance {sec:pof-sets}{scope-1}
+\KAuxDeclaredScopeTag {ex:pof-dfa}
+\KAuxNewLinkScopetagInstance {ex:pof-dfa}{scope-1}
+\KAuxDeclaredScopeTag {ex:pof-nfa}
+\KAuxNewLinkScopetagInstance {ex:pof-nfa}{scope-1}
+\KAuxDeclaredScopeTag {def:pof-set}
+\KAuxNewLinkScopetagInstance {def:pof-set}{scope-1}
+
+\KAuxFileAt {pof.tex}{76}
+\KAuxAutorefTarget {default}{base}{polynomial orbit-finite set}
+
+\KAuxFileAt {pof.tex}{83}
+\KAuxAutorefTarget {default}{base}{component}
+\KAuxAutorefTarget {default}{base}{dimension}
+
+\KAuxFileAt {pof.tex}{109}
+\KAuxAutorefTarget {default}{base}{atom permutations}
+\KAuxDeclaredScopeTag {def:equivariant-pof}
+\KAuxNewLinkScopetagInstance {def:equivariant-pof}{scope-1}
+
+\KAuxFileAt {pof.tex}{112}
+\KAuxAutorefTarget {default}{explicit-scope:equality}{equivariant}
+\KAuxDeclaredScopeTag {ex:pof-orbits-3}
+\KAuxNewLinkScopetagInstance {ex:pof-orbits-3}{scope-1}
+\KAuxDeclaredScopeTag {def:orbit-in-pof}
+\KAuxNewLinkScopetagInstance {def:orbit-in-pof}{scope-1}
+
+\KAuxFileAt {pof.tex}{140}
+\KAuxAutorefTarget {default}{base}{orbit}
+\KAuxDeclaredScopeTag {ex:how-many-orbits-in-power-of-atoms}
+\KAuxNewLinkScopetagInstance {ex:how-many-orbits-in-power-of-atoms}{scope-1}
+\KAuxDeclaredScopeTag {lem:pof-finitely-many-equivariant}
+\KAuxNewLinkScopetagInstance {lem:pof-finitely-many-equivariant}{scope-1}
+\KAuxDeclaredScopeTag {ex:functions-with-boolean-outputs}
+\KAuxNewLinkScopetagInstance {ex:functions-with-boolean-outputs}{scope-1}
+
+\KAuxFileAt {pof.tex}{182}
+\KAuxAutorefTarget {default}{base}{atomless}
+\KAuxDeclaredScopeTag {ex:equivariant-functions-of-type-atoms2-to-atoms}
+\KAuxNewLinkScopetagInstance {ex:equivariant-functions-of-type-atoms2-to-atoms}{scope-1}
+\KAuxDeclaredScopeTag {pof-one-way-permutation}
+\KAuxNewLinkScopetagInstance {pof-one-way-permutation}{scope-1}
+\KAuxDeclaredScopeTag {pof-cant-create-atom}
+\KAuxNewLinkScopetagInstance {pof-cant-create-atom}{scope-1}
+\KAuxDeclaredScopeTag {pof-number-of-subsets}
+\KAuxNewLinkScopetagInstance {pof-number-of-subsets}{scope-1}
+\KAuxDeclaredScopeTag {pof-transitive-relation-closure}
+\KAuxNewLinkScopetagInstance {pof-transitive-relation-closure}{scope-1}
+\KAuxDeclaredScopeTag {sec:pof-representation}
+\KAuxNewLinkScopetagInstance {sec:pof-representation}{scope-1}
+\KAuxDeclaredScopeTag {sec:generating-sets}
+\KAuxNewLinkScopetagInstance {sec:generating-sets}{scope-1}
+\KAuxDeclaredScopeTag {def:generated-subset}
+\KAuxNewLinkScopetagInstance {def:generated-subset}{scope-1}
+\KAuxDeclaredScopeTag {ex:generating-subsets}
+\KAuxNewLinkScopetagInstance {ex:generating-subsets}{scope-1}
+\KAuxDeclaredScopeTag {lem:generating-representation}
+\KAuxNewLinkScopetagInstance {lem:generating-representation}{scope-1}
+\KAuxDeclaredScopeTag {ex:pof-product-generating-set}
+\KAuxNewLinkScopetagInstance {ex:pof-product-generating-set}{scope-1}
+\KAuxDeclaredScopeTag {lem:formula-representation}
+\KAuxNewLinkScopetagInstance {lem:formula-representation}{scope-1}
+\KAuxDeclaredScopeTag {ex:equal-subsets}
+\KAuxNewLinkScopetagInstance {ex:equal-subsets}{scope-1}
+\KAuxDeclaredScopeTag {sec:pof-graphs}
+\KAuxNewLinkScopetagInstance {sec:pof-graphs}{scope-1}
+
+\KAuxFileAt {pof.tex}{339}
+\KAuxAutorefTarget {default}{base}{pof graph}
+\KAuxDeclaredScopeTag {thm:reachability-decidable-pof}
+\KAuxNewLinkScopetagInstance {thm:reachability-decidable-pof}{scope-1}
+\KAuxDeclaredScopeTag {pof-undirected-reachability}
+\KAuxNewLinkScopetagInstance {pof-undirected-reachability}{scope-1}
+\KAuxDeclaredScopeTag {pof-spanning-tree}
+\KAuxNewLinkScopetagInstance {pof-spanning-tree}{scope-1}
+\KAuxDeclaredScopeTag {pof-graph-isomorphism}
+\KAuxNewLinkScopetagInstance {pof-graph-isomorphism}{scope-1}
+\KAuxDeclaredScopeTag {pof-graph-diameter}
+\KAuxNewLinkScopetagInstance {pof-graph-diameter}{scope-1}
+\KAuxDeclaredScopeTag {pof-infinite-path-in-graph}
+\KAuxNewLinkScopetagInstance {pof-infinite-path-in-graph}{scope-1}
+\KAuxDeclaredScopeTag {pof-graph-acyclic-upper-bound}
+\KAuxNewLinkScopetagInstance {pof-graph-acyclic-upper-bound}{scope-1}
+\KAuxDeclaredScopeTag {pof-finite-outdegree}
+\KAuxNewLinkScopetagInstance {pof-finite-outdegree}{scope-1}
+\KAuxDeclaredScopeTag {ex:no-infinite-finitely-supported-path}
+\KAuxNewLinkScopetagInstance {ex:no-infinite-finitely-supported-path}{scope-1}
+\KAuxDeclaredScopeTag {sec:pof-algorithms}
+\KAuxNewLinkScopetagInstance {sec:pof-algorithms}{scope-1}
+\KAuxDeclaredScopeTag {sec:pof-automata}
+\KAuxNewLinkScopetagInstance {sec:pof-automata}{scope-1}
+
+\KAuxFileAt {pof-automata.tex}{11}
+\KAuxAutorefTarget {default}{base}{pof automaton}
+\KAuxDeclaredScopeTag {thm:pof-emptiness-decidable}
+\KAuxNewLinkScopetagInstance {thm:pof-emptiness-decidable}{scope-1}
+\KAuxDeclaredScopeTag {cor:decidable-equivalence-for-pof-det}
+\KAuxNewLinkScopetagInstance {cor:decidable-equivalence-for-pof-det}{scope-1}
+\KAuxDeclaredScopeTag {thm:complementation-fails-pof}
+\KAuxNewLinkScopetagInstance {thm:complementation-fails-pof}{scope-1}
+\KAuxDeclaredScopeTag {pof-example-dfa-first-last}
+\KAuxNewLinkScopetagInstance {pof-example-dfa-first-last}{scope-1}
+\KAuxDeclaredScopeTag {pof-example-dfa-two-consecutive}
+\KAuxNewLinkScopetagInstance {pof-example-dfa-two-consecutive}{scope-1}
+\KAuxDeclaredScopeTag {ex:at-least-three-different}
+\KAuxNewLinkScopetagInstance {ex:at-least-three-different}{scope-1}
+\KAuxDeclaredScopeTag {pof-only-letters-used}
+\KAuxNewLinkScopetagInstance {pof-only-letters-used}{scope-1}
+\KAuxDeclaredScopeTag {pof-dfa-finite-alphabet}
+\KAuxNewLinkScopetagInstance {pof-dfa-finite-alphabet}{scope-1}
+\KAuxDeclaredScopeTag {pof-reach-path-few-atoms}
+\KAuxNewLinkScopetagInstance {pof-reach-path-few-atoms}{scope-1}
+\KAuxDeclaredScopeTag {pof-derivative}
+\KAuxNewLinkScopetagInstance {pof-derivative}{scope-1}
+\KAuxDeclaredScopeTag {pof-myhill}
+\KAuxNewLinkScopetagInstance {pof-myhill}{scope-1}
+\KAuxDeclaredScopeTag {pof-minimal}
+\KAuxNewLinkScopetagInstance {pof-minimal}{scope-1}
+\KAuxDeclaredScopeTag {pof-epsilon-nondet}
+\KAuxNewLinkScopetagInstance {pof-epsilon-nondet}{scope-1}
+\KAuxDeclaredScopeTag {pof-ult-periodic}
+\KAuxNewLinkScopetagInstance {pof-ult-periodic}{scope-1}
+\KAuxDeclaredScopeTag {pof-shortest-word}
+\KAuxNewLinkScopetagInstance {pof-shortest-word}{scope-1}
+\KAuxDeclaredScopeTag {pof-behavioural-distinguish}
+\KAuxNewLinkScopetagInstance {pof-behavioural-distinguish}{scope-1}
+\KAuxDeclaredScopeTag {pof-det-commutative}
+\KAuxNewLinkScopetagInstance {pof-det-commutative}{scope-1}
+\KAuxDeclaredScopeTag {pof-det-more-than-permutations}
+\KAuxNewLinkScopetagInstance {pof-det-more-than-permutations}{scope-1}
+\KAuxDeclaredScopeTag {pof-det-pumping}
+\KAuxNewLinkScopetagInstance {pof-det-pumping}{scope-1}
+\KAuxDeclaredScopeTag {pof-nondet-pumping}
+\KAuxNewLinkScopetagInstance {pof-nondet-pumping}{scope-1}
+\KAuxDeclaredScopeTag {pof-example-all-letters-different}
+\KAuxNewLinkScopetagInstance {pof-example-all-letters-different}{scope-1}
+\KAuxDeclaredScopeTag {pof-det-closure}
+\KAuxNewLinkScopetagInstance {pof-det-closure}{scope-1}
+\KAuxDeclaredScopeTag {pof-nondet-closure}
+\KAuxNewLinkScopetagInstance {pof-nondet-closure}{scope-1}
+\KAuxDeclaredScopeTag {pof-complement-ww}
+\KAuxNewLinkScopetagInstance {pof-complement-ww}{scope-1}
+\KAuxDeclaredScopeTag {pof-regexp}
+\KAuxNewLinkScopetagInstance {pof-regexp}{scope-1}
+\KAuxDeclaredScopeTag {pof-regexp-intersection}
+\KAuxNewLinkScopetagInstance {pof-regexp-intersection}{scope-1}
+\KAuxDeclaredScopeTag {sec:undecidable-universality}
+\KAuxNewLinkScopetagInstance {sec:undecidable-universality}{scope-1}
+\KAuxDeclaredScopeTag {thm:universality-undecidable-pof}
+\KAuxNewLinkScopetagInstance {thm:universality-undecidable-pof}{scope-1}
+\KAuxDeclaredScopeTag {list:undecidable-universality-states}
+\KAuxNewLinkScopetagInstance {list:undecidable-universality-states}{scope-1}
+\KAuxDeclaredScopeTag {list:undecidable-universality-counters}
+\KAuxNewLinkScopetagInstance {list:undecidable-universality-counters}{scope-1}
+\KAuxDeclaredScopeTag {lem:automaton-for-wrong-runs}
+\KAuxNewLinkScopetagInstance {lem:automaton-for-wrong-runs}{scope-1}
+\KAuxDeclaredScopeTag {list:undecidability-error-a}
+\KAuxNewLinkScopetagInstance {list:undecidability-error-a}{scope-1}
+\KAuxDeclaredScopeTag {list:undecidability-error-b}
+\KAuxNewLinkScopetagInstance {list:undecidability-error-b}{scope-1}
+\KAuxDeclaredScopeTag {list:undecidability-error-c}
+\KAuxNewLinkScopetagInstance {list:undecidability-error-c}{scope-1}
+\KAuxDeclaredScopeTag {ex:fo-data-word}
+\KAuxNewLinkScopetagInstance {ex:fo-data-word}{scope-1}
+\KAuxDeclaredScopeTag {sec:decidable-universality}
+\KAuxNewLinkScopetagInstance {sec:decidable-universality}{scope-1}
+\KAuxDeclaredScopeTag {thm:universality-decidable-pof}
+\KAuxNewLinkScopetagInstance {thm:universality-decidable-pof}{scope-1}
+\KAuxDeclaredScopeTag {lem:universality-invariant}
+\KAuxNewLinkScopetagInstance {lem:universality-invariant}{scope-1}
+\KAuxDeclaredScopeTag {list:universality-contains-initial}
+\KAuxNewLinkScopetagInstance {list:universality-contains-initial}{scope-1}
+\KAuxDeclaredScopeTag {list:universality-transitions}
+\KAuxNewLinkScopetagInstance {list:universality-transitions}{scope-1}
+\KAuxDeclaredScopeTag {list:universality-intersects-accepting}
+\KAuxNewLinkScopetagInstance {list:universality-intersects-accepting}{scope-1}
+\KAuxDeclaredScopeTag {list:universality-permutations}
+\KAuxNewLinkScopetagInstance {list:universality-permutations}{scope-1}
+\KAuxDeclaredScopeTag {list:universality-upward-closed}
+\KAuxNewLinkScopetagInstance {list:universality-upward-closed}{scope-1}
+\KAuxDeclaredScopeTag {lem:finitely-generated-upward-closed}
+\KAuxNewLinkScopetagInstance {lem:finitely-generated-upward-closed}{scope-1}
+
+\KAuxFileAt {pof-automata.tex}{320}
+\KAuxScopeNewInstance {tikzcd}{tikzcd-1}{scope-1}
+\KAuxDeclaredScopeTag {ex:alternating-reversal}
+\KAuxNewLinkScopetagInstance {ex:alternating-reversal}{scope-1}
+\KAuxDeclaredScopeTag {pof-dickson-omega}
+\KAuxNewLinkScopetagInstance {pof-dickson-omega}{scope-1}
+\KAuxDeclaredScopeTag {pof-dickson-dim-2}
+\KAuxNewLinkScopetagInstance {pof-dickson-dim-2}{scope-1}
+\KAuxDeclaredScopeTag {pof-higman}
+\KAuxNewLinkScopetagInstance {pof-higman}{scope-1}
+\KAuxDeclaredScopeTag {pof-upward-closed}
+\KAuxNewLinkScopetagInstance {pof-upward-closed}{scope-1}
+\KAuxDeclaredScopeTag {cha:more-models}
+\KAuxNewLinkScopetagInstance {cha:more-models}{scope-1}
+\KAuxDeclaredScopeTag {sec:pof-alternating}
+\KAuxNewLinkScopetagInstance {sec:pof-alternating}{scope-1}
+\KAuxDeclaredScopeTag {def:pof-alternating-automaton}
+\KAuxNewLinkScopetagInstance {def:pof-alternating-automaton}{scope-1}
+\KAuxDeclaredScopeTag {example:twice-alternating}
+\KAuxNewLinkScopetagInstance {example:twice-alternating}{scope-1}
+\KAuxDeclaredScopeTag {example:all-distinct-alternating}
+\KAuxNewLinkScopetagInstance {example:all-distinct-alternating}{scope-1}
+\KAuxDeclaredScopeTag {example:empty-word-alternating}
+\KAuxNewLinkScopetagInstance {example:empty-word-alternating}{scope-1}
+\KAuxDeclaredScopeTag {def:well-founded}
+\KAuxNewLinkScopetagInstance {def:well-founded}{scope-1}
+\KAuxDeclaredScopeTag {ex:alternating-atomless}
+\KAuxNewLinkScopetagInstance {ex:alternating-atomless}{scope-1}
+\KAuxDeclaredScopeTag {pof-alternating-automata-emptiness}
+\KAuxNewLinkScopetagInstance {pof-alternating-automata-emptiness}{scope-1}
+\KAuxDeclaredScopeTag {pof-alternating-dim-one-undecidable}
+\KAuxNewLinkScopetagInstance {pof-alternating-dim-one-undecidable}{scope-1}
+\KAuxDeclaredScopeTag {pof-alternating-dim-one-decidable}
+\KAuxNewLinkScopetagInstance {pof-alternating-dim-one-decidable}{scope-1}
+\KAuxDeclaredScopeTag {pof-alternating-must-guess}
+\KAuxNewLinkScopetagInstance {pof-alternating-must-guess}{scope-1}
+\KAuxDeclaredScopeTag {sec:pof-two-way}
+\KAuxNewLinkScopetagInstance {sec:pof-two-way}{scope-1}
+\KAuxDeclaredScopeTag {pof-two-way-automata-atom-less}
+\KAuxNewLinkScopetagInstance {pof-two-way-automata-atom-less}{scope-1}
+\KAuxDeclaredScopeTag {pof-two-way-det}
+\KAuxNewLinkScopetagInstance {pof-two-way-det}{scope-1}
+\KAuxDeclaredScopeTag {pof-two-way-nondet}
+\KAuxNewLinkScopetagInstance {pof-two-way-nondet}{scope-1}
+\KAuxDeclaredScopeTag {pof-two-way-alternating}
+\KAuxNewLinkScopetagInstance {pof-two-way-alternating}{scope-1}
+\KAuxDeclaredScopeTag {ex:sep1}
+\KAuxNewLinkScopetagInstance {ex:sep1}{scope-1}
+\KAuxDeclaredScopeTag {ex:sep2}
+\KAuxNewLinkScopetagInstance {ex:sep2}{scope-1}
+\KAuxDeclaredScopeTag {sec:circuits}
+\KAuxNewLinkScopetagInstance {sec:circuits}{scope-1}
+\KAuxDeclaredScopeTag {of-dnf-cnf}
+\KAuxNewLinkScopetagInstance {of-dnf-cnf}{scope-1}
+\KAuxDeclaredScopeTag {of-circuit-to-tree}
+\KAuxNewLinkScopetagInstance {of-circuit-to-tree}{scope-1}
+\KAuxDeclaredScopeTag {of-dnf-circuit-decidable}
+\KAuxNewLinkScopetagInstance {of-dnf-circuit-decidable}{scope-1}
+\KAuxDeclaredScopeTag {of-dnf-to-cnf}
+\KAuxNewLinkScopetagInstance {of-dnf-to-cnf}{scope-1}
+\KAuxDeclaredScopeTag {sec:cfl}
+\KAuxNewLinkScopetagInstance {sec:cfl}{scope-1}
+\KAuxDeclaredScopeTag {def:orbit-finite-pushdown}
+\KAuxNewLinkScopetagInstance {def:orbit-finite-pushdown}{scope-1}
+
+\KAuxFileAt {pof-models.tex}{166}
+\KAuxAutorefTarget {default}{base}{pof context-free grammar}
+\KAuxDeclaredScopeTag {example:palindrome-pda}
+\KAuxNewLinkScopetagInstance {example:palindrome-pda}{scope-1}
+\KAuxDeclaredScopeTag {example:mid-palindrome-pda}
+\KAuxNewLinkScopetagInstance {example:mid-palindrome-pda}{scope-1}
+\KAuxDeclaredScopeTag {example:model-recursive-programs}
+\KAuxNewLinkScopetagInstance {example:model-recursive-programs}{scope-1}
+\KAuxDeclaredScopeTag {thm:pof-equality-pushdown}
+\KAuxNewLinkScopetagInstance {thm:pof-equality-pushdown}{scope-1}
+\KAuxDeclaredScopeTag {ex:higher-order}
+\KAuxNewLinkScopetagInstance {ex:higher-order}{scope-1}
+\KAuxDeclaredScopeTag {pof-cfg-exptime}
+\KAuxNewLinkScopetagInstance {pof-cfg-exptime}{scope-1}
+\KAuxDeclaredScopeTag {pof-cfg-finite-alphabet}
+\KAuxNewLinkScopetagInstance {pof-cfg-finite-alphabet}{scope-1}
+\KAuxDeclaredScopeTag {pof-chomsky}
+\KAuxNewLinkScopetagInstance {pof-chomsky}{scope-1}
+\KAuxDeclaredScopeTag {sec:pof-turing-machines-equality}
+\KAuxNewLinkScopetagInstance {sec:pof-turing-machines-equality}{scope-1}
+\KAuxDeclaredScopeTag {ex:distinct-letters}
+\KAuxNewLinkScopetagInstance {ex:distinct-letters}{scope-1}
+\KAuxDeclaredScopeTag {fig:distinct-turing}
+\KAuxNewLinkScopetagInstance {fig:distinct-turing}{scope-1}
+\KAuxDeclaredScopeTag {def:representation-equality}
+\KAuxNewLinkScopetagInstance {def:representation-equality}{scope-1}
+\KAuxDeclaredScopeTag {thm:pof-turing}
+\KAuxNewLinkScopetagInstance {thm:pof-turing}{scope-1}
+\KAuxDeclaredScopeTag {item:turing-pof-det-pof}
+\KAuxNewLinkScopetagInstance {item:turing-pof-det-pof}{scope-1}
+\KAuxDeclaredScopeTag {item:turing-pof-nondet-pof}
+\KAuxNewLinkScopetagInstance {item:turing-pof-nondet-pof}{scope-1}
+\KAuxDeclaredScopeTag {item:turing-pof-every-rep}
+\KAuxNewLinkScopetagInstance {item:turing-pof-every-rep}{scope-1}
+\KAuxDeclaredScopeTag {item:turing-pof-every-rep-det}
+\KAuxNewLinkScopetagInstance {item:turing-pof-every-rep-det}{scope-1}
+\KAuxDeclaredScopeTag {item:turing-pof-some-rep}
+\KAuxNewLinkScopetagInstance {item:turing-pof-some-rep}{scope-1}
+\KAuxDeclaredScopeTag {lem:deatomisation}
+\KAuxNewLinkScopetagInstance {lem:deatomisation}{scope-1}
+\KAuxDeclaredScopeTag {pof-turing-example-2}
+\KAuxNewLinkScopetagInstance {pof-turing-example-2}{scope-1}
+\KAuxDeclaredScopeTag {pof-turing-zero-dimension-state-two-tape}
+\KAuxNewLinkScopetagInstance {pof-turing-zero-dimension-state-two-tape}{scope-1}
+\KAuxDeclaredScopeTag {pof-turing-zero-dimension-state-one-tape}
+\KAuxNewLinkScopetagInstance {pof-turing-zero-dimension-state-one-tape}{scope-1}
+\KAuxDeclaredScopeTag {cha:orbit-finite-equality}
+\KAuxNewLinkScopetagInstance {cha:orbit-finite-equality}{scope-1}
+\KAuxDeclaredScopeTag {ex:pof-dont-minimize}
+\KAuxNewLinkScopetagInstance {ex:pof-dont-minimize}{scope-1}
+\KAuxDeclaredScopeTag {sec:subquotiented-pof-sets}
+\KAuxNewLinkScopetagInstance {sec:subquotiented-pof-sets}{scope-1}
+\KAuxDeclaredScopeTag {def:subquotiented-pof-set}
+\KAuxNewLinkScopetagInstance {def:subquotiented-pof-set}{scope-1}
+\KAuxDeclaredScopeTag {ex:subquotiented-as-subsets}
+\KAuxNewLinkScopetagInstance {ex:subquotiented-as-subsets}{scope-1}
+\KAuxDeclaredScopeTag {ex:atoms-choose-two}
+\KAuxNewLinkScopetagInstance {ex:atoms-choose-two}{scope-1}
+\KAuxDeclaredScopeTag {def:equivariant-subset-of-a-spof}
+\KAuxNewLinkScopetagInstance {def:equivariant-subset-of-a-spof}{scope-1}
+\KAuxDeclaredScopeTag {ex:choice-spof}
+\KAuxNewLinkScopetagInstance {ex:choice-spof}{scope-1}
+\KAuxDeclaredScopeTag {ex:intersection-language}
+\KAuxNewLinkScopetagInstance {ex:intersection-language}{scope-1}
+\KAuxDeclaredScopeTag {ex:union-language}
+\KAuxNewLinkScopetagInstance {ex:union-language}{scope-1}
+\KAuxDeclaredScopeTag {ex:two-atoms-from-first-everywhere}
+\KAuxNewLinkScopetagInstance {ex:two-atoms-from-first-everywhere}{scope-1}
+\KAuxDeclaredScopeTag {ex:some-two-atoms-everywhere}
+\KAuxNewLinkScopetagInstance {ex:some-two-atoms-everywhere}{scope-1}
+\KAuxDeclaredScopeTag {ex:group-colcombet}
+\KAuxNewLinkScopetagInstance {ex:group-colcombet}{scope-1}
+\KAuxDeclaredScopeTag {sec:orbit-finiteness-equality}
+\KAuxNewLinkScopetagInstance {sec:orbit-finiteness-equality}{scope-1}
+\KAuxDeclaredScopeTag {def:group-action}
+\KAuxNewLinkScopetagInstance {def:group-action}{scope-1}
+\KAuxDeclaredScopeTag {def:supports-equality}
+\KAuxNewLinkScopetagInstance {def:supports-equality}{scope-1}
+\KAuxDeclaredScopeTag {def:orbit-finite-set-equality}
+\KAuxNewLinkScopetagInstance {def:orbit-finite-set-equality}{scope-1}
+\KAuxDeclaredScopeTag {ex:pof-sets-orbit-finite}
+\KAuxNewLinkScopetagInstance {ex:pof-sets-orbit-finite}{scope-1}
+\KAuxDeclaredScopeTag {ex:powerset-not-orbit-finite}
+\KAuxNewLinkScopetagInstance {ex:powerset-not-orbit-finite}{scope-1}
+\KAuxDeclaredScopeTag {ex:cyclic-triples}
+\KAuxNewLinkScopetagInstance {ex:cyclic-triples}{scope-1}
+\KAuxDeclaredScopeTag {thm:subquotiented-pof-representation}
+\KAuxNewLinkScopetagInstance {thm:subquotiented-pof-representation}{scope-1}
+\KAuxDeclaredScopeTag {claim:equivariant-inclusion-stabiliser}
+\KAuxNewLinkScopetagInstance {claim:equivariant-inclusion-stabiliser}{scope-1}
+\KAuxDeclaredScopeTag {sec:myhill-nerode-equality}
+\KAuxNewLinkScopetagInstance {sec:myhill-nerode-equality}{scope-1}
+\KAuxDeclaredScopeTag {def:syntactic-congruence}
+\KAuxNewLinkScopetagInstance {def:syntactic-congruence}{scope-1}
+\KAuxDeclaredScopeTag {thm:myhill-nerode-subquotiented-pof}
+\KAuxNewLinkScopetagInstance {thm:myhill-nerode-subquotiented-pof}{scope-1}
+\KAuxDeclaredScopeTag {item:myhill-nerode-recognised}
+\KAuxNewLinkScopetagInstance {item:myhill-nerode-recognised}{scope-1}
+\KAuxDeclaredScopeTag {item:myhill-nerode-orbit-finite}
+\KAuxNewLinkScopetagInstance {item:myhill-nerode-orbit-finite}{scope-1}
+\KAuxDeclaredScopeTag {lem:no-choice}
+\KAuxNewLinkScopetagInstance {lem:no-choice}{scope-1}
+
+\KAuxFileAt {finite-supports.tex}{469}
+\KAuxScopeNewInstance {tikzcd}{tikzcd-2}{scope-1}
+\KAuxDeclaredScopeTag {ex:support-depend-only}
+\KAuxNewLinkScopetagInstance {ex:support-depend-only}{scope-1}
+\KAuxDeclaredScopeTag {ex:equivariant-binary-relations-on-equality-atoms}
+\KAuxNewLinkScopetagInstance {ex:equivariant-binary-relations-on-equality-atoms}{scope-1}
+\KAuxDeclaredScopeTag {ex:commuting-equivariance-diagram}
+\KAuxNewLinkScopetagInstance {ex:commuting-equivariance-diagram}{scope-1}
+\KAuxDeclaredScopeTag {ex:uniformise}
+\KAuxNewLinkScopetagInstance {ex:uniformise}{scope-1}
+\KAuxDeclaredScopeTag {exercise:orbit-finite-has-no-contraction}
+\KAuxNewLinkScopetagInstance {exercise:orbit-finite-has-no-contraction}{scope-1}
+\KAuxDeclaredScopeTag {exercise:orbit-infinite-set-with-contractions}
+\KAuxNewLinkScopetagInstance {exercise:orbit-infinite-set-with-contractions}{scope-1}
+\KAuxDeclaredScopeTag {ex:uniformly-supported}
+\KAuxNewLinkScopetagInstance {ex:uniformly-supported}{scope-1}
+\KAuxDeclaredScopeTag {ex:konig}
+\KAuxNewLinkScopetagInstance {ex:konig}{scope-1}
+\KAuxDeclaredScopeTag {sec:least-support}
+\KAuxNewLinkScopetagInstance {sec:least-support}{scope-1}
+\KAuxDeclaredScopeTag {thm:least-supports}
+\KAuxNewLinkScopetagInstance {thm:least-supports}{scope-1}
+\KAuxDeclaredScopeTag {lem:tuple-as-set}
+\KAuxNewLinkScopetagInstance {lem:tuple-as-set}{scope-1}
+\KAuxDeclaredScopeTag {eq:perm-some}
+\KAuxNewLinkScopetagInstance {eq:perm-some}{scope-1}
+\KAuxDeclaredScopeTag {eq:perm-all}
+\KAuxNewLinkScopetagInstance {eq:perm-all}{scope-1}
+\KAuxDeclaredScopeTag {thm:classify-one-orbit}
+\KAuxNewLinkScopetagInstance {thm:classify-one-orbit}{scope-1}
+\KAuxDeclaredScopeTag {thm:myhill-nerode-pof}
+\KAuxNewLinkScopetagInstance {thm:myhill-nerode-pof}{scope-1}
+\KAuxDeclaredScopeTag {item:myhill-nerode-pof-recognised}
+\KAuxNewLinkScopetagInstance {item:myhill-nerode-pof-recognised}{scope-1}
+\KAuxDeclaredScopeTag {lem:uniformization-pof}
+\KAuxNewLinkScopetagInstance {lem:uniformization-pof}{scope-1}
+\KAuxDeclaredScopeTag {ch:beyond-equality}
+\KAuxNewLinkScopetagInstance {ch:beyond-equality}{document}
+\KAuxDeclaredScopeTag {sec:oligomorphic}
+\KAuxNewLinkScopetagInstance {sec:oligomorphic}{document}
+\KAuxDeclaredScopeTag {def:relational-structure}
+\KAuxNewLinkScopetagInstance {def:relational-structure}{document}
+\KAuxDeclaredScopeTag {ex:Presburger-arithmetic}
+\KAuxNewLinkScopetagInstance {ex:Presburger-arithmetic}{document}
+
+\KAuxFileAt {oligomorphism.tex}{64}
+\KAuxAutorefTarget {default}{base}{automorphism}
+
+\KAuxFileAt {oligomorphism.tex}{69}
+\KAuxAutorefTarget {default}{base}{equivariant}
+\KAuxDeclaredScopeTag {ex:presburger-rigid}
+\KAuxNewLinkScopetagInstance {ex:presburger-rigid}{document}
+\KAuxDeclaredScopeTag {ex:equality-atoms}
+\KAuxNewLinkScopetagInstance {ex:equality-atoms}{document}
+\KAuxDeclaredScopeTag {ex:integers-with-order}
+\KAuxNewLinkScopetagInstance {ex:integers-with-order}{document}
+\KAuxDeclaredScopeTag {def:structure-assumptions}
+\KAuxNewLinkScopetagInstance {def:structure-assumptions}{document}
+
+\KAuxFileAt {oligomorphism.tex}{92}
+\KAuxAutorefTarget {default}{base}{oligomorphic}
+\KAuxDeclaredScopeTag {ex:summary-oligomorphic}
+\KAuxNewLinkScopetagInstance {ex:summary-oligomorphic}{document}
+\KAuxDeclaredScopeTag {ex:order-atoms}
+\KAuxNewLinkScopetagInstance {ex:order-atoms}{document}
+\KAuxDeclaredScopeTag {ex:two-cliques}
+\KAuxNewLinkScopetagInstance {ex:two-cliques}{document}
+\KAuxDeclaredScopeTag {ex:integers-fail-orbit-finiteness}
+\KAuxNewLinkScopetagInstance {ex:integers-fail-orbit-finiteness}{document}
+\KAuxDeclaredScopeTag {sec:representation-of-equivariant-subsets}
+\KAuxNewLinkScopetagInstance {sec:representation-of-equivariant-subsets}{document}
+\KAuxDeclaredScopeTag {lem:finitely-many-equivariant-subsets}
+\KAuxNewLinkScopetagInstance {lem:finitely-many-equivariant-subsets}{document}
+\KAuxDeclaredScopeTag {ex:reachability}
+\KAuxNewLinkScopetagInstance {ex:reachability}{document}
+\KAuxDeclaredScopeTag {ex:oligo-squares}
+\KAuxNewLinkScopetagInstance {ex:oligo-squares}{document}
+\KAuxDeclaredScopeTag {thm:ryll}
+\KAuxNewLinkScopetagInstance {thm:ryll}{document}
+\KAuxDeclaredScopeTag {ryll:fo-same}
+\KAuxNewLinkScopetagInstance {ryll:fo-same}{document}
+\KAuxDeclaredScopeTag {ryll:fin-k}
+\KAuxNewLinkScopetagInstance {ryll:fin-k}{document}
+\KAuxDeclaredScopeTag {ryll:inf-k}
+\KAuxNewLinkScopetagInstance {ryll:inf-k}{document}
+\KAuxDeclaredScopeTag {ryll:same-orbit}
+\KAuxNewLinkScopetagInstance {ryll:same-orbit}{document}
+\KAuxDeclaredScopeTag {sec:oligo-graph-reachability}
+\KAuxNewLinkScopetagInstance {sec:oligo-graph-reachability}{document}
+\KAuxDeclaredScopeTag {thm:olig-graph-reachability}
+\KAuxNewLinkScopetagInstance {thm:olig-graph-reachability}{document}
+\KAuxDeclaredScopeTag {ex:buchi-reachability-lasso}
+\KAuxNewLinkScopetagInstance {ex:buchi-reachability-lasso}{document}
+\KAuxDeclaredScopeTag {it:buchi-reach}
+\KAuxNewLinkScopetagInstance {it:buchi-reach}{document}
+\KAuxDeclaredScopeTag {it:lasso-reach}
+\KAuxNewLinkScopetagInstance {it:lasso-reach}{document}
+\KAuxDeclaredScopeTag {ex:buchi-reachability}
+\KAuxNewLinkScopetagInstance {ex:buchi-reachability}{document}
+\KAuxDeclaredScopeTag {ex:alternating-reachability}
+\KAuxNewLinkScopetagInstance {ex:alternating-reachability}{document}
+\KAuxDeclaredScopeTag {ex:buchi-game}
+\KAuxNewLinkScopetagInstance {ex:buchi-game}{document}
+\KAuxDeclaredScopeTag {ex:graph-reach-oligo-decidable-finite-vocabulary}
+\KAuxNewLinkScopetagInstance {ex:graph-reach-oligo-decidable-finite-vocabulary}{document}
+\KAuxDeclaredScopeTag {sec:orbit-finiteness-oligomorphic}
+\KAuxNewLinkScopetagInstance {sec:orbit-finiteness-oligomorphic}{document}
+\KAuxDeclaredScopeTag {def:supports-general}
+\KAuxNewLinkScopetagInstance {def:supports-general}{document}
+
+\KAuxFileAt {oligomorphism.tex}{530}
+\KAuxAutorefTarget {default}{base}{orbit-finite}
+\KAuxDeclaredScopeTag {example:totally-ordered-powerset}
+\KAuxNewLinkScopetagInstance {example:totally-ordered-powerset}{document}
+
+\KAuxFileAt {oligomorphism.tex}{544}
+\KAuxAutorefTarget {default}{base}{spof set}
+\KAuxDeclaredScopeTag {thm:spof=orbit-finite}
+\KAuxNewLinkScopetagInstance {thm:spof=orbit-finite}{document}
+\KAuxDeclaredScopeTag {ex:surjection-from-atomsk}
+\KAuxNewLinkScopetagInstance {ex:surjection-from-atomsk}{document}
+\KAuxDeclaredScopeTag {ex:transitive-closure}
+\KAuxNewLinkScopetagInstance {ex:transitive-closure}{document}
+\KAuxDeclaredScopeTag {ex:function-space}
+\KAuxNewLinkScopetagInstance {ex:function-space}{document}
+\KAuxDeclaredScopeTag {ex:function-space-bounded-supports}
+\KAuxNewLinkScopetagInstance {ex:function-space-bounded-supports}{document}
+\KAuxDeclaredScopeTag {ex:finitely-many-supported-by-one-tuple}
+\KAuxNewLinkScopetagInstance {ex:finitely-many-supported-by-one-tuple}{document}
+\KAuxDeclaredScopeTag {exercise:equality-atoms-have-uniform-chains}
+\KAuxNewLinkScopetagInstance {exercise:equality-atoms-have-uniform-chains}{document}
+\KAuxDeclaredScopeTag {sec:homogeneous-atoms}
+\KAuxNewLinkScopetagInstance {sec:homogeneous-atoms}{document}
+
+\KAuxFileAt {homogeneous.tex}{39}
+\KAuxAutorefTarget {default}{base}{substructure}
+\KAuxDeclaredScopeTag {def:homogeneous}
+\KAuxNewLinkScopetagInstance {def:homogeneous}{document}
+
+\KAuxFileAt {homogeneous.tex}{42}
+\KAuxAutorefTarget {default}{base}{homogeneous}
+
+\KAuxFileAt {homogeneous.tex}{49}
+\KAuxScopeNewInstance {tikzcd}{tikzcd-3}{document}
+\KAuxDeclaredScopeTag {ex:nat-powerset}
+\KAuxNewLinkScopetagInstance {ex:nat-powerset}{document}
+\KAuxDeclaredScopeTag {thm:hom-oligo}
+\KAuxNewLinkScopetagInstance {thm:hom-oligo}{document}
+\KAuxDeclaredScopeTag {thm:fs-qf}
+\KAuxNewLinkScopetagInstance {thm:fs-qf}{document}
+\KAuxDeclaredScopeTag {sec:fraisse}
+\KAuxNewLinkScopetagInstance {sec:fraisse}{document}
+\KAuxDeclaredScopeTag {thm:fraisse}
+\KAuxNewLinkScopetagInstance {thm:fraisse}{document}
+\KAuxDeclaredScopeTag {it:age-is-fraisse}
+\KAuxNewLinkScopetagInstance {it:age-is-fraisse}{document}
+\KAuxDeclaredScopeTag {it:age-surjective}
+\KAuxNewLinkScopetagInstance {it:age-surjective}{document}
+\KAuxDeclaredScopeTag {it:age-injective}
+\KAuxNewLinkScopetagInstance {it:age-injective}{document}
+\KAuxDeclaredScopeTag {example:pure-set-fraisse}
+\KAuxNewLinkScopetagInstance {example:pure-set-fraisse}{document}
+\KAuxDeclaredScopeTag {example:directed-graphs-amalgamation}
+\KAuxNewLinkScopetagInstance {example:directed-graphs-amalgamation}{document}
+\KAuxDeclaredScopeTag {example:planar-no-amalgamation}
+\KAuxNewLinkScopetagInstance {example:planar-no-amalgamation}{document}
+\KAuxDeclaredScopeTag {example:successor-no-amalgamation}
+\KAuxNewLinkScopetagInstance {example:successor-no-amalgamation}{document}
+\KAuxDeclaredScopeTag {ex:amalgamation-total-orders}
+\KAuxNewLinkScopetagInstance {ex:amalgamation-total-orders}{document}
+\KAuxDeclaredScopeTag {thm:age-is-all}
+\KAuxNewLinkScopetagInstance {thm:age-is-all}{document}
+\KAuxDeclaredScopeTag {it:embeddings-extend}
+\KAuxNewLinkScopetagInstance {it:embeddings-extend}{document}
+\KAuxDeclaredScopeTag {claim:extend-to-isomorphism}
+\KAuxNewLinkScopetagInstance {claim:extend-to-isomorphism}{document}
+\KAuxDeclaredScopeTag {lem:fraisse-surjective}
+\KAuxNewLinkScopetagInstance {lem:fraisse-surjective}{document}
+\KAuxDeclaredScopeTag {claim:structh}
+\KAuxNewLinkScopetagInstance {claim:structh}{document}
+
+\KAuxFileAt {homogeneous.tex}{314}
+\KAuxScopeNewInstance {tikzcd}{tikzcd-4}{document}
+
+\KAuxFileAt {homogeneous.tex}{324}
+\KAuxScopeNewInstance {tikzcd}{tikzcd-5}{document}
+\KAuxDeclaredScopeTag {thm:computable-fraisse}
+\KAuxNewLinkScopetagInstance {thm:computable-fraisse}{document}
+\KAuxDeclaredScopeTag {item:fraisse-lim-oligo}
+\KAuxNewLinkScopetagInstance {item:fraisse-lim-oligo}{document}
+\KAuxDeclaredScopeTag {item:fraisse-lim-effective-quantifier-elim}
+\KAuxNewLinkScopetagInstance {item:fraisse-lim-effective-quantifier-elim}{document}
+\KAuxDeclaredScopeTag {item:fraisse-lim-represenation}
+\KAuxNewLinkScopetagInstance {item:fraisse-lim-represenation}{document}
+\KAuxDeclaredScopeTag {item:fraisse-lim-representation-surjective}
+\KAuxNewLinkScopetagInstance {item:fraisse-lim-representation-surjective}{document}
+\KAuxDeclaredScopeTag {item:fraisse-lim-represenation-fo-theory}
+\KAuxNewLinkScopetagInstance {item:fraisse-lim-represenation-fo-theory}{document}
+\KAuxDeclaredScopeTag {item:fraisse-lim-represenation-same-orbit}
+\KAuxNewLinkScopetagInstance {item:fraisse-lim-represenation-same-orbit}{document}
+\KAuxDeclaredScopeTag {ex:amalgamation-partial-orders}
+\KAuxNewLinkScopetagInstance {ex:amalgamation-partial-orders}{document}
+\KAuxDeclaredScopeTag {ex:effective-fraisse}
+\KAuxNewLinkScopetagInstance {ex:effective-fraisse}{document}
+\KAuxDeclaredScopeTag {ex:homo-effective}
+\KAuxNewLinkScopetagInstance {ex:homo-effective}{document}
+\KAuxDeclaredScopeTag {it:homo-decidable}
+\KAuxNewLinkScopetagInstance {it:homo-decidable}{document}
+\KAuxDeclaredScopeTag {it:homo-homo}
+\KAuxNewLinkScopetagInstance {it:homo-homo}{document}
+\KAuxDeclaredScopeTag {it:homo-blowup}
+\KAuxNewLinkScopetagInstance {it:homo-blowup}{document}
+\KAuxDeclaredScopeTag {ex:rabin}
+\KAuxNewLinkScopetagInstance {ex:rabin}{document}
+\KAuxDeclaredScopeTag {ex:db-homo}
+\KAuxNewLinkScopetagInstance {ex:db-homo}{document}
+\KAuxDeclaredScopeTag {sec:random-graph}
+\KAuxNewLinkScopetagInstance {sec:random-graph}{document}
+\KAuxDeclaredScopeTag {ex:connected}
+\KAuxNewLinkScopetagInstance {ex:connected}{document}
+\KAuxDeclaredScopeTag {ex:cannot-check-path-decompositions}
+\KAuxNewLinkScopetagInstance {ex:cannot-check-path-decompositions}{document}
+\KAuxDeclaredScopeTag {sec:bit-vectors}
+\KAuxNewLinkScopetagInstance {sec:bit-vectors}{document}
+\KAuxDeclaredScopeTag {thm:least-support-bit}
+\KAuxNewLinkScopetagInstance {thm:least-support-bit}{document}
+\KAuxDeclaredScopeTag {ex:bit-vector-relational}
+\KAuxNewLinkScopetagInstance {ex:bit-vector-relational}{document}
+\KAuxDeclaredScopeTag {ex:bit-vector-relational-homo}
+\KAuxNewLinkScopetagInstance {ex:bit-vector-relational-homo}{document}
+\KAuxDeclaredScopeTag {sec:trees}
+\KAuxNewLinkScopetagInstance {sec:trees}{document}
+\KAuxDeclaredScopeTag {fig:trees-amalg}
+\KAuxNewLinkScopetagInstance {fig:trees-amalg}{document}
+\KAuxDeclaredScopeTag {cha:case-studies}
+\KAuxNewLinkScopetagInstance {cha:case-studies}{document}
+\KAuxDeclaredScopeTag {def:effectively-oligomorphic}
+\KAuxNewLinkScopetagInstance {def:effectively-oligomorphic}{document}
+\KAuxDeclaredScopeTag {sec:generating-sets-oligo}
+\KAuxNewLinkScopetagInstance {sec:generating-sets-oligo}{document}
+\KAuxDeclaredScopeTag {sec:generating-elements-oligo}
+\KAuxNewLinkScopetagInstance {sec:generating-elements-oligo}{document}
+\KAuxDeclaredScopeTag {def:atom-representation}
+\KAuxNewLinkScopetagInstance {def:atom-representation}{document}
+\KAuxDeclaredScopeTag {item:atom-representation-every-atom-represented}
+\KAuxNewLinkScopetagInstance {item:atom-representation-every-atom-represented}{document}
+\KAuxDeclaredScopeTag {item:atom-representation-fo-theory-decidable}
+\KAuxNewLinkScopetagInstance {item:atom-representation-fo-theory-decidable}{document}
+\KAuxDeclaredScopeTag {item:atom-representation-decide-same-orbit}
+\KAuxNewLinkScopetagInstance {item:atom-representation-decide-same-orbit}{document}
+\KAuxDeclaredScopeTag {thm:atom-represenation-must-exist}
+\KAuxNewLinkScopetagInstance {thm:atom-represenation-must-exist}{document}
+\KAuxDeclaredScopeTag {lem:enumerate-all-orbits}
+\KAuxNewLinkScopetagInstance {lem:enumerate-all-orbits}{document}
+\KAuxDeclaredScopeTag {exercise:atom-representations-are-the-same}
+\KAuxNewLinkScopetagInstance {exercise:atom-representations-are-the-same}{document}
+\KAuxDeclaredScopeTag {ex:equivalent-orbit-count}
+\KAuxNewLinkScopetagInstance {ex:equivalent-orbit-count}{document}
+\KAuxDeclaredScopeTag {sec:orbit-finite-automata}
+\KAuxNewLinkScopetagInstance {sec:orbit-finite-automata}{document}
+\KAuxDeclaredScopeTag {thm:oligo-spof-graph-reachability}
+\KAuxNewLinkScopetagInstance {thm:oligo-spof-graph-reachability}{document}
+\KAuxDeclaredScopeTag {def:orbit-finite-automata}
+\KAuxNewLinkScopetagInstance {def:orbit-finite-automata}{document}
+\KAuxDeclaredScopeTag {thm:olig-nfa-nonemptiness}
+\KAuxNewLinkScopetagInstance {thm:olig-nfa-nonemptiness}{document}
+\KAuxDeclaredScopeTag {ex:graph-atoms-automaton}
+\KAuxNewLinkScopetagInstance {ex:graph-atoms-automaton}{document}
+\KAuxDeclaredScopeTag {ex:graph-atoms-connected}
+\KAuxNewLinkScopetagInstance {ex:graph-atoms-connected}{document}
+\KAuxDeclaredScopeTag {claim:connected}
+\KAuxNewLinkScopetagInstance {claim:connected}{document}
+\KAuxDeclaredScopeTag {ex:linearly-dependent-automaton}
+\KAuxNewLinkScopetagInstance {ex:linearly-dependent-automaton}{document}
+\KAuxDeclaredScopeTag {thm:myhill-nerode-oligo}
+\KAuxNewLinkScopetagInstance {thm:myhill-nerode-oligo}{document}
+\KAuxDeclaredScopeTag {item:myhill-nerode-recognised-oligo}
+\KAuxNewLinkScopetagInstance {item:myhill-nerode-recognised-oligo}{document}
+\KAuxDeclaredScopeTag {item:myhill-nerode-orbit-finite-oligo}
+\KAuxNewLinkScopetagInstance {item:myhill-nerode-orbit-finite-oligo}{document}
+\KAuxDeclaredScopeTag {thm:compute-minimal}
+\KAuxNewLinkScopetagInstance {thm:compute-minimal}{document}
+\KAuxDeclaredScopeTag {ex:epsilon}
+\KAuxNewLinkScopetagInstance {ex:epsilon}{document}
+\KAuxDeclaredScopeTag {ex:check-det-unamb}
+\KAuxNewLinkScopetagInstance {ex:check-det-unamb}{document}
+\KAuxDeclaredScopeTag {ex:graph-cliques}
+\KAuxNewLinkScopetagInstance {ex:graph-cliques}{document}
+\KAuxDeclaredScopeTag {ex:syntactic-monoid}
+\KAuxNewLinkScopetagInstance {ex:syntactic-monoid}{document}
+\KAuxDeclaredScopeTag {ex:myhill-one-way-two-way}
+\KAuxNewLinkScopetagInstance {ex:myhill-one-way-two-way}{document}
+\KAuxDeclaredScopeTag {sec:equations-over-the two-element-field}
+\KAuxNewLinkScopetagInstance {sec:equations-over-the two-element-field}{document}
+\KAuxDeclaredScopeTag {thm:equivariant-solutions-to-systems-of-equations}
+\KAuxNewLinkScopetagInstance {thm:equivariant-solutions-to-systems-of-equations}{document}
+\KAuxDeclaredScopeTag {ex:presburger-equations}
+\KAuxNewLinkScopetagInstance {ex:presburger-equations}{document}
+\KAuxDeclaredScopeTag {chap:vector-spaces}
+\KAuxNewLinkScopetagInstance {chap:vector-spaces}{document}
+\KAuxDeclaredScopeTag {sec:vector-spaces-with-atoms}
+\KAuxNewLinkScopetagInstance {sec:vector-spaces-with-atoms}{document}
+\KAuxDeclaredScopeTag {def:vector-space-with-atoms}
+\KAuxNewLinkScopetagInstance {def:vector-space-with-atoms}{document}
+\KAuxDeclaredScopeTag {axiom:finite-support-for-each-vector}
+\KAuxNewLinkScopetagInstance {axiom:finite-support-for-each-vector}{document}
+\KAuxDeclaredScopeTag {axiom:scalar-multiplication-equivariant}
+\KAuxNewLinkScopetagInstance {axiom:scalar-multiplication-equivariant}{document}
+\KAuxDeclaredScopeTag {axiom:addition-equivariant}
+\KAuxNewLinkScopetagInstance {axiom:addition-equivariant}{document}
+\KAuxDeclaredScopeTag {ex:linear-combinations-of-atoms}
+\KAuxNewLinkScopetagInstance {ex:linear-combinations-of-atoms}{document}
+\KAuxDeclaredScopeTag {item:fs-fun-example-atoms}
+\KAuxNewLinkScopetagInstance {item:fs-fun-example-atoms}{document}
+\KAuxDeclaredScopeTag {ex:zero-sum-space}
+\KAuxNewLinkScopetagInstance {ex:zero-sum-space}{document}
+\KAuxDeclaredScopeTag {ex:no-equivariant-basis}
+\KAuxNewLinkScopetagInstance {ex:no-equivariant-basis}{document}
+\KAuxDeclaredScopeTag {sec:finite-length}
+\KAuxNewLinkScopetagInstance {sec:finite-length}{document}
+\KAuxDeclaredScopeTag {thm:finite-length}
+\KAuxNewLinkScopetagInstance {thm:finite-length}{document}
+
+\KAuxFileAt {vector-spaces.tex}{228}
+\KAuxScopeNewInstance {tikzcd}{tikzcd-6}{document}
+\KAuxDeclaredScopeTag {lem:dim-bounds-length}
+\KAuxNewLinkScopetagInstance {lem:dim-bounds-length}{document}
+\KAuxDeclaredScopeTag {lem:bound-on-dim-for-finite-set}
+\KAuxNewLinkScopetagInstance {lem:bound-on-dim-for-finite-set}{document}
+\KAuxDeclaredScopeTag {it:orbit-in-s}
+\KAuxNewLinkScopetagInstance {it:orbit-in-s}{document}
+\KAuxDeclaredScopeTag {it:orbit-in-atoms}
+\KAuxNewLinkScopetagInstance {it:orbit-in-atoms}{document}
+\KAuxDeclaredScopeTag {sec:function-spaces}
+\KAuxNewLinkScopetagInstance {sec:function-spaces}{document}
+\KAuxDeclaredScopeTag {ex:adding-linear-combinations-makes-finitely-generated}
+\KAuxNewLinkScopetagInstance {ex:adding-linear-combinations-makes-finitely-generated}{document}
+\KAuxDeclaredScopeTag {thm:duals-finite-generation}
+\KAuxNewLinkScopetagInstance {thm:duals-finite-generation}{document}
+\KAuxDeclaredScopeTag {lem:reduce-to-atoms-d-duals}
+\KAuxNewLinkScopetagInstance {lem:reduce-to-atoms-d-duals}{document}
+\KAuxDeclaredScopeTag {lem:rectangular-set}
+\KAuxNewLinkScopetagInstance {lem:rectangular-set}{document}
+\KAuxDeclaredScopeTag {thm:fsfun-finite-generation-vector-spaces}
+\KAuxNewLinkScopetagInstance {thm:fsfun-finite-generation-vector-spaces}{document}
+
+\KAuxFileAt {vector-spaces.tex}{620}
+\KAuxScopeNewInstance {tikzcd}{tikzcd-7}{document}
+\KAuxDeclaredScopeTag {lemma:uniformization}
+\KAuxNewLinkScopetagInstance {lemma:uniformization}{document}
+\KAuxDeclaredScopeTag {cha:turing}
+\KAuxNewLinkScopetagInstance {cha:turing}{document}
+\KAuxDeclaredScopeTag {def:of-turing-machine}
+\KAuxNewLinkScopetagInstance {def:of-turing-machine}{document}
+\KAuxDeclaredScopeTag {example:deatomisation-set}
+\KAuxNewLinkScopetagInstance {example:deatomisation-set}{document}
+\KAuxDeclaredScopeTag {ex:bit-vector-addition-relation}
+\KAuxNewLinkScopetagInstance {ex:bit-vector-addition-relation}{document}
+\KAuxDeclaredScopeTag {def:atom-representation-extended-to-pof-sets}
+\KAuxNewLinkScopetagInstance {def:atom-representation-extended-to-pof-sets}{document}
+\KAuxDeclaredScopeTag {it:representation-for-pof-sets}
+\KAuxNewLinkScopetagInstance {it:representation-for-pof-sets}{document}
+\KAuxDeclaredScopeTag {it:representation-for-spof-sets}
+\KAuxNewLinkScopetagInstance {it:representation-for-spof-sets}{document}
+\KAuxDeclaredScopeTag {it:representation-for-orbit-finite-sets}
+\KAuxNewLinkScopetagInstance {it:representation-for-orbit-finite-sets}{document}
+\KAuxDeclaredScopeTag {thm:nondeterministic-turing-completeness}
+\KAuxNewLinkScopetagInstance {thm:nondeterministic-turing-completeness}{document}
+\KAuxDeclaredScopeTag {item:turing-of-nondeterministic-pof}
+\KAuxNewLinkScopetagInstance {item:turing-of-nondeterministic-pof}{document}
+\KAuxDeclaredScopeTag {item:turing-of-every-rep}
+\KAuxNewLinkScopetagInstance {item:turing-of-every-rep}{document}
+\KAuxDeclaredScopeTag {item:turing-of-every-rep-det}
+\KAuxNewLinkScopetagInstance {item:turing-of-every-rep-det}{document}
+\KAuxDeclaredScopeTag {item:turing-of-some-rep}
+\KAuxNewLinkScopetagInstance {item:turing-of-some-rep}{document}
+\KAuxDeclaredScopeTag {lem:reduction-to-atom-alphabet}
+\KAuxNewLinkScopetagInstance {lem:reduction-to-atom-alphabet}{document}
+\KAuxDeclaredScopeTag {claim:surjective-from-tuples}
+\KAuxNewLinkScopetagInstance {claim:surjective-from-tuples}{document}
+
+\KAuxFileAt {turing.tex}{171}
+\KAuxScopeNewInstance {tikzcd}{tikzcd-8}{document}
+
+\KAuxFileAt {turing.tex}{189}
+\KAuxScopeNewInstance {tikzcd}{tikzcd-9}{document}
+\KAuxDeclaredScopeTag {lem:compute-first-order-formula}
+\KAuxNewLinkScopetagInstance {lem:compute-first-order-formula}{document}
+\KAuxDeclaredScopeTag {claim:compute-orbit-formulas}
+\KAuxNewLinkScopetagInstance {claim:compute-orbit-formulas}{document}
+\KAuxDeclaredScopeTag {lem:compute-first-order-formula-using-turing}
+\KAuxNewLinkScopetagInstance {lem:compute-first-order-formula-using-turing}{document}
+\KAuxDeclaredScopeTag {thm:alternating-turing-completeness}
+\KAuxNewLinkScopetagInstance {thm:alternating-turing-completeness}{document}
+\KAuxDeclaredScopeTag {item:turing-of-alternating-of}
+\KAuxNewLinkScopetagInstance {item:turing-of-alternating-of}{document}
+\KAuxDeclaredScopeTag {ex:no-total-from-pof-to-non-repeating-pairs}
+\KAuxNewLinkScopetagInstance {ex:no-total-from-pof-to-non-repeating-pairs}{document}
+\KAuxDeclaredScopeTag {ex:bit-vector-addition}
+\KAuxNewLinkScopetagInstance {ex:bit-vector-addition}{document}
+\KAuxDeclaredScopeTag {exercise:bit-vector-not-homogeneous-with-addition}
+\KAuxNewLinkScopetagInstance {exercise:bit-vector-not-homogeneous-with-addition}{document}
+\KAuxDeclaredScopeTag {exercise:turing-machines-to-existential-formulas}
+\KAuxNewLinkScopetagInstance {exercise:turing-machines-to-existential-formulas}{document}
+\KAuxDeclaredScopeTag {exercise:existential-collapse-is-necessary}
+\KAuxNewLinkScopetagInstance {exercise:existential-collapse-is-necessary}{document}
+\KAuxDeclaredScopeTag {ex:algebra-turing}
+\KAuxNewLinkScopetagInstance {ex:algebra-turing}{document}
+\KAuxDeclaredScopeTag {ex:det-turing-qf-formula}
+\KAuxNewLinkScopetagInstance {ex:det-turing-qf-formula}{document}
+\KAuxDeclaredScopeTag {sec:pnp-bitvector}
+\KAuxNewLinkScopetagInstance {sec:pnp-bitvector}{document}
+\KAuxDeclaredScopeTag {thm:bit-vector-p-np}
+\KAuxNewLinkScopetagInstance {thm:bit-vector-p-np}{document}
+\KAuxDeclaredScopeTag {lem:turing-three-consistency}
+\KAuxNewLinkScopetagInstance {lem:turing-three-consistency}{document}
+\KAuxDeclaredScopeTag {sec:triangles}
+\KAuxNewLinkScopetagInstance {sec:triangles}{document}
+\KAuxDeclaredScopeTag {thm:determinisation-fails}
+\KAuxNewLinkScopetagInstance {thm:determinisation-fails}{document}
+\KAuxDeclaredScopeTag {def:cfi}
+\KAuxNewLinkScopetagInstance {def:cfi}{document}
+\KAuxDeclaredScopeTag {lem:cfi-parity}
+\KAuxNewLinkScopetagInstance {lem:cfi-parity}{document}
+\KAuxDeclaredScopeTag {prop:doesnotobserve}
+\KAuxNewLinkScopetagInstance {prop:doesnotobserve}{document}
+\KAuxDeclaredScopeTag {ex:standard-alpahbets}
+\KAuxNewLinkScopetagInstance {ex:standard-alpahbets}{document}
+\KAuxDeclaredScopeTag {cha:sets-of-sets-of-sets}
+\KAuxNewLinkScopetagInstance {cha:sets-of-sets-of-sets}{document}
+\KAuxDeclaredScopeTag {sec:sets-with-atoms}
+\KAuxNewLinkScopetagInstance {sec:sets-with-atoms}{document}
+\KAuxDeclaredScopeTag {def:sets-with-atoms}
+\KAuxNewLinkScopetagInstance {def:sets-with-atoms}{document}
+\KAuxDeclaredScopeTag {item:set-with-atoms-recursive}
+\KAuxNewLinkScopetagInstance {item:set-with-atoms-recursive}{document}
+\KAuxDeclaredScopeTag {item:set-with-atoms-finite-support}
+\KAuxNewLinkScopetagInstance {item:set-with-atoms-finite-support}{document}
+\KAuxDeclaredScopeTag {ex:sets-with-atoms-of-rank-one}
+\KAuxNewLinkScopetagInstance {ex:sets-with-atoms-of-rank-one}{document}
+\KAuxDeclaredScopeTag {ex:sets-with-atoms-of-rank-two}
+\KAuxNewLinkScopetagInstance {ex:sets-with-atoms-of-rank-two}{document}
+\KAuxDeclaredScopeTag {ex:atomless-sets}
+\KAuxNewLinkScopetagInstance {ex:atomless-sets}{document}
+\KAuxDeclaredScopeTag {ex:kuratowski-pairing}
+\KAuxNewLinkScopetagInstance {ex:kuratowski-pairing}{document}
+\KAuxDeclaredScopeTag {ex:lists}
+\KAuxNewLinkScopetagInstance {ex:lists}{document}
+\KAuxDeclaredScopeTag {thm:equivariance-principle}
+\KAuxNewLinkScopetagInstance {thm:equivariance-principle}{document}
+\KAuxDeclaredScopeTag {sec:set-builder-expressions}
+\KAuxNewLinkScopetagInstance {sec:set-builder-expressions}{document}
+\KAuxDeclaredScopeTag {def:representable-set-with-atoms}
+\KAuxNewLinkScopetagInstance {def:representable-set-with-atoms}{document}
+\KAuxDeclaredScopeTag {def:intersects-finitely-many-orbits}
+\KAuxNewLinkScopetagInstance {def:intersects-finitely-many-orbits}{document}
+\KAuxDeclaredScopeTag {ex:intersects-finitely-many-orbits}
+\KAuxNewLinkScopetagInstance {ex:intersects-finitely-many-orbits}{document}
+\KAuxDeclaredScopeTag {thm:hof-is-set-builder}
+\KAuxNewLinkScopetagInstance {thm:hof-is-set-builder}{document}
+\KAuxDeclaredScopeTag {def:bar-a-orbit}
+\KAuxNewLinkScopetagInstance {def:bar-a-orbit}{document}
+\KAuxDeclaredScopeTag {lem:intersecting-nonequivariant}
+\KAuxNewLinkScopetagInstance {lem:intersecting-nonequivariant}{document}
+\KAuxDeclaredScopeTag {cor:orbit-finite-is-set-builder}
+\KAuxNewLinkScopetagInstance {cor:orbit-finite-is-set-builder}{document}
+\KAuxDeclaredScopeTag {sec:algorithms-set-builder}
+\KAuxNewLinkScopetagInstance {sec:algorithms-set-builder}{document}
+\KAuxDeclaredScopeTag {thm:decide-set-builder}
+\KAuxNewLinkScopetagInstance {thm:decide-set-builder}{document}
+\KAuxDeclaredScopeTag {lem:symbol-pushing}
+\KAuxNewLinkScopetagInstance {lem:symbol-pushing}{document}
+\KAuxDeclaredScopeTag {fig:symbol-pushing}
+\KAuxNewLinkScopetagInstance {fig:symbol-pushing}{document}
+\KAuxDeclaredScopeTag {fig:symbol-pushing}
+\KAuxNewLinkScopetagInstance {fig:symbol-pushing}{document}
+\KAuxDeclaredScopeTag {def:set-structure}
+\KAuxNewLinkScopetagInstance {def:set-structure}{document}
+\KAuxDeclaredScopeTag {ex:set-structure-projection}
+\KAuxNewLinkScopetagInstance {ex:set-structure-projection}{document}
+\KAuxDeclaredScopeTag {lem:downset-lemma}
+\KAuxNewLinkScopetagInstance {lem:downset-lemma}{document}
+\KAuxDeclaredScopeTag {claim:third-symbol-pushing}
+\KAuxNewLinkScopetagInstance {claim:third-symbol-pushing}{document}
+\KAuxDeclaredScopeTag {ex:finitely-supported-orbits}
+\KAuxNewLinkScopetagInstance {ex:finitely-supported-orbits}{document}
+\KAuxDeclaredScopeTag {ex:pspace-hard-setexpr}
+\KAuxNewLinkScopetagInstance {ex:pspace-hard-setexpr}{document}
+\KAuxDeclaredScopeTag {ex:circuit-formula}
+\KAuxNewLinkScopetagInstance {ex:circuit-formula}{document}
+\KAuxDeclaredScopeTag {cha:while-programs}
+\KAuxNewLinkScopetagInstance {cha:while-programs}{document}
+\KAuxDeclaredScopeTag {ex:graph-reachability-source-code}
+\KAuxNewLinkScopetagInstance {ex:graph-reachability-source-code}{document}
+\KAuxDeclaredScopeTag {sec:definition-of-while-programs}
+\KAuxNewLinkScopetagInstance {sec:definition-of-while-programs}{document}
+\KAuxDeclaredScopeTag {ex:Booleans}
+\KAuxNewLinkScopetagInstance {ex:Booleans}{document}
+\KAuxDeclaredScopeTag {ex:von-neumann}
+\KAuxNewLinkScopetagInstance {ex:von-neumann}{document}
+\KAuxDeclaredScopeTag {it:aggregate-agree-variables}
+\KAuxNewLinkScopetagInstance {it:aggregate-agree-variables}{document}
+\KAuxDeclaredScopeTag {ex:pairing}
+\KAuxNewLinkScopetagInstance {ex:pairing}{document}
+\KAuxDeclaredScopeTag {code:pairing-test}
+\KAuxNewLinkScopetagInstance {code:pairing-test}{document}
+\KAuxDeclaredScopeTag {ex:while-constructes-hdef}
+\KAuxNewLinkScopetagInstance {ex:while-constructes-hdef}{document}
+\KAuxDeclaredScopeTag {ex:uniform-fo-formulas}
+\KAuxNewLinkScopetagInstance {ex:uniform-fo-formulas}{document}
+\KAuxDeclaredScopeTag {ex:desingleton}
+\KAuxNewLinkScopetagInstance {ex:desingleton}{document}
+\KAuxDeclaredScopeTag {ex:graph-reachability-source-code2}
+\KAuxNewLinkScopetagInstance {ex:graph-reachability-source-code2}{document}
+\KAuxDeclaredScopeTag {ex:moore-algorithm}
+\KAuxNewLinkScopetagInstance {ex:moore-algorithm}{document}
+\KAuxDeclaredScopeTag {code:power-semigroup}
+\KAuxNewLinkScopetagInstance {code:power-semigroup}{document}
+\KAuxDeclaredScopeTag {code:power-semigroup2}
+\KAuxNewLinkScopetagInstance {code:power-semigroup2}{document}
+\KAuxDeclaredScopeTag {sec:church-turing}
+\KAuxNewLinkScopetagInstance {sec:church-turing}{document}
+\KAuxDeclaredScopeTag {thm:computational-completeness}
+\KAuxNewLinkScopetagInstance {thm:computational-completeness}{document}
+\KAuxDeclaredScopeTag {thm:execute-while-programs}
+\KAuxNewLinkScopetagInstance {thm:execute-while-programs}{document}
+\KAuxDeclaredScopeTag {ex:currying}
+\KAuxNewLinkScopetagInstance {ex:currying}{document}
+\KAuxDeclaredScopeTag {ex:same-orbit-programs}
+\KAuxNewLinkScopetagInstance {ex:same-orbit-programs}{document}
+\KAuxDeclaredScopeTag {sec:poly}
+\KAuxNewLinkScopetagInstance {sec:poly}{document}
+\KAuxDeclaredScopeTag {sec:dimension-and-size}
+\KAuxNewLinkScopetagInstance {sec:dimension-and-size}{document}
+\KAuxDeclaredScopeTag {lem:atoms-plynomial-orbit-count}
+\KAuxNewLinkScopetagInstance {lem:atoms-plynomial-orbit-count}{document}
+\KAuxDeclaredScopeTag {ex:graph-fdp}
+\KAuxNewLinkScopetagInstance {ex:graph-fdp}{document}
+\KAuxDeclaredScopeTag {sec:dimension}
+\KAuxNewLinkScopetagInstance {sec:dimension}{document}
+\KAuxDeclaredScopeTag {def:dim-sem}
+\KAuxNewLinkScopetagInstance {def:dim-sem}{document}
+\KAuxDeclaredScopeTag {def:dim-synt}
+\KAuxNewLinkScopetagInstance {def:dim-synt}{document}
+\KAuxDeclaredScopeTag {lem:dim-sem-synt}
+\KAuxNewLinkScopetagInstance {lem:dim-sem-synt}{document}
+\KAuxDeclaredScopeTag {lem:sizes-are-the-same}
+\KAuxNewLinkScopetagInstance {lem:sizes-are-the-same}{document}
+\KAuxDeclaredScopeTag {it:sem-size}
+\KAuxNewLinkScopetagInstance {it:sem-size}{document}
+\KAuxDeclaredScopeTag {it:synt-size}
+\KAuxNewLinkScopetagInstance {it:synt-size}{document}
+\KAuxDeclaredScopeTag {sec:syntactic-poly}
+\KAuxNewLinkScopetagInstance {sec:syntactic-poly}{document}
+\KAuxDeclaredScopeTag {def:syntactic-fdp}
+\KAuxNewLinkScopetagInstance {def:syntactic-fdp}{document}
+\KAuxDeclaredScopeTag {thm:decide-set-builder-fdp}
+\KAuxNewLinkScopetagInstance {thm:decide-set-builder-fdp}{document}
+\KAuxDeclaredScopeTag {ex:fixpoint-logic-reach}
+\KAuxNewLinkScopetagInstance {ex:fixpoint-logic-reach}{document}
+\KAuxDeclaredScopeTag {def:inflationary-fixpoint}
+\KAuxNewLinkScopetagInstance {def:inflationary-fixpoint}{document}
+\KAuxDeclaredScopeTag {thm:fdp-fixpoint}
+\KAuxNewLinkScopetagInstance {thm:fdp-fixpoint}{document}
+\KAuxDeclaredScopeTag {cor:examples-of-fdp}
+\KAuxNewLinkScopetagInstance {cor:examples-of-fdp}{document}
+\KAuxDeclaredScopeTag {ex:pspace-complete-form}
+\KAuxNewLinkScopetagInstance {ex:pspace-complete-form}{document}
+\KAuxDeclaredScopeTag {ex:pspace-complete-setb}
+\KAuxNewLinkScopetagInstance {ex:pspace-complete-setb}{document}
+\KAuxDeclaredScopeTag {ex:pspace-complete-setb-quantifier-free-guards}
+\KAuxNewLinkScopetagInstance {ex:pspace-complete-setb-quantifier-free-guards}{document}
+\KAuxDeclaredScopeTag {ex:dimension-tuples}
+\KAuxNewLinkScopetagInstance {ex:dimension-tuples}{document}
+\KAuxDeclaredScopeTag {ex:fdp-poc}
+\KAuxNewLinkScopetagInstance {ex:fdp-poc}{document}
+\KAuxDeclaredScopeTag {ex:orbit-count}
+\KAuxNewLinkScopetagInstance {ex:orbit-count}{document}
+\KAuxDeclaredScopeTag {ex:fdp-more-general-atoms}
+\KAuxNewLinkScopetagInstance {ex:fdp-more-general-atoms}{document}
+\KAuxDeclaredScopeTag {ex:fraisse-fdp}
+\KAuxNewLinkScopetagInstance {ex:fraisse-fdp}{document}
+\KAuxDeclaredScopeTag {ex:fdt-no}
+\KAuxNewLinkScopetagInstance {ex:fdt-no}{document}
+\KAuxDeclaredScopeTag {ex:fdt-yes}
+\KAuxNewLinkScopetagInstance {ex:fdt-yes}{document}
+\KAuxDeclaredScopeTag {ex:dim-size-tradeoff}
+\KAuxNewLinkScopetagInstance {ex:dim-size-tradeoff}{document}
+\KAuxDeclaredScopeTag {refs}
+\KAuxNewLinkScopetagInstance {refs}{document}
+\KAuxEOF {}

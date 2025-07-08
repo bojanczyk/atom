@@ -1,0 +1,164 @@
+\begin{thebibliography}{30}
+\expandafter\ifx\csname natexlab\endcsname\relax\def\natexlab#1{#1}\fi
+\expandafter\ifx\csname selectlanguage\endcsname\relax
+  \def\selectlanguage#1{\relax}\fi
+
+\bibitem[\protect\citename{Blass, }2013]{andreas-dedekind}
+Blass, Andreas. 2013.
+\newblock {\em {Power-Dedekind Finiteness}}.
+\newblock \url{http://www.math.lsa.umich.edu/~ablass/pd-finite.pdf}.
+\newblock [Online; accessed September 6, 2019].
+
+\bibitem[\protect\citename{Boja{\'{n}}czyk and Toru{\'{n}}czyk, }2012]{DBLP:conf/fsttcs/BojanczykT12}
+Boja{\'{n}}czyk, Miko{\l}aj, and Toru{\'{n}}czyk, Szymon. 2012.
+\newblock Imperative Programming in Sets with Atoms.
+\newblock {Pages  4--15 of:} {\em {IARCS} Annual Conference on Foundations of Software Technology and Theoretical Computer Science, {FSTTCS} 2012, December 15-17, 2012, Hyderabad, India}.
+
+\bibitem[\protect\citename{Boja\'nczyk and Toru\'nczyk, }2018]{bojanczyk_computability_2018}
+Boja\'nczyk, Miko{\l}aj, and Toru\'nczyk, Szymon. 2018.
+\newblock On computability and tractability for infinite sets.
+\newblock {Pages  145--154 of:} Dawar, Anuj, and Gr\"adel, Erich (eds), {\em Proceedings of the 33rd {Annual} {ACM}/{IEEE} {Symposium} on {Logic} in {Computer} {Science}, {LICS} 2018, {Oxford}, {UK}, {July} 9--12, 2018}.
+\newblock ACM.
+
+\bibitem[\protect\citename{Boja{\'{n}}czyk {et~al.}, }2012]{DBLP:conf/popl/BojanczykBKL12}
+Boja{\'{n}}czyk, Miko{\l}aj, Braud, Laurent, Klin, Bartek, and Lasota, S{\l}awomir. 2012.
+\newblock Towards nominal computation.
+\newblock {Pages  401--412 of:} {\em POPL}.
+
+\bibitem[\protect\citename{Boja{\'{n}}czyk {et~al.}, }2013a]{DBLP:conf/lics/BojanczykKLT13}
+Boja{\'{n}}czyk, Miko{\l}aj, Klin, Bartek, Lasota, S{\l}awomir, and Toru{\'{n}}czyk, Szymon. 2013a.
+\newblock Turing Machines with Atoms.
+\newblock {Pages  183--192 of:} {\em 28th Annual {ACM/IEEE} Symposium on Logic in Computer Science, {LICS} 2013, New Orleans, LA, USA, June 25-28, 2013}.
+
+\bibitem[\protect\citename{Boja{\'{n}}czyk {et~al.}, }2013b]{DBLP:conf/pods/BojanczykST13}
+Boja{\'{n}}czyk, Miko{\l}aj, Segoufin, Luc, and Toru{\'{n}}czyk, Szymon. 2013b.
+\newblock Verification of database-driven systems via amalgamation.
+\newblock {Pages  63--74 of:} {\em Proceedings of the 32nd {ACM} {SIGMOD-SIGACT-SIGART} Symposium on Principles of Database Systems, {PODS} 2013, New York, NY, {USA} - June 22 - 27, 2013}.
+
+\bibitem[\protect\citename{Boja{\'{n}}czyk {et~al.}, }2014]{DBLP:journals/corr/BojanczykKL14}
+Boja{\'{n}}czyk, Miko{\l}aj, Klin, Bartek, and Lasota, S{\l}awomir. 2014.
+\newblock Automata theory in nominal sets.
+\newblock {\em Logical Methods in Computer Science}, {\bf 10}(3).
+
+\bibitem[\protect\citename{Boja{\'n}czyk {et~al.}, }2024]{orbitFiniteVectorTheoretics}
+Boja{\'n}czyk, Miko{\l}aj, Fijalkow, Joanna, Klin, Bartek, and Moerman, Joshua. 2024.
+\newblock {Orbit-Finite-Dimensional Vector Spaces and Weighted Register Automata}.
+\newblock {\em {TheoretiCS}}, {\bf {Volume 3}}(May).
+
+\bibitem[\protect\citename{Cai {et~al.}, }1992]{DBLP:journals/combinatorica/CaiFI92}
+Cai, Jinyi, F{\"u}rer, Martin, and Immerman, Neil. 1992.
+\newblock An optimal lower bound on the number of variables for graph identifications.
+\newblock {\em Combinatorica}, {\bf 12}(4), 389--410.
+
+\bibitem[\protect\citename{Cheng and Kaminski, }1998]{DBLP:journals/acta/ChengK98}
+Cheng, Edward Y.~C., and Kaminski, Michael. 1998.
+\newblock Context-Free Languages over Infinite Alphabets.
+\newblock {\em Acta Informatica}, {\bf 35}(3), 245--267.
+
+\bibitem[\protect\citename{Clemente and Lasota, }2015a]{DBLP:conf/csl/ClementeL15}
+Clemente, Lorenzo, and Lasota, S{\l}awomir. 2015a.
+\newblock Reachability Analysis of First-order Definable Pushdown Systems.
+\newblock {Pages  244--259 of:} {\em 24th {EACSL} Annual Conference on Computer Science Logic, {CSL} 2015, September 7-10, 2015, Berlin, Germany}.
+
+\bibitem[\protect\citename{Clemente and Lasota, }2015b]{DBLP:conf/lics/ClementeL15}
+Clemente, Lorenzo, and Lasota, S{\l}awomir. 2015b.
+\newblock Timed Pushdown Automata Revisited.
+\newblock {Pages  738--749 of:} {\em 30th Annual {ACM/IEEE} Symposium on Logic in Computer Science, {LICS} 2015, Kyoto, Japan, July 6--10, 2015}.
+
+\bibitem[\protect\citename{Courcelle and Engelfriet, }2012]{courcelleGraphStructureMonadic2012}
+Courcelle, Bruno, and Engelfriet, Joost. 2012.
+\newblock {\em Graph {{Structure}} and {{Monadic Second}}-{{Order Logic}} - {{A Language}}-{{Theoretic Approach}}}.
+\newblock Encyclopedia of Mathematics and Its Applications, vol. 138.
+\newblock {Cambridge University Press}.
+
+\bibitem[\protect\citename{Engeler, }1959]{engeler1959characterization}
+Engeler, ERWIN. 1959.
+\newblock A characterization of theories with isomorphic denumerable models.
+\newblock {\em Notices of the American Mathematical Society}, {\bf 6}, 161.
+
+\bibitem[\protect\citename{Ferrari {et~al.}, }2002]{DBLP:conf/fossacs/FerrariMP02}
+Ferrari, Gian~Luigi, Montanari, Ugo, and Pistore, Marco. 2002.
+\newblock Minimizing Transition Systems for Name Passing Calculi: {A} Co-algebraic Formulation.
+\newblock {Pages  129--158 of:} {\em Foundations of Software Science and Computation Structures, 5th International Conference, {FOSSACS} 2002. Held as Part of the Joint European Conferences on Theory and Practice of Software, {ETAPS} 2002 Grenoble, France, April 8-12, 2002, Proceedings}.
+
+\bibitem[\protect\citename{Gabbay and Pitts, }2002]{DBLP:journals/fac/GabbayP02}
+Gabbay, Murdoch, and Pitts, Andrew~M. 2002.
+\newblock A New Approach to Abstract Syntax with Variable Binding.
+\newblock {\em Formal Aspects of Computing}, {\bf 13}(3-5), 341--363.
+
+\bibitem[\protect\citename{Hodges, }1993]{hodges1993model}
+Hodges, Wilfrid. 1993.
+\newblock {\em Model Theory}.
+\newblock Encyclopedia of Mathematics and its Applications.
+\newblock Cambridge University Press.
+
+\bibitem[\protect\citename{Klin and Lelyk, }2017]{klin2017modal}
+Klin, Bartek, and Lelyk, Mateusz. 2017.
+\newblock Modal mu-calculus with atoms.
+\newblock {Pages  30--1 of:} {\em 26th EACSL Annual Conference on Computer Science Logic (CSL 2017)}.
+\newblock Schloss Dagstuhl--Leibniz-Zentrum f{\"u}r Informatik.
+
+\bibitem[\protect\citename{Klin {et~al.}, }2014]{DBLP:conf/csl/KlinLOT14}
+Klin, Bartek, Lasota, S{\l}awomir, Ochremiak, Joanna, and Toru{\'{n}}czyk, Szymon. 2014.
+\newblock Turing machines with atoms, constraint satisfaction problems, and descriptive complexity.
+\newblock {Pages  58:1--58:10 of:} {\em Joint Meeting of the Twenty-Third {EACSL} Annual Conference on Computer Science Logic {(CSL)} and the Twenty-Ninth Annual {ACM/IEEE} Symposium on Logic in Computer Science (LICS), {CSL-LICS} '14, Vienna, Austria, July 14--18, 2014}.
+
+\bibitem[\protect\citename{Klin {et~al.}, }2015]{klin2015locally}
+Klin, Bartek, Kopczy{\'{n}}ski, Eryk, Ochremiak, Joanna, and Toru{\'{n}}czyk, Szymon. 2015.
+\newblock Locally finite constraint satisfaction problems.
+\newblock {Pages  475--486 of:} {\em Proceedings of the 2015 30th Annual ACM/IEEE Symposium on Logic in Computer Science (LICS)}.
+\newblock IEEE Computer Society.
+
+\bibitem[\protect\citename{Kopczy{\'{n}}ski and Toru{\'{n}}czyk, }2016]{DBLP:conf/cade/KopczynskiT16}
+Kopczy{\'{n}}ski, Eryk, and Toru{\'{n}}czyk, Szymon. 2016.
+\newblock {LOIS:} an Application of {SMT} Solvers.
+\newblock {Pages  51--60 of:} {\em Proceedings of the 14th International Workshop on Satisfiability Modulo Theories affiliated with the International Joint Conference on Automated Reasoning, SMT@IJCAR 2016, Coimbra, Portugal, July 1--2, 2016.}
+
+\bibitem[\protect\citename{Kopczy\'nski and Toru{\'{n}}czyk, }2017]{DBLP:conf/popl/KopczynskiT17}
+Kopczy\'nski, Eryk, and Toru{\'{n}}czyk, Szymon. 2017.
+\newblock {LOIS:} syntax and semantics.
+\newblock {Pages  586--598 of:} {\em Proceedings of the 44th {ACM} {SIGPLAN} Symposium on Principles of Programming Languages, {POPL} 2017, Paris, France, January 18-20, 2017}.
+
+\bibitem[\protect\citename{Moerman {et~al.}, }2017]{DBLP:conf/popl/MoermanS0KS17}
+Moerman, Joshua, Sammartino, Matteo, Silva, Alexandra, Klin, Bartek, and Szynwelski, Michal. 2017.
+\newblock Learning nominal automata.
+\newblock {Pages  613--625 of:} {\em Proceedings of the 44th {ACM} {SIGPLAN} Symposium on Principles of Programming Languages, {POPL} 2017, Paris, France, January 18-20, 2017}.
+
+\bibitem[\protect\citename{Murawski {et~al.}, }2014]{DBLP:conf/mfcs/MurawskiRT14}
+Murawski, Andrzej, Ramsay, Steven, and Tzevelekos, Nikos. 2014.
+\newblock Reachability in Pushdown Register Automata.
+\newblock {Pages  464--473 of:} {\em Mathematical Foundations of Computer Science 2014 - 39th International Symposium, {MFCS} 2014, Budapest, Hungary, August 25-29, 2014. Proceedings, Part {I}}.
+
+\bibitem[\protect\citename{Murawski {et~al.}, }2015]{DBLP:conf/lics/MurawskiRT15}
+Murawski, Andrzej, Ramsay, Steven, and Tzevelekos, Nikos. 2015.
+\newblock Biosimilarity in Fresh-Register Automata.
+\newblock {Pages  156--167 of:} {\em 30th Annual {ACM/IEEE} Symposium on Logic in Computer Science, {LICS} 2015, Kyoto, Japan, July 6--10, 2015}.
+
+\bibitem[\protect\citename{Pitts, }2013]{PittsAM:nomsns}
+Pitts, Andrew~M. 2013.
+\newblock {\em Nominal Sets: Names and Symmetry in Computer Science}.
+\newblock Cambridge Tracts in Theoretical Computer Science, vol. 57.
+\newblock Cambridge University Press.
+
+\bibitem[\protect\citename{Reingold, }2008]{reingold2008undirected}
+Reingold, Omer. 2008.
+\newblock Undirected connectivity in log-space.
+\newblock {\em J. ACM}, {\bf 55}(4).
+
+\bibitem[\protect\citename{Ryll-Nardzewski, }1959]{ryll1959categoricity}
+Ryll-Nardzewski, Czes{\l}aw. 1959.
+\newblock On the categoricity in power $\leq \aleph_0$.
+\newblock {\em Bull. Acad. Polon. Sci. S{\'e}r. Sci. Math. Astr. Phys}, {\bf 7}, 545--548.
+
+\bibitem[\protect\citename{Svenonius, }1959]{svenonius1959no}
+Svenonius, Lars. 1959.
+\newblock No-categoricity in first-order predicate calculus 1.
+\newblock {\em Theoria}, {\bf 25}(2), 82--94.
+
+\bibitem[\protect\citename{Thomas, }1990]{DBLP:books/el/leeuwen90/Thomas90}
+Thomas, Wolfgang. 1990.
+\newblock Automata on infinite objects.
+\newblock {Pages  135--191 of:} van Leeuwen, J. (ed), {\em Handbook of Theoretical Computer Science},  vol. vol. B, Formal models and semantics.
+\newblock Elsevier.
+
+\end{thebibliography}

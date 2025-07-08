@@ -1,0 +1,85 @@
+\knowledge{notion}
+  | homogeneous
+ | Homogeneous
+  | HOMOGENEOUS
+
+\knowledge{notion}
+ | substructure
+ | substructures
+
+
+\knowledge{notion}
+ | polynomial orbit-finite set
+ | pof sets
+ | pof set
+ | Polynomial orbit-finite sets
+ | polynomial orbit-finite sets
+
+\knowledge{notion}
+ | component
+ | components
+
+\knowledge{notion}
+ | dimension
+ | dimensions
+
+
+\knowledge{notion}
+ | atom permutations
+ | atom permutation
+
+%  for the equality atoms
+\knowledge{notion,scope=equality}
+ | equivariant
+ | Equivariant
+  | EQUIVARIANT
+
+% for general oligomorphic atoms
+\knowledge{notion}
+ | equivariant
+ | Equivariant
+  | EQUIVARIANT
+
+\knowledge{notion}
+ | orbit
+ | orbits
+
+ \knowledge{notion}
+  | orbit-finite
+ | Orbit-finite
+  | ORBIT-FINITE
+
+\knowledge{notion}
+| atomless
+
+\knowledge{notion}
+| pof automaton
+| pof automata
+
+\knowledge{notion}
+| pof graph
+| pof graphs
+
+\knowledge{notion}
+ | pof context-free grammar
+  | pof context-free grammars
+
+\knowledge{notion}
+  | spof set
+  | spof sets
+
+\knowledge{notion}
+| oligomorphic
+| oligomorphism
+
+\knowledge{notion}
+| automorphism
+| automorphisms
+
+
+
+
+% \knowledge{notion,scope=scope:smaller}
+% | identify
+
+% \knowledge{notion}

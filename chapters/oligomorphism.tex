@@ -146,6 +146,41 @@ discussed in Examples~\ref{ex:Presburger-arithmetic} and~\ref{ex:integers-with-o
 	are equal up to atom automorphisms if and only if they have the same equality types and the same equivalence types with respect to the equivalence relation ``in the same clique''. Since there are finitely many possibilities for every choice of $n$, it follows that these atoms are oligomorphic.
 \end{myexample}
 
+Here is another example of an oligomorphic structure, which will play  an important role in this book, next to the equality atoms and the ordered atoms.
+\begin{myexample}
+	[Bit vector atoms] \label{ex:bit-vector-atoms} 
+	 The bit vector atoms are defined as follows: 
+	\begin{itemize}
+		\item the universe is sequences in $\set{0,1}^\omega$ that use finitely many ones;
+		\item there is one ternary relation $x + y = z$ for coordinate-wise addition modulo two.
+	\end{itemize}
+	
+	We think of this structure as being a vector space over the two element field. The first observation is that an automorphism of this structure is the same thing as a permutation which is a linear map. This is almost by definition: automorphisms must be consistent with the addition relation, while linear maps must be consistent with both addition and scalar multiplication. However, for the two element field, consistency with addition implies consistency with scalar multiplication. For the scalar $\lambda  = 1$, there is nothing to check, while for the scalar $\lambda = 0$, we need to prove that an automorphism must map $0$ to itself. This is true, because $0$ is the only neutral element of addition. 
+	
+	Let us now show that the bit vector atoms are oligomorphic. The main observation is the following claim, which shows that the orbit of a tuple of atoms is uniquely determined by its linear dependencies.
+	\begin{claim}\label{claim:bit-vector-orbit-dependencies}
+		The orbit of a tuple $\bar a \in \atoms^d$ is uniquely determined by the following family
+		\begin{align*}
+		\setbuild { I \subseteq \set{1,\ldots,d}}{$0 = \sum_{i \in I} a_i$}.
+		\end{align*}
+	\end{claim}
+	\begin{proof}
+		We first consider the special case when there are no nontrivial dependencies, i.e.~the family in the statement of the claim contains only the empty set. This means that the tuple $\bar a$ is linearly independent. To prove the claim in this special case, we need to show that any two linearly  tuples $\bar a , \bar b \in \atoms^d$ are in the same orbit. This is because each of the two tuples can be completed to a basis of the entire vector space, and then the two bases can be mapped to each other by a linear map, which is an automorphism.
+
+		Consider now the general case. Take two tuples $\bar a, \bar b \in \atoms^d$ which satisfy the same linear dependencies, i.e.~they induce the same families as in the statement of the claim. Choose a subset $I \subseteq \set{1,\ldots,d}$ of the coordinates which is linearly independent (in both tuples, since they have the same linear dependencies), and which is maximal for this property. By the argument in the previous paragraph, there is an automorphism $\pi$ that maps  $a_i$ to $b_i$ for every coordinate $i \in I$. We now show that this automorphism $\pi$  also works for the remaining coordinates. Indeed, if we take some $i \not \in I$, then we know that $a_i$ is spanned by some of the coordinates in $I$, i.e.
+		\begin{align*}
+		a_i = \sum_{j \in J} a_j  \qquad  \text{for some $J \subseteq I$}.
+		\end{align*}
+		The same kind of equality must hold in $\bar b$, and therefore the automorphism $\pi$ maps $a_i$ to $b_i$, since it preserves such equalities.
+	\end{proof}
+
+	 Since the family from the above claim can be chosen in finitely many ways for a given length $d$, it follows that the number of orbits is also finite. In Exercise~\ref{ex:bit-vector-orbit-count}, we refine this observation a bit, by showing that the number of orbits is singly exponential in $d$, despite the fact that we are choosing a set of sets, which seems to indicate a doubly exponential count.
+\end{myexample}
+
+
+
+
+
 \paragraph*{"Polynomial orbit-finite sets".} Many of the notions that we have described so far make sense for other atoms, and not just the equality atoms. The only difference is that instead of "atom permutations", we use the more general notion of atom automorphism. In the special case of the equality atoms, this will be the same as "atom permutations". 
 
 We begin with the generalization of "pof sets" and their "equivariant" subsets. 

@@ -74,6 +74,7 @@ We begin with a very simple example of an alternating automaton, which explains 
 	If we run the automaton on an empty input word, then the universal player cannot pick a transition from the initial state, and thus  the existential player wins immediately,  witnessing acceptance. Otherwise, if the input word is nonempty, then the universal player can pick a transition which goes to the state $\bot$, where the existential player has no choice, and therefore loses, witnessing rejection. 
 \end{myexample}
 
+
 \begin{theorem}
 	Alternating pof automata generalise nondeterministic pof automata.
 \end{theorem}
@@ -100,8 +101,24 @@ For this construction, we make another assumption on the model, which  disallows
 \end{proof}
 
 
-One could extend the complementation construction to general alternating automata, if we extended the model to be more self-symmetric. This could be achieved, for example, by using a parity condition for infinite runs. However, we do not discuss such extensions in more detail, since already without such extensions the model is undecidable for essentially any problem, such as  emptiness or universality. In light of this undecidability, there seems to be little motivation for seriously studying the model, as opposed to studying general Turing machines. 
+One could extend the complementation construction to general alternating automata, by extending the model to be more self-symmetric. This could be achieved, for example, by using a parity condition for infinite runs\footnote{A parity condition is a kind of acceptance condition that is used for automata with infinite runs, see~\cite[Section 5]{DBLP:reference/hfl/Thomas97}. }. However, we do not discuss such extensions in more detail, since already without such extensions the model is undecidable for essentially any problem, such as  emptiness or universality. In light of this undecidability, there seems to be little motivation for seriously studying this particular model, as opposed to general Turing machines. 
+Nevertheless, the model can still be a source of amusing examples and exercises, which is what we end this section with.
 
+
+\begin{myexample} Consider the following language:
+	\begin{align*}
+		\setbuild{ w\#w}{$w \in \atoms^*$ has pairwise different letters}.
+	\end{align*}
+	The input alphabet is $\atoms + 1$, with the added letter being the separator symbol $\#$. We will show that this language is recognised by an alternating pof automaton. 
+	The assumption that all letters are distinct in $w$ is crucial. 
+	A word belongs to the language if and only if it satisfies the following conditions: 
+	\begin{enumerate}
+			\item the separator $\#$ appears exactly once;
+		\item every atom appears zero or two times;
+		\item for every word $ab \in \atoms^2$, this word appears before $\#$ iff it appears after $\#$.
+	\end{enumerate}
+	Since alternating automata are closed under intersections, it remains to give describe an automaton for each of the tree above conditions. We only to the third one, which is the most interesting one. At the beginning of the run, the automaton chooses a pair of atoms. This is done by using a universal initial state, with one outgoing $\varepsilon$-transition for every possible choice of the pair $(a,b)$, which results in the pair being stored in the state. Once the pair has been guessed, the automaton  checks that either the word $ab$  not appear at all, or it appears twice -- once before the separator, and once after it. This check can be done deterministically.
+\end{myexample}
 
 \exercisepart
 \input{problems/pof-models-alternating}
@@ -111,17 +128,36 @@ One could extend the complementation construction to general alternating automat
 
 \section{Two-way automata}
 \label{sec:pof-two-way}
-We now describe a second extension of finite automata, which is equivalent to the usual automata in the atom-free case, but not in the presence of atoms. This is a two-way automaton,  where the head can move both left and right. This model is the same as Turing machines that have a read-only input tape and no work tape. We will consider the pof variant of this model, in the deterministic case.
-A \emph{deterministic two-way pof  automaton} is defined like a deterministic pof automaton, except that the transition function is of type 
-\begin{align*}
-Q \times 
-\myunderbrace{(\Sigma + \set{\vdash,\dashv} )}{input letters or endmarkers}  
-\ \to\ 
-\set{\text{accept, reject}} + 
+In this section, we describe another kind of generalisation of automata, namely two-way automata. One could combine this generalisation with the one from the previous section, and consider alternating two-way automata, but we stick with the basic model, in its deterministic and nondeterministic variants. In the case of finite alphabets, two-way automata are equivalent to the usual one-way automata, but this will no longer be the case in the presence of atoms. 
+
+\begin{definition}[Two-way automaton] 
+	A two-way pof automaton consists of: 
+	\begin{itemize}
+		\item a pof set $Q$ of states;
+		\item a pof set $\Sigma$ for the input alphabet;
+		\item two equivariant sets $I,F \subseteq Q$ of initial and final states, respectively;
+		\item an equivariant transition relation of the form 
+		\begin{align*}
+\delta \qquad \subseteq \qquad 
+\myoverbrace{Q \times 
+\myunderbrace{(\Sigma + \set{\vdash,\dashv} )}{input letters or endmarkers}}{before transition}
+\quad \times \quad
+\myoverbrace{ 
 (Q \times 
-\myunderbrace{\set{\text{left, stay, right}}}{head movement}).
+\myunderbrace{\set{\text{left, stay, right}}}{head movement})}{after transition}.
 \end{align*}
-The automaton can also reject by entering an infinite loop.
+	\end{itemize}
+The automaton is called deterministic if it has exactly one initial state, and the transition relation is a function from the ``before transition'' part to the ``after transition'' part.
+\end{definition}
+
+We now define the semantics of the model, i.e.~the language recognised by a two-way automaton. A \emph{configuration} of the automaton looks like this: 
+\mypicb{11}
+Formally speaking, a configuration consists of an input word $a_1 \cdots a_n$, together with a state $q \in Q$ and a head position in $\set{0,1,\ldots,n+1}$. 
+The head of the automaton is over some input position, which corresponds to indices in $\set{1,\ldots,n}$,  or over one of the two end-markers, which corresponds to indices $0$ and $n+1$. (This is in contrast with a one-way automaton, where it is more convenient to think of the head as being between positions.) The main purpose of the end-markers is to warn the automaton when it is close to the end of the input tape, so that it does not fall off. For each input word, we view the configurations as a directed graph, where the vertices are configurations, and the edges correspond to the transitions in the natural way. (Based on the state in the previous configuration and the letter under the head, the automaton updates the state and moves the head. If the head falls off the tape, then the transition is not enabled.) 
+An initial configuration is any configuration where the  head is over the left end-marker $\vdash$, and the state is an initial state. The automaton accepts an input word if the configuration graph has a path from an initial configuration (the state is in the initial set, and the head is over the left end-marker $\vdash$) to any configuration that uses an accepting state. If the automaton is deterministic, then there is exactly one initial configuration, and each vertex in the configuration graph has at most one successor. 
+
+Note that the automaton might enter an infinite loop. Therefore, even for deterministic two-way automata, complementation is not simply a matter of swapping accepting and rejecting configurations (a rejecting configuration is one that has no successors). Nevertheless, this issue can be addressed, see Exercise~\ref{ex:sipser-loop-removal}.
+
 
 \exercisepart
 \input{problems/pof-models-two-way}

@@ -17,7 +17,19 @@ All of the four equivariant relations mentioned in the solution to Exercise~\ref
 \mikexercise{Consider a structure $\atoms$ that is oligomorphic. Let $\mathbb B$ be a new structure, whose universe is a pof set over $\atoms$, and whose relations are equivariant (under automorphism of $\atoms$). Show that $\mathbb B$ is also an oligomorphic structure.  }{}
 
 
+\mikexercise{\label{ex:bit-vector-orbit-count} Consider the bit vector atoms. Show that the number of orbits in $\atoms^d$ is singly exponential in $d$.}{ Here is a formula for an upper bound: 
+\begin{align*}
+\myunderbrace{\sum_{0 \in \set{1,\ldots,b}}}{size of a basis}
+\quad 
+\myunderbrace{{d \choose b}}{choose \\ the \\  basis}
+\ \cdot \ 
+\myunderbrace{(2^{(d-b)})^b}{choose a \\ basis\\  decomposition \\ for the \\ remaining \\ $d-b$\\ coordinates}
+\qquad \leq \qquad 
+d \cdot 2^d \cdot 2^{d^2}.
+\end{align*}
+}
 
+\mikexercise{Consider the bit vector atoms. Find all equivariant functions of type $\atoms^2 \to \atoms$. Are these all linear maps? }{}
 
 % \mikexercise{Consider the atoms $(\mathbb Q, <)$. Show that there is no equivariant well-founded total order on $\atoms$. }{ Suppose that $R$ is an equivariant binary relation on the atoms. Let $c$ be the smallest atom in the finite support. If $a_1<b_1$ and $a_2<b_2$ are atoms which are smaller than $c$, then $R$ selects the pair $(a_1,b_1)$ if and only if it selects the pair $(a_2,b_2)$, because these pairs can be mapped to each other by an automorphism of the rational numbers that fixes all rational numbers greater or equal to $c$. It follows that for atoms smaller than $c$, the order imposed by $R$ is either that of the rational numbers or its opposite, neither of which is well-founded.
 

@@ -519,40 +519,50 @@ recognised by a nondeterministic orbit-finite automaton?
 
 \subsection{Bit vectors}
 \label{sec:bit-vectors}
-This section is about the \fraisse limit of finite vector spaces over the two element field. These atoms will also be discussed in Chapter~\ref{cha:turing}, where we will show that, over these atoms, deterministic polynomial time orbit-finite Turing machines are weaker than the nondeterministic ones.
+In this section, we revisit the bit vector atoms from Example~\ref{ex:bit-vector-atoms}. With the vocabulary that was originally used, i.e.~with a ternary relation for addition, the structure is not homogeneous, as shown in the following example. 
 
-For the rest of this section, we only study vector spaces over the two element field, so we say vector space with the implicit assumption that the underlying field is the two element field. Every  vector space of finite dimension (which is equivalent to having finitely many vectors) is isomorphic to
-\begin{align*}
-(\set{0,1}^d, +) \qquad \text{for some $d \in \set{1,2,\ldots}$}
-\end{align*}
-where addition is modulo two.
-We model a -- possibly infinite -- vector space $V$ as a structure over the following infinite vocabulary: for every $d \in \set{0,1,\ldots}$ there is a relation which selects $d$-tuples of vectors that are linearly independent. Here, a $d$-tuple $\bar v \in V^d$ is called linearly independent if it does not satisfy any non-trivial dependency
-\begin{align*}
-\alpha_1 v_1 + \cdots + \alpha_d v_d = 0,
-\end{align*}
-where non-trivial means that at least one of the coefficients $\alpha_i$ is nonzero. In particular, if the tuple contains a repetition, then it is linearly dependent. If the vector space has finite dimension, then the relation will not select any tuple, once $d$ exceeds the dimension.
-
-
-It is not hard to see that finite vector spaces are a \fraisse class. Embeddings are the same thing as injective linear maps. To amalgamate two vector spaces, of dimensions say $d_1$ and $d_2$, one needs a vector space of dimension $\max(d_1,d_2)$. Therefore, there is a \fraisse limit of the finite vector spaces; and thanks to Theorem~\ref{thm:computable-fraisse} this limit is a countably oligomorphic structure.
-
-One can also construct the \fraisse limit explicitly. 
-The \fraisse limit must be a vector space, since any violation of the vector space axioms would need to happen already in a finitely generated substructure. Since the \fraisse limit is countable, its dimension must be countable, and since the \fraisse limit embeds all finite vector spaces, its dimension must be infinite. Therefore, the \fraisse limit is a vector space of countably infinite dimension. Up to isomorphism, there is a unique vector space like this. One way of representing this unique vector space is as follows. The elements are \emph{bit vectors}, which are defined to be $\omega$-sequences of zeroes and ones which have finitely many ones (if we allowed infinitely many ones, the resulting vector spaces would have uncountable dimension). By ignoring trailing zeroes, a bit vector can be represented as a finite sequence, such as $00101001$. Define the \emph{bit vector atoms} to be the bit vectors equipped with a function for coordinate-wise addition modulo two:
+\begin{myexample}
+	Consider the following  eight atoms, where we only specify the first four bits, and the rest are all zeros:
 	\begin{align*}
-		01011 + 11001 = 10010 = 1001.
-	\end{align*}
-An example basis consists of bit vectors which have a $1$ on the $n$-th coordinate:
+		\begin{array}{ll}
+			1000 \cdots & 1000 \cdots \\
+			0100 \cdots & 0100 \cdots \\
+			0010 \cdots & 0010 \cdots \\
+			1110 \cdots & 0001 \cdots
+		\end{array}
+	\end{align*} 
+	We will show that there is a partial automorphism of the structure which maps the first column to the second one, but this partial automorphism does not extend to a full automorphism of the structure (i.e.~the two columns are not in the same orbit).
+	The first column is linearly dependent, while the second column is linearly independent, and therefore, the  two columns are not in the same orbit. However, there is a partial automorphism which maps the first column to the second one. This is because the  ternary relation for addition does not select any triples in either of the two columns. 
+\end{myexample}
+
+As we have argued before Theorem~\ref{thm:hom-oligo}, the bit vector atoms, like any oligomorphic structure, can be turned into an oligomorphic structure by using an infinite vocabulary, with one relation for each orbit in $\atoms^*$. This vocabulary can be improved, by only using relations of the form 
+\begin{align}
+	\label{eq:bit-vector-orbit-dependencies}
+x_1 + \cdots + x_d = 0.
+\end{align}
+This is thanks to Claim~\ref{claim:bit-vector-orbit-dependencies}, which showed that two tuples are in the same orbit if and only if they satisfy the same linear dependencies. Such linear dependencies can be expressed using quantifier-free formulas in the new vocabulary with relations of the form~\eqref{eq:bit-vector-orbit-dependencies}, which means that the structure is homogeneous. Observe that, since we are using the two-element field, addition is the same as subtraction, and therefore the equality~\eqref{eq:bit-vector-orbit-dependencies} can be equivalently stated as 
 \begin{align*}
-	1, 01,001,0001,\ldots.
+x_1 + \cdots + x_{d-1} = x_d.
 \end{align*}
-Another example of a basis is
-\begin{align*}
-1,11,111,1111,\ldots.
-\end{align*}
- 
- 
+Summing up, the bit vector atoms become a homogeneous structure if we extend the vocabulary to an infinite one, where we have a relation for addition for every dimension $d$, and not just a ternary relation $x+y =z$ for addition of two vectors. 
 
 
-\paragraph*{Least supports.} We prove below that for the bit vector atoms, a version of the Least Support Theorem is true.  For bit vectors, least supports are not unique as sets, but as spanned subspaces. For example, the pair of atoms $(01,10)$ is supported by itself, but it is also supported by $(11,01)$. More generally, the following lemma shows that supporting and spanning are the same concepts, when talking about tuples of atoms. 
+
+\begin{myexample}[Using functions]
+	In this example, we briefly sketch an alternative  solution for making the bit vectors homogeneous. In this alternative solution, we think  of addition as a function, and not a relation. We only sketch this solution, since in this book we   consider structures with relations only, and without  functions. In particular, we do not prove the \fraisse Theorem for structures with functions, although it would still be true. However, let us at least explain the difference between functions and relations, and how functions could be advantageous.  The difference between a function with $n$ arguments and the corresponding relation with $n+1$ arguments is that the relation can only check if a given candidate for the output is the correct, while the function produces this candidate. This difference manifests itself in the expressive power of  quantifier-free formulas. For example, if we view addition as a function with two arguments, then 
+\begin{align*}
+(x_1 + x_2) + x_3 = x_4
+\end{align*}
+is a quantifier-free formula. On the other hand, if we view addition as a relation, then expressing the above  would need to have a quantifier to refer to the value of the sum $x_1+x_2$, i.e.~it would need to be rewritten as 
+\begin{align*}
+\exists y  (x_1 + x_2 = y) \land (y + x_3 = x_4).
+\end{align*}
+Once we decide to use functions, there is no longer a need to have addition for more than two arguments, since it can be implemented in a quantifier-free way using addition for two arguments. Therefore, the bit vectors become homogeneous, if we use a vocabulary that has one function for addition of two vectors. 
+\end{myexample}
+
+
+
+\paragraph*{Least supports.} We prove below that for the bit vector atoms, a version of the Least Support Theorem is true.  For bit vectors, least supports are not unique as sets, but as spanned subspaces. For example, consider the pair of atoms $(01 \cdots,10 \cdots)$, where the dots stand for trailing zeros. This pair is supported by itself, but it is also supported by the pair $(11 \cdots ,01 \cdots)$. More generally, the following lemma shows that supporting and spanning are the same concepts, when talking about tuples of atoms. 
 \begin{lemma} Assume the bit vector atoms. 
  An atom tuple $\bar a$ supports an atom tuple $\bar b$ if and only if all atoms in $\bar b$ are spanned by $\bar a$. 
 \end{lemma}

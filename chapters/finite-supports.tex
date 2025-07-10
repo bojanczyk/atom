@@ -165,6 +165,12 @@ By equivariance of the automaton, this is an equivariant partial equivalence rel
 \label{sec:orbit-finiteness-equality}
 One could worry that subquotient pof sets are a hack that fixes the minimization issue for automata, but does not have other applications, or a proper theoretical justification. In this section, we ease such worries, by giving a more semantic concept, namely orbit-finite sets, and showing that they are exactly the same as subquotient pof sets.
 
+The general idea is that a set $X$ is orbit-finite if it has finitely many orbits, which means that there are finitely many generators  $x_1,\ldots,x_n \in X$ such that every other element of the set is in the same orbit as one of these generators, i.e.~every element is of the form $\pi(x_i)$ for some atom permutation $\pi$ and some generator $x_i$.  However, in order to formalise this idea, we need to explain what $\pi(x_i)$ means, i.e.~how we apply an atom permutation to an element of the set $X$. If $X$ constructed using atoms in some natural way, e.g.~it is a quotiented pof set such as \begin{align*}
+\atoms^3 + \atoms^{(2)} + {\atoms \choose 3},
+\end{align*}
+then the meaning of $\pi(x)$ is clear: we simply apply $\pi$ to all atoms that appear in $x$. However, for an abstract set $X$, it is not exactly clear what it means for an atom to ``appear'' in an element $x \in X$. Therefore, in order to talk about orbits in an abstract set $X$, we need to explicitly define what it means to apply atom permutations to elements of $X$. This is done by defining an action of the group of atom permutations on the set $X$, as described below. 
+
+
 \paragraph*{Group actions.}
 The semantic characterization will use two of the central notions in this book: finite supports, and orbit-finiteness. These notions are defined in terms of group actions, so begin by defining those. 
 
@@ -196,13 +202,42 @@ In this book, the group $G$ will always consist of  permutations of the atoms, a
     \begin{align*}
     \pi(a_1,\ldots,a_d) = (\pi(a_1),\ldots,\pi(a_d)).
     \end{align*}
-    We have been using this group action implicitly in the previous chapters. The action also extends to other sets, such as $\atoms^*$ or the powerset $\powerset \atoms$. In the case of the powerset, we use the image, i.e.~\begin{align*}
-    \pi(X) = \setbuild{\pi(a)}{$a \in X$}.
-    \end{align*}
+    We have been using this group action implicitly in the previous chapters. The action also extends to other sets, such as $\atoms^*$ or the powerset $\powerset \atoms$. In the case of the powerset, we use the image, i.e.~$
+    \pi(X) = \setbuild{\pi(a)}{$a \in X$}$.
 \end{myexample}
 
-\paragraph*{Finite supports.}
-We now introduce the fundamental notion of supports. The general idea is that the support of an  element $x$ in a set $X$ consists of  the atoms that are needed to describe it. Since the notion is defined in abstract terms of group actions, it will be useful to keep the following examples in mind while reading the formal definition.
+The main topic of this book is sets that have finitely many orbits.
+
+\begin{definition}[Orbit]\label{def:orbit}
+    Consider a set $X$ equipped with an action of a group $G$. The  ""orbit"" of an element $x \in X$ is the set 
+    \begin{align*}
+        \setbuild{ \pi(x)}{$\pi$ is an element of $G$}.
+    \end{align*}
+\end{definition}
+
+\begin{myexample}
+    \label{ex:finite-constructions-of-of-sets}
+     As we have shown in Lemma~\ref{lem:pof-finitely-many-equivariant}, every "pof set" has finitely many orbits. Another example of a set with finitely many orbits is the set $\atoms^{(d)}$ of non-repeating tuples, which was introduced in Example~\ref{ex:pof-product-generating-set}. This set has exactly one orbit. In fact, this is the only kind of one-orbit set that can arise in "pof set". This is because  every orbit in $\atoms^d$ admits an equivariant bijection with a set of the form $\atoms^{(e)}$ for some $e \in \set{1,\ldots,d}$. For example, the orbit of 
+    \begin{align*}
+    (\john,\mary,\john,\mary) \in \atoms^4
+    \end{align*}
+admits an equivariant bijection with the set $\atoms^{(2)}$, namely projection onto the first two coordinates. In a subquotiented pof set, we can see other one-orbit sets, such as $\atoms \choose 2$. 
+\end{myexample}
+
+\begin{myexample}[Sets which are neither finite nor co-finite]
+\label{ex:infinite-co-infinite}
+    Consider the family 
+    \begin{align*}
+    X = \setbuild { Y \subseteq \atoms}{there are infinitely many atoms in $Y$, and also in its complement}.
+    \end{align*}
+    The family $X$ is naturally equipped with an action of atom permutations. There is exactly one orbit in $X$, because any two sets $Y_1,X_2 \in X$ can be mapped to each other  by an atom permutation. This permutation is constructed by taking a bijection between the atoms in the two sets, and another bijection between the atoms in their complements. Such bijections exist, because the corresponding sets are all countably infinite.
+\end{myexample}
+
+
+
+\paragraph*{Finite supports.} Judging by the name alone, one would think that an orbit-finite set is defined to be a set that has finitely many orbits. This is not, however, the definition that we will use in this book, see Definition~\ref{def:orbit-finite-set-equality}. There will be an additional requirement, on finite supports, which we will now explain. This requirement will be consistent with  finite constructions such as taking pairs or finite sequences (see Example~\ref{ex:finite-constructions-of-of-sets}), but it will be inconsistent with infinite constructions such as taking sets that are infinite and co-infinite (see Example~\ref{ex:infinite-co-infinite}). As we will explain later in this chapter, this additional requirement will be necessary to get finite representations of orbit-finite sets, and algorithms that operate on them.
+
+ The general idea is that the support of an  element $x$ in a set $X$ consists of  the atoms that are needed to describe it. Since the notion is defined in abstract terms of group actions, it will be useful to keep the following examples in mind while reading the formal definition.
 
 \begin{center}
     \begin{tabular}{c|c|c}
@@ -214,7 +249,7 @@ We now introduce the fundamental notion of supports. The general idea is that th
     \end{tabular}
 \end{center}
 
-
+Like orbits, one can only talk about supports in the presence of an explicitly defined group action, which must use the group of atom permutations. 
 \begin{definition}[Supports]\label{def:supports-equality}
     Consider a set $X$ that is equipped with an action of the group of all  atom permutations. An element $x \in X$ is said to be \emph{supported} by  a list of  atoms $a_1,\ldots,a_n$ if 
     \begin{align}\label{eq:support-defining-implication}
@@ -227,7 +262,7 @@ We now introduce the fundamental notion of supports. The general idea is that th
 
 Observe that in the above definition, the group of atom permutation acts on two sets. The first action is on atoms: an atom permutation can be applied to an atom, and the result is another atom. This is the action that is used in the assumption of implication~\eqref{eq:support-defining-implication}. The second action is the action on the set $X$, which is used in the conclusion of the implication. The second action is a parameter of the definition, i.e.~in order for the definition to be meaningful, the set has to come with an action of the group of atom permutations. In most cases of interest, the second action will be clear from the context, e.g.~if we take $X$ to be $\atoms^d$, or the powerset $\powerset \atoms$, or any other set that is constructed using atoms in some natural way. However, in principle when talking about finite supports, we must remember that the notion depends on the action of the group of atom permutations on the set $X$.
 
-Before continuing, let us remark on the notation. In the above definition, we use finite lists for supports. The order of atoms in this list, or their repetitions, are not relevant for the notion of support, since they do not affect the assumption of the implication~\eqref{eq:support-defining-implication}. Therefore, the only relevant information is the set of atoms that appears on this list, which is why many authors present the support as a  finite set of atoms, and not a list. If one uses sets $\set{a_1,\ldots,a_n}$ for supports, then one should remember that the assumption in implication~\eqref{eq:support-defining-implication} is not
+Before continuing, let us remark on the notation. In Definition~\ref{def:supports-equality}, supports are finite lists of atoms. The order of atoms in this list, or their repetitions, are not relevant for the notion of support, since they do not affect the assumption of the implication~\eqref{eq:support-defining-implication}. Therefore, the only relevant information is the set of atoms that appears on this list, which is why many authors present the support as a  finite set of atoms, and not a list. If one uses sets $\set{a_1,\ldots,a_n}$ for supports, then one should remember that the assumption in implication~\eqref{eq:support-defining-implication} is not
 \begin{align*}
     \pi(\set{a_1,\ldots,a_n}) = \set{a_1,\ldots,a_n},
 \end{align*}
@@ -245,33 +280,23 @@ which is a weaker assumption, because it allows $\pi$ to swap atoms inside the s
     The remaining elements of the powerset are not finitely supported.  Let us prove this formally. Suppose that $x \in \powerset \atoms$ is neither finite nor cofinite, and take some hypothetical finite support $\bar a$. There must be some atoms $b,c$ that are not in this finite support, and such that $b \in x$ and $c \not \in x$. Take the atom permutation that swaps $b$ and $c$, and leaves all other atoms fixed. This permutation fixes the support, but moves $x$, which contradicts the definition of finite support.
 \end{myexample}
 
-\paragraph*{Orbits and orbit-finiteness.} We now introduce the second fundamental notion of this book, which is orbit-finiteness. This idea was already discussed informally before, but we now give a formal definition in terms of group actions.  Consider a set  $X$  equipped with an action of atom permutations.  An \emph{orbit} of $X$ is defined to be  any subset of the form  
-    \begin{align*}
-        \setbuild{ \pi(x)}{$\pi$ is an atom permutation},
-    \end{align*}
-    for some $x \in X$. We will be interested in sets that have finitely many orbits, and where all elements are finitely supported. (In the exercises, we explain why these two conditions are necessary for the theory to work.)
+\paragraph*{Orbits and orbit-finiteness.} We are now ready to present one of the central definitions of this book, namely orbit-finiteness. 
 
 
 \begin{definition}[Orbit-finite set]\label{def:orbit-finite-set-equality}
 	An \emph{orbit-finite set} is defined to be a set $X$, together with an action of the group of atom permutations, such that every element $x \in X$ has finite support, and there are finitely many orbits. 
 \end{definition}
 
-In the above definition, we require two things: there are finitely many orbits, and every element has finite support. The name ``orbit-finite'' would seem to imply only the first condition. At the end of this section we discuss why the second condition is also included.
+At the end of this section we discuss why the condition on finite supports is necessary. Also note that in order for the definition to be meaningful, the action of the group of atom permutations must be explicitly defined on the set $X$. In most examples, this action will be clear from the context, e.g.~if $X$ consists of tuples of atoms.
 
-\begin{myexample}[Pof sets are orbit-finite]\label{ex:pof-sets-orbit-finite}
-    Recall the set $\atoms^{(d)}$, which consists of non-repeating $d$-tuples of atoms. This set has one orbit, and every element has a support of size $d$, and therefore it is orbit-finite.  Another example of an orbit-finite set, this time with more than one orbit, is  $\atoms^3$. Like any orbit-finite set, this set decomposes into a disjoint union of one-orbit sets, which in this case uses five orbits:
-    \begin{align*}
-    \myunderbrace{\atoms^1}{all atoms\\ are equal} 
-    \quad + \quad 
-    \myunderbrace{\atoms^{(2)} + \atoms^{(2)} + \atoms^{(2)}}{two atoms are equal, and\\ one is diffferent, which\\ can happen in three ways} 
-    \quad + \quad 
-    \myunderbrace{\atoms^{(3)}}{all atoms\\ are different}.
-    \end{align*} 
-    More generally, any polynomially orbit-finite set is orbit-finite, which explains the name.
-\end{myexample}
 
 \begin{myexample}[Powerset is not orbit-finite]\label{ex:powerset-not-orbit-finite}
-    The powerset $\powerset \atoms$ is not orbit-finite, for two reasons. The first reason is that it contains elements (i.e.~subsets of $\atoms$) which are not finitely supported. The second reason is that, even if we restricted the powerset to finitely supported element (the resulting variant of the powerset is called the \emph{finitely supported powerset}), then it would still not be orbit-finite, because it would have infinitely many orbits. This is because sets of different finite size are in different orbits. 
+    The powerset $\powerset \atoms$ is  not an orbit-finite set, for two reasons.
+    
+    \begin{itemize}
+        \item     The first reason is that it contains elements (i.e.~subsets of $\atoms$) which are not finitely supported. For this reason also the set in Example~\ref{ex:infinite-co-infinite} is not orbit-finite, despite having one orbit: its elements are not finitely supported. 
+        \item       The second reason is that, even if we restricted the powerset to finitely supported element (the resulting variant of the powerset is called the \emph{finitely supported powerset}), then it still has infinitely many orbits. This is because sets of different finite size are in different orbits. Observe that the elements with infinite support are all in a single orbit, namely the orbit from Example~\ref{ex:infinite-co-infinite}. 
+    \end{itemize}
 \end{myexample}
 
 \begin{myexample}[Triples modulo cyclic shift]\label{ex:cyclic-triples}

@@ -156,22 +156,139 @@ Formally speaking, a configuration consists of an input word $a_1 \cdots a_n$, t
 The head of the automaton is over some input position, which corresponds to indices in $\set{1,\ldots,n}$,  or over one of the two end-markers, which corresponds to indices $0$ and $n+1$. (This is in contrast with a one-way automaton, where it is more convenient to think of the head as being between positions.) The main purpose of the end-markers is to warn the automaton when it is close to the end of the input tape, so that it does not fall off. For each input word, we view the configurations as a directed graph, where the vertices are configurations, and the edges correspond to the transitions in the natural way. (Based on the state in the previous configuration and the letter under the head, the automaton updates the state and moves the head. If the head falls off the tape, then the transition is not enabled.) 
 An initial configuration is any configuration where the  head is over the left end-marker $\vdash$, and the state is an initial state. The automaton accepts an input word if the configuration graph has a path from an initial configuration (the state is in the initial set, and the head is over the left end-marker $\vdash$) to any configuration that uses an accepting state. If the automaton is deterministic, then there is exactly one initial configuration, and each vertex in the configuration graph has at most one successor. 
 
-Note that the automaton might enter an infinite loop. Therefore, even for deterministic two-way automata, complementation is not simply a matter of swapping accepting and rejecting configurations (a rejecting configuration is one that has no successors). Nevertheless, this issue can be addressed, see Exercise~\ref{ex:sipser-loop-removal}.
+Note that the automaton might enter an infinite loop. Therefore, even for deterministic two-way automata, complementation is not simply a matter of swapping accepting and rejecting configurations (a rejecting configuration is one that has no successors). In fact, we do not know if deterministic two-way automata are closed under complementation.
 
+\begin{myexample}[All letters distinct]\label{ex:distinct-letters-two-way}
+	Consider the language 
+	\begin{align*}
+	\setbuild{w \in \atoms^*}{all letters in $w$ are pairwise distinct}.
+	\end{align*}
+	We will show that this language is recognised by a deterministic two-way automaton. The state space is 
+	\begin{align*}
+	\myunderbrace{\atoms^0}{init} 
+	\quad + \quad
+	\myunderbrace{\atoms^1}{search}
+	\quad + \quad
+	\myunderbrace{\atoms^1}{return}
+	\quad + \quad 
+	\myunderbrace{\atoms^0}{accept}.
+	\end{align*}
+	The initial state is the first component, and the last component is the accepting state. (Since the run is immediately terminated upon reaching an accepting state, there is no need to have more than one accepting state.) The automaton begins by moving to the first input position, and storing the corresponding atom $a$ into a state from the ``search'' component. Then it scans the rest of the input word. If the atom $a$ appears again, then the automaton rejects immediately, which means that the automaton blocks by having no outgoing transition. Otherwise, if the automaton reaches the right end-marker $\dashv$, it needs to return to the original appearance of the atom $a$, so that it can process the next atom. This can be done, since we have just checked that the atom $a$ appears exactly once, and this atom is stored in the state. Therefore, a right-to-left pass can be used to return to the unique appearance of $a$, using a state in the ``return'' component. Once we have returned to the unique position with atom $a$, we can process the next one. This is done for all letters, and once the entire input has been processed, the automaton enters the accepting state. Here is the list of transitions, where $a \neq b$ are distinct atoms: 
+	\begin{align*}
+	\text{init} & \stackrel {\vdash} \to \text{init}, \text{right}\\
+	\text{init} & \stackrel {\dashv} \to \text{accept}, \text{stay}\\
+	\text{init} & \stackrel a \to \text{search}(a), \text{right} \\
+	\text{search}(a) & \stackrel b \to \text{search(a)}, \text{right} \\
+	\text{search}(a) & \stackrel {\dashv} \to \text{return}(a), \text{left} \\
+	\text{return}(a) & \stackrel b \to \text{return}(a), \text{left} \\
+	\text{return}(a) & \stackrel a \to \text{init}, \text{right} 
+	\end{align*}
+\end{myexample}
 
+We do not know if deterministic two-way automata are equivalent to nondeterministic two-way automata. However, this seems unlikely or at least difficult to prove, since such an equivalence would directly imply the equality of the complexity classes L and NL, i.e.~deterministic and nondeterministic logarithmic space.
+\begin{myexample}
+	[Graph reachability] \label{ex:reachability-two-way}
+	A classical complete problem for the complexity class NL is directed graph reachability. (This problem was already discussed in  the proof of Theorem~\ref{thm:reachability-decidable-pof}.) Graph reachability can be represented as a language over the alphabet $\atoms^2$, where each letter $(a,b)$ represents a directed edge from $a$ to $b$. In the language, we are given a list of edges, together with a designated source and target pair, and  we want to know if the graph admits a path from the source to the target. Formally, we consider the language
+	\begin{align*}
+	\setbuild{ (a_0,b_0)(a_1,b_1) \cdots (a_n,b_n) }{there is a path from $a_0$ to $b_0$ in the directed graph \\ with vertices $\atoms$ and edges $(a_1,b_1),\ldots,(a_n,b_n)$}.
+	\end{align*}
+	This language is easily seen to be recognised by a nondeterministic two-way automaton, which stores the current vertex in its state, and uses nondeterminism to guess the next edge in the path. Therefore, if deterministic and nondeterministic two-way automata would be equivalent, then there would be a deterministic two-way automaton for this language. This would lead to a deterministic logarithmic space algorithm for graph reachability, since a deterministic two-way automaton can be simulated in logarithmic space. Therefore, graph reachability would be in L, and thus NL  would be equal to L, by completeness of graph reachability.
+\end{myexample}
+
+Determinisation of two-way automata is an open problem. 
+The example above only shows one implication: if two-way automata determinise, then L = NL. It may well be the one can show failure of determinisation without showing L = NL. 
 \exercisepart
 \input{problems/pof-models-two-way}
 
 \section{Circuits}
 \label{sec:circuits}
-In this group of problems, we consider the pof version of circuits.     A pof circuit consists of:
-\begin{enumerate}
-    \item a pof set $X$ of variables;
-    \item a pof directed acyclic graph whose vertices are called  \emph{gates};
-    \item a distinguished output gate;
-    \item an equivariant labelling from gates to $X + \set{\lor,\land}$.
-\end{enumerate}
-Given a valuation of the variables $X \to \set{\text{true, false}}$, the circuit computes a value in the natural way, which is the value of the output gate.
+In the finite world, a circuit is a representation of a Boolean function with finitely many inputs, i.e.~a function of type $2^n \to 2$ for some $n$. Here is a picture of a circuit for $n=6$: 
+\mypicb{12}
+Although the picture should be self-explanatory, let us briefly discuss it to fix the terminology.
+At the bottom of the picture, we see the  inputs to the circuit. Above them, we see the remaining gates. Apart from the inputs, there  are three kinds of gates, corresponding to the Boolean operations $\lor, \land$ or $\neg$. There is an order in the computation, i.e.~inputs to a gate must be lower in the picture. A gate with negation $\neg$ has exactly one input, but the gates for disjunction $\lor$ and conjunction $\land$ may have any number of inputs. (We assume that an empty disjunction is false, and an empty conjunction is true.) Finally, at the top of the circuit we find a designated output gate, which is the output of the circuit. 
+
+Circuits are an important part of complexity theory, where one studies families of circuits with given resource bounds, e.g.~polynomial size or bounded height. 
+In this section, we consider a pof variant of circuits, as defined below. Essentially, a pof circuit is a pof graph, with some extra annotation. We use the convention that directed edges go from a gate to its inputs. In terms of the picture from the previous paragraph,  the edges go down. 
+
+\begin{definition}[Pof circuit]
+	\label{def:pof-circuit}
+	A \emph{pof circuit} consists of:
+	\begin{itemize}
+		\item a pof set of gates;
+		\item a  partition of the gages into four equivariant parts: input gates, negation gates, disjunction gates and conjunction gates;
+		\item a designated output gate, which is equivariant (i.e.~contains no atoms);
+		\item an \emph{input relation}, which is an equivariant binary relation $E \subseteq V^2$ such that: 
+		\begin{itemize}
+			\item the output gate has no incoming edges;
+			\item each input gate has no outgoing edges;
+			\item each negation gate has exactly one outgoing edge;
+			\item the maximal length of paths is bounded\footnote{As discussed in Exercise~\ref{pof-graph-acyclic-upper-bound}, having finite height is the same as being acyclic, i.e.~either there is a cycle, or paths have uniformly bounded finite length. }.
+		\end{itemize}
+	\end{itemize}
+\end{definition}
+
+An input to the circuit is a valuation of the inputs, i.e.~a function 
+\begin{align*}
+	 \eta : X \to \set{\text{true, false}},
+\end{align*}
+where $X$ is the set of input gates.
+One could restrict the valuations to be equivariant, but in this section we are mainly interested in what a circuit does to arbitrary valuations, which are not necessarily equivariant. Once we have given the input valuation, each gate of the circuit assumes some Boolean, which is defined naturally by induction on the height the gate (the length of the longest path from the gate to an output gate). 
+
+\begin{myexample}[Exactly one input gate is true]
+\label{ex:exactly-one-input-true}
+	Here is a circuit where the input gates are atoms.  The circuit checks if the valuation assigns ``true'' to exactly one input gate.  The gates of the circuit are
+	\begin{align*}
+	\myunderbrace{\atoms^0}{$\lor$\\ output \\ gate} \quad + \quad \myunderbrace{\atoms^1}{$\land$} 
+	\quad + \quad \myunderbrace{\atoms^1}{$\neg$}
+	\quad + \quad \myunderbrace{\atoms^1}{inputs}
+	\end{align*}
+	The gates of the circuit are defined as follows: 
+	\begin{align*}
+	\lor & \to \land(a)\\
+	\land(a) & \to \text{input}(a)\\
+	\land(a) & \to \neg(b) \quad \text{for $b \neq a$}\\
+	\neg(b) & \to \text{input}(a).
+	\end{align*}
+	A gate in the second component checks, using an infinite conjunction,  that the atom stored in this gate is true, and the remaining atoms are false. Therefore, the output (first component) gate is true if at least one gate from the second component is true.  
+\end{myexample}
+
+Using a similar idea as in the above example, we could check if two input gates are true. For this extension, the second component would be $\atoms^2$ instead of $\atoms^1$.  However, as we show in the following theorem, we cannot check if finitely many input gates are set to true. Perhaps more interesting is the proof of the theorem, which establishes that circuits have the expressive power as first-order logic, and thus suffer from the same limitations (in particular, they cannot express finiteness).
+\begin{theorem}\label{thm:circuits-finiteness}
+	There is no pof circuit which has input gates $\atoms$, and which checks if finitely many input gates are true.
+\end{theorem}
+\begin{proof}
+	In the proof we will show that circuits have the same expressive power as first-order formulas, and finiteness cannot be expressed in first-order logic. 
+
+Let us first explain the connection between circuits and first-order logic.
+If the input gates are $\atoms$, then an input to the circuit can be seen as a subset $X \subseteq \atoms$, namely the atoms which make the corresponding gate true. Therefore, a circuit defines a property of such subsets $X$. For example, the property of interest in this theorem is finiteness of the set $X$. An alternative formalism is to use formulas, as explained in the following example, which expresses that $X$ has exactly one element $x$, and which closely  corresponds to the circuit from Example~\ref{ex:exactly-one-input-true}:
+	\begin{align}
+		\label{eq:circuits-first-order}
+	\myunderbrace{\exists x}{quantification \\ is over atoms}
+	\qquad 
+	\myunderbrace{x \in X}{we can \\ test \\ membership \\ in $X$} \quad \land \quad 
+	\forall y (\myunderbrace{x \neq y}{we can \\ test \\ equality} \implies y \not \in X).
+	\end{align}
+	We say that a property of subsets $X$ is \emph{first-order definable} if it can be expressed by a formula of the above form, i.e.~it can use quantification over atoms, and refer to membership in the set $X$. The fact that the circuit from Example~\ref{ex:exactly-one-input-true} could be converted into a first-order formula is not a coincidence, since this is true for every pof circuit.
+	\begin{claim}
+		For every circuit, the corresponding property of subsets $X$ is first-order definable.
+	\end{claim}
+	\begin{proof}
+		Suppose that the set of gates in the circuit is a pof set 
+		\begin{align*}
+		 \atoms^{d_1} + \cdots + \atoms^{d_k}.
+		\end{align*}
+
+		The essential idea is that the disjunctions and conjunctions in the circuit, which can have infinitely many arguments, are simulated using quantifiers. 
+		A first-order formula can quantify over gates, since a gate is specified by giving a component $i \in \set{1,\ldots,k}$ and a tuple of atoms whose length is the dimension $d_i$ of the component. If we want to do existential quantification over gates, then the choice of the component is simulated using a finite disjunction, and the choice of atoms is simulated using $d_i$ existential quantifiers. Universal quantification over gates is treated similarly. 
+
+		We show that for every orbit of gates, there is a first-order formula which inputs a gate from the orbit, and tells  if this gate is true under the given input $X$ to the circuit. If the orbit comes from the $i$-th component, and therefore it involves $d_i$ atoms, then this formula has $d_i$ free variables, which is the number of atoms needed to specify a gate in the orbit. The formula is true if and only if the tuple of atoms indeed represents an element of the orbit, and furthermore the corresponding gate is true.  The formula is defined by induction on the height of the orbit, i.e.~the maximal length of a path that begins in the orbit. Note that the height is uniform across an orbit, since the edge relation is equivariant, and therefore the induction parameter is well-defined. The formula uses quantification, as described in the previous paragraph, to access to the input gates. If the gate is a disjunction, then existential quantification is used to access the input gates, and if it is a conjunction, then universal quantification is used. If the gate is a negation, then the formula looks at the unique input, and negates it. Finally, if the gate is an input gate, then we consult if the corresponding atom is in the input set $X$.
+	\end{proof}
+
+	This converse implication in the above claim is also true, i.e.~every first order definable property of subsets can be simulated by circuit. The proof of the converse implication is similar as for the forward direction, and uses the fact that orbit-finite disjunctions and conjunctions are the same as quantification. However, since we do not need the converse implication, we leave the details to the reader.
+
+	Thanks to the above claim, it is enough to show that the property of being finite is not first-order definable. This is a classical result, which can be shown by either using compactness, or an Ehrenfeucht-Fraïssé game. Let us give the compactness proof. Suppose that there is first-order sentence $\varphi$ which says that the set $X$ is finite. Consider the infinite set of sentences which contains $\varphi$, and all sentences of the form ``$X$ has at least  $n$ elements'', for  $n \in \set{1,2,\ldots}$. Every finite subset of this set is satisfiable, yet the set itself is not satisfiable. This contradicts the compactness theorem.
+\end{proof}
+
 
 \exercisepart
 \input{problems/pof-models-circuits}
@@ -182,41 +299,36 @@ Given a valuation of the variables $X \to \set{\text{true, false}}$, the circuit
 In this section, we discuss pof variants of  pushdown automata\footnote{Context-free languages for infinite alphabets were originally introduced by~\cite{DBLP:journals/acta/ChengK98}, who proved equivalence for register extensions of context-free grammars and pushdown automata. The generalisation to orbit-finite pushdown automata and context-free grammars is from~\cite{DBLP:journals/corr/BojanczykKL14}. See also~\cite{DBLP:conf/mfcs/MurawskiRT14,DBLP:conf/csl/ClementeL15,DBLP:conf/lics/ClementeL15}. } and context-free grammars.  We show that basic results, such as equivalence of pushdown automata and context-free grammars, or decidability of emptiness,  transfer easily to the pof setting. We also motivate the models by giving examples of automata and grammars that use atoms. 
     % Turing machines will be discussed in Section~\ref{cha:turing}.  
 
- 
- \begin{definition}\label{def:orbit-finite-pushdown}  
+ \paragraph*{Pushdown automata.} We begin with the pof version of a pushdown automaton. This is the usual definition of a pushdown automaton, except that the sets are pof sets instead of finite sets. Otherwise, everything remains the same. We use the version of pushdown automata which accepts by reaching an empty stack at the end of the input word. 
+ \begin{definition}[Pof pushdown automaton]\label{def:orbit-finite-pushdown}  
 	A \emph{pof pushdown automaton}  consists of 
-	\begin{align*}
-  \underbrace{Q}_{\text{states}} \quad   \underbrace{\Sigma}_{\substack{\text{input}\\ \text{alphabet}}} \quad  \underbrace{\Gamma}_{\substack{\text{stack}\\ \text{alphabet}}} \quad    \underbrace{q_0 \in Q}_{\text{initial state}} \quad   \myunderbrace{\gamma_0 \in \Gamma}{initial stack\\ symbol},
-\end{align*}
-such that the initial state and initial stack symbol are equivariant, together with an equivariant transition relation
-\begin{align*}
-	\delta \qquad \subseteq \qquad  Q\ \  \times \overbrace{\Gamma^*}^{\text{popped}} \times \ \  \overbrace{(\Sigma \cup \epsilon)}^{\text{input}} \ \  \times \ \  Q\ \  \times \overbrace{\Gamma^*}^{\text{pushed}}
-\end{align*}
-such that the popped and pushed strings have bounded length.
+	\begin{itemize}
+		\item a pof set $Q$ of states;
+		\item two pof sets $\Sigma$ and $\Gamma$ for the input alphabet and stack alphabet, respectively;
+		\item an equivariant initial state $q_0 \in Q$;
+		\item an equivariant initial stack symbol $\gamma_0 \in \Gamma$;
+		\item an equivariant set of transitions of the form 
+		\begin{align*}
+			\delta \qquad \subseteq \qquad Q\ \  \times \overbrace{\Gamma^*}^{\text{popped}} \times \ \  \overbrace{(\Sigma \cup \epsilon)}^{\text{input}} \ \  \times \ \  Q\ \  \times \overbrace{\Gamma^*}^{\text{pushed}}
+		\end{align*}
+		such that the popped and pushed strings have bounded length.
+	\end{itemize}
 \end{definition}
 
-The language recognised by such an automaton is defined in the usual way.  We assume that the automaton accepts via empty stack, i.e.~a run is accepting if the last configuration (state, stack contents) has an empty stack.  
-
-Similarly, we can define a pof pushdown grammar.
-\begin{definition}
-	A ""pof context-free grammar"" consists of 
-	\begin{align*}
-		\underbrace{N}_{\text{nonterminals}} \quad   \underbrace{\Sigma}_{\substack{\text{input}\\ \text{alphabet}}}  \qquad  \underbrace{R \subseteq N \times (N + \Sigma)^*}_{\text{rules}} 
-		\qquad \myunderbrace{S \in N}{initial\\ nonterminal}
-	  \end{align*}
-	where the nonterminals and input alphabet are pof sets, the set of rules is equivariant and has bounded length, and the initial nonterminal is equivariant.
-\end{definition}
-The language generated by a grammar  is defined in the usual way. 
-
-
-
+The semantics of the automaton, i.e.~the set of words that it accepts, are defined in the usual way, which we briefly recall here.
+A configuration of the automaton is defined to be a  triple which consists of: 
+\begin{enumerate}
+	\item a state $q \in Q$;
+	\item a stack $\gamma \in \Gamma^*$;
+	\item a word $w \in \Sigma^*$.
+\end{enumerate}
+The automaton begins in the configuration  where the first two items are initialised as  in the definition of the automaton, and the third item is the  input word. Each transition of the automaton updates the transition in the expected way, with the input letter of the transition (which may be $\varepsilon$) being removed from the beginning of the input word in the configuration. If the automaton is nondeterministic, a transition might have several successors. The automaton accepts if it reaches a configuration where the stack and  word are both empty.
 
 \begin{myexample}\label{example:palindrome-pda}[Pushdown automaton for palindromes.]
 	For a pof alphabet $\Sigma$, consider the language of palindromes, i.e.~words which are equal to their reverse.
-	This language is recognised by a pof pushdown automaton which works exactly the same way as the usual automaton for palindromes, with the only difference being that the stack alphabet $\Gamma$ is now a pof  set, namely  $\Sigma$. For instance, in the case when $\Sigma = \atoms$, the automaton keeps a stack of atoms during its computation. The automaton has two control states: one for the first half of the input word, and one for the second half of the input  word. As in the standard automaton for palindromes, this automaton uses nondeterminism to guess the middle of the word.
+	This language is recognised by a pof pushdown automaton which works exactly the same way as the usual automaton for palindromes, with the only difference being that the stack alphabet $\Gamma$ is now a pof  set, namely  $\Sigma$. The automaton has two control states: one for the first half of the input word, and one for the second half of the input  word. As in the standard automaton for palindromes, this automaton uses nondeterminism to guess the middle of the word, when it switches from pushing letters to popping them.
 	\end{myexample}
-	
-	
+
 	\begin{myexample}\label{example:mid-palindrome-pda}[Pushdown automaton for modified palindromes.]
 		The automaton in Example~\ref{example:palindrome-pda} had two control states, which did not store any atoms. In some cases, it might be useful to have a set $Q$ of control states that uses atoms. Consider  the set of odd-length palindromes where the middle letter is equal to the first letter. 
 		A natural automaton  recognising this language would be similar to the automaton for palindromes, except that it would store the first letter $a_1$ in its control state. 
@@ -225,31 +337,75 @@ The language generated by a grammar  is defined in the usual way.
 		\begin{align*}
 			(a_1,a_1),(a_1,a_2),\ldots,(a_1,a_n).
 		\end{align*}
-		This automaton needs only two control states. Actually, using the standard construction, one can show that every orbit-finite pushdown automaton  can be converted into one that has one control state, but a larger stack alphabet.
+		This automaton needs only two control states. Actually, using the standard construction, one can show that every pof pushdown automaton  can be converted into an equivalent automaton that has one control state, but a larger stack alphabet.
 	\end{myexample}
 	
-	The following example gives some motivation for studying orbit-finite pushdown automata.
+	The following example gives some ``practical'' motivation for studying pof pushdown automata.
 		\begin{myexample}[Modelling  recursive programs] \label{example:model-recursive-programs}
 		Pushdown automata without atoms are sometimes used to model the behaviour of recursive  programs with Boolean variables. By adding atoms,  
-	we can also model programs that have variables ranging over atoms. 	Consider  a recursive function such as the following one (this program does not do anything smart):
+	we can also model programs that have variables ranging over atoms. 	Consider  a recursive function such as the following one, where the input argument is an atom (this program does not do anything smart):
 
 
 
 
 
 \begin{lstlisting}
-function f(a: atom)
-begin 
-	b:=read() // read an atom from the input
-	if b != a then
-		f(b)
-		if b != read() then 
-			fail() // terminate the computation
-end
+def function f(a): # the input is an atom
+  b = read() # read an atom from the input
+  if b != a:
+    f(b)
+    if b != read():
+	  fail() # terminate the computation
 \end{lstlisting}
 	The behaviour of this program can be modelled by a pof pushdown automaton. The input tape corresponds to the {\tt read()} functions. The stack corresponds to the call stack of the recursive functions; the stack stores atoms since the functions take atoms as parameters. Since the only variables are atoms, the set of possible call frames (i.e.~the stack alphabet) is a pof set. Pof 
  pushdown automata could also be used to model more sophisticated behaviour, including mutually recursive functions and boolean variables. 
 	\end{myexample}
+
+
+\paragraph*{Grammars.} A classical result is that pushdown automata recognise exactly the same languages as context-free grammars. We will show that this result extends, with essentially no modifications, to the pof setting. The only interest in presenting this proof is to show how pof sets have the closure properties which are needed to make this kind of proof work.
+
+Let us begin by defining context-free grammars. Again, the definition is the classical one, with pof sets used instead of finite ones. 
+\begin{definition}[Pof context-free grammar]
+	\label{def:pof-grammar}
+	A ""pof context-free grammar"" consists of 
+	\begin{itemize}
+		\item a pof set $N$ of nonterminals;
+		\item a pof set $\Sigma$ for the input alphabet;
+		\item an equivariant starting nonterminal $S \in N$;
+		\item an equivariant set $R \subseteq N \times (N + \Sigma)^*$ of rules, such that the length of the right-hand sides is bounded.
+	\end{itemize}
+\end{definition}
+
+In the definition, we require that the right-hand sides have bounded length. This corresponds to the usual restriction (in the case of finite sets) that there are finitely many rules. An alternative way of phrasing this restriction in the pof setting is to say that, up to renaming atoms, there are finitely many rules in the grammar. 
+
+The language generated by a grammar  is defined in the usual way, which we briefly recall here. A derivation is defined  to be a sequence of words over the alphabet $\Sigma + N$, such that: (a) the first word is the starting nonterminal; (b) the last word uses only letters from the input alphabet; and (c) each word in the derivation is  obtained from the previous one by replacing a nonterminal  with a right-hand side of some corresponding rule. The language generated by the grammar is the set of all words that can be found at the end of some derivation.
+
+
+
+\begin{myexample}
+	[Grammar for palindromes] \label{example:palindrome-grammar}
+	Consider the language of palindromes over a pof alphabet $\Sigma$. The grammar for this language has only one nonterminal, call it $S$. In other words, we do not use the full power of pof grammars, since  our set of nonterminals is finite, and does not use any atoms. The rules in the grammar are the same as in the usual grammar for palindromes, i.e.~we have a rule 
+	\begin{align*}
+	S \to \varepsilon,
+	\end{align*}
+	and for every letter $a \in \Sigma$, we have rules
+	\begin{align*}
+	S & \to aSa, \\
+	S & \to aSa.
+	\end{align*}
+	This set of rules is no longer finite, if the input alphabet is not finite. However, it is equivariant and has bounded length. 
+\end{myexample}
+
+\begin{myexample}[Simulating automata] In the previous example, we had just one nonterminal. Let us give an example of a grammar that uses atoms in its nonterminals, which results in a formally infinite set. Suppose that we want to convert a nondeterministic pof automaton into a grammar. This is done by setting the nonterminals to be the states $Q$, plus an extra starting nonterminal. The rules of the grammar are 
+	\begin{align*}
+	S  \to q  \qquad & \text{for every initial state $q$ of the automaton},\\
+	q  \to ap \qquad & \text{for every transition $q \stackrel a \to p$ of the automaton},\\
+	q \to \varepsilon \qquad & \text{for every accepting state $q$ of the automaton}.
+	\end{align*}
+If the states of the automaton use atoms, then the same will be true for the nonterminals in the grammar.
+\end{myexample}
+	
+	
 
 
 
@@ -266,6 +422,7 @@ We just redo the classical constructions, which are so natural  that they easily
 	  \begin{align*}
 		   N \qquad  =  \qquad \underbrace{\set S}_{\text{an initial nonterminal}} + \qquad  Q \times \Gamma \times Q.
 	  \end{align*}
+	  This set is a pof set, since pof sets are closed under taking disjoint unions and products (this is  essentially the only property of pof sets that is used in the construction).
 	The language generated by a nonterminal $(p,\gamma,q)$ is going to be the set of words which label runs of the following form:
 		\mypic{69}To describe these runs, we use the following grammar rules. All  the sets  below are equivariant and have bounded length: 
 	 \begin{enumerate}
@@ -290,8 +447,8 @@ We just redo the classical constructions, which are so natural  that they easily
 			 S \to (q_0,\gamma_0,p) a .
 		 \end{align*}
 	 \end{enumerate} 
-	  	\item  \emph{From a context-free grammar to a pushdown automaton.}  The automaton keeps a stack of nonterminals. It begins with just the starting nonterminal, and accepts when all nonterminals have been used up. In a single transition, it replaces the nonterminal on top of the stack by the result of applying a rule. This automaton has one state (if we disregard the restriction that all transitions have to be either push or pop). 
-	  	\item \emph{Emptiness is decidable.} We now show that emptiness is decidable. We use the context-free grammars, and the usual algorithm. This algorithm stores an equivariant subset of the nonterminals that are known to be nonempty (also known as productive nonterminals). Initially, the subset is empty. In each step, we add a nonterminal $X$ to the subset if there is some rule in the grammar, where the left-hand side has $X$, and the right-hand side has only terminals and nonterminals that are already in the subsets. Because the set of rules is equivariant, in each step the subset is equivariant. Therefore, the subset can grow only in finitely many steps before stabilizing. The number of steps is at most the number of orbits in the set of nonterminals, which is at most exponential in the representation of the grammar.
+	  	\item  \emph{From a context-free grammar to a pushdown automaton.}  The automaton keeps a stack of nonterminals. It begins with just the starting nonterminal, and accepts when all nonterminals have been used up. There are two kinds of transition. In the first kind, the automaton reads an input letter from the input, and pops the same letter from the stack. In the second kind, which is an $\varepsilon$-transition, the automaton replaces the nonterminal on top of the stack by the result of applying a rule. This automaton has one state (if we disregard the restriction that all transitions have to be either push or pop). 
+	  	\item \emph{Emptiness is decidable.} We now show that emptiness is decidable. We use the representation in terms of  context-free grammars. The  algorithm, which is the usual algorithm, stores an equivariant subset of the nonterminals that are known to be nonempty (also known as productive nonterminals). Initially, the subset is empty. In each step, we add a nonterminal $X$ to the subset if there is some rule in the grammar, where the left-hand side has $X$, and the right-hand side has only terminals and nonterminals that are already in the subsets. Because the set of rules is equivariant, in each step the subset is equivariant. Therefore, the subset can grow only in finitely many steps before stabilizing. The number of steps is at most the number of orbits in the set of nonterminals, which is at most exponential in the representation of the grammar.
 	\end{itemize}
 \end{proof}
 	
@@ -411,8 +568,6 @@ Maybe the above undecidability argument shows that our definition of higher-orde
 \section{Turing machines}
 \label{sec:pof-turing-machines-equality}
 In this section, we discuss the pof version of Turing machines.
-A pof Turing machine is defined like a Turing machine, except that the set of states, and the alphabets are pof sets, and the transition function is equivariant. 
-
 We assume that the reader is familiar with Turing machines, but we give a more detailed description of our modal to fix notation.
 The input alphabet $\Sigma$, the work alphabet $\Gamma$, and the set of states $Q$ are all pof sets. We assume that the work alphabet contains the input alphabet, and there is some designated blank symbol
 \begin{align*}
@@ -430,21 +585,22 @@ The behaviour of the Turing machine is specified by its transition function, whi
             \myunderbrace{\Gamma}{what is \\ written on \\ the  tape}).
             \end{gather*}
 Using the transition function, the machine computes a new configuration in the expected way, or it accepts/rejects. This leads to a computation (a sequence of configurations), which is either finite -- when an accept/reject instruction is executed -- or infinite. 
-In a nondeterministic machine, instead of a function we have a binary relation, and an input string might have more than one computation. The language \emph{recognised by}  a (possibly nondeterministic) Turing machine is the set of words that have at least one accepting computation.
+In a nondeterministic machine, instead of a function we have a binary relation, and an input string might have more than one computation. The language \emph{recognised by}  a (possibly nondeterministic) Turing machine is the set of input words that admit at least one accepting computation.
 
 
-\begin{myexample}[A Turing machine checking that all letters are different]\label{ex:distinct-letters}
-	Consider the equality atoms.
-		Assume that the input alphabet is $\atoms$. 	We show a deterministic Turing machine which accepts words where all letters are distinct.
-		The idea is that the machine iterates the following procedure until the tape contains only blank symbols: if the first non-blank letter on the tape is $a$, replace it by a blank and load $a$ into the state, scan the word to check that $a$ does not appear again (if it does appear again, then reject immediately), and after reading the entire word go back to the beginning of the tape. If the tape is entirely erased, then accept. The sets of states is $\atoms$, plus two extra states for the scanning, which are depicted using red and blue in Figure~\ref{fig:distinct-turing}. 
+\begin{myexample}[A Turing machine checking that all letters are different]\label{ex:distinct-letters} 
+		Assume that the input alphabet is $\atoms$. 	We show a deterministic Turing machine which accepts words where all letters are distinct. In Example~\ref{ex:distinct-letters-two-way}, we gave a deterministic two-way automaton which recognises the same language. Such an automaton is the special case of a deterministic Turing machine that does not write on its tape. Therefore, we already have one solution to this problem. 
+
+		Let us give another solution, which leverages writing on the tape. 
+		The  machine iterates the following procedure until the tape contains only blank symbols: if the first non-blank letter on the tape is $a$, replace it by a blank and load $a$ into the state, scan the word to check that $a$ does not appear again (if it does appear again, then reject immediately), and after reading the entire word go back to the beginning of the tape. If the tape is entirely erased, then accept. The sets of states is $\atoms$, plus two extra states for the scanning, which are depicted using red and blue in Figure~\ref{fig:distinct-turing}. 
 \begin{figure}
 \mypicb{8}	
 \caption{\label{fig:distinct-turing}An accepting run of the Turing machine from Example~\ref{ex:distinct-letters}.}
 \end{figure}
 \end{myexample}
 
-Having defined Turing machines, we get the usual notions of semi-decidability (the language of some Turing machine) and decidability (the language of some Turing machine that always halts).
-The Church-Turing Thesis states that there is only one notion of decidable language, which is captured by Turing machines. Does introducing atoms give a violation of this thesis? What does that even mean? One way of answering this question is to relate computation with atoms to the classical notion of computation without atoms. A word with atoms can be represented by a word without atoms, by writing down the atoms, such as ``John'' or ``Mary'' using a finite alphabet. Under such a representation, we  get a usual word over a finite alphabet, which can be used as an input for the classical atom-free models of computation. We will show later in this section that Turing machines with atoms can be simulated by machines without atoms, and vice versa, and thus the two models of computation are essentially equivalent. Using this equivalence, we can carry over to the atom world classical results, such as equivalence of deterministic and nondeterministic machines in the presence of unbounded computation time. However, in  Chapter~\ref{cha:turing} we will discover a twist in the story -- if we use a more general notion of pof sets, namely (not necessarily polynomial) orbit-finite sets, then some  equivalences break down, for example nondeterministic machines are not equivalent to deterministic ones. Before we get to the twist, let us tell the untwisted story, which involves pof sets. 
+Having defined Turing machines, we get the usual notions of semi-decidability (the language of some Turing machine) and decidability (the language of some Turing machine that  does not have any infinite computations).
+The Church-Turing Thesis states that there is only one notion of decidable language, which is captured by Turing machines. Does introducing atoms give a violation of this thesis? What does that even mean? One way of answering this question is to relate computation with atoms to the classical notion of computation without atoms. A word with atoms can be represented by a word without atoms, by writing down the atoms, such as ``John'' or ``Mary'' using a finite alphabet. Under such a representation, we  get a usual word over a finite alphabet, which can be used as an input for the classical atom-free models of computation. We will show later in this section that Turing machines with atoms can be simulated by machines without atoms, and vice versa, and thus the two models of computation are essentially equivalent. Using this equivalence, we can carry over to the atom world classical results, such as equivalence of deterministic and nondeterministic machines in the presence of unbounded computation time. However, in  Chapter~\ref{cha:turing} we will discover a twist in the story -- if we use a more general notion of pof sets, namely (not necessarily polynomial) orbit-finite sets, then some results from this section will break down, for example nondeterministic machines are not equivalent to deterministic ones. Before we get to the twist, let us tell the untwisted story, which involves pof sets. 
 
 We begin by formalizing what it means to ``write down'' an atom.
 
@@ -458,9 +614,9 @@ We begin by formalizing what it means to ``write down'' an atom.
     which is surjective (every atom has at least one representation) and such that one can decide if two strings represent the same atom.
 \end{definition}
 
-An alternative choice of definition would require the function to be bijective, which would also give a simpler algorithm for deciding if two strings represent the same atom. We choose to use the above definition because it will more naturally extend to atoms with more structure.
+An alternative choice of definition would require the function to be bijective, which would also give a simpler algorithm for deciding if two strings represent the same atom. We choose to use the above definition because it is more similar to an extended definition that will be used later in this book, for atoms with more structure.
 
-Suppose that we have a representation of the atoms. We can extend  it to represent elements of a pof set: an element of such a set is described by indicating which component $\atoms^{d_i}$ is used,  followed by a representation of the $d_i$ atoms  in the tuple. We can also extend the representation to describes words over a pof set, by using separator symbols between the letters. Summing up, once we know how to represent atoms with atom-less strings, we can do the same for words over a pof alphabet.  In the following theorem, we show that the atom version of Turing machines correspond to the usual Turing machines without atoms, via the representation. Furthermore, the choice of  representation is not important. 
+Suppose that we have a representation of the atoms. We can extend  it to represent elements of a pof set: an element of such a set is described by indicating which component $\atoms^{d_i}$ is used,  followed by a representation of the $d_i$ atoms  in the tuple. We can also extend the representation to describes words over a pof set, by using separator symbols between the letters. Summing up, once we know how to represent atoms with atom-less strings, we can do the same for words over a pof alphabet.  In the following theorem, we show that the atom version of Turing machines corresponds to the usual Turing machines without atoms, via the representation. Furthermore, the choice of  representation is not important. 
 
 \begin{theorem}\label{thm:pof-turing}
     The following conditions are equivalent for every language $L \subseteq \Sigma^*$ over a pof alphabet:
@@ -469,7 +625,7 @@ Suppose that we have a representation of the atoms. We can extend  it to represe
         \item \label{item:turing-pof-nondet-pof} $L$ is recognised by a nondeterministic pof  Turing machine;
         \item \label{item:turing-pof-every-rep} $L$ is equivariant and for every representation $r$, 
         \begin{align*}
-            \setbuild{ w }{ $w$ represents, under $r$, some word in $L$}
+            \setbuild{ w }{ $w$ represents some word in $L$, under the representation $r$ }
             \end{align*}
          is recognised by  a nondeterministic  Turing machine;
         \item \label{item:turing-pof-every-rep-det} as in the previous item, but the machine is deterministic;
@@ -485,10 +641,10 @@ Suppose that we have a representation of the atoms. We can extend  it to represe
 
     \begin{lemma}[Deatomisation]\label{lem:deatomisation}
         There is a function $f: \Sigma^* \to 2^*$, 
-         computed by a deterministic pof Turing machine,  such that  every word $w \in \Sigma^*$ is in the same orbit as $s(f(w))$.
+         computed by a deterministic pof Turing machine,  such that  every word $w \in \Sigma^*$ is in the same orbit the word represented by $f(w)$.
     \end{lemma}
 
-    Before proving the above lemma, we use it to prove the implication \ref{item:turing-pof-some-rep} $\Rightarrow$ \ref{item:turing-pof-det-pof}. Using the atom-less Turing machine from the  assumption, we know that there is a Turing machine that  in puts $w \in \Sigma^*$, and checks if  $s(f(w))$ belongs to the language. By the assumption that the language is equivariant, this is the same as checking if $w$ belongs to the language. It remains to prove the Deatomisation Lemma.
+    Before proving the above lemma, we use it to prove the implication \ref{item:turing-pof-some-rep} $\Rightarrow$ \ref{item:turing-pof-det-pof}. Using the atom-less Turing machine from the  assumption, we know that there is a Turing machine that  inputs $w \in \Sigma^*$, and checks if  $s(f(w))$ belongs to the language. By the assumption that the language is equivariant, this is the same as checking if $w$ belongs to the language. It remains to prove the Deatomisation Lemma.
 
     \begin{proof}
         Consider some computable enumeration of representations of the atoms, i.e.~an infinite list of strings in $2^*$ 

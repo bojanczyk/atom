@@ -29,7 +29,7 @@
         %
     }{
         % If we are in composition mode, highlight unknown stuff (in yellow) and display the anchor point.
-        \knowledgeconfigure{anchor point color={KlDefn}, anchor point shape=corner}
+        % \knowledgeconfigure{anchor point color=KlDefn, anchor point shape=corner}
         \knowledgestyle{intro unknown}{color={KlWarning}, emphasize}
         \knowledgestyle{intro unknown cont}{color={KlWarning}, emphasize}
         \knowledgestyle{kl unknown}{color={KlWarning}}
@@ -41,7 +41,7 @@
 % Correctly handling \mathop/\mathrel with \knowledgenewrobuscmd
 % ---
 \ExplSyntaxOn
-\RenewDocumentCommand\withkl{mm}{
+\NewDocumentCommand\withkl{mm}{
 \int_gincr:N\knowledge_inner_modifier_count_int
 \cs_gset:cpx
 {\knowledge_inner_command:}

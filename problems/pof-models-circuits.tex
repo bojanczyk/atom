@@ -17,7 +17,7 @@ We now describe the reduction, i.e.~we show that the satisfiability problem for 
 }
 
 \mikexercise{\label{of-circuit-to-tree}
-    A circuit is called a \emph{formula} if the directed acyclic graph is a tree. Show that every pof circuit can be transformed into an equivalent formula.
+    A circuit is called a \emph{formula} if the directed acyclic graph is a tree, once the input gates have been removed. Show that every pof circuit can be transformed into an equivalent formula.
 }{
     By Problem~\ref{pof-graph-acyclic-upper-bound}, since the graph is acyclic, there is some finite upper bound $k$ on the length of paths. We can now unfold the circuit into a tree, by creating gates of the form 
     \begin{align*}
@@ -28,7 +28,7 @@ We now describe the reduction, i.e.~we show that the satisfiability problem for 
 
 
 \mikexercise{\label{of-dnf-circuit-decidable}
-    A pof circuit is said to be in DNF form if the root gate is a disjunction, its children are conjunctions, and their children are variables or their negations. Show that satisfiability is decidable for circuits in DNF form.
+    A pof circuit is said to be in DNF form if the root gate is a disjunction, its children are conjunctions, and their children are input gates or their negations. Show that satisfiability is decidable for circuits in DNF form.
 }{
 We can guess the disjunct that is true, since there are orbit-finitely many possiblities. Therefore, the problem reduces to satisfiability of circuits that are a disjunction of literals (i.e.~variables or their negations). Such a conjunction is satisfiable if and only if it does not contain an direct contradiction, i.e.~both a variable and its negation.
 }

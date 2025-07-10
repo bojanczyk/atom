@@ -1,4 +1,4 @@
-\mikexercise{\label{ex:sipser-loop-removal} Show that for every deterministic two-way automaton, there is an equivalent one that never enters an infinite loop. Hint: use the proof a technique from~\cite{sipser-halting} for space-bounded Turing machines.  }{}
+
 
 
 \mikexercise{\label{pof-two-way-automata-atom-less}
@@ -7,32 +7,6 @@ Show that in the atom-less case, i.e.~when the states and input alphabet have at
     This is a classical automata construction. 
 }
 
-
-\mikexercise{\label{pof-two-way-det}
-Suppose that atoms are names, which can be written using the Latin alphabet. 
-The \emph{atomless representation} of an element in a pof set is the string over the finite  alphabet, which is obtained from the Latin alphabet by adding letters for brackets and commas, that is obtained by writing out each atom as a string. For example the triple 
-\begin{align*}
-(\john,\eve,\john) \in \atoms^3
-\end{align*}
- has an  atomless representation of 15 letters, where the first letter is an opening bracket and the second letter is J. The atomless representation extends to words over a pof alphabet.
-    Show that for every two-way pof automaton, the set 
-    \begin{align*}
-    \setbuild{\text{atomless representation of $w$}}{the automaton accepts $w$}
-    \end{align*}
-    is in the complexity class L, i.e.~deterministic logarithmic space.
-}
-{
-    The configuration of the automaton of a pointer to the head position, and pointers to the atoms stored in the state. (The atoms in the state must originate from the input string, by the arguments from  Problem~\ref{pof-only-letters-used}.) All of this can be stored in logarithmic space, since the number of pointers is constant.
-}
-
-\mikexercise{\label{pof-two-way-nondet}Consider the nondeterministic variant of the previous exercise. Show that the language of atomless representations is in NL, i.e.~nondeterministic logarithmic space, and it can be complete for that class\footnote{A corollary of Exercises~\ref{pof-two-way-det} and~\ref{pof-two-way-nondet} is that 
-\begin{align*}
-\text{pof two-way automata determinise} \quad \Rightarrow \quad \text{NL} = \text{L}.
-\end{align*}
-It is likely that the assumption is false, but no proof is known as of this time. }.}
-{
-    The idea is to simulate all possible runs of the automaton, and check if any of them accepts. This can be done in polynomial time, since the number of possible runs is polynomial in the input length.
-}
 
 \mikexercise{Find a deterministic two-way register automaton which recognises the language
 \begin{align*}
@@ -101,3 +75,6 @@ It remains to show that the language cannot be done by an alternating one-way au
 such that there is a path from $1$ to $n$ in the graph whose vertices are $\set{1,\ldots,n}$ and where the edge relation contains all pairs $i \to j$ such that $i < j$ and $b_i=a_j$. This language is clearly seen to be recognised by a one-way nondeterministic register automaton without guessing (and therefore also by an alternating one). However, if the language were recognised by a two-way deterministic register automaton, then the language would be in deterministic {\sc LogSpace}. However, every instance of directed graph reachability can be encoded as a membership question in this language, and therefore we would get that directed graph reachability is in deterministic {\sc LogSpace}, thus implying that {\sc LogSpace} can be determinised.
  }
 
+
+\mikexercise{\label{ex:nondeterministic-two-way-sym-reachability}
+Consider a variant of the language in Example~\ref{ex:reachability-two-way} which talks about symmetric reachability, i.e.~each edge $(a,b)$ can be traversed in both directions $a \to b$ and $b \to a$. Show that this language is recognised by a deterministic two-way automaton. Hint: symmetric reachability is known to be in L.}{}

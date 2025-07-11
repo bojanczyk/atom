@@ -3,6 +3,20 @@
 
 So far, we have worked with polynomial orbit-finite sets, which had an elementary and concrete definition, but were enough to describe many interesting examples of automata, or other computational models. However,  there are certain limitations of pof sets. 
 
+The first limitation is that there are entertaining examples which are not captured by pof sets. 
+
+\begin{myexample}
+    Consider the input alphabet 
+    \begin{align*}
+    {\atoms \choose 3},
+    \end{align*}
+    which consists of sets of exactly three atoms. This alphabet is not a pof set, although it can be obtained from pof set $\atoms^3$ by keeping only the non-repeating triples, and then quotienting them under the equivalence relation $\sim$ which identifies two triples if they are a permutation of each other.
+    Over this alphabet, consider the language 
+    \begin{align*}
+    \setbuild { w \in {\atoms \choose 3}^*}{there is an atom that appears in every letter}.
+    \end{align*}
+\end{myexample}
+
 One limitation is that  pof sets are not closed under taking equivariant subsets. An example is the   set of non-repeating tuples
 \begin{align*}
 \atoms^{(d)} 

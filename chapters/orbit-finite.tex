@@ -1,162 +1,136 @@
 \chapter{Orbit-finite sets}
 \label{cha:orbit-finite-equality}
 
-So far, we have worked with polynomial orbit-finite sets, which had an elementary and concrete definition, but were enough to describe many interesting examples of automata, or other computational models. However,  there are certain limitations of pof sets. 
+So far, we have worked with polynomial orbit-finite sets, which had an elementary and concrete definition, but were enough to describe many interesting examples of automata and other computational models. However, as we will show in this chapter,  pof lack certain closure properties, which are necessary for some applications, such as minimisation of automata. To overcome this limitation,  we introduce in this chapter a  generalisation of pof sets, namely the (not necessarily polynomial) orbit-finite sets.
+This generalisation can be described using two approaches, which turn out to be equivalent.
+\begin{itemize}
+    \item The first approach, which is described in Section~\ref{sec:subquotiented-pof-sets}, is more syntactic. It  extends pof sets with two features, namely subsets and quotients.
+    \item The second approach, which is described in Section~\ref{sec:orbit-finiteness-equality}, is more  semantic. It is described using the abstract language of group actions. 
+\end{itemize}
+Each of the two approaches has its own advantages. The syntactic approach is more concrete and easy to understand. It is also automatically equipped with a finite representation, which will allow us to use algorithms on orbit-finite sets. A disadvantage of the syntactic approach is that it may seem a bit arbitrary. The reader might ask: why are subsets and quotients the only feature that needs to be added? This disadvantage of the syntactic approach is addressed by its equivalence with the semantic approach, which does not raise such questions. Also, in some applications, the semantic approach will be more useful from a technical point of view. For example, in   the Myhill-Nerode Theorem from Section~\ref{sec:myhill-nerode-equality}, we will use the  semantic approach, since only the semantic structure will be readily available under the assumptions of the theorem.
 
-The first limitation is that there are entertaining examples which are not captured by pof sets. 
 
-\begin{myexample}
-    Consider the input alphabet 
-    \begin{align*}
-    {\atoms \choose 3},
-    \end{align*}
-    which consists of sets of exactly three atoms. This alphabet is not a pof set, although it can be obtained from pof set $\atoms^3$ by keeping only the non-repeating triples, and then quotienting them under the equivalence relation $\sim$ which identifies two triples if they are a permutation of each other.
-    Over this alphabet, consider the language 
-    \begin{align*}
-    \setbuild { w \in {\atoms \choose 3}^*}{there is an atom that appears in every letter}.
-    \end{align*}
-\end{myexample}
+\section{Subquotients}
+\label{sec:subquotiented-pof-sets}
+We begin with a description of the syntactic approach, which uses two closure properties, namely subsets and quotients. 
+Since this book is inspired by automata applications, we  use minimisation of deterministic automata as a motivation for these closure properties.  
 
-One limitation is that  pof sets are not closed under taking equivariant subsets. An example is the   set of non-repeating tuples
+The classical minimisation construction restricts the state space of a deterministic automaton to  the subset of reachable states, and then it quotients this subset under the  equivalence relation defined by 
+\begin{align*}
+q \sim p \qquad \eqdef \qquad qw \in F \Leftrightarrow pw \in F \text{ for every word $w \in \Sigma^*$},
+\end{align*}
+where $qw$ is the state that is reached after reading the word $w$ from the state $q$. Therefore, the resulting set of states will be a quotient of a subset of the original state space. This motivates the following definition, which captures the syntactic approach to orbit-finite sets.
+
+\begin{definition}[Subquotiented pof sets]
+    A subquotient of a pof set $X$ is any set that is obtained as follows.
+    \begin{itemize}
+        \item First, take an equivariant subset $Y \subseteq X$.
+        \item Next, take an equivariant equivalence relation $\sim$ on $Y$.
+    \end{itemize}
+    The subquotient is then defined to be the family of equivalence classes of $\sim$. We use the name subquotiented pof set, or ""spof set"" for short, for any set of this form.
+\end{definition}
+
+At the moment, it is not clear why the above definition captures orbit-finiteness. It is not hard to see that spof sets have finitely many orbits, since this is the case for pof sets, and subquotients can only decrease the number of orbits. However, the converse implication is less apparent: why should every set with finitely many orbits be a spof set? This question will be addressed in the next section, Section~\ref{sec:orbit-finiteness-equality}, where we discuss orbits in a more abstract way, and show that spof sets are indeed expressively complete. For the moment, however, we work with the syntactic definition, without worrying about completeness. 
+% It is not hard to see, and will be shown later in this chapter,  that a subset of quotient is a quotient of a subset. Therefore, "spof sets" are closed under taking both subsets and quotients, and there is no need to further iterate the operations. 
+ The rest of this section is devoted to discussion of their properties and examples, mainly motivated by automata applications.
+
+\begin{myexample}[Subsets]
+Consider the    set of non-repeating tuples
 \begin{align*}
 \atoms^{(d)} 
-\quad \eqdef \quad 
-\setbuild{(a_1,\ldots,a_d) \in \atoms^d}{$a_1,\ldots,a_d$ are pairwise different},
+\quad  = \quad 
+\setbuild{(a_1,\ldots,a_d) \in \atoms^d}{$a_1,\ldots,a_d$ are pairwise different}
 \end{align*}
-which is not a pof set. (This is an important example, since every orbit in a pof set is of this kind, up to an equivariant bijection.) Subsets will arise naturally in various contexts. For example, we might want to restrict the state space of an automaton the reachable states, and this will be impossible with pof sets. 
+that was introduced in Example~\ref{ex:pof-product-generating-set}. This is an equivariant subset of the pof set $\atoms^d$,  but it is not a pof set on its own. This example is particularly important, since every orbit in a pof set is of this kind, up to an equivariant bijection.     
+\end{myexample}
+ 
+\begin{myexample}[Quotients] Consider the equivalence relation $\sim$ on $\atoms^d$, which identifies two tuples if one is a permutation of the other. The corresponding quotient describes multisets: an equivalence class in the quotient is  the same as a multiset of exactly $d$ atoms. Recall that a multiset is an unordered list that can have repeated elements. 
+\end{myexample}
 
-Another limitation of pof sets is that they are not closed under taking quotients. An example is the set of unordered tuples 
+\begin{myexample}
+    [Subquotients]  Consider the  set of unordered tuples 
 \begin{align*}
 {\atoms \choose d} 
 \quad \eqdef \quad
-\setbuild{\set{a_1,\ldots,a_d}}{$a_1,\ldots,a_d$ are pairwise different},
+\setbuild{\set{a_1,\ldots,a_d}}{$a_1,\ldots,a_d$ are pairwise different}.
 \end{align*}
-which can be seen as the quotient of the set $\atoms^{(d)}$  under the equivalence relation that identifies two tuples if they are the same up to a permutation of coordinates. Quotients will arise naturally in various contexts. For example, when minimising an automaton, we will want to identify two states if they accept the same words, and this will be impossible with pof sets. 
-
-In this chapter, we overcome these limitations, by introducing the notion of (not necessarily polynomial) orbit-finite sets. This notion is defined using the abstract language  of group actions, which may seem at first glance to be excessively formalistic. However, as we will see later in this book, the added generality has many advantages. Also, the same notion can be described in more concrete terms, such as the closure of pof sets under equivariant subsets and quotients.
-
+This set can be obtained from $\atoms^d$ by first restricting to the subset of non-repeating pairs, and then quotienting under the equivalence relation that identifies two tuples if they are a permutation of each other.
+\end{myexample}
 
 
-\paragraph*{Minimization of automata.} The motivating example is  minimization of deterministic automata. Suppose that we want to minimise a deterministic pof automaton. The classical construction restricts the state space to  the subset of reachable states, and then quotient this subset under the Myhill-Nerode equivalence relation
-\begin{align*}
-q \sim p \qquad \eqdef \qquad qw \in F \Leftrightarrow pw \in F \text{ for every word $w \in \Sigma^*$}.
-\end{align*}
-As we have explained at the beginning of this chapter, we cannot apply this construction for pof automata,  since pof sets are not closed under taking subsets, or quotients. This is illustrated in the following example.
 
-\begin{myexample}\label{ex:pof-dont-minimize}
+In the following example, we show how "spof sets" are used in minimisation. 
+
+
+
+\begin{myexample}\label{ex:pof-dont-minimize}[Minimisation]
     Consider the language
     \begin{align*}
     L = \setbuild{w \in \atoms^*}{\text{$w$ uses at most two different atoms}}.
     \end{align*}
-    This language is recognised by a pof automaton, which has a state space 
+    This language has a pof alphabet, without any subquotients, and it is recognised by a pof automaton, again without subquotients,  which has a state space 
     \begin{align*}
         \myunderbrace{\atoms^0+\atoms^1 + \atoms^2}{atoms seen so far}
         \quad + \quad 
         \myunderbrace{\atoms^0}{reject}.
     \end{align*}
-    This automaton is not minimal, because the states from $\atoms^2$ store the order in a pair $(a,b)$, which is not needed for the language.
+    Nevertheless, as we will show in this example, minimisation for this automaton will require using subquotients.
+    This automaton is not minimal for two reasons: (1) repeating pairs $(a,a)$ in the component $\atoms^2$ are never reached; and (2)  the states from $\atoms^2$ store the order in a pair $(a,b)$, which is not needed for the language. Both of these reasons are addressed by using subquotients.
      To make this automaton minimal, we should use a state space of the form
     \begin{align*}
     \atoms^0 + \atoms^1 + 
-    \myunderbrace{\atoms \choose 2}{sets of exactly two atoms, as described \\ at the beginning of this chapter } + \atoms^0
+    \myunderbrace{\atoms \choose 2}{sets of exactly two atoms, as described \\ at the beginning of this chapter } + \atoms^0.
     \end{align*}
-    This kind of feature is not available in pof automata, and therefore the minimal automaton for this language cannot be a pof automaton. More formally, we will show that for every deterministic pof automaton for this language, the states after reading the input words $ab$ and $ba$ must be different (while they should be equal in a minimal automaton). Indeed, if the same state $q$ would be reached after reading both $ab$ and $ba$,  then this state would satisfy 
+    This state space is a spof set, but it is not a pof set. 
+    
+    Let us show that subquotients are necessary more formally. Consider a deterministic pof automaton for this language, without subquotients. We will  show  the states after reading the input words $ab$ and $ba$ must be different, while they should be equal in a minimal automaton. Indeed, if the same state $q$ would be reached after reading both $ab$ and $ba$,  then this state would satisfy 
     \begin{align*}
     \pi(q) = q \qquad \text{where $\pi$ is the atom permutation that swaps $a$ and $b$}.
     \end{align*}
     If an element in a pof set satisfies the above condition, then it cannot use the atoms $a$ and $b$. This cannot happen in an automaton that recognises the language.
 \end{myexample}
 
-If we would like our automata to be closed under minimization, then they should support taking subsets and quotients. A quick and dirty solution is to simply add these two features. We will describe this solution in Section~\ref{sec:subquotiented-pof-sets}. Later in this chapter, we will show that the solution is not so dirty after all, and it can be equivalently described in a more abstract way, using the language of group actions. Later in the book, other ways of describing the notion will also appear, namely the representable sets from Chapter~\ref{cha:sets-of-sets-of-sets}, thus inspiring confidence that the notion is well motivated.
+% In this chapter, we overcome these limitations, by introducing the notion of (not necessarily polynomial) orbit-finite sets. This notion is defined using the abstract language  of group actions, which may seem at first glance to be excessively formalistic. However, as we will see later in this book, the added generality has many advantages. Also, the same notion can be described in more concrete terms, such as the closure of pof sets under equivariant subsets and quotients.
 
 
-\exercisepart
-\input{problems/spof-intro}
+% If we would like our automata to be closed under minimization, then they should support taking subsets and quotients. A quick and dirty solution is to simply add these two features. We will describe this solution in Section~\ref{sec:subquotiented-pof-sets}. Later in this chapter, we will show that the solution is not so dirty after all, and it can be equivalently described in a more abstract way, using the language of group actions. Later in the book, other ways of describing the notion will also appear, namely the representable sets from Chapter~\ref{cha:sets-of-sets-of-sets}, thus inspiring confidence that the notion is well motivated.
 
-\section{Subquotiented pof sets}
-\label{sec:subquotiented-pof-sets}
-To formalize subsets and quotients, we use partial equivalence relations. 
-    A \emph{partial equivalence relation} on a set $X$ is defined to be a binary relation that satisfies 
-    \begin{align*}
-        \myunderbrace{x \sim y \quad \Rightarrow \quad y \sim x}{symmetric} 
-        \quad \text{and} \quad
-        \myunderbrace{x \sim y  \text{ and }  y \sim z \quad \Rightarrow
-        \quad x \sim z}{transitive}.
-    \end{align*}
-    This is like an equivalence relation, but the missing axiom is  reflexivity $x\sim x$. Defining a partial equivalence relation is the same as indicating some subset (the elements that are equivalent to themselves), and then defining a (total) equivalence relation on the subset. Therefore, partial equivalence relations subsume both subsets and quotients. 
-     We write $X_{/\sim}$ for the set of equivalence classes of $\sim$, and we call this a \emph{subquotient} of the original set.
-
-    \begin{definition}\label{def:subquotiented-pof-set}
-        A \emph{subquotiented pof set}, spof for short, is any subquotient $X_{/\sim}$ of a pof set $X$ by a partial equivalence relation $\sim$ that is equivariant. 
-    \end{definition}
-
-    \begin{myexample}\label{ex:subquotiented-as-subsets} Subquotiented pof sets subsume both subsets and quotients. Let us begin by illustrating subsets.
-        Every equivariant subset $Y \subseteq X$, can be seen as a subquotiented pof set, which corresponds to the partial equivalence relation 
-        \begin{align*}
-            x \sim y \quad \text{if} \quad x = y \text{ and } x \in Y.
-        \end{align*}
-        One example of such a set is the set
-        \begin{align*}
-        \atoms^{(d)} \eqdef 
-        \setbuild{(a_1,\ldots,a_d) \in \atoms^d}{$a_1,\ldots,a_d$ are pairwise different},
-        \end{align*} 
-        which we call the \emph{set of non-repeating tuples}. We will use these sets a lot.
-    \end{myexample}
-
-
-\begin{myexample}\label{ex:atoms-choose-two}
-    In Example~\ref{ex:pof-dont-minimize}, we discussed the set 
-    \begin{align*}
-    {\atoms \choose 2}.
-    \end{align*}
-    This is an example of a subquotiented pof set. It is the subquotient of $\atoms^2$ under the partial equivalence relation defined by 
-    \begin{align*}
-    (a,b) \sim (a',b') \quad \text{if} \quad \set{a,b} = \set{a',b'} \land a \neq b.
-    \end{align*}
-\end{myexample}
-
-Similarly to the case of pof sets, all structure on subquotiented pof sets will be required to be equivariant. Equivariance is defined in the same way as for subsets of pof sets: membership in the set must be stable under applying atom permutations. Let us define this more formally.
-
-\begin{definition}\label{def:equivariant-subset-of-a-spof}[Equivariant subset of a spof set]
-    A subset 
-    \begin{align*}
-    Y \subseteq X_{/\sim}
-    \end{align*}
-    of a subquotiented pof set is called \emph{equivariant} if for every element of $X_{/\sim}$, which is an equivalence class $[x]_\sim$ of some element $x \in X$, we have 
-    \begin{align*}
-    [x]_\sim \in Y \quad \Leftrightarrow \qquad \myunderbrace{\pi([x]_\sim)}{image of $\pi$, when applied to  the set \\ of elements that are in the equivalence class $[x]$} \in Y \quad \text{for every atom permutation $\pi$}.
-    \end{align*}
-\end{definition}
-
-In the above definition, when we apply an atom permutation to an element of an equivalence class, we take the image of all elements in the equivalence class. An alternative approach would be to apply the atom permutation to a representative of the equivalence class, and then take the equivalence class of the image. This would give the same effect, since applying atom permutations commutes with taking equivalence classes, as long as $\sim$ is equivariant:
-    \begin{align*}
-    \myunderbrace{\pi([x]_\sim)}{first take the equivalence class, \\ then apply the atom permutation}
-    \qquad \qquad  = \qquad \qquad
-    \myunderbrace{[\pi(x)]_\sim}{first apply the atom permutation, \\ then take the equivalence class}.
-    \end{align*}
-
-
-\begin{myexample}
-    Consider the subquotiented pof set
+In the above example, we used a subquotient to create a minimal automaton. However, once we have authorised spof sets, we can start using them as input alphabets, and define new languages for them, which will lead us to interesting examples of automata. Before discussing these examples, we need to define equivariance for spof sets, since all the structure in the automata will be required to be equivariant. There are no surprises for this definition: a subset $Y$ of a spof set $X$ is called equivariant if it is invariant under applying atom permutations, i.e.
 \begin{align*}
-\atoms \choose 2
+y \in Y 
+\quad \Leftrightarrow \quad
+\pi(y) \in Y 
+\quad \text{for every atom permutation $\pi$}.
 \end{align*}
-from Example~\ref{ex:atoms-choose-two}, which is obtained by a quotient of $X = \atoms^2$ with respect to a certain partial equivalence relation $\sim$.  An element  of the subquotient is  an equivalence class of  pairs, as in the following example: 
-\begin{align}\label{eq:subquotiented-element-example}
-   \myunderbrace{(\john,\mary)}{element $x \in X$} 
-   \qquad 
-   \myunderbrace{\set{(\john,\mary),(\mary,\john)}}{its equivalence class in $X_{/\sim}$}.
-\end{align}
-If we apply to the above equivalence class the atom permutation that swaps $\john$ and $\mary$, then we get the same equivalence class. 
-\end{myexample}
+In order for this definition be meaningful, we need to explain what $\pi(y)$ is, i.e.~how atom permutations are applied to elements of a spof set.  This is done in the natural way. Since an element of a spof set is an equivalence class, an atom permutation is applied to it by taking the image of the equivalence class. The following straightforward lemma shows that the image will also be an equivalence class in the spof set, which ensures that $\pi(y)$ is well-defined. 
 
-In Definition~\ref{def:equivariant-subset-of-a-spof}, we defined equivariance for subsets of subquotiented pof sets. Since subquotient pof sets are closed under taking products $X \times Y$, we can also talk about equivariant relations on subquotient pof sets, by considering equivariant subsets of the product $X \times Y$. As a special case of relations, we can discuss equivariant functions between subquotient pof sets.
+\begin{lemma}
+    Let $X$ be a spof set. If $\pi$ is an atom permutation and $x \in X$, then $\pi(x) \in X$.
+\end{lemma}
+\begin{proof}
+        By definition,  the spof set $X$ is obtained by starting with a pof set, call it $Z$, and taking a quotient with respect to some equivariant relation $\sim$ that is defined on some equivariant subset of $Z$. 
+        Take an element $x \in X$. This element is the equivalence class of some representative $z \in Z$ in the original pof set. By equivariance of $\sim$, we know 
+        \begin{align*}
+        z' \sim z
+        \quad \Leftrightarrow \quad
+        \pi(z') \sim \pi(z) 
+        \qquad \text{for every $z' \in Z$}.
+        \end{align*}
+        Therefore, the  same result is obtained by: (a) first taking the equivalence class of the representative $z$ and then applying $\pi$ to all elements of this equivalence class; or (b) first applying $\pi$ to the representative $z$, and then taking its equivalence class.         The result of (a)  is equal to $\pi(x)$, by definition of how $\pi$ is applied to elements of $X$. The result of (a) is an element of $X$, since the $\pi(z)$ is guaranteed to be in the domain of the equivalence relation $\sim$. 
+\end{proof}
 
-\begin{myexample}\label{ex:choice-spof}
+In the case of pof sets, we defined equivariant functions as the special case of equivariant relations, and we defined equivariant relations as the special case of subsets of products. This approach extends to spof sets, using the following straightforward lemma, whose proof is left as an exercise for the reader. 
+    \begin{lemma}
+    Spof sets are closed under disjoint unions $X + Y$ and products $X \times Y$.
+\end{lemma}
+By thinking of functions and relations as subsets of products, we can now speak of equivariant functions and relations on spof sets. One of the interesting properties of equivariant functions is that symmetries on the input must be reflected in the output, which will prohibit certain functions, as shown in the following example.
+
+\begin{myexample}[Choice fails]\label{ex:choice-spof}
     We will show that there is no "equivariant" function 
     \begin{align*}
     f : {\atoms \choose 2} \to \atoms.
     \end{align*}
+    In other words, one cannot choose an atom from a set of size two, in an equivariant way.
     In this proof, we treat elements of $\atoms \choose 2$ as sets $\set{a,b}$ of size two, although formally they are defined to be equivalence classes of ordered pairs.  Consider some hypothetical function $f$, and some  input-output pair 
     \begin{align*}
         f(\set{a,b})=c.
@@ -165,30 +139,105 @@ In Definition~\ref{def:equivariant-subset-of-a-spof}, we defined equivariance fo
 \end{myexample}
 
 
+ We finish this section with two examples of deterministic spof automata, i.e.~deterministic automata where the input alphabet and state space are spof sets, and the remaining structure is equivariant. 
+
+\begin{myexample}[Intersecting letters] In this example we show that once a subquotient is used in the input alphabet, then it will also be necessary in the state space of a deterministic automaton, even if we do not insist on minimality. 
+    
+    Let $d \in \set{1,2,\ldots}$ and  consider the language 
+    \begin{align*}
+    \setbuild { w \in {\atoms \choose d}^*}{there is an atom that appears in every letter}.
+    \end{align*}
+    In other words, this language consists of words, where the intersection of all letters is a nonempty set. We will show a deterministic automaton that recognises this language, although the states of this automaton will also use subquotients. The automaton stores the intersection of letters seen so far. Its state space is therefore 
+    \begin{align*}
+    \myunderbrace{\atoms^0}{initial}
+    \quad + \quad 
+    {\atoms \choose {\leq d}},
+    \end{align*}
+    where the second summand describes possibly empty sets with at most $d$ atoms. Upon reading the first letter, the automaton loads it into its state. Then, it keeps on intersecting the state with each new input letter. The accepting states are all states, except the initial state and the empty set in the second summand.
+
+    The automaton described above uses subquotients. In the presence of nondeterminism, we could avoid this, and have a state space that is a pof set without subquotients. Th state space would be 
+    \begin{align*}
+    \myunderbrace{\atoms^0}{initial}
+    \quad + \quad 
+    \myunderbrace{
+        \atoms^d + \atoms^{d-1} + \cdots + \atoms^0}
+    {intersection of letters seen so far}.
+    \end{align*}
+    Upon reading the first letter, the automaton would nondeterministically choose some order on the atoms appearing in this letter, and put the corresponding tuple of atoms into a state of the form $\atoms^d$. Then, it would start removing atoms from this tuple that do not appear in subsequent letters, leading to rejection once the tuple becomes empty. 
+
+    However, as we will now show, subquotients are necessary if we want to use a deterministic automaton. The idea is that the symmetries for the input alphabet impose symmetries for the state space. The main observation is stated in the following claim, which shows that if the state space is a pof set, then the automaton is incapable of putting any atoms into its state. The claim is a variant of the observations from Example~\ref{ex:choice-spof}, which showed that choice fails in the presence of symmetries.
+    \begin{claim}
+        Let $d > 1$, let  $Q$ be a pof set,  let 
+            \begin{align*}
+    \delta : Q \times {\atoms \choose d} \to Q 
+    \end{align*}
+    be an equivariant function, and consider some triple $\delta(p,a)=q$. If $p$ has no atoms, i.e.~it comes from  a component of dimension zero, then the same is true for $q$.
+    \end{claim}
+    \begin{proof}
+        We use the following property of pof sets: (*) if $Q$  is  a pof set, and $\pi$ is an atom permutation that fixes some $q \in Q$, then all atoms which appear in $q$ must be fixed by $\pi$. The reason for this property is that the atoms in a pof set are stored in an ordered list, and therefore moving them will affect the list.  Property (*) is no longer valid in the presence of subquotients, e.g.~the set $\set{\eve, \john}$ is stabled under swapping Eve  and John.
+
+        We use property (*) to prove the claim. 
+        Consider an atom permutation $\pi$ which swaps two atoms that appear in the input letter. Such a permutation is possible by the assumption that $d>1$. By equivariance, we can apply this permutation to the transition $\delta(p,a)=q$, and the result should be a new transition. This permutation does not affect the input letter, since the input letter does not care about the order of the atoms. This permutation also does not affect the source state $p$, since this state does not use any atoms. Therefore, by equivariance of the transition function, this permutation should also not affect the target state $q$. (Here we use determinism, i.e.~the fact that $\delta$ is a function.)  Since the set of states is a pof set, we can use the property (*) from the previous paragraph to conclude that none of the atoms from the input letter can be used in the target state. For a similar reason, we can swap atoms that are not in the input letter, and therefore these atoms also cannot appear in the target state.  Summing up, no atoms can appear in the target state. 
+    \end{proof}
+
+    Using the above claim, we show that our language cannot be recognised by a deterministic pof automaton without subquotients.
+    In a pof automaton, the initial state cannot contain any atoms. Therefore, by the above claim, a deterministic pof automaton would be unable to reach any state that uses atoms. In particular, after reading the first letter, the state would not depend on the contents of this first letter. Since membership in the language clearly depends on the contents of the first letter, it follows that such an automaton cannot recognise the language. 
+\end{myexample}
+
+\begin{myexample}[Hitting sets]\label{ex:hitting-set}
+    In the previous example, the language required that there is some atom which appears in all input letters. In this example, we present a more interesting automaton, in which the requirement is relaxed: there is a set of two atoms $\set{a,b}$ which is a \emph{hitting set}, i.e.~it has nonempty intersection with every input letter.  Consider the following  language:
+    \begin{align*}
+    \setbuild{w \in {\atoms \choose 2}^*}{there is a hitting  set of at most two atoms}.
+    \end{align*}
+    We will show that this language can be recognised by a deterministic automaton, if we allow spof sets. This example can even be (non-trivially) extended to a more general variant, where the input alphabet uses sets of some fixed size $d$, and the hitting set has some other size $e$, see Exercise~\ref{ex:hitting-set-deterministic-generalised}.
+
+    We begin with a nondeterministic automaton. As in the previous example, in the presence of nondeterminism, we can even avoid subquotients. More importantly, the construction is very straightforward: the automaton uses nondeterminism to guess the hitting set. 
+    
+    The rest of this example is devoted to presenting a deterministic automaton.  The key observation is that after reading three distinct input letters, there are finitely many candidates for the hitting set. These candidates are explained in the following picture (in red), depending on the possible overlaps between the three input letters:
+    \mypicb{13}
+    Using this observation, we now describe the automaton. 
+    
+    At the beginning, it  waits for the first three distinct input letters to arrive, which is done using a state space of the form 
+        \begin{align*}
+    \myunderbrace{{\atoms \choose d}^0 + {\atoms \choose d}^1 + {\atoms \choose d}^2}{at most two distinct letters seen so far}.
+        \end{align*}  
+    The first component is the initial state. 
+    These states are accepting, because there is a  hitting set of size at most two, namely one atom for each letter. Once the three letters have arrived, the automaton computes the finite set of candidates for the hitting set. From then on, it starts reading the input and removing candidates from the set which do not hit the current input letter. Once all candidates are removed, the automaton enters a rejecting state; before this happens the state is accepting. 
+
+    Finally, when the third distinct input letter arrives, the automaton computes the finite set of candidates for the hitting set. As explained in the picture above, these candidates use at most 5 atoms. Therefore, to describe a set of candidates, we need to indicate a set of 5 atoms, and then indicate a family of subsets of size two in this set, which leads to the set 
+    \begin{align*}
+    \myunderbrace{
+       P =   \setbuild{
+            \setbuild{X}{$X \subseteq {Y \choose 2}$}
+        }{
+            $Y \subseteq {\atoms \choose 5}$
+        }
+    }{sets of candidates for the hitting set}.
+    \end{align*}
+    This set is somewhat similar to a pof set, in the sense that it is finite up to permutations of the atoms. This is because  once the 5 atoms for the set $Y$ have been chosen, there are finitely ways of choosing the family $X$ of subsets of size two. However, the set $P$ is not a pof set, since it has certain internal symmetries.     Once the third distinct input letter arrives, the automaton computes the set of candidates for the hitting set, which is done using a function 
+    \begin{align*}
+    f : {\atoms \choose d}^3 \to P,
+    \end{align*}
+    which is the one that is described in the picture with five cases. The function is partial, since it is only defined on arguments where the three input letters are distinct. More importantly, the function is equivariant. This is left as an exercise for the reader, with the important thing being that the output of $f$ depends only on how the three input sets overlap.
+\end{myexample}
 
 
-Subquotiented pof sets are a solution to the problem of minimization of deterministic pof automata. Indeed, if we have some pof automaton, then we can define a partial equivalence relation on its states by 
-\begin{align*}
-p \sim q \quad \eqdef \quad  \text{$p$ and $q$ are both reachable, and accept the same words}.
-\end{align*}
-By equivariance of the automaton, this is an equivariant partial equivalence relation. Therefore, the quotient $Q_{/\sim}$ is a subquotiented pof set. As usual, one can define a quotient automaton $\Aa_{/\sim}$ which recognises the same language as the original automaton $\Aa$. This automaton is well-defined (i.e.~its structure is equivariant), and it is minimal in the appropriate sense. More details will be provided later in this chapter, when we prove  Myhill-Nerode Theorem. 
+
 
 \exercisepart
 \input{problems/spof-spof}
 \section{Orbit-finiteness}
 \label{sec:orbit-finiteness-equality}
-One could worry that subquotient pof sets are a hack that fixes the minimization issue for automata, but does not have other applications, or a proper theoretical justification. In this section, we ease such worries, by giving a more semantic concept, namely orbit-finite sets, and showing that they are exactly the same as subquotient pof sets.
+In the previous section, we defined subquotiented pof sets, with an emphasis on minimisation of deterministic pof automata. 
+One could worry that subquotient pof sets are a hack, whose usefulness is limited to the  minimisation problem. In this section, we ease such worries, by giving a more semantic concept, namely orbit-finite sets, and showing that they are exactly the same as subquotiented pof sets.
 
-The general idea is that a set $X$ is orbit-finite if it has finitely many orbits, which means that there are finitely many generators  $x_1,\ldots,x_n \in X$ such that every other element of the set is in the same orbit as one of these generators, i.e.~every element is of the form $\pi(x_i)$ for some atom permutation $\pi$ and some generator $x_i$.  However, in order to formalise this idea, we need to explain what $\pi(x_i)$ means, i.e.~how we apply an atom permutation to an element of the set $X$. If $X$ constructed using atoms in some natural way, e.g.~it is a quotiented pof set such as \begin{align*}
+The general idea is that a set $X$ is orbit-finite if it has finitely many orbits, which means that there are finitely many generators  $x_1,\ldots,x_n \in X$ such that every other element of the set is in the same orbit as one of these generators, i.e.~every element is of the form $\pi(x_i)$ for some atom permutation $\pi$ and some generator $x_i$.  In order to formalise this idea, we need to explain what $\pi(x_i)$ means, i.e.~how we apply an atom permutation to an element of the set $X$. If $X$ constructed using atoms in some natural way, e.g.~it is a subquotiented pof set such as \begin{align*}
 \atoms^3 + \atoms^{(2)} + {\atoms \choose 3},
 \end{align*}
-then the meaning of $\pi(x)$ is clear: we simply apply $\pi$ to all atoms that appear in $x$. However, for an abstract set $X$, it is not exactly clear what it means for an atom to ``appear'' in an element $x \in X$. Therefore, in order to talk about orbits in an abstract set $X$, we need to explicitly define what it means to apply atom permutations to elements of $X$. This is done by defining an action of the group of atom permutations on the set $X$, as described below. 
+then the meaning of $\pi(x)$ is clear: we simply apply $\pi$ to all atoms that appear in $x$. However, for an abstract set $X$, it might not be clear what it means for an atom to ``appear'' in an element $x \in X$.  Therefore, in order to talk about orbits in an abstract set $X$, we need to explicitly define what it means to apply atom permutations to elements of $X$. This is explicit definition is formalised by a group action, as described below. 
 
 
-\paragraph*{Group actions.}
-The semantic characterization will use two of the central notions in this book: finite supports, and orbit-finiteness. These notions are defined in terms of group actions, so begin by defining those. 
-
-
+\paragraph*{Group actions.} In the following definition, we will be mainly interested in the case where the group $G$ is the group of all atom permutations.  (In later chapters, we will restrict the group to those permutations that respect some extra structure on the atoms, such as a linear order.) 
 
 
 
@@ -209,15 +258,15 @@ The semantic characterization will use two of the central notions in this book: 
     \end{align*}
 \end{definition}
 
-In this book, the group $G$ will always consist of  permutations of the atoms, although in later chapters will restrict the permutations to those that respect some extra structure on the atoms, such as a linear order.
 
-\begin{myexample}
-    Sets constructed using atoms are naturally equipped with an action  of the group of atom permutations. For example, the set $\atoms^d$ is equipped with the action defined by 
+
+\begin{myexample}[Constructors] 
+    \label{ex:group-action-constructors}
+    We typically construct sets by starting with the atoms, and applying some constructors.  In this case, the constructors will naturally tell us how the group action is defined.  For example, if we have already defined the action on a set $X$, then we can extend it to the power $X^d$, by appling group elements coordinate-wise:
     \begin{align*}
-    \pi(a_1,\ldots,a_d) = (\pi(a_1),\ldots,\pi(a_d)).
+    \pi(x_1,\ldots,x_d) = (\pi(x_1),\ldots,\pi(x_d)).
     \end{align*}
-    We have been using this group action implicitly in the previous chapters. The action also extends to other sets, such as $\atoms^*$ or the powerset $\powerset \atoms$. In the case of the powerset, we use the image, i.e.~$
-    \pi(X) = \setbuild{\pi(a)}{$a \in X$}$.
+    Similar extensions can be defined for other constructors, such as disjoint unions, powersets, or subquotients
 \end{myexample}
 
 The main topic of this book is sets that have finitely many orbits.
@@ -231,7 +280,7 @@ The main topic of this book is sets that have finitely many orbits.
 
 \begin{myexample}
     \label{ex:finite-constructions-of-of-sets}
-     As we have shown in Lemma~\ref{lem:pof-finitely-many-equivariant}, every "pof set" has finitely many orbits. Another example of a set with finitely many orbits is the set $\atoms^{(d)}$ of non-repeating tuples, which was introduced in Example~\ref{ex:pof-product-generating-set}. This set has exactly one orbit. In fact, this is the only kind of one-orbit set that can arise in "pof set". This is because  every orbit in $\atoms^d$ admits an equivariant bijection with a set of the form $\atoms^{(e)}$ for some $e \in \set{1,\ldots,d}$. For example, the orbit of 
+     As we have shown in Lemma~\ref{lem:pof-finitely-many-equivariant}, every "pof set" has finitely many orbits. Another example of a set with finitely many orbits is the set $\atoms^{(d)}$ of non-repeating tuples, which was introduced in Example~\ref{ex:pof-product-generating-set}. This set has exactly one orbit. As we have mentioned before, this is the only kind of one-orbit set that can arise in "pof set". This is because  every orbit in $\atoms^d$ admits an equivariant bijection with a set of the form $\atoms^{(e)}$ for some $e \in \set{1,\ldots,d}$. For example, the orbit of 
     \begin{align*}
     (\john,\mary,\john,\mary) \in \atoms^4
     \end{align*}
@@ -249,9 +298,10 @@ admits an equivariant bijection with the set $\atoms^{(2)}$, namely projection o
 
 
 
-\paragraph*{Finite supports.} Judging by the name alone, one would think that an orbit-finite set is defined to be a set that has finitely many orbits. This is not, however, the definition that we will use in this book, see Definition~\ref{def:orbit-finite-set-equality}. There will be an additional requirement, on finite supports, which we will now explain. This requirement will be consistent with  finite constructions such as taking pairs or finite sequences (see Example~\ref{ex:finite-constructions-of-of-sets}), but it will be inconsistent with infinite constructions such as taking sets that are infinite and co-infinite (see Example~\ref{ex:infinite-co-infinite}). As we will explain later in this chapter, this additional requirement will be necessary to get finite representations of orbit-finite sets, and algorithms that operate on them.
+\paragraph*{Finite supports.} Judging by the name alone, one would think that an orbit-finite set  is defined to be a set (equipped with the appropriate group action) that has finitely many orbits. This is not, however, the definition that we use, since we will impose an additional requirement. This additional requirement concerns finite supports, which we now explain. The idea is that we only want to allow  finite constructions such as taking pairs or finite sequences (see Example~\ref{ex:finite-constructions-of-of-sets}), and we do not want infinite constructibut it will be inconsistent with infinite constructions such as taking sets that are infinite and co-infinite (see Example~\ref{ex:infinite-co-infinite}). This additional requirement will ensure equivalence with the subquotiented pof sets from the previous section, which will yield a finite representation of orbit-finite sets that can be used by algorithms. Also, we will show that  if this requirement is dropped, then no finite representation is possible.
 
- The general idea is that the support of an  element $x$ in a set $X$ consists of  the atoms that are needed to describe it. Since the notion is defined in abstract terms of group actions, it will be useful to keep the following examples in mind while reading the formal definition.
+Let us now define finite supports.
+ The general idea is that the support of an  element $x \in X$ consists of  the atoms that are needed to describe $x$. Since the notion is defined in abstract terms of group actions, and  may be hard to grasp immediately, it will be useful to keep the following examples in mind.
 
 \begin{center}
     \begin{tabular}{c|c|c}
@@ -274,7 +324,7 @@ Like orbits, one can only talk about supports in the presence of an explicitly d
     holds for every atom permutation $\pi$. We say that $x$ is \emph{finitely supported} if it is supported by some finite list of atoms.
 \end{definition}
 
-Observe that in the above definition, the group of atom permutation acts on two sets. The first action is on atoms: an atom permutation can be applied to an atom, and the result is another atom. This is the action that is used in the assumption of implication~\eqref{eq:support-defining-implication}. The second action is the action on the set $X$, which is used in the conclusion of the implication. The second action is a parameter of the definition, i.e.~in order for the definition to be meaningful, the set has to come with an action of the group of atom permutations. In most cases of interest, the second action will be clear from the context, e.g.~if we take $X$ to be $\atoms^d$, or the powerset $\powerset \atoms$, or any other set that is constructed using atoms in some natural way. However, in principle when talking about finite supports, we must remember that the notion depends on the action of the group of atom permutations on the set $X$.
+Observe that in the above definition, the group of atom permutation acts on two sets. The first action, which is used in the assumption of implication~\eqref{eq:support-defining-implication}, concerns atoms: an atom permutation is applied to an atom, and the result is another atom.  The second action, which is used in the conclusion of the same implication, concerns the set $X$: an atom permutation is applied to an element of $X$, and the result is another element of $X$. The second action is a parameter of the definition, i.e.~in order for the definition to be meaningful, the set has to come with an action of the group of atom permutations. In most cases of interest, the second action will be clear from the context, when the set is built using  standard constructors, see Example~\ref{ex:group-action-constructors}.  However, in principle when talking about finite supports, we must remember that the notion depends on the action of the group of atom permutations on the set $X$.
 
 Before continuing, let us remark on the notation. In Definition~\ref{def:supports-equality}, supports are finite lists of atoms. The order of atoms in this list, or their repetitions, are not relevant for the notion of support, since they do not affect the assumption of the implication~\eqref{eq:support-defining-implication}. Therefore, the only relevant information is the set of atoms that appears on this list, which is why many authors present the support as a  finite set of atoms, and not a list. If one uses sets $\set{a_1,\ldots,a_n}$ for supports, then one should remember that the assumption in implication~\eqref{eq:support-defining-implication} is not
 \begin{align*}
@@ -294,14 +344,14 @@ which is a weaker assumption, because it allows $\pi$ to swap atoms inside the s
     The remaining elements of the powerset are not finitely supported.  Let us prove this formally. Suppose that $x \in \powerset \atoms$ is neither finite nor cofinite, and take some hypothetical finite support $\bar a$. There must be some atoms $b,c$ that are not in this finite support, and such that $b \in x$ and $c \not \in x$. Take the atom permutation that swaps $b$ and $c$, and leaves all other atoms fixed. This permutation fixes the support, but moves $x$, which contradicts the definition of finite support.
 \end{myexample}
 
-\paragraph*{Orbits and orbit-finiteness.} We are now ready to present one of the central definitions of this book, namely orbit-finiteness. 
+\paragraph*{Orbits and orbit-finiteness.} We are now ready to present  the semantic extension of pof sets that was announced at the beginning of this chapter. 
 
 
 \begin{definition}[Orbit-finite set]\label{def:orbit-finite-set-equality}
 	An \emph{orbit-finite set} is defined to be a set $X$, together with an action of the group of atom permutations, such that every element $x \in X$ has finite support, and there are finitely many orbits. 
 \end{definition}
 
-At the end of this section we discuss why the condition on finite supports is necessary. Also note that in order for the definition to be meaningful, the action of the group of atom permutations must be explicitly defined on the set $X$. In most examples, this action will be clear from the context, e.g.~if $X$ consists of tuples of atoms.
+We emphasise once again that, in order for the definition to be meaningful, the action of the group of atom permutations must be explicitly defined on the set $X$. In most examples, this action will be clear from the context, e.g.~if $X$ consists of tuples of atoms.
 
 
 \begin{myexample}[Powerset is not orbit-finite]\label{ex:powerset-not-orbit-finite}
@@ -324,7 +374,7 @@ At the end of this section we discuss why the condition on finite supports is ne
 
 
 
-The positive examples we have seen above were examples of subquotient pof sets. This is not a coincidence, since as the following theorem asserts, these are the only possible orbit-finite sets.
+The positive examples we have seen above were examples of subquotient pof sets. This is not a coincidence: as we have announced at the beginning of this chapter, the semantic notion of orbit-finite sets from this section is equivalent to the syntactic notion of subquotient pof sets from the previous section.
 
 \begin{theorem}\label{thm:subquotiented-pof-representation} 
     Let $X$ be a set equipped with an action of atom permutations. Then $X$ is orbit-finite if and only if it admits an equivariant bijection with a subquotient pof set.
